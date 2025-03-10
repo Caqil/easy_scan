@@ -1,0 +1,26 @@
+class AppConstants {
+  // Hive box names
+  static const String documentsBoxName = 'documents';
+  static const String foldersBoxName = 'folders';
+  static const String settingsBoxName = 'settings';
+
+  // Hive keys
+  static const String settingsKey = 'app_settings';
+
+  // App constants
+  static const int defaultPdfQuality = 80;
+  static const int defaultImageQuality = 85;
+  static const int thumbnailSize = 300;
+
+  // Folder colors
+  static const List<int> folderColors = [
+    0xFF2196F3, // Blue
+    0xFF4CAF50, // Green
+    0xFFF44336, // Red
+    0xFF9C27B0, // Purple
+    0xFFFF9800, // Orange
+    0xFF795548, // Brown
+    0xFF607D8B, // Blue Grey
+    0xFF009688, // Teal
+  ];
+}
