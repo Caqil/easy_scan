@@ -19,6 +19,7 @@ class DocumentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,

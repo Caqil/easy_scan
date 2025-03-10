@@ -5,6 +5,7 @@ import '../utils/file_utils.dart';
 class CameraService {
   CameraController? _controller;
   List<CameraDescription>? _cameras;
+  List<CameraDescription>? get cameras => _cameras;
 
   /// Initialize available cameras
   Future<bool> initializeCameras() async {

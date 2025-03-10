@@ -25,11 +25,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Can I use the camera please?</string>
+	<string>Camera access is needed to scan documents and take photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Can I use the photos please?</string>
+	<string>Photo library access is needed to import images for scanning</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Can I use the photos please?</string>
+	<string>Permission is needed to save scanned documents to your photo library</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

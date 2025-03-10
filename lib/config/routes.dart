@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/document.dart';
 import '../models/folder.dart';
 import '../ui/screen/camera_screen.dart';

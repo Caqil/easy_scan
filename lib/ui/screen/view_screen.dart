@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_scan/models/document.dart';
@@ -7,7 +6,6 @@ import 'package:easy_scan/services/share_service.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/utils/date_utils.dart';
 import 'package:easy_scan/utils/file_utils.dart';
-
 import '../widget/pdf_viewer.dart';
 
 class ViewScreen extends ConsumerStatefulWidget {

@@ -55,7 +55,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
       setState(() {
         _isInitialized = true;
         _hasPermission = true;
-       // _cameras = _cameraService.cameras;
+        _cameras = _cameraService.cameras;
       });
     } else {
       setState(() {

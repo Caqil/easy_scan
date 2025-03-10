@@ -1,10 +1,12 @@
 import 'dart:io';
-
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/utils/constants.dart';
+import 'package:edge_detection/edge_detection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../config/routes.dart';
 import '../../models/folder.dart';
 import '../../providers/document_provider.dart';
@@ -24,24 +26,26 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
-  
+  final TextEditingController controller = TextEditingController();
+  String? _imagePath;
   @override
   void dispose() {
     _searchController.dispose();
+    controller.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final recentDocuments = ref.watch(recentDocumentsProvider);
     final allDocuments = ref.watch(documentsProvider);
     final rootFolders = ref.watch(rootFoldersProvider);
-    
+
     // Filtered documents based on search
     final List<Document> filteredDocuments = _searchQuery.isEmpty
         ? []
         : ref.read(documentsProvider.notifier).searchDocuments(_searchQuery);
-    
+
     return Scaffold(
       appBar: CustomAppBar(
         title: _searchQuery.isEmpty
@@ -103,8 +107,54 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-  
-  Widget _buildHomeContent(List<Document> recentDocuments, List<Folder> rootFolders, List<Document> allDocuments) {
+
+  Future<void> getImageFromCamera() async {
+    bool isCameraGranted = await Permission.camera.request().isGranted;
+    if (!isCameraGranted) {
+      isCameraGranted =
+          await Permission.camera.request() == PermissionStatus.granted;
+    }
+
+    if (!isCameraGranted) {
+      // Have not permission to camera
+      return;
+    }
+
+    // Generate filepath for saving
+    String imagePath = path.join((await getApplicationSupportDirectory()).path,
+        "${(DateTime.now().millisecondsSinceEpoch / 1000).round()}.jpeg");
+
+    bool success = false;
+
+    try {
+      //Make sure to await the call to detectEdge.
+      success = await EdgeDetection.detectEdge(
+        imagePath,
+        canUseGallery: true,
+        androidScanTitle: 'Scanning', // use custom localizations for android
+        androidCropTitle: 'Crop',
+        androidCropBlackWhiteTitle: 'Black White',
+        androidCropReset: 'Reset',
+      );
+      print("success: $success");
+    } catch (e) {
+      print(e);
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      if (success) {
+        _imagePath = imagePath;
+      }
+    });
+  }
+
+  Widget _buildHomeContent(List<Document> recentDocuments,
+      List<Folder> rootFolders, List<Document> allDocuments) {
     return RefreshIndicator(
       onRefresh: () async {
         // Refresh documents and folders
@@ -117,6 +167,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         children: [
           // Quick Actions
           Card(
+            elevation: 0,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -150,9 +201,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       _buildQuickAction(
                         icon: Icons.folder_open,
                         label: 'Folders',
-                        onTap: () {
-                         // _showFolderOptions();
-                        },
+                        onTap: () => _showFolderSelectionDialog(rootFolders),
                       ),
                       _buildQuickAction(
                         icon: Icons.star,
@@ -168,9 +217,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Recent Documents
           if (recentDocuments.isNotEmpty) ...[
             const Text(
@@ -208,8 +257,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: 24),
           ],
-          
-          // Folders
+
           if (rootFolders.isNotEmpty) ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -222,9 +270,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    _showCreateFolderDialog();
-                  },
+                  onPressed: _showCreateFolderDialog, // This should now work
                   child: const Text('Create New'),
                 ),
               ],
@@ -244,19 +290,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 final folder = rootFolders[index];
                 return FolderCard(
                   folder: folder,
-                  documentCount: ref.read(documentsInFolderProvider(folder.id)).length,
-                  onTap: () {
-                    AppRoutes.navigateToFolder(context, folder);
-                  },
-                  onMorePressed: () {
-                    _showFolderOptions(folder);
-                  },
+                  documentCount:
+                      ref.read(documentsInFolderProvider(folder.id)).length,
+                  onTap: () => AppRoutes.navigateToFolder(context, folder),
+                  onMorePressed: () => _showFolderOptions(folder),
                 );
               },
             ),
             const SizedBox(height: 24),
           ],
-          
+
           // All Documents
           if (allDocuments.isNotEmpty) ...[
             const Text(
@@ -302,15 +345,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
             ),
           ],
-          
+
           // Empty state
-          if (recentDocuments.isEmpty && rootFolders.isEmpty && allDocuments.isEmpty)
+          if (recentDocuments.isEmpty &&
+              rootFolders.isEmpty &&
+              allDocuments.isEmpty)
             _buildEmptyState(),
         ],
       ),
     );
   }
-  
+
+  void _showFolderSelectionDialog(List<Folder> folders) {
+    if (folders.isEmpty) {
+      _showCreateFolderDialog();
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Select Folder',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: folders.length,
+            itemBuilder: (context, index) {
+              final folder = folders[index];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Color(folder.color),
+                  radius: 16,
+                ),
+                title: Text(folder.name),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showFolderOptions(folder);
+                },
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.add),
+            title: const Text('Create New Folder'),
+            onTap: () {
+              Navigator.pop(context);
+              _showCreateFolderDialog();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSearchResults(List<Document> documents) {
     if (documents.isEmpty) {
       return const Center(
@@ -331,7 +428,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       );
     }
-    
+
     return ListView.builder(
       itemCount: documents.length,
       itemBuilder: (context, index) {
@@ -365,7 +462,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
     );
   }
-  
+
   Widget _buildQuickAction({
     required IconData icon,
     required String label,
@@ -390,7 +487,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-  
+
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -429,79 +526,116 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-  
+
   void _showCreateFolderDialog() {
     final TextEditingController controller = TextEditingController();
     int selectedColor = AppConstants.folderColors[0];
-    
+    bool isLoading = false; // Track loading state
+
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
+      barrierDismissible: false, // Prevent dismissing while loading
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
           return AlertDialog(
             title: const Text('Create New Folder'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: controller,
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Folder Name',
-                    border: OutlineInputBorder(),
+            content: isLoading
+                ? const SizedBox(
+                    height: 100,
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: controller,
+                        autofocus: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Folder Name',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text('Select Color:'),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: AppConstants.folderColors.map((color) {
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                selectedColor = color;
+                              });
+                            },
+                            child: CircleAvatar(
+                              radius: 16,
+                              backgroundColor: Color(color),
+                              child: selectedColor == color
+                                  ? const Icon(Icons.check,
+                                      size: 16, color: Colors.white)
+                                  : null,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 16),
-                const Text('Select Color:'),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: AppConstants.folderColors.map((color) {
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          selectedColor = color;
-                        });
+            actions: isLoading
+                ? [] // Hide buttons during loading
+                : [
+                    TextButton(
+                      onPressed: () => Navigator.pop(dialogContext),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        if (controller.text.trim().isNotEmpty) {
+                          // Show loading state
+                          setState(() {
+                            isLoading = true;
+                          });
+
+                          try {
+                            // Add the folder
+                            await ref.read(foldersProvider.notifier).addFolder(
+                                  Folder(
+                                    name: controller.text.trim(),
+                                    color: selectedColor,
+                                  ),
+                                );
+
+                            // Wait for the UI to update (optional, depending on provider implementation)
+                            await Future.delayed(
+                                const Duration(milliseconds: 100));
+
+                            // Close dialog after folder is added
+                            if (mounted) {
+                              Navigator.pop(dialogContext);
+                            }
+                          } catch (e) {
+                            // Handle error and reset loading state
+                            setState(() {
+                              isLoading = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Error creating folder: $e')),
+                            );
+                          }
+                        }
                       },
-                      child: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Color(color),
-                        child: selectedColor == color
-                            ? const Icon(Icons.check, size: 16, color: Colors.white)
-                            : null,
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (controller.text.trim().isNotEmpty) {
-                    ref.read(foldersProvider.notifier).addFolder(
-                      Folder(
-                        name: controller.text.trim(),
-                        color: selectedColor,
-                      ),
-                    );
-                    Navigator.pop(context);
-                  }
-                },
-                child: const Text('Create'),
-              ),
-            ],
+                      child: const Text('Create'),
+                    ),
+                  ],
           );
         },
       ),
-    ).then((_) => controller.dispose());
+    ).then((_) {
+      controller.dispose(); // Dispose controller after dialog is fully closed
+    });
   }
-  
+
   void _showDocumentOptions(Document document) {
     showModalBottomSheet(
       context: context,
@@ -521,11 +655,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               document.isFavorite ? Icons.star : Icons.star_border,
             ),
             title: Text(
-              document.isFavorite ? 'Remove from Favorites' : 'Add to Favorites',
+              document.isFavorite
+                  ? 'Remove from Favorites'
+                  : 'Add to Favorites',
             ),
             onTap: () {
               Navigator.pop(context);
-              
+
               // Toggle favorite status
               final updatedDoc = Document(
                 id: document.id,
@@ -542,7 +678,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 isPasswordProtected: document.isPasswordProtected,
                 password: document.password,
               );
-              
+
               ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
             },
           ),
@@ -585,7 +721,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-  
+
   void _showFolderOptions(Folder folder) {
     showModalBottomSheet(
       context: context,
@@ -620,10 +756,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-  
+
   void _showRenameDocumentDialog(Document document) {
-    final TextEditingController controller = TextEditingController(text: document.name);
-    
+    final TextEditingController controller =
+        TextEditingController(text: document.name);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -659,7 +796,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   isPasswordProtected: document.isPasswordProtected,
                   password: document.password,
                 );
-                
+
                 ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
                 Navigator.pop(context);
               }
@@ -670,10 +807,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     ).then((_) => controller.dispose());
   }
-  
+
   void _showRenameFolderDialog(Folder folder) {
-    final TextEditingController controller = TextEditingController(text: folder.name);
-    
+    final TextEditingController controller =
+        TextEditingController(text: folder.name);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -702,7 +840,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   iconName: folder.iconName,
                   createdAt: folder.createdAt,
                 );
-                
+
                 ref.read(foldersProvider.notifier).updateFolder(updatedFolder);
                 Navigator.pop(context);
               }
@@ -713,10 +851,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     ).then((_) => controller.dispose());
   }
-  
+
   void _showChangeFolderColorDialog(Folder folder) {
     int selectedColor = folder.color;
-    
+
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -758,8 +896,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     iconName: folder.iconName,
                     createdAt: folder.createdAt,
                   );
-                  
-                  ref.read(foldersProvider.notifier).updateFolder(updatedFolder);
+
+                  ref
+                      .read(foldersProvider.notifier)
+                      .updateFolder(updatedFolder);
                   Navigator.pop(context);
                 },
                 child: const Text('Save'),
@@ -770,11 +910,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-  
+
   void _showMoveToFolderDialog(Document document) {
     final folders = ref.read(foldersProvider);
     String? selectedFolderId = document.folderId;
-    
+
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -785,7 +925,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               width: double.maxFinite,
               child: folders.isEmpty
                   ? const Center(
-                      child: Text('No folders available. Create a folder first.'),
+                      child:
+                          Text('No folders available. Create a folder first.'),
                     )
                   : ListView(
                       shrinkWrap: true,
@@ -837,8 +978,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     isPasswordProtected: document.isPasswordProtected,
                     password: document.password,
                   );
-                  
-                  ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
+
+                  ref
+                      .read(documentsProvider.notifier)
+                      .updateDocument(updatedDoc);
                   Navigator.pop(context);
                 },
                 child: const Text('Move'),
@@ -849,10 +992,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-  
+
   void _showPasswordDialog(Document document) {
     final TextEditingController controller = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -873,37 +1016,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: const Text('Cancel'),
           ),
           if (document.isPasswordProtected)
-           TextButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                final updatedDoc = Document(
-                  id: document.id,
-                  name: document.name,
-                  pdfPath: document.pdfPath,
-                  pagesPaths: document.pagesPaths,
-                  pageCount: document.pageCount,
-                  thumbnailPath: document.thumbnailPath,
-                  createdAt: document.createdAt,
-                  modifiedAt: DateTime.now(),
-                  tags: document.tags,
-                  folderId: document.folderId,
-                  isFavorite: document.isFavorite,
-                  isPasswordProtected: true,
-                  password: controller.text.trim(),
-                );
-                
-                // TODO: In a real app, we would use the PdfService to add password protection to the PDF
-                ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('Save'),
-          ),
+            TextButton(
+              onPressed: () {
+                if (controller.text.trim().isNotEmpty) {
+                  final updatedDoc = Document(
+                    id: document.id,
+                    name: document.name,
+                    pdfPath: document.pdfPath,
+                    pagesPaths: document.pagesPaths,
+                    pageCount: document.pageCount,
+                    thumbnailPath: document.thumbnailPath,
+                    createdAt: document.createdAt,
+                    modifiedAt: DateTime.now(),
+                    tags: document.tags,
+                    folderId: document.folderId,
+                    isFavorite: document.isFavorite,
+                    isPasswordProtected: true,
+                    password: controller.text.trim(),
+                  );
+
+                  // TODO: In a real app, we would use the PdfService to add password protection to the PDF
+                  ref
+                      .read(documentsProvider.notifier)
+                      .updateDocument(updatedDoc);
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Save'),
+            ),
         ],
       ),
     ).then((_) => controller.dispose());
   }
-  
+
   void _showDeleteConfirmation(Document document) {
     showDialog(
       context: context,
@@ -928,16 +1073,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-  
+
   void _showDeleteFolderConfirmation(Folder folder) {
     final documents = ref.read(documentsInFolderProvider(folder.id));
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Folder'),
         content: documents.isNotEmpty
-            ? Text('This folder contains ${documents.length} documents. Deleting the folder will move all documents to root. Continue?')
+            ? Text(
+                'This folder contains ${documents.length} documents. Deleting the folder will move all documents to root. Continue?')
             : Text('Are you sure you want to delete "${folder.name}"?'),
         actions: [
           TextButton(
@@ -964,11 +1110,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     isPasswordProtected: document.isPasswordProtected,
                     password: document.password,
                   );
-                  
-                  ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
+
+                  ref
+                      .read(documentsProvider.notifier)
+                      .updateDocument(updatedDoc);
                 }
               }
-              
+
               // Delete the folder
               ref.read(foldersProvider.notifier).deleteFolder(folder.id);
               Navigator.pop(context);
@@ -980,7 +1128,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-  
+
   void _showImportOptions() {
     showModalBottomSheet(
       context: context,
@@ -1015,11 +1163,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-  
-  
+
   void _showFavorites() {
     final favorites = ref.read(favoriteDocumentsProvider);
-    
+
     if (favorites.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -1028,7 +1175,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       );
       return;
     }
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1078,7 +1225,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       icon: const Icon(Icons.star, color: Colors.amber),
                       onPressed: () {
                         Navigator.pop(context);
-                        
+
                         // Remove from favorites
                         final updatedDoc = Document(
                           id: document.id,
@@ -1095,8 +1242,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           isPasswordProtected: document.isPasswordProtected,
                           password: document.password,
                         );
-                        
-                        ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
+
+                        ref
+                            .read(documentsProvider.notifier)
+                            .updateDocument(updatedDoc);
                       },
                     ),
                     onTap: () {
@@ -1113,4 +1262,3 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
-
