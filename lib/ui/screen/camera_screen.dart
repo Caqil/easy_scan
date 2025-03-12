@@ -1,18 +1,20 @@
 import 'dart:io';
-import 'package:easy_scan/config/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:camera/camera.dart';
+import 'package:cunning_document_scanner/cunning_document_scanner.dart';
+import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
-import '../../models/scan_settings.dart';
+import '../../config/routes.dart';
 import '../../providers/scan_provider.dart';
-import '../../services/camera_service.dart';
 import '../../services/image_service.dart';
+import '../../services/pdf_service.dart';
 import '../../utils/permission_utils.dart';
 import '../common/app_bar.dart';
-import '../widget/camera_widget.dart';
+import '../common/dialogs.dart';
 import '../widget/scan_options.dart';
+import '../../models/document.dart';
+import '../../providers/document_provider.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   const CameraScreen({super.key});
@@ -21,58 +23,234 @@ class CameraScreen extends ConsumerStatefulWidget {
   ConsumerState<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends ConsumerState<CameraScreen> {
-  final CameraService _cameraService = CameraService();
+class _CameraScreenState extends ConsumerState<CameraScreen>
+    with WidgetsBindingObserver {
   final ImageService _imageService = ImageService();
+  final PdfService _pdfService = PdfService();
   final ImagePicker _imagePicker = ImagePicker();
-  bool _isInitialized = false;
-  bool _hasPermission = false;
-  List<CameraDescription>? _cameras;
+  bool _isLoading = false;
+  bool _scanSuccessful = false;
+  String? _pdfPath;
+  File? _thumbnailImage;
 
   @override
   void initState() {
     super.initState();
-    _initializeCamera();
+    WidgetsBinding.instance.addObserver(this);
+    _checkCameraPermission();
   }
 
-  Future<void> _initializeCamera() async {
-    // Check camera permission
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Reset loading state when app resumes to prevent UI being stuck in loading state
+    if (state == AppLifecycleState.resumed && _isLoading) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _checkCameraPermission() async {
+    final hasPermission = await PermissionUtils.hasCameraPermission();
+    if (!hasPermission) {
+      await PermissionUtils.requestCameraPermission();
+    }
+  }
+
+  Future<void> _scanDocuments() async {
+    // Check for camera permission first
     final hasPermission = await PermissionUtils.hasCameraPermission();
     if (!hasPermission) {
       final granted = await PermissionUtils.requestCameraPermission();
       if (!granted) {
-        setState(() {
-          _isInitialized = true;
-          _hasPermission = false;
-        });
+        _showPermissionDialog();
         return;
       }
     }
 
-    // Initialize camera
-    final initialized = await _cameraService.initializeCameras();
-    if (initialized) {
+    try {
       setState(() {
-        _isInitialized = true;
-        _hasPermission = true;
-        _cameras = _cameraService.cameras;
+        _isLoading = true;
+        _scanSuccessful = false;
+        _pdfPath = null;
+        _thumbnailImage = null;
       });
-    } else {
+
+      // Get the pictures - this will show the scanner UI
+      List<String> imagePaths = [];
+      try {
+        imagePaths = await CunningDocumentScanner.getPictures(
+                isGalleryImportAllowed: true) ??
+            [];
+      } catch (e) {
+        if (mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'Error scanning: ${e.toString()}',
+          );
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // User canceled or no images captured
+      if (imagePaths.isEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Pre-process path validation
+      List<File> validImageFiles = [];
+      for (String path in imagePaths) {
+        final File file = File(path);
+        if (await file.exists()) {
+          validImageFiles.add(file);
+        }
+      }
+
+      if (validImageFiles.isEmpty) {
+        if (mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'No valid images found',
+          );
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Processing loading screen
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Processing scanned images...')
+              ],
+            ),
+          ),
+        );
+      }
+
+      // Process all images and add to scan provider
+      final scanState = ref.read(scanProvider);
+      for (File imageFile in validImageFiles) {
+        try {
+          final File processedFile = await _imageService.enhanceImage(
+            imageFile,
+            scanState.settings.colorMode,
+            quality: scanState.settings.quality,
+          );
+          ref.read(scanProvider.notifier).addPage(processedFile);
+        } catch (e) {
+          // Just skip failed images to improve reliability
+          print('Failed to process image: $e');
+        }
+      }
+
+      // Create a PDF from the processed images
+      if (ref.read(scanProvider).scannedPages.isNotEmpty) {
+        // Save first image as thumbnail
+        _thumbnailImage = ref.read(scanProvider).scannedPages.first;
+
+        // Generate a default document name
+        final documentName =
+            'Scan_${DateTime.now().toString().substring(0, 19).replaceAll(':', '-')}';
+
+        // Create PDF
+        _pdfPath = await _pdfService.createPdfFromImages(
+          ref.read(scanProvider).scannedPages,
+          documentName,
+        );
+      }
+
+      // Close the processing dialog
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      // Update UI to show success state
       setState(() {
-        _isInitialized = true;
-        _hasPermission = false;
+        _isLoading = false;
+        _scanSuccessful = ref.read(scanProvider).scannedPages.isNotEmpty;
+      });
+    } catch (e) {
+      // Close the processing dialog if it's open
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error: ${e.toString()}',
+        );
+      }
+      setState(() {
+        _isLoading = false;
       });
     }
   }
 
   Future<void> _pickImages() async {
     try {
-      final List<XFile> images = await _imagePicker.pickMultiImage();
-      if (images.isNotEmpty) {
-        final scanState = ref.read(scanProvider);
-        ref.read(scanProvider.notifier).setScanning(true);
+      setState(() {
+        _isLoading = true;
+        _scanSuccessful = false;
+        _pdfPath = null;
+        _thumbnailImage = null;
+      });
 
-        for (var image in images) {
+      // Let the gallery picker do its job
+      final List<XFile> images = await _imagePicker.pickMultiImage();
+
+      // User canceled or no images selected
+      if (images.isEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Show processing dialog
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Processing images...')
+              ],
+            ),
+          ),
+        );
+      }
+
+      // Process images
+      final scanState = ref.read(scanProvider);
+      for (var image in images) {
+        try {
           final File imageFile = File(image.path);
           final File processedFile = await _imageService.enhanceImage(
             imageFile,
@@ -80,20 +258,58 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
             quality: scanState.settings.quality,
           );
           ref.read(scanProvider.notifier).addPage(processedFile);
-        }
-
-        ref.read(scanProvider.notifier).setScanning(false);
-
-        // Navigate to edit screen
-        if (ref.read(scanProvider).scannedPages.isNotEmpty) {
-          // ignore: use_build_context_synchronously
-          AppRoutes.navigateToEdit(context);
+        } catch (e) {
+          print('Failed to process image: $e');
+          // Continue with other images
         }
       }
+
+      // Create a PDF from the processed images
+      if (ref.read(scanProvider).scannedPages.isNotEmpty) {
+        // Save first image as thumbnail
+        _thumbnailImage = ref.read(scanProvider).scannedPages.first;
+
+        // Generate a default document name
+        final documentName =
+            'Scan_${DateTime.now().toString().substring(0, 19).replaceAll(':', '-')}';
+
+        // Create PDF
+        _pdfPath = await _pdfService.createPdfFromImages(
+          ref.read(scanProvider).scannedPages,
+          documentName,
+        );
+      }
+
+      // Close the processing dialog
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      // Update UI to show success state
+      setState(() {
+        _isLoading = false;
+        _scanSuccessful = ref.read(scanProvider).scannedPages.isNotEmpty;
+      });
     } catch (e) {
-      ref.read(scanProvider.notifier).setScanning(false);
-      ref.read(scanProvider.notifier).setError(e.toString());
+      // Close the processing dialog if it's open
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error importing images: ${e.toString()}',
+        );
+      }
+      setState(() {
+        _isLoading = false;
+      });
     }
+  }
+
+  void _navigateToEditScreen() {
+    AppRoutes.navigateToEdit(context);
   }
 
   void _showScanOptions() {
@@ -117,182 +333,356 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
     );
   }
 
+  void _showPermissionDialog() {
+    AppDialogs.showConfirmDialog(
+      context,
+      title: 'Permission Required',
+      message:
+          'Camera permission is needed to scan documents. Would you like to open app settings?',
+      confirmText: 'Open Settings',
+      cancelText: 'Cancel',
+    ).then((confirmed) {
+      if (confirmed) {
+        PermissionUtils.openAppSettings();
+      }
+    });
+  }
+
+  Future<void> _saveDocument() async {
+    if (ref.read(scanProvider).scannedPages.isEmpty) {
+      AppDialogs.showSnackBar(
+        context,
+        message: 'No pages to save',
+      );
+      return;
+    }
+
+    // Display a dialog to input document name
+    final TextEditingController nameController = TextEditingController(
+      text: 'Scan ${DateTime.now().toString().substring(0, 10)}',
+    );
+
+    bool shouldSave = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Save Document'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Document Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  autofocus: true,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (!shouldSave || !mounted) return;
+
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Show saving dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 16),
+              Text('Saving document...'),
+            ],
+          ),
+        ),
+      );
+
+      // Generate thumbnail for the first page
+      final scanState = ref.read(scanProvider);
+      if (scanState.scannedPages.isNotEmpty) {
+        final File thumbnailFile = await _imageService.createThumbnail(
+          scanState.scannedPages[0],
+        );
+
+        // Create PDF from scanned images
+        final String documentName = nameController.text.trim();
+        final String pdfPath = await _pdfService.createPdfFromImages(
+          scanState.scannedPages,
+          documentName,
+        );
+
+        // Get number of pages
+        final int pageCount = await _pdfService.getPdfPageCount(pdfPath);
+
+        // Create document model
+        final document = Document(
+          name: documentName,
+          pdfPath: pdfPath,
+          pagesPaths: scanState.scannedPages.map((file) => file.path).toList(),
+          pageCount: pageCount,
+          thumbnailPath: thumbnailFile.path,
+        );
+
+        // Save document to provider
+        await ref.read(documentsProvider.notifier).addDocument(document);
+
+        // Close saving dialog
+        if (mounted && Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+
+        // Show success and navigate to home
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Document saved successfully',
+        );
+
+        // Clear the scan state and return to home
+        ref.read(scanProvider.notifier).clearPages();
+        AppRoutes.navigateToHome(context);
+      }
+    } catch (e) {
+      // Close saving dialog if open
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Error saving document: ${e.toString()}',
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
+    nameController.dispose();
+  }
+
+  void _resetScan() {
+    setState(() {
+      _scanSuccessful = false;
+      _pdfPath = null;
+      _thumbnailImage = null;
+    });
+    ref.read(scanProvider.notifier).clearPages();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final scanState = ref.watch(scanProvider);
-
     return Scaffold(
       appBar: CustomAppBar(
         title: const Text('Scan Document'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: _showScanOptions,
-          ),
-          IconButton(
-            icon: const Icon(Icons.photo_library),
-            onPressed: _pickImages,
-          ),
+          if (_scanSuccessful)
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: _showScanOptions,
+            ),
         ],
       ),
-      body: !_isInitialized
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : !_hasPermission
-              ? _buildNoPermissionView()
-              : _cameras == null || _cameras!.isEmpty
-                  ? _buildNoCameraView()
-                  : CameraWidget(
-                      cameras: _cameras!,
-                      scanMode: scanState.settings.scanMode,
-                      onImageCaptured: (File imageFile) async {
-                        ref.read(scanProvider.notifier).setScanning(true);
-
-                        try {
-                          final File processedFile =
-                              await _imageService.enhanceImage(
-                            imageFile,
-                            scanState.settings.colorMode,
-                            quality: scanState.settings.quality,
-                          );
-
-                          ref
-                              .read(scanProvider.notifier)
-                              .addPage(processedFile);
-
-                          if (scanState.settings.scanMode == ScanMode.batch) {
-                            // In batch mode, stay on camera to take more pictures
-                            // Show a small indicator of how many photos were taken
-                            // ignore: use_build_context_synchronously
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Page ${ref.read(scanProvider).scannedPages.length} captured',
-                                ),
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
-                          } else {
-                            // In other modes, go to edit screen
-                            // ignore: use_build_context_synchronously
-                            AppRoutes.navigateToEdit(context);
-                          }
-                        } catch (e) {
-                          ref
-                              .read(scanProvider.notifier)
-                              .setError(e.toString());
-                        } finally {
-                          ref.read(scanProvider.notifier).setScanning(false);
-                        }
-                      },
-                    ),
-      floatingActionButton: scanState.settings.scanMode == ScanMode.batch &&
-              scanState.scannedPages.isNotEmpty
-          ? FloatingActionButton.extended(
-              icon: const Icon(Icons.check),
-              label: Text('Done (${scanState.scannedPages.length})'),
-              onPressed: () {
-                AppRoutes.navigateToEdit(context);
-              },
+          : _scanSuccessful
+              ? _buildSuccessUI()
+              : _buildScanUI(),
+      floatingActionButton: _scanSuccessful
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton.small(
+                  heroTag: "addBtn",
+                  onPressed: _scanDocuments,
+                  child: const Icon(Icons.add),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton.extended(
+                  heroTag: "saveBtn",
+                  onPressed: _saveDocument,
+                  icon: const Icon(Icons.save),
+                  label: const Text('Save PDF'),
+                ),
+              ],
             )
           : null,
     );
   }
 
-  Widget _buildNoPermissionView() {
+  Widget _buildSuccessUI() {
+    return Column(
+      children: [
+        // Drag and drop hint
+        Container(
+          padding: const EdgeInsets.all(12),
+          color: Colors.grey.shade800,
+          child: Row(
+            children: [
+              Icon(Icons.drag_indicator, color: Colors.grey.shade400),
+              const SizedBox(width: 8),
+              Text(
+                'Drag and drop to reorder pages',
+                style: TextStyle(color: Colors.grey.shade400),
+              ),
+            ],
+          ),
+        ),
+        // Scanned pages grid with reordering
+        Expanded(
+          child: ReorderableGridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.75,
+            ),
+            itemCount: ref.watch(scanProvider).scannedPages.length,
+            itemBuilder: (context, index) {
+              final page = ref.watch(scanProvider).scannedPages[index];
+              return GestureDetector(
+                key: ValueKey(page.path),
+                onTap: _navigateToEditScreen,
+                child: _buildPageCard(page, index),
+              );
+            },
+            onReorder: (oldIndex, newIndex) {
+              ref.read(scanProvider.notifier).reorderPages(oldIndex, newIndex);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPageCard(File page, int index) {
+    return Card(
+      elevation: 4,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Thumbnail
+          Expanded(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.file(
+                  page,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.close,
+                          color: Colors.white, size: 20),
+                      onPressed: () {
+                        ref.read(scanProvider.notifier).removePage(index);
+                        if (ref.read(scanProvider).scannedPages.isEmpty) {
+                          _resetScan();
+                        }
+                      },
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Page label
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            color: Colors.black.withOpacity(0.7),
+            child: Text(
+              'Page ${index + 1}',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScanUI() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.no_photography,
-              size: 64,
-              color: Colors.grey,
+            Icon(
+              Icons.document_scanner,
+              size: 80,
+              color: Theme.of(context).primaryColor,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             const Text(
-              'Camera Permission Required',
+              'Ready to Scan',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             const Text(
-              'Please grant camera permission to scan documents',
+              'Tap the button below to scan a document',
               textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 40),
+            ElevatedButton.icon(
+              onPressed: _scanDocuments,
+              icon: const Icon(Icons.camera_alt),
+              label: const Text('Start Scanning'),
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                textStyle: const TextStyle(fontSize: 18),
+              ),
             ),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () async {
-                final granted = await PermissionUtils.requestCameraPermission();
-                if (granted) {
-                  await _initializeCamera();
-                } else {
-                  // Open app settings
-                  // ignore: use_build_context_synchronously
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Permission Required'),
-                      content: const Text(
-                        'Camera permission is needed to scan documents. '
-                        'Please grant this permission in app settings.',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            PermissionUtils.openAppSettings();
-                          },
-                          child: const Text('Open Settings'),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              },
-              child: const Text('Grant Permission'),
-            ),
-            const SizedBox(height: 16),
-            TextButton.icon(
+            OutlinedButton.icon(
+              onPressed: _pickImages,
               icon: const Icon(Icons.photo_library),
               label: const Text('Import from Gallery'),
-              onPressed: _pickImages,
+            ),
+            const SizedBox(height: 16),
+            IconButton(
+              onPressed: _showScanOptions,
+              icon: const Icon(Icons.settings),
+              tooltip: 'Scan Settings',
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildNoCameraView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.no_photography,
-            size: 64,
-            color: Colors.grey,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'No camera available',
-            style: TextStyle(fontSize: 18),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.photo_library),
-            label: const Text('Import from Gallery'),
-            onPressed: _pickImages,
-          ),
-        ],
       ),
     );
   }

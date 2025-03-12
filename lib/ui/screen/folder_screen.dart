@@ -13,7 +13,6 @@ import '../widget/folder_card.dart';
 
 class FolderScreen extends ConsumerWidget {
   final Folder folder;
-
   const FolderScreen({
     super.key,
     required this.folder,
@@ -31,7 +30,6 @@ class FolderScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // TODO: Implement search within folder
             },
           ),
           IconButton(
@@ -202,7 +200,6 @@ class FolderScreen extends ConsumerWidget {
             onTap: () {
               Navigator.pop(context);
               AppRoutes.navigateToCamera(context);
-              // TODO: Set current folder as target
             },
           ),
           ListTile(
@@ -210,7 +207,6 @@ class FolderScreen extends ConsumerWidget {
             title: const Text('Import Documents'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Implement import functionality
             },
           ),
           ListTile(
@@ -218,7 +214,6 @@ class FolderScreen extends ConsumerWidget {
             title: const Text('Move Documents Here'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Implement move documents functionality
             },
           ),
         ],
@@ -328,7 +323,6 @@ class FolderScreen extends ConsumerWidget {
               title: const Text('Move Folder'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement move folder functionality
               },
             ),
           ListTile(
@@ -394,7 +388,6 @@ class FolderScreen extends ConsumerWidget {
             title: const Text('Share'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Implement share functionality
             },
           ),
           ListTile(
@@ -704,7 +697,7 @@ class FolderScreen extends ConsumerWidget {
                               });
                             },
                           );
-                        }).toList(),
+                        }),
                       ],
                     ),
             ),

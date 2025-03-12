@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
-part 'document.g.dart'; // Generated code for Hive
+part 'document.g.dart'; 
 
 @HiveType(typeId: 0)
 class Document extends HiveObject {

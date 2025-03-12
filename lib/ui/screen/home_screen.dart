@@ -1,18 +1,20 @@
 import 'dart:io';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/utils/constants.dart';
-import 'package:edge_detection/edge_detection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../config/routes.dart';
 import '../../models/folder.dart';
 import '../../providers/document_provider.dart';
 import '../../providers/folder_provider.dart';
+import '../../providers/scan_provider.dart';
+import '../../services/image_service.dart';
+import '../../services/pdf_import_service.dart';
 import '../../utils/date_utils.dart';
 import '../common/app_bar.dart';
+import '../common/dialogs.dart';
 import '../widget/document_card.dart';
 import '../widget/folder_card.dart';
 
@@ -28,6 +30,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController controller = TextEditingController();
   String? _imagePath;
+  bool _isLoading = false;
+  final ImagePicker _imagePicker = ImagePicker();
+  bool _isProcessing = false;
   @override
   void dispose() {
     _searchController.dispose();
@@ -95,9 +100,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      body: _searchQuery.isNotEmpty
-          ? _buildSearchResults(filteredDocuments)
-          : _buildHomeContent(recentDocuments, rootFolders, allDocuments),
+      body: Stack(
+        children: [
+          // Main content
+          _searchQuery.isNotEmpty
+              ? _buildSearchResults(filteredDocuments)
+              : _buildHomeContent(recentDocuments, rootFolders, allDocuments),
+
+          // Loading overlay
+          if (_isLoading)
+            Container(
+              color: Colors.black45,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           AppRoutes.navigateToCamera(context);
@@ -108,56 +127,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Future<void> getImageFromCamera() async {
-    bool isCameraGranted = await Permission.camera.request().isGranted;
-    if (!isCameraGranted) {
-      isCameraGranted =
-          await Permission.camera.request() == PermissionStatus.granted;
-    }
-
-    if (!isCameraGranted) {
-      // Have not permission to camera
-      return;
-    }
-
-    // Generate filepath for saving
-    String imagePath = path.join((await getApplicationSupportDirectory()).path,
-        "${(DateTime.now().millisecondsSinceEpoch / 1000).round()}.jpeg");
-
-    bool success = false;
-
-    try {
-      //Make sure to await the call to detectEdge.
-      success = await EdgeDetection.detectEdge(
-        imagePath,
-        canUseGallery: true,
-        androidScanTitle: 'Scanning', // use custom localizations for android
-        androidCropTitle: 'Crop',
-        androidCropBlackWhiteTitle: 'Black White',
-        androidCropReset: 'Reset',
-      );
-      print("success: $success");
-    } catch (e) {
-      print(e);
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      if (success) {
-        _imagePath = imagePath;
-      }
-    });
-  }
-
   Widget _buildHomeContent(List<Document> recentDocuments,
       List<Folder> rootFolders, List<Document> allDocuments) {
     return RefreshIndicator(
       onRefresh: () async {
-        // Refresh documents and folders
         await Future.delayed(const Duration(milliseconds: 500));
         ref.invalidate(documentsProvider);
         ref.invalidate(foldersProvider);
@@ -165,7 +138,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          // Quick Actions
           Card(
             elevation: 0,
             child: Padding(
@@ -207,7 +179,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         icon: Icons.star,
                         label: 'Favorites',
                         onTap: () {
-                          // Show favorites
                           _showFavorites();
                         },
                       ),
@@ -217,10 +188,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
-
           const SizedBox(height: 24),
-
-          // Recent Documents
           if (recentDocuments.isNotEmpty) ...[
             const Text(
               'Recent Documents',
@@ -591,30 +559,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     TextButton(
                       onPressed: () async {
                         if (controller.text.trim().isNotEmpty) {
-                          // Show loading state
                           setState(() {
                             isLoading = true;
                           });
 
                           try {
-                            // Add the folder
                             await ref.read(foldersProvider.notifier).addFolder(
                                   Folder(
                                     name: controller.text.trim(),
                                     color: selectedColor,
                                   ),
                                 );
-
-                            // Wait for the UI to update (optional, depending on provider implementation)
                             await Future.delayed(
                                 const Duration(milliseconds: 100));
-
-                            // Close dialog after folder is added
                             if (mounted) {
                               Navigator.pop(dialogContext);
                             }
                           } catch (e) {
-                            // Handle error and reset loading state
                             setState(() {
                               isLoading = false;
                             });
@@ -632,7 +593,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         },
       ),
     ).then((_) {
-      controller.dispose(); // Dispose controller after dialog is fully closed
+      controller.dispose();
     });
   }
 
@@ -1129,39 +1090,180 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  void _showImportOptions() {
+  Future<void> _showImportOptions() async {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.photo_library),
-            title: const Text('Import from Gallery'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Implement gallery import
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.file_copy),
-            title: const Text('Import PDF'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Implement PDF import
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.cloud_download),
-            title: const Text('Import from Cloud'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Implement cloud import
-            },
-          ),
-        ],
+      builder: (context) => Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: Text(
+                'Import Options',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            CupertinoListSection.insetGrouped(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              children: [
+                CupertinoListTile(
+                  leading: const Icon(CupertinoIcons.photo),
+                  title: const Text('Import from Gallery'),
+                  trailing: const Icon(CupertinoIcons.chevron_right, size: 18),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImageForScan();
+                  },
+                ),
+                CupertinoListTile(
+                  leading: const Icon(CupertinoIcons.doc),
+                  title: const Text('Import PDF'),
+                  trailing: const Icon(CupertinoIcons.chevron_right, size: 18),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _importPdfFromLocal();
+                  },
+                ),
+                CupertinoListTile(
+                  leading: const Icon(CupertinoIcons.cloud_download),
+                  title: const Text('Import from iCloud'),
+                  trailing: const Icon(CupertinoIcons.chevron_right, size: 18),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _importPdfFromICloud();
+                  },
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 50,
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  /// Import PDF from device storage
+  Future<void> _importPdfFromLocal() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final pdfImportService = PdfImportService();
+      final document = await pdfImportService.importPdfFromLocal();
+
+      if (document != null) {
+        // Add the document to storage
+        await ref.read(documentsProvider.notifier).addDocument(document);
+
+        // Show success message
+        // ignore: use_build_context_synchronously
+        AppDialogs.showSnackBar(
+          context,
+          message: 'PDF imported successfully',
+        );
+      }
+    } catch (e) {
+      // Show error
+      // ignore: use_build_context_synchronously
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Error importing PDF: ${e.toString()}',
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Import PDF from iCloud (iOS only)
+  Future<void> _importPdfFromICloud() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final pdfImportService = PdfImportService();
+      final document = await pdfImportService.importPdfFromICloud();
+
+      if (document != null) {
+        // Add the document to storage
+        await ref.read(documentsProvider.notifier).addDocument(document);
+
+        // Show success message
+        // ignore: use_build_context_synchronously
+        AppDialogs.showSnackBar(
+          context,
+          message: 'PDF imported from iCloud successfully',
+        );
+      }
+    } catch (e) {
+      // Show error
+      // ignore: use_build_context_synchronously
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Error importing PDF from iCloud: ${e.toString()}',
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Pick image from gallery for scanning
+  Future<void> _pickImageForScan() async {
+    final imageService = ImageService();
+    try {
+      final List<XFile> images = await _imagePicker.pickMultiImage();
+      if (images.isNotEmpty) {
+        setState(() {
+          _isProcessing = true;
+        });
+
+        // Process images
+        final scanState = ref.read(scanProvider);
+        ref.read(scanProvider.notifier).setScanning(true);
+
+        for (var image in images) {
+          final File imageFile = File(image.path);
+          final File processedFile = await imageService.enhanceImage(
+            imageFile,
+            scanState.settings.colorMode,
+            quality: scanState.settings.quality,
+          );
+          ref.read(scanProvider.notifier).addPage(processedFile);
+        }
+
+        ref.read(scanProvider.notifier).setScanning(false);
+
+        // Navigate to edit screen
+        if (ref.read(scanProvider).scannedPages.isNotEmpty) {
+          // ignore: use_build_context_synchronously
+          AppRoutes.navigateToEdit(context);
+        }
+      }
+    } catch (e) {
+      // Show error
+      // ignore: use_build_context_synchronously
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Error importing images: ${e.toString()}',
+      );
+    } finally {
+      setState(() {
+        _isProcessing = false;
+      });
+    }
   }
 
   void _showFavorites() {

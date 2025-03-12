@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-
 import '../../models/document.dart';
 
 class PDFViewerWidget extends StatefulWidget {
@@ -22,7 +21,6 @@ class PDFViewerWidget extends StatefulWidget {
 
 class _PDFViewerWidgetState extends State<PDFViewerWidget> {
   final PdfViewerController _pdfViewerController = PdfViewerController();
-  bool _isPasswordDialogOpen = false;
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -33,78 +31,18 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
   }
 
   void _checkPasswordProtection() {
-    // If the document is password protected and we have a password, we need to prompt for it
     if (widget.document.isPasswordProtected &&
         widget.document.password != null) {
-      // In a real app, we would decrypt the file here
-      // For now, we'll just simulate it
       Future.delayed(const Duration(milliseconds: 500), () {
         setState(() {
           _isLoading = false;
         });
       });
     } else {
-      // Not password protected, just load it
       setState(() {
         _isLoading = false;
       });
     }
-  }
-
-  void _showPasswordDialog() {
-    if (_isPasswordDialogOpen) return;
-
-    _isPasswordDialogOpen = true;
-    final TextEditingController controller = TextEditingController();
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('Password Protected'),
-        content: TextField(
-          controller: controller,
-          obscureText: true,
-          decoration: const InputDecoration(
-            labelText: 'Password',
-            border: OutlineInputBorder(),
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context); // Go back to previous screen
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.text == widget.document.password) {
-                Navigator.pop(context);
-                // In a real app, we would decrypt the file here
-                setState(() {
-                  _isLoading = false;
-                });
-              } else {
-                // Show error message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Incorrect password'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
-            child: const Text('Open'),
-          ),
-        ],
-      ),
-    ).then((_) {
-      controller.dispose();
-      _isPasswordDialogOpen = false;
-    });
   }
 
   @override
@@ -211,10 +149,8 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                       onSelected: (value) {
                         switch (value) {
                           case 'bookmark':
-                            // TODO: Implement bookmarks
                             break;
                           case 'print':
-                            // TODO: Implement print
                             break;
                         }
                       },

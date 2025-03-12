@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,7 @@ import '../../services/pdf_service.dart';
 import '../../utils/constants.dart';
 import '../common/app_bar.dart';
 import '../common/dialogs.dart';
+import '../common/loading.dart';
 import '../widget/edit_tools.dart';
 
 class EditScreen extends ConsumerStatefulWidget {
@@ -26,14 +28,16 @@ class _EditScreenState extends ConsumerState<EditScreen> {
   final TextEditingController _documentNameController = TextEditingController(
       text: 'Scan ${DateTime.now().toString().substring(0, 10)}');
   final PdfService _pdfService = PdfService();
-  final ImageService _imageService = ImageService();
   final ImagePicker _imagePicker = ImagePicker();
   int _currentPageIndex = 0;
   bool _isProcessing = false;
+  String _processingMessage = '';
+  bool _isMounted = true;
 
   @override
   void initState() {
     super.initState();
+    _isMounted = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkIfEmpty();
     });
@@ -42,6 +46,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
   @override
   void dispose() {
     _documentNameController.dispose();
+    _isMounted = false;
     super.dispose();
   }
 
@@ -50,6 +55,15 @@ class _EditScreenState extends ConsumerState<EditScreen> {
     if (scanState.scannedPages.isEmpty) {
       // No pages to edit, go back
       Navigator.pop(context);
+    }
+  }
+
+  void _updateProcessingState(bool isProcessing, [String message = '']) {
+    if (_isMounted) {
+      setState(() {
+        _isProcessing = isProcessing;
+        _processingMessage = message;
+      });
     }
   }
 
@@ -72,7 +86,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_a_photo),
-            onPressed: _addMorePages,
+            onPressed: _isProcessing ? null : _addMorePages,
           ),
         ],
       ),
@@ -90,14 +104,17 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                     });
                   },
                   itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        // Future enhancement: Zoom in on image
-                      },
+                    return InteractiveViewer(
+                      boundaryMargin: const EdgeInsets.all(20.0),
+                      minScale: 0.5,
+                      maxScale: 3.0,
                       child: Center(
                         child: Image.file(
                           pages[index],
                           fit: BoxFit.contain,
+                          cacheHeight:
+                              MediaQuery.of(context).size.height.toInt(),
+                          cacheWidth: MediaQuery.of(context).size.width.toInt(),
                         ),
                       ),
                     );
@@ -133,9 +150,9 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                 // Loading indicator
                 if (_isProcessing)
                   Container(
-                    color: Colors.black45,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
+                    color: Colors.black54,
+                    child: Center(
+                      child: LoadingIndicator(message: _processingMessage),
                     ),
                   ),
               ],
@@ -143,14 +160,15 @@ class _EditScreenState extends ConsumerState<EditScreen> {
           ),
 
           // Editing tools
-          EditTools(
-            currentColorMode: scanState.settings.colorMode,
-            onColorModeChanged: _changeColorMode,
-            onRotateLeft: () => _rotateCurrentPage(true),
-            onRotateRight: () => _rotateCurrentPage(false),
-            onCrop: _cropCurrentPage,
-            onFilter: _showFilterOptions,
-          ),
+          if (!_isProcessing)
+            EditTools(
+              currentColorMode: scanState.settings.colorMode,
+              onColorModeChanged: _changeColorMode,
+              onRotateLeft: () => _rotateCurrentPage(true),
+              onRotateRight: () => _rotateCurrentPage(false),
+              onCrop: _cropCurrentPage,
+              onFilter: _showFilterOptions,
+            ),
 
           // Divider
           const Divider(height: 1),
@@ -170,9 +188,11 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
-                          setState(() {
-                            _currentPageIndex = index;
-                          });
+                          if (!_isProcessing) {
+                            setState(() {
+                              _currentPageIndex = index;
+                            });
+                          }
                         },
                         child: Container(
                           width: 60,
@@ -191,26 +211,30 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                               Image.file(
                                 pages[index],
                                 fit: BoxFit.cover,
+                                cacheWidth:
+                                    120, // Lower resolution for thumbnails
+                                cacheHeight: 160,
                               ),
-                              Positioned(
-                                right: 0,
-                                top: 0,
-                                child: GestureDetector(
-                                  onTap: () => _deletePageAtIndex(index),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    padding: const EdgeInsets.all(2),
-                                    child: const Icon(
-                                      Icons.close,
-                                      size: 14,
-                                      color: Colors.white,
+                              if (!_isProcessing)
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: GestureDetector(
+                                    onTap: () => _deletePageAtIndex(index),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.all(2),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 14,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                         ),
@@ -229,13 +253,14 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                     border: OutlineInputBorder(),
                     filled: true,
                   ),
+                  enabled: !_isProcessing,
                 ),
 
                 const SizedBox(height: 16),
 
                 // Save button
                 ElevatedButton.icon(
-                  onPressed: _saveDocument,
+                  onPressed: _isProcessing ? null : _saveDocument,
                   icon: const Icon(Icons.save),
                   label: const Text('Save as PDF'),
                   style: ElevatedButton.styleFrom(
@@ -283,42 +308,60 @@ class _EditScreenState extends ConsumerState<EditScreen> {
       try {
         final List<XFile> images = await _imagePicker.pickMultiImage();
         if (images.isNotEmpty) {
-          setState(() {
-            _isProcessing = true;
-          });
+          _updateProcessingState(true, 'Processing ${images.length} images...');
 
-          for (var image in images) {
-            final File imageFile = File(image.path);
-            final File processedFile = await _imageService.enhanceImage(
-              imageFile,
-              scanState.settings.colorMode,
-              quality: scanState.settings.quality,
+          // Process images in batches to avoid UI freezes
+          for (int i = 0; i < images.length; i++) {
+            _updateProcessingState(
+                true, 'Processing image ${i + 1} of ${images.length}...');
+            final File imageFile = File(images[i].path);
+
+            // Use compute for heavy processing to avoid UI freezes
+            final File processedFile = await compute(
+              _processImageIsolate,
+              {
+                'imagePath': imageFile.path,
+                'colorMode': scanState.settings.colorMode.index,
+                'quality': scanState.settings.quality
+              },
             );
+
             ref.read(scanProvider.notifier).addPage(processedFile);
           }
         }
       } catch (e) {
         // Show error
-        // ignore: use_build_context_synchronously
-        AppDialogs.showSnackBar(
-          context,
-          message: 'Error importing images: ${e.toString()}',
-        );
+        if (_isMounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'Error importing images: ${e.toString()}',
+          );
+        }
       } finally {
-        setState(() {
-          _isProcessing = false;
-        });
+        _updateProcessingState(false);
       }
     }
+  }
+
+  // Static method to process image in isolate
+  static Future<File> _processImageIsolate(Map<String, dynamic> params) async {
+    final String imagePath = params['imagePath'];
+    final ColorMode colorMode = ColorMode.values[params['colorMode']];
+    final int quality = params['quality'];
+
+    final ImageService imageService = ImageService();
+    return await imageService.enhanceImage(
+      File(imagePath),
+      colorMode,
+      quality: quality,
+    );
   }
 
   void _changeColorMode(ColorMode colorMode) async {
     final scanState = ref.read(scanProvider);
     if (scanState.settings.colorMode == colorMode) return;
 
-    setState(() {
-      _isProcessing = true;
-    });
+    _updateProcessingState(true, 'Applying color mode...');
 
     try {
       // Update settings
@@ -329,11 +372,14 @@ class _EditScreenState extends ConsumerState<EditScreen> {
       // Get current page
       final File currentPage = scanState.scannedPages[_currentPageIndex];
 
-      // Apply new color mode
-      final File processedFile = await _imageService.enhanceImage(
-        currentPage,
-        colorMode,
-        quality: scanState.settings.quality,
+      // Apply new color mode using compute to avoid UI freezes
+      final File processedFile = await compute(
+        _processImageIsolate,
+        {
+          'imagePath': currentPage.path,
+          'colorMode': colorMode.index,
+          'quality': scanState.settings.quality
+        },
       );
 
       // Update the page
@@ -342,15 +388,14 @@ class _EditScreenState extends ConsumerState<EditScreen> {
           .updatePageAt(_currentPageIndex, processedFile);
     } catch (e) {
       // Show error
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error applying color mode: ${e.toString()}',
-      );
+      if (_isMounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error applying color mode: ${e.toString()}',
+        );
+      }
     } finally {
-      setState(() {
-        _isProcessing = false;
-      });
+      _updateProcessingState(false);
     }
   }
 
@@ -358,15 +403,18 @@ class _EditScreenState extends ConsumerState<EditScreen> {
     final scanState = ref.read(scanProvider);
     if (scanState.scannedPages.isEmpty) return;
 
-    setState(() {
-      _isProcessing = true;
-    });
+    _updateProcessingState(true, 'Rotating image...');
 
     try {
       final File currentPage = scanState.scannedPages[_currentPageIndex];
-      final File rotatedFile = await _imageService.rotateImage(
-        currentPage,
-        counterclockwise,
+
+      // Use compute for rotation to avoid UI freezes
+      final File rotatedFile = await compute(
+        _rotateImageIsolate,
+        {
+          'imagePath': currentPage.path,
+          'counterclockwise': counterclockwise,
+        },
       );
 
       // Update the page
@@ -375,16 +423,27 @@ class _EditScreenState extends ConsumerState<EditScreen> {
           .updatePageAt(_currentPageIndex, rotatedFile);
     } catch (e) {
       // Show error
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error rotating image: ${e.toString()}',
-      );
+      if (_isMounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error rotating image: ${e.toString()}',
+        );
+      }
     } finally {
-      setState(() {
-        _isProcessing = false;
-      });
+      _updateProcessingState(false);
     }
+  }
+
+  // Static method to rotate image in isolate
+  static Future<File> _rotateImageIsolate(Map<String, dynamic> params) async {
+    final String imagePath = params['imagePath'];
+    final bool counterclockwise = params['counterclockwise'];
+
+    final ImageService imageService = ImageService();
+    return await imageService.rotateImage(
+      File(imagePath),
+      counterclockwise,
+    );
   }
 
   void _cropCurrentPage() {
@@ -423,7 +482,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
       confirmText: 'Delete',
       isDangerous: true,
     ).then((confirmed) {
-      if (confirmed) {
+      if (confirmed && _isMounted) {
         ref.read(scanProvider.notifier).removePage(index);
 
         // Adjust current page index if needed
@@ -454,27 +513,35 @@ class _EditScreenState extends ConsumerState<EditScreen> {
       return;
     }
 
-    setState(() {
-      _isProcessing = true;
-    });
+    _updateProcessingState(true, 'Preparing to save document...');
 
     try {
       // Create a clean document name
       final String documentName = _documentNameController.text.trim();
 
-      // Generate thumbnails for the first page
-      final File thumbnailFile = await _imageService.createThumbnail(
-        scanState.scannedPages[0],
-        size: AppConstants.thumbnailSize,
+      // Run thumbnail generation in compute
+      _updateProcessingState(true, 'Generating thumbnail...');
+      final thumbnailResult = await compute(
+        _createThumbnailIsolate,
+        {
+          'imagePath': scanState.scannedPages[0].path,
+          'size': AppConstants.thumbnailSize,
+        },
       );
 
       // Create PDF from scanned images
-      final String pdfPath = await _pdfService.createPdfFromImages(
-        scanState.scannedPages,
-        documentName,
+      _updateProcessingState(true, 'Creating PDF file...');
+      final pdfPath = await compute(
+        _createPdfIsolate,
+        {
+          'imagePaths':
+              scanState.scannedPages.map((file) => file.path).toList(),
+          'documentName': documentName,
+        },
       );
 
       // Get number of pages
+      _updateProcessingState(true, 'Finalizing document...');
       final int pageCount = await _pdfService.getPdfPageCount(pdfPath);
 
       // Create document model
@@ -483,36 +550,64 @@ class _EditScreenState extends ConsumerState<EditScreen> {
         pdfPath: pdfPath,
         pagesPaths: scanState.scannedPages.map((file) => file.path).toList(),
         pageCount: pageCount,
-        thumbnailPath: thumbnailFile.path,
+        thumbnailPath: thumbnailResult,
       );
 
       // Save document to storage
       await ref.read(documentsProvider.notifier).addDocument(document);
 
       // Show success message
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Document saved successfully',
-      );
+      if (_isMounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Document saved successfully!',
+        );
 
-      // Clear scan state
-      ref.read(scanProvider.notifier).clearPages();
+        // Clear scan state
+        ref.read(scanProvider.notifier).clearPages();
 
-      // Navigate back to home
-      // ignore: use_build_context_synchronously
-      AppRoutes.navigateToHome(context);
+        // Navigate back to home
+        AppRoutes.navigateToHome(context);
+      }
     } catch (e) {
       // Show error
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error saving document: ${e.toString()}',
-      );
+      if (_isMounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error saving document: ${e.toString()}',
+        );
+      }
     } finally {
-      setState(() {
-        _isProcessing = false;
-      });
+      _updateProcessingState(false);
     }
+  }
+
+  // Static method to create thumbnail in isolate
+  static Future<String> _createThumbnailIsolate(
+      Map<String, dynamic> params) async {
+    final String imagePath = params['imagePath'];
+    final int size = params['size'];
+
+    final ImageService imageService = ImageService();
+    final File thumbnailFile = await imageService.createThumbnail(
+      File(imagePath),
+      size: size,
+    );
+
+    return thumbnailFile.path;
+  }
+
+  // Static method to create PDF in isolate
+  static Future<String> _createPdfIsolate(Map<String, dynamic> params) async {
+    final List<String> imagePaths = params['imagePaths'];
+    final String documentName = params['documentName'];
+
+    final PdfService pdfService = PdfService();
+    final List<File> imageFiles = imagePaths.map((path) => File(path)).toList();
+
+    return await pdfService.createPdfFromImages(
+      imageFiles,
+      documentName,
+    );
   }
 }
