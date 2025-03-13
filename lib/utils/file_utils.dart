@@ -35,6 +35,74 @@ class FileUtils {
     return filePath;
   }
 
+ 
+
+  Future<String> calculateFolderSize(String directoryPath) async {
+    final directory = Directory(directoryPath);
+    if (!await directory.exists()) return '0 B';
+
+    int totalSizeInBytes = 0;
+
+    try {
+      // List all files and directories in the current directory
+      final entities = directory.listSync(recursive: false, followLinks: false);
+      for (var entity in entities) {
+        if (entity is File) {
+          // Get size of individual file
+          final fileSize = await FileUtils.getFileSize(entity.path);
+          // Parse the size string to extract the numeric value and unit
+          final sizeParts = fileSize.split(' ');
+          if (sizeParts.length == 2) {
+            final sizeValue = double.parse(sizeParts[0]);
+            final unit = sizeParts[1];
+            totalSizeInBytes += _convertToBytes(sizeValue, unit);
+          }
+        } else if (entity is Directory) {
+          // Recursively calculate size of subdirectories
+          final subDirSize = await calculateFolderSize(entity.path);
+          final sizeParts = subDirSize.split(' ');
+          if (sizeParts.length == 2) {
+            final sizeValue = double.parse(sizeParts[0]);
+            final unit = sizeParts[1];
+            totalSizeInBytes += _convertToBytes(sizeValue, unit);
+          }
+        }
+      }
+    } catch (e) {
+      print('Error calculating folder size: $e');
+      return 'N/A';
+    }
+
+    // Format the total size
+    return _formatSize(totalSizeInBytes);
+  }
+
+// Helper method to convert size with unit to bytes
+  int _convertToBytes(double value, String unit) {
+    switch (unit) {
+      case 'B':
+        return value.toInt();
+      case 'KB':
+        return (value * 1024).toInt();
+      case 'MB':
+        return (value * 1024 * 1024).toInt();
+      case 'GB':
+        return (value * 1024 * 1024 * 1024).toInt();
+      case 'TB':
+        return (value * 1024 * 1024 * 1024 * 1024).toInt();
+      default:
+        return 0;
+    }
+  }
+
+// Use the existing formatSize method from FileUtils or keep the custom one
+  String _formatSize(int sizeInBytes) {
+    if (sizeInBytes <= 0) return '0 B';
+    const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    var i = (log(sizeInBytes) / log(1024)).floor();
+    return '${(sizeInBytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
+  }
+
   /// Get file size in a human-readable format
   static Future<String> getFileSize(String filePath, {int decimals = 1}) async {
     final file = File(filePath);

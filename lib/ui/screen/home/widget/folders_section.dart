@@ -2,6 +2,8 @@
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/ui/widget/folder_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../models/folder.dart';
 
@@ -32,9 +34,10 @@ class FoldersSection extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+             Text(
               'Folders',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: GoogleFonts.notoSerif(
+                  fontSize: 16.sp, fontWeight: FontWeight.bold),
             ),
             Row(
               children: [

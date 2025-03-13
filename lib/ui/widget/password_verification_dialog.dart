@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PasswordVerificationDialog extends StatefulWidget {
   final String correctPassword;
@@ -115,10 +118,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
           child: child,
         );
       },
-      child: AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+      child: CupertinoAlertDialog(
         title: Row(
           children: [
             Icon(
@@ -146,26 +146,10 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
               Stack(
                 alignment: Alignment.centerRight,
                 children: [
-                  TextField(
+                  CupertinoTextField(
                     controller: _controller,
                     focusNode: _focusNode,
                     obscureText: _obscureText,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      errorText: _isError ? 'Incorrect password' : null,
-                      prefixIcon: const Icon(Icons.password),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
-                      errorStyle: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.auto,
-                    ),
                     style: theme.textTheme.bodyLarge,
                     onSubmitted: (_) => _verifyPassword(),
                     autofocus: true,
@@ -210,10 +194,10 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                         size: 16,
                         color: theme.colorScheme.error,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 4.w),
                       Text(
                         'Please check your password and try again',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.error,
                         ),
                       ),
@@ -233,18 +217,13 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                   },
             child: Text(
               'Cancel',
-              style: TextStyle(
+              style: GoogleFonts.notoSerif(
                 color: colorScheme.primary,
               ),
             ),
           ),
-          FilledButton(
+          TextButton(
             onPressed: _isVerifying ? null : _verifyPassword,
-            style: FilledButton.styleFrom(
-              backgroundColor: colorScheme.primary,
-              foregroundColor: colorScheme.onPrimary,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            ),
             child: _isVerifying
                 ? SizedBox(
                     width: 20,
@@ -259,9 +238,6 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                 : const Text('Unlock'),
           ),
         ],
-        actionsAlignment: MainAxisAlignment.spaceBetween,
-        actionsPadding:
-            const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       ),
     );
   }

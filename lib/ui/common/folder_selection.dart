@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/folder.dart';
+import '../../providers/folder_provider.dart';
 
 class FolderSelector {
-  /// Show a modern folder selection bottom sheet
+  /// Show a modern folder selection bottom sheet with subfolder support
   static Future<Folder?> showFolderSelectionDialog(
     BuildContext context,
-    List<Folder> folders,
+    List<Folder> allFolders,
     WidgetRef ref, {
+    String? currentFolderId,
     required Function() onCreateFolder,
     Function(Folder)? onFolderOptions,
   }) async {
-    if (folders.isEmpty) {
+    if (allFolders.isEmpty) {
       onCreateFolder();
       return null;
     }
@@ -21,7 +25,9 @@ class FolderSelector {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => _FolderSelectionSheet(
-        folders: folders,
+        allFolders: allFolders,
+        ref: ref,
+        currentFolderId: currentFolderId,
         onCreateFolder: onCreateFolder,
         onFolderOptions: onFolderOptions,
       ),
@@ -29,19 +35,98 @@ class FolderSelector {
   }
 }
 
-class _FolderSelectionSheet extends StatelessWidget {
-  final List<Folder> folders;
+class _FolderSelectionSheet extends ConsumerStatefulWidget {
+  final List<Folder> allFolders;
+  final String? currentFolderId;
   final Function() onCreateFolder;
   final Function(Folder)? onFolderOptions;
+  final WidgetRef ref;
 
   const _FolderSelectionSheet({
-    required this.folders,
+    required this.allFolders,
+    required this.ref,
+    this.currentFolderId,
     required this.onCreateFolder,
     this.onFolderOptions,
   });
 
   @override
+  ConsumerState<_FolderSelectionSheet> createState() =>
+      _FolderSelectionSheetState();
+}
+
+class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
+  String? _currentParentId;
+  List<String> _breadcrumbs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentParentId = null;
+    _breadcrumbs = ["Root"];
+
+    // If we have a current folder, build the breadcrumb path
+    if (widget.currentFolderId != null) {
+      _buildBreadcrumbPath(widget.currentFolderId);
+    }
+  }
+
+  // Build the breadcrumb path from the current folder up to the root
+  void _buildBreadcrumbPath(String? folderId) {
+    if (folderId == null) return;
+
+    final List<String> path = [];
+    String? currentId = folderId;
+
+    while (currentId != null) {
+      final folder = widget.allFolders.firstWhere(
+        (f) => f.id == currentId,
+        orElse: () => Folder(name: "Unknown"),
+      );
+
+      path.insert(0, folder.name);
+      currentId = folder.parentId;
+    }
+
+    if (path.isNotEmpty) {
+      setState(() {
+        _breadcrumbs = ["Root", ...path];
+        _currentParentId = folderId;
+      });
+    }
+  }
+
+  // Navigate to a subfolder
+  void _navigateToFolder(Folder folder) {
+    setState(() {
+      _currentParentId = folder.id;
+      _breadcrumbs.add(folder.name);
+    });
+  }
+
+  // Navigate up one level
+  void _navigateUp() {
+    if (_currentParentId == null) return;
+
+    final allFolders = ref.read(foldersProvider);
+    final currentFolder = allFolders.firstWhere(
+      (f) => f.id == _currentParentId,
+      orElse: () => Folder(name: "Unknown"),
+    );
+
+    setState(() {
+      _currentParentId = currentFolder.parentId;
+      _breadcrumbs.removeLast();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Get folders for current level from the provided allFolders list
+    final folders = widget.allFolders
+        .where((folder) => folder.parentId == _currentParentId)
+        .toList();
+
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.7,
@@ -92,20 +177,20 @@ class _FolderSelectionSheet extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-                const Expanded(
+                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Select Folder',
-                        style: TextStyle(
-                          fontSize: 18,
+                        style: GoogleFonts.notoSerif(
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         'Choose a destination folder',
-                        style: TextStyle(
+                        style: GoogleFonts.notoSerif(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
@@ -116,19 +201,58 @@ class _FolderSelectionSheet extends StatelessWidget {
               ],
             ),
           ),
+// Replace the existing SingleChildScrollView with this:
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment
+                    .start, // Changed from default center alignment
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Add a back button when not at root
+                  if (_currentParentId != null)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: InkWell(
+                        onTap: _navigateUp,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade200),
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            size: 18,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ..._buildBreadcrumbs(),
+                ],
+              ),
+            ),
+          ),
 
           const Divider(height: 1),
 
           // Folder list
           Flexible(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: folders.length,
-              itemBuilder: (context, index) {
-                final folder = folders[index];
-                return _buildFolderTile(context, folder);
-              },
-            ),
+            child: folders.isEmpty
+                ? _buildEmptyState()
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: folders.length,
+                    itemBuilder: (context, index) {
+                      final folder = folders[index];
+                      return _buildFolderTile(context, folder);
+                    },
+                  ),
           ),
 
           const Divider(height: 1),
@@ -137,7 +261,7 @@ class _FolderSelectionSheet extends StatelessWidget {
           InkWell(
             onTap: () {
               Navigator.pop(context);
-              onCreateFolder();
+              widget.onCreateFolder();
             },
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -156,12 +280,12 @@ class _FolderSelectionSheet extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Expanded(
+                   Expanded(
                     child: Text(
                       'Create New Folder',
-                      style: TextStyle(
+                      style: GoogleFonts.notoSerif(
                         fontWeight: FontWeight.w500,
-                        fontSize: 16,
+                        fontSize: 14.sp,
                       ),
                     ),
                   ),
@@ -171,6 +295,31 @@ class _FolderSelectionSheet extends StatelessWidget {
             ),
           ),
 
+          // Select current folder button (only show when inside a folder)
+          if (_currentParentId != null)
+            InkWell(
+              onTap: () {
+                final currentFolder = widget.allFolders.firstWhere(
+                  (f) => f.id == _currentParentId,
+                  orElse: () => Folder(name: "Unknown"),
+                );
+                Navigator.pop(context, currentFolder);
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                child: Text(
+                  'Select Current Folder (${_breadcrumbs.last})',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.notoSerif(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+            ),
+
           // Bottom padding for safe area
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
@@ -178,10 +327,159 @@ class _FolderSelectionSheet extends StatelessWidget {
     );
   }
 
+  List<Widget> _buildBreadcrumbs() {
+    List<Widget> items = [];
+
+    for (int i = 0; i < _breadcrumbs.length; i++) {
+      final isLast = i == _breadcrumbs.length - 1;
+      final isFirst = i == 0;
+
+      items.add(
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: isLast
+                ? null
+                : () {
+                    if (i == 0) {
+                      setState(() {
+                        _currentParentId = null;
+                        _breadcrumbs = ["Root"];
+                      });
+                    } else {
+                      String? targetId;
+                      String? parentId = null;
+
+                      for (int j = 1; j <= i; j++) {
+                        final folders = widget.allFolders
+                            .where((f) => f.parentId == parentId)
+                            .toList();
+                        final targetFolder = folders.firstWhere(
+                          (f) => f.name == _breadcrumbs[j],
+                          orElse: () => Folder(name: "Unknown"),
+                        );
+                        parentId = targetFolder.id;
+                        targetId = targetFolder.id;
+                      }
+
+                      if (targetId != null) {
+                        setState(() {
+                          _currentParentId = targetId;
+                          _breadcrumbs = _breadcrumbs.sublist(0, i + 1);
+                        });
+                      }
+                    }
+                  },
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: isLast
+                    ? Theme.of(context).primaryColor.withOpacity(0.1)
+                    : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isLast
+                      ? Theme.of(context).primaryColor.withOpacity(0.3)
+                      : Colors.grey.shade200,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isFirst)
+                    Icon(
+                      Icons.home,
+                      size: 16,
+                      color: isLast
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey.shade600,
+                    ),
+                  if (isFirst) const SizedBox(width: 4),
+                  Text(
+                    _breadcrumbs[i],
+                    style: GoogleFonts.notoSerif(
+                      color: isLast
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey.shade800,
+                      fontWeight: isLast ? FontWeight.w600 : FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      if (!isLast) {
+        items.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: Colors.grey.shade400,
+            ),
+          ),
+        );
+      }
+    }
+
+    return items;
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.folder_open,
+              size: 64,
+              color: Colors.grey.shade400,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No subfolders found',
+              style: GoogleFonts.notoSerif(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Create a new subfolder here',
+              style: GoogleFonts.notoSerif(
+                fontSize: 14,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFolderTile(BuildContext context, Folder folder) {
+    // Get subfolder count
+    final subfolders =
+        widget.allFolders.where((f) => f.parentId == folder.id).toList();
+    final hasSubfolders = subfolders.isNotEmpty;
+
     return InkWell(
       onTap: () {
-        Navigator.pop(context, folder);
+        // If has subfolders, navigate into it, otherwise select it
+        if (hasSubfolders) {
+          _navigateToFolder(folder);
+        } else {
+          Navigator.pop(context, folder);
+        }
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -206,18 +504,33 @@ class _FolderSelectionSheet extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Text(
-                folder.name,
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    folder.name,
+                    style:  GoogleFonts.notoSerif(
+                      fontSize: 16,
+                    ),
+                  ),
+                  if (hasSubfolders)
+                    Text(
+                      '${subfolders.length} subfolder${subfolders.length == 1 ? "" : "s"}',
+                      style: GoogleFonts.notoSerif(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                ],
               ),
             ),
-            if (onFolderOptions != null)
+            if (hasSubfolders)
+              const Icon(Icons.chevron_right, color: Colors.grey),
+            if (widget.onFolderOptions != null)
               IconButton(
                 icon: const Icon(Icons.more_vert, size: 20),
                 onPressed: () {
-                  onFolderOptions!(folder);
+                  widget.onFolderOptions!(folder);
                 },
               ),
           ],

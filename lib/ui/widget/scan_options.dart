@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../models/scan_settings.dart';
 
@@ -18,10 +20,10 @@ class ScanOptionsWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       shrinkWrap: true,
       children: [
-        const Text(
+        Text(
           'Scan Settings',
-          style: TextStyle(
-            fontSize: 18,
+          style: GoogleFonts.notoSerif(
+            fontSize: 16.sp,
             fontWeight: FontWeight.bold,
           ),
         ),

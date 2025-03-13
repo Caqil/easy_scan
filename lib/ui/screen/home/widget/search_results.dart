@@ -1,6 +1,8 @@
 // search_results.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../config/routes.dart';
 import '../../../../utils/date_utils.dart';
 
@@ -12,13 +14,14 @@ class SearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (documents.isEmpty) {
-      return const Center(
+      return  Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.search_off, size: 64, color: Colors.grey),
             SizedBox(height: 16),
-            Text('No documents found', style: TextStyle(fontSize: 18)),
+            Text('No documents found',
+                style: GoogleFonts.notoSerif(fontSize: 16.sp)),
           ],
         ),
       );
@@ -34,8 +37,8 @@ class SearchResults extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                   child: Image.file(
                     File(document.thumbnailPath!),
-                    width: 40,
-                    height: 40,
+                    width: 30.w,
+                    height: 30.h,
                     fit: BoxFit.cover,
                   ),
                 )

@@ -1,8 +1,12 @@
 // Add this file to your project as lib/ui/common/folder_actions.dart
 
 import 'package:easy_scan/providers/document_provider.dart';
+import 'package:easy_scan/ui/common/dialogs.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../models/folder.dart';
 import '../../providers/folder_provider.dart';
@@ -33,70 +37,67 @@ class FolderActions {
     );
   }
 
-  /// Show rename folder dialog
   static Future<void> showRenameFolderDialog(
     BuildContext context,
     Folder folder,
     WidgetRef ref,
   ) async {
-    final TextEditingController controller =
-        TextEditingController(text: folder.name);
-
-    final String? newName = await showDialog<String>(
+    // Move the controller inside the builder to ensure it stays alive
+    // throughout the dialog's lifecycle
+    return showCupertinoDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Rename Folder'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: InputDecoration(
-            labelText: 'Folder Name',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                Navigator.pop(context, controller.text.trim());
-              }
-            },
-            child: const Text('Rename'),
-          ),
-        ],
-      ),
-    );
+      builder: (dialogContext) {
+        // Create controller inside the builder
+        final controller = TextEditingController(text: folder.name);
 
-    controller.dispose();
-
-    if (newName != null && newName.isNotEmpty) {
-      final updatedFolder = Folder(
-        id: folder.id,
-        name: newName,
-        parentId: folder.parentId,
-        color: folder.color,
-        iconName: folder.iconName,
-        createdAt: folder.createdAt,
-      );
-
-      ref.read(foldersProvider.notifier).updateFolder(updatedFolder);
-
-      // Show success message
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Folder renamed successfully'),
-            backgroundColor: Colors.green,
-          ),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return CupertinoAlertDialog(
+              title: const Text('Rename Folder'),
+              content: CupertinoTextField(
+                controller: controller,
+                autofocus: true,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (controller.text.trim().isNotEmpty) {
+                      Navigator.pop(dialogContext, controller.text.trim());
+                    }
+                  },
+                  child: const Text('Rename'),
+                ),
+              ],
+            );
+          },
         );
+      },
+    ).then((newName) {
+      // Handle the result after dialog is closed
+      if (newName != null && newName.isNotEmpty) {
+        final updatedFolder = Folder(
+          id: folder.id,
+          name: newName,
+          parentId: folder.parentId,
+          color: folder.color,
+          iconName: folder.iconName,
+          createdAt: folder.createdAt,
+        );
+
+        ref.read(foldersProvider.notifier).updateFolder(updatedFolder);
+
+        // Show success message
+        if (context.mounted) {
+          AppDialogs.showSnackBar(context,
+              type: SnackBarType.success,
+              message: 'Folder renamed successfully');
+        }
       }
-    }
+    });
   }
 
   /// Show change folder color dialog
@@ -107,11 +108,11 @@ class FolderActions {
   ) async {
     int selectedColor = folder.color;
 
-    final bool? result = await showDialog<bool>(
+    final bool? result = await showCupertinoDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title: const Text('Change Folder Color'),
             content: Wrap(
               spacing: 16,
@@ -181,12 +182,8 @@ class FolderActions {
 
       // Show success message
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Folder color updated successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        AppDialogs.showSnackBar(context,
+            message: 'Folder color updated successfully');
       }
     }
   }
@@ -201,27 +198,34 @@ class FolderActions {
     final documentsInFolder = ref.read(documentsInFolderProvider(folder.id));
     final subfolders = ref.read(subFoldersProvider(folder.id));
 
-    final bool confirm = await showDialog<bool>(
+    final bool confirm = await showCupertinoDialog<bool>(
           context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Delete Folder'),
-            content: documentsInFolder.isNotEmpty || subfolders.isNotEmpty
-                ? Text(
-                    'This folder contains ${documentsInFolder.length} documents and ${subfolders.length} subfolders. '
-                    'All contents will be moved to the parent folder. Continue?')
-                : Text('Are you sure you want to delete "${folder.name}"?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: const Text('Delete'),
-              ),
-            ],
-          ),
+          builder: (context) => StatefulBuilder(
+              builder: (context, setState) => CupertinoAlertDialog(
+                    title: const Text('Delete Folder'),
+                    content: documentsInFolder.isNotEmpty ||
+                            subfolders.isNotEmpty
+                        ? Text(
+                            'This folder contains ${documentsInFolder.length} documents and ${subfolders.length} subfolders. '
+                            'All contents will be moved to the parent folder. Continue?')
+                        : Text(
+                            'Are you sure you want to delete "${folder.name}"?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {});
+                          Navigator.pop(context, true);
+                        },
+                        style:
+                            TextButton.styleFrom(foregroundColor: Colors.red),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  )),
         ) ??
         false;
 
@@ -254,14 +258,9 @@ class FolderActions {
 
       // Show success message
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Folder deleted successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.success, message: 'Folder deleted successfully');
 
-        // Optionally pop navigator if viewing the deleted folder
         if (popNavigatorOnSuccess) {
           Navigator.pop(context);
         }
@@ -309,8 +308,8 @@ class _FolderOptionsSheet extends StatelessWidget {
           // Handle bar
           Container(
             margin: const EdgeInsets.symmetric(vertical: 12),
-            height: 4,
-            width: 40,
+            height: 2.h,
+            width: 30.w,
             decoration: BoxDecoration(
               color: Colors.grey.shade300,
               borderRadius: BorderRadius.circular(4),
@@ -346,9 +345,9 @@ class _FolderOptionsSheet extends StatelessWidget {
                 Expanded(
                   child: Text(
                     folder.name,
-                    style: const TextStyle(
+                    style:  GoogleFonts.notoSerif(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 16.sp,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -457,8 +456,8 @@ class _FolderOptionsSheet extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 30.w,
+              height: 30.h,
               decoration: BoxDecoration(
                 color: (iconColor ?? Theme.of(context).primaryColor)
                     .withOpacity(0.1),
@@ -477,15 +476,15 @@ class _FolderOptionsSheet extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: GoogleFonts.notoSerif(
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),
                   ),
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: GoogleFonts.notoSerif(
+                      fontSize: 10.sp,
                       color: Colors.grey.shade600,
                     ),
                   ),

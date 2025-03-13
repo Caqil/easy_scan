@@ -1,7 +1,10 @@
 // Add this to your lib/ui/common/folder_creator.dart
 
+import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../models/folder.dart';
 import '../../providers/folder_provider.dart';
 import '../../utils/constants.dart';
@@ -32,6 +35,7 @@ class FolderCreator {
               ref: ref,
               onFolderCreated: (folder) {
                 createdFolder = folder;
+                setState(() {});
               },
             );
           },
@@ -97,8 +101,8 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
             Center(
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 12),
-                height: 4,
-                width: 40,
+                height: 2.h,
+                width: 30.w,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(4),
@@ -112,8 +116,8 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
               child: Row(
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 30.w,
+                    height: 30.h,
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -126,8 +130,8 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                   const SizedBox(width: 16),
                   Text(
                     widget.title,
-                    style: const TextStyle(
-                      fontSize: 20,
+                    style: GoogleFonts.notoSerif(
+                      fontSize: 16.sp.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -157,14 +161,14 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                         hintText: 'Enter folder name',
                         prefixIcon: const Icon(Icons.folder_outlined),
                       ),
-                      style: const TextStyle(fontSize: 16),
+                      style:  GoogleFonts.notoSerif(fontSize: 14.sp),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       'Select Color:',
-                      style: TextStyle(
+                      style: GoogleFonts.notoSerif(
                         fontWeight: FontWeight.w500,
-                        fontSize: 16,
+                        fontSize: 14.sp,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -236,9 +240,9 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: ElevatedButton(
+                          child: OutlinedButton(
                             onPressed: _createFolder,
-                            style: ElevatedButton.styleFrom(
+                            style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -263,12 +267,8 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
 
   Future<void> _createFolder() async {
     if (widget.controller.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a folder name'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      AppDialogs.showSnackBar(context,
+          type: SnackBarType.error, message: 'Folder name cannot be empty');
       return;
     }
 
@@ -289,12 +289,8 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
       if (mounted) {
         Navigator.pop(context);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Folder created successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.success, message: 'Folder created successfully');
       }
     } catch (e) {
       setState(() {
@@ -302,30 +298,9 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error creating folder: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.error, message: 'Error creating folder');
       }
     }
   }
 }
-
-// Example usage:
-/*
-void _showCreateFolderBottomSheet() async {
-  final folder = await FolderCreator.showCreateFolderBottomSheet(
-    context, 
-    ref,
-    title: 'Create New Folder',
-    parentId: currentFolder?.id,  // Optional parent folder ID
-  );
-  
-  if (folder != null) {
-    // Use the created folder
-    print('Created folder: ${folder.name}');
-  }
-}
-*/

@@ -1,7 +1,12 @@
+import 'package:easy_scan/services/share_service.dart';
 import 'package:easy_scan/ui/common/add_options.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/ui/common/document_actions.dart';
+import 'package:easy_scan/ui/common/folder_creator.dart';
+import 'package:easy_scan/ui/common/folder_selection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_scan/config/routes.dart';
 import 'package:easy_scan/models/document.dart';
@@ -9,25 +14,30 @@ import 'package:easy_scan/models/folder.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/providers/folder_provider.dart';
 import 'package:easy_scan/ui/common/app_bar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utils/constants.dart';
 import '../widget/document_card.dart';
 import '../widget/folder_card.dart';
 
-class FolderScreen extends ConsumerWidget {
+class FolderScreen extends ConsumerStatefulWidget {
   final Folder folder;
-  const FolderScreen({
-    super.key,
-    required this.folder,
-  });
+  const FolderScreen({super.key, required this.folder});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final subfolders = ref.watch(subFoldersProvider(folder.id));
-    final documents = ref.watch(documentsInFolderProvider(folder.id));
+  ConsumerState<FolderScreen> createState() => _FolderScreenState();
+}
 
+class _FolderScreenState extends ConsumerState<FolderScreen> {
+  bool _isLoading = false;
+  final ShareService _shareService = ShareService();
+  @override
+  Widget build(BuildContext context) {
+    final subfolders = ref.watch(subFoldersProvider(widget.folder.id));
+    final documents = ref.watch(documentsInFolderProvider(widget.folder.id));
+    final allFolders = ref.watch(foldersProvider);
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(folder.name),
+        title: Text(widget.folder.name),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -35,11 +45,18 @@ class FolderScreen extends ConsumerWidget {
           ),
           IconButton(
             icon: const Icon(Icons.more_vert),
-            onPressed: () => _showFolderOptions(context, ref, folder),
+            onPressed: () => _showFolderOptions(context, ref, widget.folder),
           ),
         ],
       ),
-      body: _buildContent(context, ref, subfolders, documents),
+      body: _buildContent(
+        context,
+        ref,
+        subfolders,
+        documents,
+        widget.folder,
+        allFolders,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => AddOptions.showAddOptions(
           context,
@@ -59,23 +76,55 @@ class FolderScreen extends ConsumerWidget {
     WidgetRef ref,
     List<Folder> subfolders,
     List<Document> documents,
+    Folder currentFolder, // Add current folder as a parameter
+    List<Folder> allFolders, // Add all folders for breadcrumb path
   ) {
     if (subfolders.isEmpty && documents.isEmpty) {
       return _buildEmptyView(context, ref);
     }
 
+    // Build the breadcrumb path
+    final List<String> breadcrumbs =
+        _buildBreadcrumbPath(currentFolder, allFolders);
+
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
+        // Breadcrumb navigation
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  breadcrumbs.join(' > '),
+                  style: GoogleFonts.notoSerif(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade800,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.sort, size: 20),
+                onPressed: () {},
+                color: Colors.grey.shade600,
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1, color: Colors.grey),
+
         // Subfolders section
         if (subfolders.isNotEmpty) ...[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Folders',
-                style: TextStyle(
-                  fontSize: 18,
+                style: GoogleFonts.notoSerif(
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -117,10 +166,10 @@ class FolderScreen extends ConsumerWidget {
 
         // Documents section
         if (documents.isNotEmpty) ...[
-          const Text(
+          Text(
             'Documents',
-            style: TextStyle(
-              fontSize: 18,
+            style: GoogleFonts.notoSerif(
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -142,14 +191,215 @@ class FolderScreen extends ConsumerWidget {
                 onTap: () {
                   AppRoutes.navigateToView(context, document);
                 },
-                onMorePressed: () =>
-                    DocumentActions.showDocumentOptions(context, document, ref),
+                onMorePressed: () => DocumentActions.showDocumentOptions(
+                  context,
+                  document,
+                  ref,
+                  onDelete: (p0) {
+                    showDeleteConfirmation(context, p0, ref);
+                  },
+                  onMoveToFolder: (p0) {
+                    showMoveToFolderDialog(context, p0, ref);
+                  },
+                  onRename: (p0) {
+                    showRenameDocumentDialog(context, p0, ref);
+                  },
+                  onShare: (p0) => _shareDocument(context, p0, ref),
+                ),
               );
             },
           ),
         ],
       ],
     );
+  }
+
+  List<String> _buildBreadcrumbPath(
+      Folder currentFolder, List<Folder> allFolders) {
+    final List<String> path = [];
+    String? currentId = currentFolder.id;
+
+    while (currentId != null) {
+      final folder = allFolders.firstWhere(
+        (f) => f.id == currentId,
+      );
+      path.insert(0, folder.name);
+      currentId = folder.parentId;
+    }
+
+    // Add "Root" as the starting point
+    path.insert(0, 'Root');
+    return path;
+  }
+
+  Future<void> _shareDocument(
+    BuildContext context,
+    Document document,
+    WidgetRef ref,
+  ) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      await _shareService.sharePdf(
+        document.pdfPath,
+        subject: document.name,
+      );
+    } catch (e) {
+      // Show error
+      // ignore: use_build_context_synchronously
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Error sharing document: ${e.toString()}',
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> showRenameDocumentDialog(
+    BuildContext context,
+    Document document,
+    WidgetRef ref,
+  ) async {
+    final TextEditingController controller =
+        TextEditingController(text: document.name);
+
+    final String? newName = await showCupertinoDialog<String>(
+        context: context,
+        builder: (context) => StatefulBuilder(
+              builder: (context, setState) => CupertinoAlertDialog(
+                title: const Text('Rename Document'),
+                content: CupertinoTextField(
+                  controller: controller,
+                  autofocus: true,
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      if (controller.text.trim().isNotEmpty) {
+                        Navigator.pop(context, controller.text.trim());
+                      }
+                    },
+                    child: const Text('Rename'),
+                  ),
+                ],
+              ),
+            ));
+
+    controller.dispose();
+
+    if (newName != null && newName.isNotEmpty) {
+      final updatedDoc = document.copyWith(
+        name: newName,
+        modifiedAt: DateTime.now(),
+      );
+
+      ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
+
+      // Show success message
+      if (context.mounted) {
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.success,
+            message: 'Document renamed successfully');
+      }
+    }
+  }
+
+  Future<void> showMoveToFolderDialog(
+    BuildContext context,
+    Document document,
+    WidgetRef ref,
+  ) async {
+    // Get all folders
+    final allFolders = ref.read(foldersProvider);
+
+    // Show folder selection dialog
+    final selectedFolder = await FolderSelector.showFolderSelectionDialog(
+      context,
+      allFolders,
+      ref,
+      onCreateFolder: () async {
+        // Create a new folder directly as a destination
+        await FolderCreator.showCreateFolderBottomSheet(
+          context,
+          ref,
+          title: 'Create Destination Folder',
+        );
+      },
+    );
+
+    // If user selected a folder, move the document
+    if (selectedFolder != null && context.mounted) {
+      // Update document with new folder ID
+      final updatedDoc = document.copyWith(
+        folderId: selectedFolder.id,
+        modifiedAt: DateTime.now(),
+      );
+
+      // Save the updated document
+      await ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
+
+      // Show success message
+      if (context.mounted) {
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.success,
+            message: 'Moved to ${selectedFolder.name}');
+      }
+    }
+  }
+
+  Future<void> showDeleteConfirmation(
+    BuildContext context,
+    Document document,
+    WidgetRef ref,
+  ) async {
+    final bool confirm = await showCupertinoDialog(
+          context: context,
+          builder: (context) => StatefulBuilder(
+              builder: (context, setState) => CupertinoAlertDialog(
+                    title: const Text('Delete Document'),
+                    content: Text(
+                        'Are you sure you want to delete "${document.name}"? This action cannot be undone.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          ref
+                              .read(documentsProvider.notifier)
+                              .deleteDocument(document.id);
+                          setState(() {});
+                          Navigator.pop(context);
+                        },
+                        style:
+                            TextButton.styleFrom(foregroundColor: Colors.red),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  )),
+        ) ??
+        false;
+
+    if (confirm && context.mounted) {
+      await ref.read(documentsProvider.notifier).deleteDocument(document.id);
+
+      // Show success message
+      if (context.mounted) {
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.success,
+            message: 'Document deleted successfully');
+      }
+    }
   }
 
   Widget _buildEmptyView(BuildContext context, WidgetRef ref) {
@@ -163,22 +413,22 @@ class FolderScreen extends ConsumerWidget {
             color: Colors.grey,
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'This folder is empty',
-            style: TextStyle(
-              fontSize: 18,
+            style: GoogleFonts.notoSerif(
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+           Text(
             'Add documents or create subfolders',
-            style: TextStyle(
+            style: GoogleFonts.notoSerif(
               color: Colors.grey,
             ),
           ),
           const SizedBox(height: 16),
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () => AddOptions.showAddOptions(
               context,
               ref,
@@ -202,10 +452,10 @@ class FolderScreen extends ConsumerWidget {
         allDocuments.where((doc) => doc.folderId == null).toList();
     final Set<String> selectedDocumentIds = {};
 
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
+        builder: (context, setState) => CupertinoAlertDialog(
           title: const Text('Import Documents from Root'),
           content: SizedBox(
             width: double.maxFinite,
@@ -220,31 +470,61 @@ class FolderScreen extends ConsumerWidget {
                       final document = rootDocuments[index];
                       final isSelected =
                           selectedDocumentIds.contains(document.id);
-                      return CheckboxListTile(
-                        title: Text(document.name),
-                        subtitle: Text(
-                          'Modified: ${document.modifiedAt.toString().substring(0, 10)}',
-                        ),
-                        value: isSelected,
-                        onChanged: (bool? value) {
+                      return GestureDetector(
+                        onTap: () {
                           setState(() {
-                            if (value == true) {
-                              selectedDocumentIds.add(document.id);
-                            } else {
+                            if (isSelected) {
                               selectedDocumentIds.remove(document.id);
+                            } else {
+                              selectedDocumentIds.add(document.id);
                             }
                           });
                         },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            children: [
+                              CupertinoCheckbox(
+                                value: isSelected,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (value == true) {
+                                      selectedDocumentIds.add(document.id);
+                                    } else {
+                                      selectedDocumentIds.remove(document.id);
+                                    }
+                                  });
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(document.name),
+                                    Text(
+                                      'Modified: ${document.modifiedAt.toString().substring(0, 10)}',
+                                      style:  GoogleFonts.notoSerif(
+                                        color: CupertinoColors.secondaryLabel,
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       );
                     },
                   ),
           ),
           actions: [
-            TextButton(
+            CupertinoButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Cancel'),
             ),
-            TextButton(
+            CupertinoButton(
               onPressed: selectedDocumentIds.isEmpty
                   ? null
                   : () {
@@ -278,7 +558,7 @@ class FolderScreen extends ConsumerWidget {
         createdAt: document.createdAt,
         modifiedAt: DateTime.now(),
         tags: document.tags,
-        folderId: folder.id, // Move to current folder
+        folderId: widget.folder.id, // Move to current folder
         isFavorite: document.isFavorite,
         isPasswordProtected: document.isPasswordProtected,
         password: document.password,
@@ -292,47 +572,45 @@ class FolderScreen extends ConsumerWidget {
     final TextEditingController controller = TextEditingController();
     int selectedColor = AppConstants.folderColors[0];
 
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title: const Text('Create Subfolder'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
+                CupertinoTextField(
                   controller: controller,
                   autofocus: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Folder Name',
-                    border: OutlineInputBorder(),
-                  ),
                 ),
                 const SizedBox(height: 16),
                 const Text('Select Color:'),
                 const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: AppConstants.folderColors.map((color) {
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          selectedColor = color;
-                        });
-                      },
-                      child: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Color(color),
-                        child: selectedColor == color
-                            ? const Icon(Icons.check,
-                                size: 16, color: Colors.white)
-                            : null,
-                      ),
-                    );
-                  }).toList(),
-                ),
+                Material(
+                    color: Colors.transparent,
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: AppConstants.folderColors.map((color) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedColor = color;
+                            });
+                          },
+                          child: CircleAvatar(
+                            radius: 16,
+                            backgroundColor: Color(color),
+                            child: selectedColor == color
+                                ? const Icon(Icons.check,
+                                    size: 16, color: Colors.white)
+                                : null,
+                          ),
+                        );
+                      }).toList(),
+                    )),
               ],
             ),
             actions: [
@@ -347,7 +625,7 @@ class FolderScreen extends ConsumerWidget {
                           Folder(
                             name: controller.text.trim(),
                             color: selectedColor,
-                            parentId: folder.id,
+                            parentId: widget.folder.id,
                           ),
                         );
                     Navigator.pop(context);
@@ -388,8 +666,8 @@ class FolderScreen extends ConsumerWidget {
             // Handle bar
             Container(
               margin: const EdgeInsets.symmetric(vertical: 12),
-              height: 4,
-              width: 40,
+              height: 2.h,
+              width: 30.w,
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(4),
@@ -425,9 +703,9 @@ class FolderScreen extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       folder.name,
-                      style: const TextStyle(
+                      style:  GoogleFonts.notoSerif(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 16.sp,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -518,8 +796,8 @@ class FolderScreen extends ConsumerWidget {
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 30.w,
+              height: 30.h,
               decoration: BoxDecoration(
                 color: (iconColor ?? Theme.of(context).primaryColor)
                     .withOpacity(0.1),
@@ -538,15 +816,15 @@ class FolderScreen extends ConsumerWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: GoogleFonts.notoSerif(
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),
                   ),
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: GoogleFonts.notoSerif(
+                      fontSize: 10.sp,
                       color: Colors.grey.shade600,
                     ),
                   ),
@@ -569,55 +847,55 @@ class FolderScreen extends ConsumerWidget {
     final TextEditingController controller =
         TextEditingController(text: folder.name);
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Rename Folder'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'Folder Name',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                final updatedFolder = Folder(
-                  id: folder.id,
-                  name: controller.text.trim(),
-                  parentId: folder.parentId,
-                  color: folder.color,
-                  iconName: folder.iconName,
-                  createdAt: folder.createdAt,
-                );
+    showCupertinoDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+              builder: (context, setState) => CupertinoAlertDialog(
+                title: const Text('Rename Folder'),
+                content: CupertinoTextField(
+                  controller: controller,
+                  autofocus: true,
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      if (controller.text.trim().isNotEmpty) {
+                        final updatedFolder = Folder(
+                          id: folder.id,
+                          name: controller.text.trim(),
+                          parentId: folder.parentId,
+                          color: folder.color,
+                          iconName: folder.iconName,
+                          createdAt: folder.createdAt,
+                        );
 
-                ref.read(foldersProvider.notifier).updateFolder(updatedFolder);
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('Rename'),
-          ),
-        ],
-      ),
-    ).then((_) => controller.dispose());
+                        ref
+                            .read(foldersProvider.notifier)
+                            .updateFolder(updatedFolder);
+                        setState(() {});
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: const Text('Rename'),
+                  ),
+                ],
+              ),
+            )).then((_) => controller.dispose());
   }
 
   void _showChangeFolderColorDialog(
       BuildContext context, WidgetRef ref, Folder folder) {
     int selectedColor = folder.color;
 
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title: const Text('Change Folder Color'),
             content: Wrap(
               spacing: 8,
@@ -674,7 +952,7 @@ class FolderScreen extends ConsumerWidget {
     final documents = ref.read(documentsInFolderProvider(folder.id));
     final subfolders = ref.read(subFoldersProvider(folder.id));
 
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Folder'),
@@ -731,7 +1009,7 @@ class FolderScreen extends ConsumerWidget {
               Navigator.pop(context);
 
               // If this is the folder we're viewing, go back
-              if (folder.id == this.folder.id) {
+              if (folder.id == widget.folder.id) {
                 Navigator.pop(context);
               }
             },

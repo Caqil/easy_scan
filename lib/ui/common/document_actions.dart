@@ -1,13 +1,13 @@
 import 'dart:io';
+import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../models/document.dart';
 import '../../providers/document_provider.dart';
-import '../../providers/folder_provider.dart';
 import '../../utils/date_utils.dart';
-import 'folder_creator.dart';
-import 'folder_selection.dart';
 
 /// A globally accessible class to handle document-related actions
 class DocumentActions {
@@ -35,160 +35,8 @@ class DocumentActions {
       ),
     );
   }
-
-  /// Show rename document dialog
-  static Future<void> showRenameDocumentDialog(
-    BuildContext context,
-    Document document,
-    WidgetRef ref,
-  ) async {
-    final TextEditingController controller =
-        TextEditingController(text: document.name);
-
-    final String? newName = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Rename Document'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: InputDecoration(
-            labelText: 'Document Name',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                Navigator.pop(context, controller.text.trim());
-              }
-            },
-            child: const Text('Rename'),
-          ),
-        ],
-      ),
-    );
-
-    controller.dispose();
-
-    if (newName != null && newName.isNotEmpty) {
-      final updatedDoc = document.copyWith(
-        name: newName,
-        modifiedAt: DateTime.now(),
-      );
-
-      ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
-
-      // Show success message
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Document renamed successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    }
-  }
-
-  /// Show folder selection dialog to move a document
-  static Future<void> showMoveToFolderDialog(
-    BuildContext context,
-    Document document,
-    WidgetRef ref,
-  ) async {
-    // Get all folders
-    final allFolders = ref.read(foldersProvider);
-
-    // Show folder selection dialog
-    final selectedFolder = await FolderSelector.showFolderSelectionDialog(
-      context,
-      allFolders,
-      ref,
-      onCreateFolder: () async {
-        // Create a new folder directly as a destination
-        await FolderCreator.showCreateFolderBottomSheet(
-          context,
-          ref,
-          title: 'Create Destination Folder',
-        );
-      },
-    );
-
-    // If user selected a folder, move the document
-    if (selectedFolder != null && context.mounted) {
-      // Update document with new folder ID
-      final updatedDoc = document.copyWith(
-        folderId: selectedFolder.id,
-        modifiedAt: DateTime.now(),
-      );
-
-      // Save the updated document
-      await ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
-
-      // Show success message
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Moved to ${selectedFolder.name}'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    }
-  }
-
-  /// Show delete confirmation dialog
-  static Future<void> showDeleteConfirmation(
-    BuildContext context,
-    Document document,
-    WidgetRef ref,
-  ) async {
-    final bool confirm = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Delete Document'),
-            content: Text(
-                'Are you sure you want to delete "${document.name}"? This action cannot be undone.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: const Text('Delete'),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-
-    if (confirm && context.mounted) {
-      await ref.read(documentsProvider.notifier).deleteDocument(document.id);
-
-      // Show success message
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Document deleted successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    }
-  }
 }
 
-/// Internal widget for the document options sheet
 class _DocumentOptionsSheet extends ConsumerWidget {
   final Document document;
   final WidgetRef ref;
@@ -229,8 +77,8 @@ class _DocumentOptionsSheet extends ConsumerWidget {
           // Handle bar
           Container(
             margin: const EdgeInsets.symmetric(vertical: 12),
-            height: 4,
-            width: 40,
+            height: 2.h,
+            width: 30.w,
             decoration: BoxDecoration(
               color: Colors.grey.shade300,
               borderRadius: BorderRadius.circular(4),
@@ -271,19 +119,19 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     children: [
                       Text(
                         document.name,
-                        style: const TextStyle(
+                        style: GoogleFonts.notoSerif(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: 14.sp,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 2.h),
                       Text(
                         '${document.pageCount} pages • ${DateTimeUtils.formatDateTime(document.modifiedAt)}',
-                        style: TextStyle(
+                        style: GoogleFonts.notoSerif(
                           color: Colors.grey.shade600,
-                          fontSize: 12,
+                          fontSize: 10.sp,
                         ),
                       ),
                     ],
@@ -309,9 +157,6 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     Navigator.pop(context);
                     if (onRename != null) {
                       onRename!(document);
-                    } else {
-                      DocumentActions.showRenameDocumentDialog(
-                          context, document, ref);
                     }
                   },
                 ),
@@ -336,14 +181,12 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                         .read(documentsProvider.notifier)
                         .updateDocument(updatedDoc);
 
-                    // Show feedback
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(document.isFavorite
-                            ? 'Removed from favorites'
-                            : 'Added to favorites'),
-                        backgroundColor: Colors.green,
-                      ),
+                    AppDialogs.showSnackBar(
+                      context,
+                      type: SnackBarType.success,
+                      message: document.isFavorite
+                          ? 'Removed from favorites'
+                          : 'Added to favorites',
                     );
                   },
                 ),
@@ -356,9 +199,6 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     Navigator.pop(context);
                     if (onMoveToFolder != null) {
                       onMoveToFolder!(document);
-                    } else {
-                      DocumentActions.showMoveToFolderDialog(
-                          context, document, ref);
                     }
                   },
                 ),
@@ -404,9 +244,6 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     Navigator.pop(context);
                     if (onDelete != null) {
                       onDelete!(document);
-                    } else {
-                      DocumentActions.showDeleteConfirmation(
-                          context, document, ref);
                     }
                   },
                 ),
@@ -451,8 +288,8 @@ class _DocumentOptionsSheet extends ConsumerWidget {
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 30.w,
+              height: 30.h,
               decoration: BoxDecoration(
                 color: (iconColor ?? Theme.of(context).primaryColor)
                     .withOpacity(0.1),
@@ -471,15 +308,15 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: GoogleFonts.notoSerif(
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),
                   ),
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: GoogleFonts.notoSerif(
+                      fontSize: 10.sp,
                       color: Colors.grey.shade600,
                     ),
                   ),
@@ -542,8 +379,8 @@ class _PasswordBottomSheetState extends State<_PasswordBottomSheet> {
             widget.document.isPasswordProtected
                 ? 'Change Password'
                 : 'Add Password',
-            style: const TextStyle(
-              fontSize: 20,
+            style: GoogleFonts.notoSerif(
+              fontSize: 16.sp.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -552,7 +389,7 @@ class _PasswordBottomSheetState extends State<_PasswordBottomSheet> {
             widget.document.isPasswordProtected
                 ? 'Enter a new password for "${widget.document.name}"'
                 : 'Add a password to protect "${widget.document.name}"',
-            style: TextStyle(
+            style: GoogleFonts.notoSerif(
               color: Colors.grey.shade600,
             ),
           ),
@@ -596,9 +433,9 @@ class _PasswordBottomSheetState extends State<_PasswordBottomSheet> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: ElevatedButton(
+                child: OutlinedButton(
                   onPressed: _isLoading ? null : _applyPassword,
-                  style: ElevatedButton.styleFrom(
+                  style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -623,9 +460,8 @@ class _PasswordBottomSheetState extends State<_PasswordBottomSheet> {
 
   void _applyPassword() {
     if (_passwordController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a password')),
-      );
+      AppDialogs.showSnackBar(context,
+          type: SnackBarType.error, message: 'Password cannot be empty');
       return;
     }
 
@@ -649,16 +485,11 @@ class _PasswordBottomSheetState extends State<_PasswordBottomSheet> {
 
       // Close the sheet and show success message
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            widget.document.isPasswordProtected
-                ? 'Password updated successfully'
-                : 'Password added successfully',
-          ),
-          backgroundColor: Colors.green,
-        ),
-      );
+      AppDialogs.showSnackBar(context,
+          type: SnackBarType.success,
+          message: widget.document.isPasswordProtected
+              ? 'Password updated'
+              : 'Password added');
     });
   }
 }

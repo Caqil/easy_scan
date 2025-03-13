@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../models/folder.dart';
 
 class FolderCard extends StatelessWidget {
@@ -78,8 +80,8 @@ class FolderCard extends StatelessWidget {
                             ),
                             child: Text(
                               '$documentCount',
-                              style: TextStyle(
-                                fontSize: 12,
+                              style: GoogleFonts.notoSerif(
+                                fontSize: 10.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Color(folder.color),
                               ),
@@ -99,9 +101,9 @@ class FolderCard extends StatelessWidget {
                 folder.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: GoogleFonts.notoSerif(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 14.sp,
                 ),
               ),
             ],

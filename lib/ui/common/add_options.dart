@@ -1,7 +1,9 @@
 // Add this to your lib/ui/common/add_options.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// A globally accessible component to show add/create options
 class AddOptions {
@@ -68,22 +70,22 @@ class _AddOptionsSheet extends StatelessWidget {
           // Handle bar
           Container(
             margin: const EdgeInsets.symmetric(vertical: 12),
-            height: 4,
-            width: 40,
+            height: 2.h,
+            width: 30.w,
             decoration: BoxDecoration(
               color: Colors.grey.shade300,
               borderRadius: BorderRadius.circular(4),
             ),
           ),
-          
+
           // Header with title
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
             child: Row(
               children: [
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 30.w,
+                  height: 30.h,
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -97,8 +99,8 @@ class _AddOptionsSheet extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 20,
+                    style: GoogleFonts.notoSerif(
+                      fontSize: 16.sp.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -106,9 +108,9 @@ class _AddOptionsSheet extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const Divider(),
-          
+
           // Action options
           _buildOptionTile(
             context,
@@ -120,7 +122,7 @@ class _AddOptionsSheet extends StatelessWidget {
               onCreateSubfolder();
             },
           ),
-          
+
           _buildOptionTile(
             context,
             icon: Icons.document_scanner_outlined,
@@ -131,7 +133,7 @@ class _AddOptionsSheet extends StatelessWidget {
               onScanDocument();
             },
           ),
-          
+
           _buildOptionTile(
             context,
             icon: Icons.file_upload_outlined,
@@ -142,7 +144,7 @@ class _AddOptionsSheet extends StatelessWidget {
               onImportDocuments();
             },
           ),
-          
+
           if (onMoveDocuments != null)
             _buildOptionTile(
               context,
@@ -154,14 +156,14 @@ class _AddOptionsSheet extends StatelessWidget {
                 onMoveDocuments!();
               },
             ),
-          
+
           // Bottom padding for safe area
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
       ),
     );
   }
-  
+
   Widget _buildOptionTile(
     BuildContext context, {
     required IconData icon,
@@ -195,15 +197,15 @@ class _AddOptionsSheet extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: GoogleFonts.notoSerif(
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      fontSize: 14.sp,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: TextStyle(
+                    style: GoogleFonts.notoSerif(
                       fontSize: 14,
                       color: Colors.grey.shade600,
                     ),
@@ -222,18 +224,3 @@ class _AddOptionsSheet extends StatelessWidget {
     );
   }
 }
-
-// Example usage:
-/*
-void _showFolderAddOptions() {
-  AddOptions.showAddOptions(
-    context,
-    ref,
-    title: 'Add to This Folder',
-    onCreateSubfolder: () => _showCreateFolderDialog(context, ref),
-    onScanDocument: () => AppRoutes.navigateToCamera(context),
-    onImportDocuments: () => _showImportDocumentsDialog(context, ref),
-    onMoveDocuments: () => _showMoveDocumentsDialog(),
-  );
-}
-*/

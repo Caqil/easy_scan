@@ -1,7 +1,10 @@
+import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PasswordBottomSheet extends StatefulWidget {
   final Document document;
@@ -47,8 +50,8 @@ class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
             widget.document.isPasswordProtected
                 ? 'Change Password'
                 : 'Add Password',
-            style: const TextStyle(
-              fontSize: 20,
+            style: GoogleFonts.notoSerif(
+              fontSize: 16.sp.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -57,7 +60,7 @@ class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
             widget.document.isPasswordProtected
                 ? 'Enter a new password for "${widget.document.name}"'
                 : 'Add a password to protect "${widget.document.name}"',
-            style: TextStyle(
+            style: GoogleFonts.notoSerif(
               color: Colors.grey.shade600,
             ),
           ),
@@ -102,9 +105,9 @@ class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: ElevatedButton(
+                child: OutlinedButton(
                   onPressed: _isLoading ? null : _applyPassword,
-                  style: ElevatedButton.styleFrom(
+                  style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -129,9 +132,9 @@ class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
 
   void _applyPassword() {
     if (_passwordController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a password')),
-      );
+      AppDialogs.showSnackBar(context,
+          type: SnackBarType.error, message: 'Please enter a password');
+
       return;
     }
 
@@ -165,16 +168,11 @@ class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
 
       // Close the sheet and show success message
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            widget.document.isPasswordProtected
-                ? 'Password updated successfully'
-                : 'Password added successfully',
-          ),
-          backgroundColor: Colors.green,
-        ),
-      );
+      AppDialogs.showSnackBar(context,
+          type: SnackBarType.success,
+          message: widget.document.isPasswordProtected
+              ? 'Password updated successfully'
+              : 'Password added successfully');
     });
   }
 }

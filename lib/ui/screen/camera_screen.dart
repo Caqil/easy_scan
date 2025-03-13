@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:edge_detection/edge_detection.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
@@ -176,7 +178,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
         return;
       }
 
-      final scanState = ref.read(scanProvider);
       for (var image in images) {
         final File imageFile = File(image.path);
 
@@ -406,10 +407,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
                     ),
                     child: Text(
                       '${index + 1}',
-                      style: const TextStyle(
+                      style: GoogleFonts.notoSerif(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 12,
+                        fontSize: 10.sp,
                       ),
                     ),
                   ),
@@ -482,10 +483,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
                             Text(
                               'Tap to edit',
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: GoogleFonts.notoSerif(
                                 color: Colors.white.withOpacity(0.9),
                                 fontWeight: FontWeight.w500,
-                                fontSize: 12,
+                                fontSize: 10.sp,
                               ),
                             ),
                           ],
@@ -501,10 +502,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
                             Text(
                               'Drag',
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: GoogleFonts.notoSerif(
                                 color: Colors.white.withOpacity(0.9),
                                 fontWeight: FontWeight.w500,
-                                fontSize: 12,
+                                fontSize: 10.sp,
                               ),
                             ),
                           ],
@@ -535,15 +536,16 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
               color: Theme.of(context).primaryColor,
             ),
             const SizedBox(height: 24),
-            const Text(
+             Text(
               'Ready to Scan',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: GoogleFonts.notoSerif(
+                  fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            const Text(
+             Text(
               'Tap the button below to scan a document',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
+              style: GoogleFonts.notoSerif(fontSize: 14.sp),
             ),
             const SizedBox(height: 40),
             OutlinedButton.icon(

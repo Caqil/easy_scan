@@ -1,37 +1,33 @@
 import 'dart:io';
 import 'package:easy_scan/models/document.dart';
+import 'package:easy_scan/services/share_service.dart';
 import 'package:easy_scan/ui/common/document_actions.dart';
 import 'package:easy_scan/ui/common/folder_actions.dart';
 import 'package:easy_scan/ui/common/folder_creator.dart';
 import 'package:easy_scan/ui/common/folder_selection.dart';
 import 'package:easy_scan/ui/common/folders_grid.dart';
 import 'package:easy_scan/ui/common/import_options.dart';
-import 'package:easy_scan/utils/constants.dart';
-import 'package:edge_detection/edge_detection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import '../../../config/routes.dart';
 import '../../../models/folder.dart';
 import '../../../providers/document_provider.dart';
 import '../../../providers/folder_provider.dart';
 import '../../../providers/scan_provider.dart';
-import '../../../services/image_service.dart';
 import '../../../services/pdf_import_service.dart';
-import '../../../services/pdf_service.dart';
 import '../../../utils/date_utils.dart';
 import '../../common/app_bar.dart';
 import '../../common/dialogs.dart';
-import '../../widget/folder_card.dart';
-import '../../widget/password_bottom_sheet.dart';
 import 'widget/all_documents.dart';
 import 'widget/empty_state.dart';
 import 'widget/folders_section.dart';
 import 'widget/quick_actions.dart';
 import 'widget/recent_documents.dart';
-import 'widget/search_results.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -44,88 +40,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController controller = TextEditingController();
-  String? _imagePath;
   bool _isLoading = false;
   final ImagePicker _imagePicker = ImagePicker();
   bool _isProcessing = false;
-  final PdfService _pdfService = PdfService();
-  bool _scanSuccessful = false;
-  String? _pdfPath;
-  File? _thumbnailImage;
-
+  final ShareService _shareService = ShareService();
   @override
   void dispose() {
     _searchController.dispose();
     controller.dispose();
     super.dispose();
-  }
-
-  Future<void> _scanDocuments() async {
-    try {
-      setState(() {
-        _isLoading = true;
-        _scanSuccessful = false;
-        _pdfPath = null;
-        _thumbnailImage = null;
-      });
-
-      // Define the output path for the scanned image
-      final directory = await getTemporaryDirectory();
-      String outputPath =
-          '${directory.path}/scanned_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-      // Use the edge_detection plugin to scan the document
-      bool success = await EdgeDetection.detectEdge(
-        outputPath,
-        canUseGallery: true,
-        androidScanTitle: 'Scan Document',
-        androidCropTitle: 'Crop Document',
-        androidCropBlackWhiteTitle: 'Black & White',
-        androidCropReset: 'Reset',
-      );
-
-      if (!success || !mounted) {
-        setState(() => _isLoading = false);
-        return;
-      }
-
-      final File imageFile = File(outputPath);
-      if (!await imageFile.exists()) {
-        if (mounted) {
-          AppDialogs.showSnackBar(context, message: 'No valid image found');
-        }
-        setState(() => _isLoading = false);
-        return;
-      }
-
-      // Process the image
-      final scanState = ref.read(scanProvider);
-
-      ref.read(scanProvider.notifier).addPage(imageFile);
-
-      // Create PDF
-      if (ref.read(scanProvider).scannedPages.isNotEmpty) {
-        _thumbnailImage = ref.read(scanProvider).scannedPages.first;
-        final documentName =
-            'Scan_${DateTime.now().toString().substring(0, 19).replaceAll(':', '-')}';
-        _pdfPath = await _pdfService.createPdfFromImages(
-          ref.read(scanProvider).scannedPages,
-          documentName,
-        );
-      }
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _scanSuccessful = ref.read(scanProvider).scannedPages.isNotEmpty;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        AppDialogs.showSnackBar(context, message: 'Error: ${e.toString()}');
-        setState(() => _isLoading = false);
-      }
-    }
   }
 
   @override
@@ -140,7 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: _searchQuery.isEmpty
-            ? const Text('CamScanner App')
+            ? Text('CamScanner App', style: GoogleFonts.notoSerif())
             : TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
@@ -218,7 +141,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           AppRoutes.navigateToView(context, doc),
                       onMorePressed: (Document document) {
                         DocumentActions.showDocumentOptions(
-                            context, document, ref);
+                          context,
+                          document,
+                          ref,
+                          onDelete: (p0) {
+                            showDeleteConfirmation(context, p0, ref);
+                          },
+                          onMoveToFolder: (p0) {
+                            showMoveToFolderDialog(context, p0, ref);
+                          },
+                          onRename: (p0) {
+                            showRenameDocumentDialog(context, p0, ref);
+                          },
+                          onShare: (p0) {
+                            _shareDocument(context, p0, ref);
+                          },
+                        );
                       },
                     ),
                   if (rootFolders.isNotEmpty)
@@ -251,7 +189,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           AppRoutes.navigateToView(context, doc),
                       onMorePressed: (Document document) {
                         DocumentActions.showDocumentOptions(
-                            context, document, ref);
+                          context,
+                          document,
+                          ref,
+                          onDelete: (p0) {
+                            showDeleteConfirmation(context, p0, ref);
+                          },
+                          onMoveToFolder: (p0) {
+                            showMoveToFolderDialog(context, p0, ref);
+                          },
+                          onRename: (p0) {
+                            showRenameDocumentDialog(context, p0, ref);
+                          },
+                          onShare: (p0) {
+                            _shareDocument(context, p0, ref);
+                          },
+                        );
                       },
                     ),
                   if (recentDocuments.isEmpty &&
@@ -277,16 +230,187 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  Future<void> _shareDocument(
+    BuildContext context,
+    Document document,
+    WidgetRef ref,
+  ) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      await _shareService.sharePdf(
+        document.pdfPath,
+        subject: document.name,
+      );
+    } catch (e) {
+      // Show error
+      // ignore: use_build_context_synchronously
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Error sharing document: ${e.toString()}',
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> showRenameDocumentDialog(
+    BuildContext context,
+    Document document,
+    WidgetRef ref,
+  ) async {
+    final TextEditingController controller =
+        TextEditingController(text: document.name);
+
+    final String? newName = await showCupertinoDialog<String>(
+        context: context,
+        builder: (context) => StatefulBuilder(
+              builder: (context, setState) => CupertinoAlertDialog(
+                title: const Text('Rename Document'),
+                content: CupertinoTextField(
+                  controller: controller,
+                  autofocus: true,
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      if (controller.text.trim().isNotEmpty) {
+                        Navigator.pop(context, controller.text.trim());
+                      }
+                    },
+                    child: const Text('Rename'),
+                  ),
+                ],
+              ),
+            ));
+
+    controller.dispose();
+
+    if (newName != null && newName.isNotEmpty) {
+      final updatedDoc = document.copyWith(
+        name: newName,
+        modifiedAt: DateTime.now(),
+      );
+
+      ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
+
+      // Show success message
+      if (context.mounted) {
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.success,
+            message: 'Document renamed successfully');
+      }
+    }
+  }
+
+  Future<void> showMoveToFolderDialog(
+    BuildContext context,
+    Document document,
+    WidgetRef ref,
+  ) async {
+    // Get all folders
+    final allFolders = ref.read(foldersProvider);
+
+    // Show folder selection dialog
+    final selectedFolder = await FolderSelector.showFolderSelectionDialog(
+      context,
+      allFolders,
+      ref,
+      onCreateFolder: () async {
+        // Create a new folder directly as a destination
+        await FolderCreator.showCreateFolderBottomSheet(
+          context,
+          ref,
+          title: 'Create Destination Folder',
+        );
+      },
+    );
+
+    // If user selected a folder, move the document
+    if (selectedFolder != null && context.mounted) {
+      // Update document with new folder ID
+      final updatedDoc = document.copyWith(
+        folderId: selectedFolder.id,
+        modifiedAt: DateTime.now(),
+      );
+
+      // Save the updated document
+      await ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
+
+      // Show success message
+      if (context.mounted) {
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.success,
+            message: 'Moved to ${selectedFolder.name}');
+      }
+    }
+  }
+
+  Future<void> showDeleteConfirmation(
+    BuildContext context,
+    Document document,
+    WidgetRef ref,
+  ) async {
+    final bool confirm = await showCupertinoDialog(
+          context: context,
+          builder: (context) => StatefulBuilder(
+              builder: (context, setState) => CupertinoAlertDialog(
+                    title: const Text('Delete Document'),
+                    content: Text(
+                        'Are you sure you want to delete "${document.name}"? This action cannot be undone.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          ref
+                              .read(documentsProvider.notifier)
+                              .deleteDocument(document.id);
+                          setState(() {});
+                          Navigator.pop(context);
+                        },
+                        style:
+                            TextButton.styleFrom(foregroundColor: Colors.red),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  )),
+        ) ??
+        false;
+
+    if (confirm && context.mounted) {
+      await ref.read(documentsProvider.notifier).deleteDocument(document.id);
+
+      // Show success message
+      if (context.mounted) {
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.success,
+            message: 'Document deleted successfully');
+      }
+    }
+  }
+
   void _createNewFolder() async {
     final folder = await FolderCreator.showCreateFolderBottomSheet(
       context,
       ref,
-      title: 'Create Subfolder',
+      title: 'Create Folder',
     );
 
     if (folder != null) {
-      // Use the created folder
-      print('Created folder: ${folder.name}');
+      AppDialogs.showSnackBar(context,
+          type: SnackBarType.success,
+          message: 'Created folder ${folder.name} successfully');
     }
   }
 
@@ -309,7 +433,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   // Search results builder
   Widget _buildSearchResults(List<Document> documents) {
     if (documents.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -321,7 +445,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             SizedBox(height: 16),
             Text(
               'No documents found',
-              style: TextStyle(fontSize: 18),
+              style: GoogleFonts.notoSerif(fontSize: 16.sp),
             ),
           ],
         ),
@@ -339,23 +463,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   borderRadius: BorderRadius.circular(4),
                   child: Image.file(
                     File(document.thumbnailPath!),
-                    width: 40,
-                    height: 40,
+                    width: 30.w,
+                    height: 30.h,
                     fit: BoxFit.cover,
                   ),
                 )
               : const Icon(Icons.picture_as_pdf),
           title: Text(
             document.name,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(
             DateTimeUtils.getFriendlyDate(document.modifiedAt),
           ),
           trailing: IconButton(
             icon: const Icon(Icons.more_vert),
-            onPressed: () =>
-                DocumentActions.showDocumentOptions(context, document, ref),
+            onPressed: () => DocumentActions.showDocumentOptions(
+              context,
+              document,
+              ref,
+              onDelete: (p0) {
+                showDeleteConfirmation(context, p0, ref);
+              },
+              onMoveToFolder: (p0) {
+                showMoveToFolderDialog(context, p0, ref);
+              },
+              onRename: (p0) {
+                showRenameDocumentDialog(context, p0, ref);
+              },
+              onShare: (p0) {
+                _shareDocument(context, p0, ref);
+              },
+            ),
           ),
           onTap: () => AppRoutes.navigateToView(context, document),
         );
@@ -434,7 +573,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   /// Pick image from gallery for scanning
   Future<void> _pickImageForScan() async {
-    final imageService = ImageService();
     try {
       final List<XFile> images = await _imagePicker.pickMultiImage();
       if (images.isNotEmpty) {
@@ -443,7 +581,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         });
 
         // Process images
-        final scanState = ref.read(scanProvider);
         ref.read(scanProvider.notifier).setScanning(true);
 
         for (var image in images) {
@@ -478,10 +615,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final favorites = ref.read(favoriteDocumentsProvider);
 
     if (favorites.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No favorite documents yet'),
-        ),
+      AppDialogs.showSnackBar(
+        context,
+        message: 'No favorite documents yet',
       );
       return;
     }
@@ -489,81 +625,267 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.7,
         ),
-        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Favorites',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            // Handle bar for better UX
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 30.w,
+                height: 2.h,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-            const SizedBox(height: 16),
+
+            // Header with count
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.star_rounded,
+                        color: Colors.amber,
+                        size: 28,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Favorites',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '${favorites.length}',
+                      style: GoogleFonts.notoSerif(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Divider(),
+
+            // Document list
             Expanded(
               child: ListView.builder(
-                shrinkWrap: true,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemCount: favorites.length,
                 itemBuilder: (context, index) {
                   final document = favorites[index];
-                  return ListTile(
-                    leading: document.thumbnailPath != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: Image.file(
-                              File(document.thumbnailPath!),
-                              width: 40,
-                              height: 40,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : const Icon(Icons.picture_as_pdf),
-                    title: Text(document.name),
-                    subtitle: Text(
-                      DateTimeUtils.getFriendlyDate(document.modifiedAt),
+                  return Card(
+                    elevation: 0,
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.star, color: Colors.amber),
-                      onPressed: () {
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
                         Navigator.pop(context);
-
-                        // Remove from favorites
-                        final updatedDoc = Document(
-                          id: document.id,
-                          name: document.name,
-                          pdfPath: document.pdfPath,
-                          pagesPaths: document.pagesPaths,
-                          pageCount: document.pageCount,
-                          thumbnailPath: document.thumbnailPath,
-                          createdAt: document.createdAt,
-                          modifiedAt: document.modifiedAt,
-                          tags: document.tags,
-                          folderId: document.folderId,
-                          isFavorite: false,
-                          isPasswordProtected: document.isPasswordProtected,
-                          password: document.password,
-                        );
-
-                        ref
-                            .read(documentsProvider.notifier)
-                            .updateDocument(updatedDoc);
+                        AppRoutes.navigateToView(context, document);
                       },
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          children: [
+                            // Document thumbnail
+                            document.thumbnailPath != null
+                                ? Hero(
+                                    tag: 'document_${document.id}',
+                                    child: Container(
+                                      width: 60,
+                                      height: 70,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        image: DecorationImage(
+                                          image: FileImage(
+                                              File(document.thumbnailPath!)),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    width: 60,
+                                    height: 70,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Icon(
+                                      Icons.picture_as_pdf,
+                                      size: 30,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+
+                            const SizedBox(width: 16),
+
+                            // Document info
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    document.name,
+                                    style: GoogleFonts.notoSerif(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14.sp,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.access_time,
+                                        size: 14,
+                                        color: Colors.grey,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        DateTimeUtils.getFriendlyDate(
+                                            document.modifiedAt),
+                                        style: GoogleFonts.notoSerif(
+                                          fontSize: 10.sp,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.insert_drive_file,
+                                        size: 14,
+                                        color: Colors.grey,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '${document.pageCount} pages',
+                                        style: GoogleFonts.notoSerif(
+                                          fontSize: 10.sp,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Actions
+                            IconButton(
+                              icon: const Icon(
+                                Icons.star_rounded,
+                                color: Colors.amber,
+                                size: 28,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+
+                                // Remove from favorites
+                                final updatedDoc = Document(
+                                  id: document.id,
+                                  name: document.name,
+                                  pdfPath: document.pdfPath,
+                                  pagesPaths: document.pagesPaths,
+                                  pageCount: document.pageCount,
+                                  thumbnailPath: document.thumbnailPath,
+                                  createdAt: document.createdAt,
+                                  modifiedAt: document.modifiedAt,
+                                  tags: document.tags,
+                                  folderId: document.folderId,
+                                  isFavorite: false,
+                                  isPasswordProtected:
+                                      document.isPasswordProtected,
+                                  password: document.password,
+                                );
+
+                                ref
+                                    .read(documentsProvider.notifier)
+                                    .updateDocument(updatedDoc);
+
+                                // Show feedback
+                                AppDialogs.showSnackBar(
+                                  context,
+                                  message:
+                                      '${document.name} removed from favorites',
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      AppRoutes.navigateToView(context, document);
-                    },
                   );
                 },
+              ),
+            ),
+
+            // Bottom actions
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SafeArea(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text('Close'),
+                  ),
+                ),
               ),
             ),
           ],

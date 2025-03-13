@@ -1,6 +1,8 @@
 // recent_documents.dart
 import 'package:easy_scan/ui/widget/document_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../models/document.dart';
 
@@ -24,9 +26,10 @@ class RecentDocuments extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+         Text(
           'Recent Documents',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: GoogleFonts.notoSerif(
+              fontSize: 16.sp, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         SizedBox(

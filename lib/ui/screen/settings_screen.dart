@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_scan/providers/settings_provider.dart';
 import 'package:easy_scan/services/auth_service.dart';
@@ -264,36 +266,37 @@ class SettingsScreen extends ConsumerWidget {
 
   void _showSaveLocationDialog(
       BuildContext context, WidgetRef ref, String currentLocation) {
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: const Text('Default Save Location'),
-        children: [
-          RadioListTile<String>(
-            title: const Text('Device Storage'),
-            value: 'local',
-            groupValue: currentLocation,
-            onChanged: (value) {
-              ref
-                  .read(settingsProvider.notifier)
-                  .setDefaultSaveLocation(value!);
-              Navigator.pop(context);
-            },
-          ),
-          RadioListTile<String>(
-            title: const Text('Cloud Storage'),
-            value: 'cloud',
-            groupValue: currentLocation,
-            onChanged: (value) {
-              ref
-                  .read(settingsProvider.notifier)
-                  .setDefaultSaveLocation(value!);
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
+    showCupertinoDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+              builder: (context, setState) => AlertDialog(
+                title: const Text('Default Save Location'),
+                actions: [
+                  RadioListTile<String>(
+                    title: const Text('Device Storage'),
+                    value: 'local',
+                    groupValue: currentLocation,
+                    onChanged: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setDefaultSaveLocation(value!);
+                      Navigator.pop(context);
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('Cloud Storage'),
+                    value: 'cloud',
+                    groupValue: currentLocation,
+                    onChanged: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setDefaultSaveLocation(value!);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ));
   }
 }
 
@@ -310,7 +313,7 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
       child: Text(
         title,
-        style: TextStyle(
+        style: GoogleFonts.notoSerif(
           fontSize: 14,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.primary,

@@ -1,5 +1,7 @@
 // empty_state.dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class EmptyState extends StatelessWidget {
   final VoidCallback onScan;
@@ -14,17 +16,18 @@ class EmptyState extends StatelessWidget {
         children: [
           const Icon(Icons.document_scanner, size: 80, color: Colors.grey),
           const SizedBox(height: 24),
-          const Text(
+           Text(
             'No documents yet',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: GoogleFonts.notoSerif(
+                fontSize: 20.sp, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Scan or import your first document',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
+            style: GoogleFonts.notoSerif(fontSize: 14.sp, color: Colors.grey),
           ),
           const SizedBox(height: 24),
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: onScan,
             icon: const Icon(Icons.camera_alt),
             label: const Text('Start Scanning'),

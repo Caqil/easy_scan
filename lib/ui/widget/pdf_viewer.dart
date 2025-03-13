@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:easy_scan/ui/widget/password_verification_dialog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../models/document.dart';
 
@@ -34,7 +37,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
   void _checkPasswordProtection() {
     if (widget.document.isPasswordProtected) {
       Future.delayed(const Duration(milliseconds: 500), () {
-        showDialog(
+        showCupertinoDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) => PasswordVerificationDialog(
@@ -80,7 +83,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
             Text(
               _errorMessage!,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16),
+              style:  GoogleFonts.notoSerif(fontSize: 14.sp),
             ),
             TextButton(
               onPressed: () =>
@@ -95,7 +98,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
     // Check if the file exists
     final file = File(widget.document.pdfPath);
     if (!file.existsSync()) {
-      return const Center(
+      return  Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -108,7 +111,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
             Text(
               'PDF file not found',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
+              style: GoogleFonts.notoSerif(fontSize: 14.sp),
             ),
           ],
         ),
@@ -154,8 +157,8 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                     Expanded(
                       child: Text(
                         widget.document.name,
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style:  GoogleFonts.notoSerif(
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                         maxLines: 1,

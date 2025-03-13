@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:easy_scan/models/document.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../utils/date_utils.dart';
 
@@ -105,15 +107,15 @@ class DocumentCard extends StatelessWidget {
                           document.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style:  GoogleFonts.notoSerif(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           DateTimeUtils.getFriendlyDate(document.modifiedAt),
-                          style: TextStyle(
-                            fontSize: 12,
+                          style: GoogleFonts.notoSerif(
+                            fontSize: 10.sp,
                             color: Colors.grey.shade600,
                           ),
                         ),

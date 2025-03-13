@@ -1,4 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+enum SnackBarType {
+  normal,
+  success,
+  error,
+  warning,
+}
 
 class AppDialogs {
   static Future<bool> showConfirmDialog(
@@ -9,26 +18,30 @@ class AppDialogs {
     String cancelText = 'Cancel',
     bool isDangerous = false,
   }) async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(cancelText),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: isDangerous
-                ? TextButton.styleFrom(foregroundColor: Colors.red)
-                : null,
-            child: Text(confirmText),
-          ),
-        ],
-      ),
-    );
+    final result = await showCupertinoDialog<bool>(
+        context: context,
+        builder: (context) => StatefulBuilder(
+              builder: (context, setState) => CupertinoAlertDialog(
+                title: Text(title),
+                content: Text(message),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(cancelText),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {});
+                      Navigator.pop(context, true);
+                    },
+                    style: isDangerous
+                        ? TextButton.styleFrom(foregroundColor: Colors.red)
+                        : null,
+                    child: Text(confirmText),
+                  ),
+                ],
+              ),
+            ));
 
     return result ?? false;
   }
@@ -83,13 +96,95 @@ class AppDialogs {
     required String message,
     Duration duration = const Duration(seconds: 2),
     SnackBarAction? action,
+    SnackBarType type = SnackBarType.normal,
+    Color? backgroundColor,
+    Color? textColor,
+    double bottomMargin = 16.0,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: duration,
-        action: action,
+    // Determine colors based on type
+    Color snackBarColor;
+    Color snackBarTextColor = textColor ?? Colors.white;
+
+    switch (type) {
+      case SnackBarType.success:
+        snackBarColor = backgroundColor ?? Colors.green.shade700;
+        break;
+      case SnackBarType.error:
+        snackBarColor = backgroundColor ?? Colors.red.shade700;
+        break;
+      case SnackBarType.warning:
+        snackBarColor = backgroundColor ?? Colors.amber.shade900;
+        break;
+      case SnackBarType.normal:
+      default:
+        snackBarColor = backgroundColor ?? const Color(0xFF323232);
+        break;
+    }
+
+    // Create overlay entry
+    OverlayState? overlayState = Overlay.of(context);
+    OverlayEntry? overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        bottom: MediaQuery.of(context).viewInsets.bottom + bottomMargin,
+        left: 16.0,
+        right: 16.0,
+        child: Material(
+          elevation: 6.0,
+          borderRadius: BorderRadius.circular(8.0),
+          color: snackBarColor,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: action != null ? 16.0 : 24.0,
+              vertical: 14.0,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: Text(
+                    message,
+                    style: GoogleFonts.notoSerif(
+                      color: snackBarTextColor,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                ),
+                if (action != null) ...[
+                  const SizedBox(width: 8.0),
+                  TextButton(
+                    onPressed: () {
+                      // Remove the overlay first
+                      overlayEntry?.remove();
+                      overlayEntry = null;
+
+                      // Then trigger the action
+                      action.onPressed();
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: action.textColor ?? Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      backgroundColor: Colors.transparent,
+                    ),
+                    child: Text(action.label),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
+
+    // Insert the overlay and schedule removal after duration
+    overlayState.insert(overlayEntry!);
+
+    Future.delayed(duration, () {
+      if (overlayEntry != null) {
+        overlayEntry?.remove();
+        overlayEntry = null;
+      }
+    });
   }
 }

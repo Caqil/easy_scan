@@ -1,7 +1,9 @@
 // Add this to your lib/ui/common/folders_grid.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../models/folder.dart';
 import '../../providers/document_provider.dart';
 import '../widget/folder_card.dart';
@@ -75,8 +77,8 @@ class _AllFoldersSheet extends ConsumerWidget {
           // Handle bar
           Container(
             margin: const EdgeInsets.symmetric(vertical: 12),
-            height: 4,
-            width: 40,
+            height: 2.h,
+            width: 30.w,
             decoration: BoxDecoration(
               color: Colors.grey.shade300,
               borderRadius: BorderRadius.circular(4),
@@ -89,8 +91,8 @@ class _AllFoldersSheet extends ConsumerWidget {
             child: Row(
               children: [
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 30.w,
+                  height: 30.h,
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -107,14 +109,14 @@ class _AllFoldersSheet extends ConsumerWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          fontSize: 20,
+                        style: GoogleFonts.notoSerif(
+                          fontSize: 16.sp.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         '${folders.length} folders',
-                        style: TextStyle(
+                        style: GoogleFonts.notoSerif(
                           color: Colors.grey.shade600,
                         ),
                       ),
@@ -222,8 +224,8 @@ class _AllFoldersSheet extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             'No folders yet',
-            style: TextStyle(
-              fontSize: 18,
+            style: GoogleFonts.notoSerif(
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade700,
             ),
@@ -231,13 +233,13 @@ class _AllFoldersSheet extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'Create folders to organize your documents',
-            style: TextStyle(
+            style: GoogleFonts.notoSerif(
               color: Colors.grey.shade600,
             ),
           ),
           if (onCreateNewFolder != null) ...[
             const SizedBox(height: 24),
-            ElevatedButton.icon(
+            OutlinedButton.icon(
               onPressed: () {
                 Navigator.pop(context);
                 onCreateNewFolder!();
@@ -251,4 +253,3 @@ class _AllFoldersSheet extends ConsumerWidget {
     );
   }
 }
-

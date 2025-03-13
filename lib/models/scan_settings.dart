@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 enum ScanMode {
   auto, // Automatic mode (default)
@@ -276,7 +277,7 @@ extension DocumentTypeExtension on DocumentType {
         );
     }
   }
-  
+
   /// Get recommended aspect ratio for this document type
   double get aspectRatio {
     switch (this) {
@@ -313,22 +314,22 @@ class ScanSettingsFactory {
   static ScanSettings documentPreset() {
     return DocumentType.document.optimizedSettings;
   }
-  
+
   /// Create receipt preset scan settings
   static ScanSettings receiptPreset() {
     return DocumentType.receipt.optimizedSettings;
   }
-  
+
   /// Create ID card preset scan settings
   static ScanSettings idCardPreset() {
     return DocumentType.idCard.optimizedSettings;
   }
-  
+
   /// Create photo preset scan settings
   static ScanSettings photoPreset() {
     return DocumentType.photo.optimizedSettings;
   }
-  
+
   /// Create a high-quality preset for any type
   static ScanSettings highQualityPreset() {
     return ScanSettings(
@@ -341,7 +342,7 @@ class ScanSettingsFactory {
       quality: 95,
     );
   }
-  
+
   /// Create a speed-optimized preset for quick scanning
   static ScanSettings quickScanPreset() {
     return ScanSettings(

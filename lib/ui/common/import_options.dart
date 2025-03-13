@@ -1,6 +1,8 @@
 // Add this file to your project as lib/ui/common/import_options.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// A globally accessible class to show import options
 class ImportOptions {
@@ -58,8 +60,8 @@ class _ImportOptionsSheet extends StatelessWidget {
           // Handle bar
           Container(
             margin: const EdgeInsets.symmetric(vertical: 12),
-            height: 4,
-            width: 40,
+            height: 2.h,
+            width: 30.w,
             decoration: BoxDecoration(
               color: Colors.grey.shade300,
               borderRadius: BorderRadius.circular(4),
@@ -72,8 +74,8 @@ class _ImportOptionsSheet extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 30.w,
+                  height: 30.h,
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -84,20 +86,20 @@ class _ImportOptionsSheet extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-                const Expanded(
+                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Import Document',
-                        style: TextStyle(
-                          fontSize: 18,
+                        style: GoogleFonts.notoSerif(
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         'Choose an import method',
-                        style: TextStyle(
+                        style: GoogleFonts.notoSerif(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
@@ -185,15 +187,15 @@ class _ImportOptionsSheet extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: GoogleFonts.notoSerif(
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      fontSize: 14.sp,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: GoogleFonts.notoSerif(
                       fontSize: 14,
                       color: Colors.grey.shade600,
                     ),

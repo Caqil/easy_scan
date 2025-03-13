@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../config/routes.dart';
 import '../../models/document.dart';
 import '../../providers/document_provider.dart';
@@ -71,7 +74,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
       appBar: CustomAppBar(
         title: Text(
           'Edit Document',
-          style: TextStyle(
+          style: GoogleFonts.notoSerif(
             fontWeight: FontWeight.bold,
             color: colorScheme.onSurface,
           ),
@@ -85,13 +88,13 @@ class _EditScreenState extends ConsumerState<EditScreen> {
             margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             child: TextField(
               controller: _documentNameController,
-              style: TextStyle(
+              style: GoogleFonts.notoSerif(
                 color: colorScheme.onSurface,
                 fontWeight: FontWeight.w500,
               ),
               decoration: InputDecoration(
                 labelText: 'Document Name',
-                labelStyle: TextStyle(color: colorScheme.primary),
+                labelStyle: GoogleFonts.notoSerif(color: colorScheme.primary),
                 prefixIcon: Icon(Icons.description_outlined,
                     color: colorScheme.primary),
                 border: OutlineInputBorder(
@@ -184,7 +187,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                                 );
                               },
                               child: Container(
-                                width: 40,
+                                width: 30.w,
                                 margin: const EdgeInsets.only(left: 8),
                                 decoration: BoxDecoration(
                                   color: Colors.black45,
@@ -210,7 +213,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                                 );
                               },
                               child: Container(
-                                width: 40,
+                                width: 30.w,
                                 margin: const EdgeInsets.only(right: 8),
                                 decoration: BoxDecoration(
                                   color: Colors.black45,
@@ -249,7 +252,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                               color: Colors.red.withOpacity(0.9),
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
@@ -260,10 +263,10 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                                 SizedBox(width: 4),
                                 Text(
                                   'Delete',
-                                  style: TextStyle(
+                                  style: GoogleFonts.notoSerif(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                                    fontSize: 10.sp,
                                   ),
                                 ),
                               ],
@@ -292,7 +295,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                               const SizedBox(width: 6),
                               Text(
                                 '${_currentPageIndex + 1} / ${pages.length}',
-                                style: const TextStyle(
+                                style: GoogleFonts.notoSerif(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -316,9 +319,9 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                               color: colorScheme.primary,
                             ),
                             const SizedBox(height: 16),
-                            const Text(
+                            Text(
                               'Processing...',
-                              style: TextStyle(
+                              style: GoogleFonts.notoSerif(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -335,11 +338,11 @@ class _EditScreenState extends ConsumerState<EditScreen> {
           // Save button
           Container(
             margin: const EdgeInsets.all(16),
-            child: ElevatedButton.icon(
+            child: OutlinedButton.icon(
               onPressed: _saveDocument,
               icon: const Icon(Icons.save_alt_rounded),
               label: const Text('Save as PDF'),
-              style: ElevatedButton.styleFrom(
+              style: OutlinedButton.styleFrom(
                 backgroundColor: colorScheme.primary,
                 foregroundColor: colorScheme.onPrimary,
                 minimumSize: const Size(double.infinity, 56),
@@ -348,8 +351,8 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                 ),
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                textStyle: const TextStyle(
-                  fontSize: 16,
+                textStyle: GoogleFonts.notoSerif(
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
                 ),
@@ -360,7 +363,6 @@ class _EditScreenState extends ConsumerState<EditScreen> {
       ),
     );
   }
-
 
   void _deletePageAtIndex(int index) {
     final scanState = ref.read(scanProvider);
