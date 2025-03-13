@@ -1,7 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// The [AppTheme] defines light and dark themes for the app.
 ///
@@ -20,7 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 abstract final class AppTheme {
   // The defined light theme.
   static ThemeData light = FlexThemeData.light(
-    scheme: FlexScheme.deepPurple,
+    scheme: FlexScheme.yellowM3,
     subThemesData: const FlexSubThemesData(
       interactionEffects: true,
       tintedDisabledControls: true,
@@ -36,7 +35,7 @@ abstract final class AppTheme {
   );
   // The defined dark theme.
   static ThemeData dark = FlexThemeData.dark(
-    scheme: FlexScheme.deepPurple,
+    scheme: FlexScheme.yellowM3,
     subThemesData: const FlexSubThemesData(
       interactionEffects: true,
       tintedDisabledControls: true,

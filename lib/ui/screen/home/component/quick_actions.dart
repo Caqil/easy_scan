@@ -242,13 +242,13 @@ class _MinimalistQuickActionsState extends State<MinimalistQuickActions> {
     ];
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 16),
+      margin: const EdgeInsets.symmetric(vertical: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Subtle section header
           Padding(
-            padding: const EdgeInsets.only(left: 10, bottom: 16),
+            padding: const EdgeInsets.only(left: 10, bottom: 5),
             child: Text(
               'Quick Actions',
               style: GoogleFonts.notoSerif(

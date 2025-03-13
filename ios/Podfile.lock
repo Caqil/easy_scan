@@ -1,6 +1,8 @@
 PODS:
   - camera_avfoundation (0.0.1):
     - Flutter
+  - cunning_document_scanner (1.0.0):
+    - Flutter
   - device_info_plus (0.0.1):
     - Flutter
   - DKImagePickerController/Core (4.3.9):
@@ -34,9 +36,6 @@ PODS:
   - DKPhotoGallery/Resource (0.0.19):
     - SDWebImage
     - SwiftyGif
-  - edge_detection (1.1.3):
-    - Flutter
-    - WeScan
   - emoji_picker_flutter (0.0.1):
     - Flutter
   - file_picker (0.0.1):
@@ -68,6 +67,8 @@ PODS:
   - Mantle (2.2.0):
     - Mantle/extobjc (= 2.2.0)
   - Mantle/extobjc (2.2.0)
+  - open_file_ios (0.0.1):
+    - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -93,18 +94,18 @@ PODS:
     - Flutter
   - vibration (3.0.0):
     - Flutter
-  - WeScan (3.0.0)
 
 DEPENDENCIES:
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
+  - cunning_document_scanner (from `.symlinks/plugins/cunning_document_scanner/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
-  - edge_detection (from `.symlinks/plugins/edge_detection/ios`)
   - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
   - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - local_auth_darwin (from `.symlinks/plugins/local_auth_darwin/darwin`)
+  - open_file_ios (from `.symlinks/plugins/open_file_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - printing (from `.symlinks/plugins/printing/ios`)
@@ -113,7 +114,6 @@ DEPENDENCIES:
   - syncfusion_flutter_pdfviewer (from `.symlinks/plugins/syncfusion_flutter_pdfviewer/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
-  - WeScan (from `.symlinks/plugins/edge_detection/ios/WeScan-3.0.0`)
 
 SPEC REPOS:
   trunk:
@@ -128,10 +128,10 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
+  cunning_document_scanner:
+    :path: ".symlinks/plugins/cunning_document_scanner/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
-  edge_detection:
-    :path: ".symlinks/plugins/edge_detection/ios"
   emoji_picker_flutter:
     :path: ".symlinks/plugins/emoji_picker_flutter/ios"
   file_picker:
@@ -144,6 +144,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   local_auth_darwin:
     :path: ".symlinks/plugins/local_auth_darwin/darwin"
+  open_file_ios:
+    :path: ".symlinks/plugins/open_file_ios/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
@@ -160,15 +162,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   vibration:
     :path: ".symlinks/plugins/vibration/ios"
-  WeScan:
-    :path: ".symlinks/plugins/edge_detection/ios/WeScan-3.0.0"
 
 SPEC CHECKSUMS:
   camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
+  cunning_document_scanner: 7cb9bd173f7cc7b11696dde98d01492187fc3a67
   device_info_plus: bf2e3232933866d73fe290f2942f2156cdd10342
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
-  edge_detection: ca7942eecdfb4acb1de11cb9300c42242acb5679
   emoji_picker_flutter: 8e50ec5caac456a23a78637e02c6293ea0ac8771
   file_picker: b159e0c068aef54932bb15dc9fd1571818edaf49
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
@@ -177,6 +177,7 @@ SPEC CHECKSUMS:
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   local_auth_darwin: 66e40372f1c29f383a314c738c7446e2f7fdadc3
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
+  open_file_ios: 461db5853723763573e140de3193656f91990d9e
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   printing: 233e1b73bd1f4a05615548e9b5a324c98588640b
@@ -188,8 +189,7 @@ SPEC CHECKSUMS:
   syncfusion_flutter_pdfviewer: bb9998884b864cfedf72628df3503bdf57e397c0
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
   vibration: 3797858f8cbf53d841e189ef8bd533d96e4ca93c
-  WeScan: f50277f7304d146d9ebc4ebdc1b587df84dcdd8b
 
-PODFILE CHECKSUM: 7620e7c07491ad9c529fc40293707815c4d295d4
+PODFILE CHECKSUM: a7cd7065298c219ed5dc250f5d4d7b89d6e3403a
 
 COCOAPODS: 1.15.2

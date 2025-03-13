@@ -1,4 +1,4 @@
-package com.example.easy_scan
+package bg.pdfreader.pdfviewer.pdfeditor
 
 import io.flutter.embedding.android.FlutterActivity
 

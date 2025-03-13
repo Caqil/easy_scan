@@ -61,14 +61,14 @@ class SettingsScreen extends ConsumerWidget {
               }
             },
           ),
-          ListTile(
-            title: const Text('Document Passwords'),
-            subtitle: const Text('Manage default password settings'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () {
-              // TODO: Show password settings
-            },
-          ),
+          // ListTile(
+          //   title: const Text('Document Passwords'),
+          //   subtitle: const Text('Manage default password settings'),
+          //   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+          //   onTap: () {
+          //     // TODO: Show password settings
+          //   },
+          // ),
 
           // Scan settings section
           const _SectionHeader(title: 'Scan Settings'),
@@ -98,63 +98,63 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          ListTile(
-            title: const Text('Default Save Location'),
-            subtitle: Text(settings.defaultSaveLocation == 'local'
-                ? 'Device Storage'
-                : 'Cloud Storage'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () {
-              _showSaveLocationDialog(
-                  context, ref, settings.defaultSaveLocation);
-            },
-          ),
+          // ListTile(
+          //   title: const Text('Default Save Location'),
+          //   subtitle: Text(settings.defaultSaveLocation == 'local'
+          //       ? 'Device Storage'
+          //       : 'Cloud Storage'),
+          //   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+          //   onTap: () {
+          //     _showSaveLocationDialog(
+          //         context, ref, settings.defaultSaveLocation);
+          //   },
+          // ),
 
-          // Storage section
-          const _SectionHeader(title: 'Storage'),
-          FutureBuilder<double>(
-            future: storageService.getAvailableStorage(),
-            builder: (context, snapshot) {
-              final available = snapshot.data ?? 0;
-              return ListTile(
-                title: const Text('Available Storage'),
-                subtitle: Text('${available.toStringAsFixed(1)} MB'),
-                leading: const Icon(Icons.storage),
-              );
-            },
-          ),
-          ListTile(
-            title: const Text('Clear Temporary Files'),
-            subtitle: const Text('Free up space by removing cache'),
-            leading: const Icon(Icons.cleaning_services),
-            onTap: () async {
-              final confirmed = await AppDialogs.showConfirmDialog(
-                context,
-                title: 'Clear Temporary Files',
-                message:
-                    'This will delete all temporary files. This action cannot be undone.',
-                confirmText: 'Clear',
-              );
+          // // Storage section
+          // const _SectionHeader(title: 'Storage'),
+          // FutureBuilder<double>(
+          //   future: storageService.getAvailableStorage(),
+          //   builder: (context, snapshot) {
+          //     final available = snapshot.data ?? 0;
+          //     return ListTile(
+          //       title: const Text('Available Storage'),
+          //       subtitle: Text('${available.toStringAsFixed(1)} MB'),
+          //       leading: const Icon(Icons.storage),
+          //     );
+          //   },
+          // ),
+          // ListTile(
+          //   title: const Text('Clear Temporary Files'),
+          //   subtitle: const Text('Free up space by removing cache'),
+          //   leading: const Icon(Icons.cleaning_services),
+          //   onTap: () async {
+          //     final confirmed = await AppDialogs.showConfirmDialog(
+          //       context,
+          //       title: 'Clear Temporary Files',
+          //       message:
+          //           'This will delete all temporary files. This action cannot be undone.',
+          //       confirmText: 'Clear',
+          //     );
 
-              if (confirmed) {
-                await storageService.clearTempFiles();
-                // ignore: use_build_context_synchronously
-                AppDialogs.showSnackBar(
-                  context,
-                  message: 'Temporary files cleared successfully',
-                );
-              }
-            },
-          ),
-          SwitchListTile(
-            title: const Text('Cloud Backup'),
-            subtitle: const Text('Automatically backup documents to cloud'),
-            value: settings.cloudBackupEnabled,
-            secondary: const Icon(Icons.cloud_upload),
-            onChanged: (value) {
-              ref.read(settingsProvider.notifier).toggleCloudBackup();
-            },
-          ),
+          //     if (confirmed) {
+          //       await storageService.clearTempFiles();
+          //       // ignore: use_build_context_synchronously
+          //       AppDialogs.showSnackBar(
+          //         context,
+          //         message: 'Temporary files cleared successfully',
+          //       );
+          //     }
+          //   },
+          // ),
+          // SwitchListTile(
+          //   title: const Text('Cloud Backup'),
+          //   subtitle: const Text('Automatically backup documents to cloud'),
+          //   value: settings.cloudBackupEnabled,
+          //   secondary: const Icon(Icons.cloud_upload),
+          //   onChanged: (value) {
+          //     ref.read(settingsProvider.notifier).toggleCloudBackup();
+          //   },
+          // ),
 
           // Permissions section
           const _SectionHeader(title: 'Permissions'),

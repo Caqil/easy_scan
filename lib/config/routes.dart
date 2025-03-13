@@ -1,9 +1,11 @@
+import 'package:easy_scan/ui/screen/conversion/conversion_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/document.dart';
 import '../models/folder.dart';
-import '../ui/screen/camera_screen.dart';
-import '../ui/screen/edit_screen.dart';
+import '../ui/screen/camera/camera_screen.dart';
+import '../ui/screen/conversion/components/format_selection.dart';
+import '../ui/screen/edit/edit_screen.dart';
 import '../ui/screen/folder_screen.dart';
 import '../ui/screen/home/home_screen.dart';
 import '../ui/screen/settings_screen.dart';
@@ -14,6 +16,7 @@ class AppRoutes {
   static const String home = '/';
   static const String camera = '/camera';
   static const String edit = '/edit';
+  static const String conversion = '/conversion';
   static const String view = '/view';
   static const String folderRoute =
       '/folder'; // Renamed to avoid naming conflict
@@ -28,6 +31,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const CameraScreen());
       case edit:
         return MaterialPageRoute(builder: (_) => const EditScreen());
+      case conversion:
+        return MaterialPageRoute(builder: (_) => const ConversionScreen());
       case view:
         final Document document = routeSettings.arguments as Document;
         return MaterialPageRoute(
@@ -64,6 +69,11 @@ class AppRoutes {
   static void navigateToEdit(BuildContext context) {
     Navigator.pushNamed(context, edit);
   }
+
+  static void navigateToConversion(BuildContext context) {
+    Navigator.pushNamed(context, conversion);
+  }
+
 
   static void navigateToView(BuildContext context, Document document) {
     Navigator.pushNamed(

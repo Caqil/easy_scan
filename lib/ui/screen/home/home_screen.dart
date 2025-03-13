@@ -23,11 +23,11 @@ import '../../../services/pdf_import_service.dart';
 import '../../../utils/date_utils.dart';
 import '../../common/app_bar.dart';
 import '../../common/dialogs.dart';
-import 'widget/all_documents.dart';
-import 'widget/empty_state.dart';
-import 'widget/folders_section.dart';
-import 'widget/quick_actions.dart';
-import 'widget/recent_documents.dart';
+import 'component/all_documents.dart';
+import 'component/empty_state.dart';
+import 'component/folders_section.dart';
+import 'component/quick_actions.dart';
+import 'component/recent_documents.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -102,6 +102,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: const Icon(Icons.settings),
             onPressed: () {
               AppRoutes.navigateToSettings(context);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.connected_tv_rounded),
+            onPressed: () {
+              AppRoutes.navigateToConversion(context);
             },
           ),
         ],

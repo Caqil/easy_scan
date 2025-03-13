@@ -6,30 +6,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import '../utils/file_utils.dart';
 
 class ImageService {
-  /// Compress image to reduce file size
-  Future<File> compressImage(File imageFile, {int quality = 80}) async {
-    final String targetPath = await FileUtils.getUniqueFilePath(
-      documentName: 'compressed_${DateTime.now().millisecondsSinceEpoch}',
-      extension: 'jpg',
-      inTempDirectory: true,
-    );
-
-    // Compress the image
-    final result = await FlutterImageCompress.compressAndGetFile(
-      imageFile.absolute.path,
-      targetPath,
-      quality: quality,
-      minHeight: 1080,
-      minWidth: 1080,
-    );
-
-    if (result == null) {
-      throw Exception('Image compression failed');
-    }
-
-    return File(result.path);
-  }
-
   Future<File> rotateImage(File imageFile, bool counterClockwise) async {
     // Read the image
     final Uint8List bytes = await imageFile.readAsBytes();

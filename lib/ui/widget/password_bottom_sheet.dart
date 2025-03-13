@@ -6,6 +6,8 @@ import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../services/pdf_service.dart';
+
 class PasswordBottomSheet extends StatefulWidget {
   final Document document;
   final WidgetRef ref;
@@ -130,11 +132,10 @@ class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
     );
   }
 
-  void _applyPassword() {
+  Future<void> _applyPassword() async {
     if (_passwordController.text.trim().isEmpty) {
       AppDialogs.showSnackBar(context,
           type: SnackBarType.error, message: 'Please enter a password');
-
       return;
     }
 
@@ -142,37 +143,57 @@ class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
       _isLoading = true;
     });
 
-    // Apply password to document
-    final updatedDoc = Document(
-      id: widget.document.id,
-      name: widget.document.name,
-      pdfPath: widget.document.pdfPath,
-      pagesPaths: widget.document.pagesPaths,
-      pageCount: widget.document.pageCount,
-      thumbnailPath: widget.document.thumbnailPath,
-      createdAt: widget.document.createdAt,
-      modifiedAt: DateTime.now(),
-      tags: widget.document.tags,
-      folderId: widget.document.folderId,
-      isFavorite: widget.document.isFavorite,
-      isPasswordProtected: true,
-      password: _passwordController.text.trim(),
-    );
+    try {
+      // Get the PDF service
+      final pdfService = PdfService();
 
-    // Add a slight delay to simulate processing
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (!mounted) return;
+      // Apply the password to the actual PDF file
+      final protectedPdfPath = await pdfService.protectPdf(
+        widget.document.pdfPath,
+        _passwordController.text.trim(),
+      );
 
       // Update document with password
+      final updatedDoc = Document(
+        id: widget.document.id,
+        name: widget.document.name,
+        pdfPath: protectedPdfPath, // Use the protected PDF path
+        pagesPaths: widget.document.pagesPaths,
+        pageCount: widget.document.pageCount,
+        thumbnailPath: widget.document.thumbnailPath,
+        createdAt: widget.document.createdAt,
+        modifiedAt: DateTime.now(),
+        tags: widget.document.tags,
+        folderId: widget.document.folderId,
+        isFavorite: widget.document.isFavorite,
+        isPasswordProtected: true,
+        password: _passwordController.text.trim(),
+      );
+
+      // Update document in the database
       widget.ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
 
       // Close the sheet and show success message
-      Navigator.pop(context);
-      AppDialogs.showSnackBar(context,
-          type: SnackBarType.success,
-          message: widget.document.isPasswordProtected
-              ? 'Password updated successfully'
-              : 'Password added successfully');
-    });
+      if (mounted) {
+        Navigator.pop(context);
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.success,
+            message: widget.document.isPasswordProtected
+                ? 'Password updated successfully'
+                : 'Password added successfully');
+      }
+    } catch (e) {
+      if (mounted) {
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.error,
+            message: 'Failed to apply password: ${e.toString()}');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 }
