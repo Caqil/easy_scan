@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_scan/ui/widget/password_verification_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../models/document.dart';
@@ -31,12 +32,29 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
   }
 
   void _checkPasswordProtection() {
-    if (widget.document.isPasswordProtected &&
-        widget.document.password != null) {
+    if (widget.document.isPasswordProtected) {
       Future.delayed(const Duration(milliseconds: 500), () {
-        setState(() {
-          _isLoading = false;
-        });
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => PasswordVerificationDialog(
+            correctPassword:
+                widget.document.password ?? "", // Pastikan tidak null
+            onVerified: () {
+              setState(() {
+                _isLoading = false;
+                _errorMessage = null; // Reset error jika ada
+              });
+            },
+            onCancelled: () {
+              setState(() {
+                _isLoading = false;
+                _errorMessage =
+                    "Password input was cancelled."; // Tampilkan error
+              });
+            },
+          ),
+        );
       });
     } else {
       setState(() {
@@ -52,22 +70,22 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
         child: CircularProgressIndicator(),
       );
     }
-
     if (_errorMessage != null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 48,
-              color: Colors.red,
-            ),
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
             const SizedBox(height: 16),
             Text(
               _errorMessage!,
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 16),
+            ),
+            TextButton(
+              onPressed: () =>
+                  Navigator.pop(context), // Kembali ke halaman sebelumnya
+              child: const Text("Go Back"),
             ),
           ],
         ),
@@ -101,10 +119,20 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
       children: [
         SfPdfViewer.file(
           file,
+          password: widget.document.isPasswordProtected
+              ? widget.document.password ?? ""
+              : null,
           controller: _pdfViewerController,
           onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
             setState(() {
-              _errorMessage = 'Failed to load PDF: ${details.error}';
+              _isLoading = false; // Stop loading
+              if (details.error.contains('Password required') ||
+                  details.error.contains('invalid password')) {
+                _errorMessage =
+                    'Incorrect password or password input was cancelled.';
+              } else {
+                _errorMessage = 'Failed to load PDF: ${details.error}';
+              }
             });
           },
         ),
@@ -142,7 +170,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                     IconButton(
                       icon: const Icon(Icons.search),
                       onPressed: () {
-                      //  _pdfViewerController.openSearchTextField();
+                        //  _pdfViewerController.openSearchTextField();
                       },
                     ),
                     PopupMenuButton<String>(

@@ -1,0 +1,51 @@
+// search_results.dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import '../../../../config/routes.dart';
+import '../../../../utils/date_utils.dart';
+
+class SearchResults extends StatelessWidget {
+  final List<dynamic> documents;
+
+  const SearchResults({super.key, required this.documents});
+
+  @override
+  Widget build(BuildContext context) {
+    if (documents.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text('No documents found', style: TextStyle(fontSize: 18)),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: documents.length,
+      itemBuilder: (context, index) {
+        final document = documents[index];
+        return ListTile(
+          leading: document.thumbnailPath != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Image.file(
+                    File(document.thumbnailPath!),
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : const Icon(Icons.picture_as_pdf),
+          title: Text(document.name),
+          subtitle: Text(DateTimeUtils.getFriendlyDate(document.modifiedAt)),
+          trailing: const Icon(Icons.more_vert),
+          onTap: () => AppRoutes.navigateToView(context, document),
+        );
+      },
+    );
+  }
+}

@@ -4,7 +4,7 @@ import '../models/folder.dart';
 import '../ui/screen/camera_screen.dart';
 import '../ui/screen/edit_screen.dart';
 import '../ui/screen/folder_screen.dart';
-import '../ui/screen/home_screen.dart';
+import '../ui/screen/home/home_screen.dart';
 import '../ui/screen/settings_screen.dart';
 import '../ui/screen/view_screen.dart';
 

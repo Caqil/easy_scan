@@ -12,6 +12,7 @@ class PdfImportService {
 
   Future<Document?> importPdfFromLocal() async {
     try {
+      // Pick PDF file
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],

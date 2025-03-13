@@ -3,65 +3,9 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import '../models/scan_settings.dart';
 import '../utils/file_utils.dart';
 
 class ImageService {
-  /// Enhance image quality for document scanning
-  Future<File> enhanceImage(File imageFile, ColorMode colorMode,
-      {int quality = 80}) async {
-    // Read the image
-    final Uint8List bytes = await imageFile.readAsBytes();
-    var image = img.decodeImage(bytes);
-
-    if (image == null) {
-      throw Exception('Failed to decode image');
-    }
-
-    // Apply filters based on color mode
-    switch (colorMode) {
-      case ColorMode.grayscale:
-        image = img.grayscale(image);
-        break;
-      case ColorMode.blackAndWhite:
-        image = img.grayscale(image);
-        // Manual thresholding since direct function isn't available
-        for (var i = 0; i < image.length; i++) {
-          var pixel = image.getPixel(i % image.width, i ~/ image.width);
-          var luminance = img.getLuminance(pixel);
-          if (luminance < 128) {
-            image.setPixel(
-                i % image.width, i ~/ image.width, img.ColorInt8.rgb(0, 0, 0));
-          } else {
-            image.setPixel(i % image.width, i ~/ image.width,
-                img.ColorInt8.rgb(255, 255, 255));
-          }
-        }
-        break;
-      case ColorMode.color:
-        // For color, we just enhance contrast and brightness
-        image = img.adjustColor(image, contrast: 1.2);
-        break;
-    }
-
-    // Apply a convolution filter for sharpening
-    final sharpKernel = [0, -1, 0, -1, 5, -1, 0, -1, 0];
-    image = img.convolution(image, filter: sharpKernel);
-
-    // Get a temp file path
-    final String outputPath = await FileUtils.getUniqueFilePath(
-      documentName: 'enhanced_${DateTime.now().millisecondsSinceEpoch}',
-      extension: 'jpg',
-      inTempDirectory: true,
-    );
-
-    // Save processed image
-    final File outputFile = File(outputPath);
-    await outputFile.writeAsBytes(img.encodeJpg(image, quality: quality));
-
-    return outputFile;
-  }
-
   /// Compress image to reduce file size
   Future<File> compressImage(File imageFile, {int quality = 80}) async {
     final String targetPath = await FileUtils.getUniqueFilePath(
@@ -86,7 +30,6 @@ class ImageService {
     return File(result.path);
   }
 
-  /// Rotate image by 90 degrees (clockwise or counterclockwise)
   Future<File> rotateImage(File imageFile, bool counterClockwise) async {
     // Read the image
     final Uint8List bytes = await imageFile.readAsBytes();

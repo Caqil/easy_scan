@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
-part 'document.g.dart'; 
+part 'document.g.dart';
 
 @HiveType(typeId: 0)
 class Document extends HiveObject {
@@ -43,6 +43,40 @@ class Document extends HiveObject {
 
   @HiveField(12)
   String? thumbnailPath;
+// Add this method to your Document class in lib/models/document.dart
+
+// Inside the Document class:
+  Document copyWith({
+    String? id,
+    String? name,
+    String? pdfPath,
+    List<String>? pagesPaths,
+    int? pageCount,
+    String? thumbnailPath,
+    DateTime? createdAt,
+    DateTime? modifiedAt,
+    List<String>? tags,
+    String? folderId,
+    bool? isFavorite,
+    bool? isPasswordProtected,
+    String? password,
+  }) {
+    return Document(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      pdfPath: pdfPath ?? this.pdfPath,
+      pagesPaths: pagesPaths ?? this.pagesPaths,
+      pageCount: pageCount ?? this.pageCount,
+      thumbnailPath: thumbnailPath ?? this.thumbnailPath,
+      createdAt: createdAt ?? this.createdAt,
+      modifiedAt: modifiedAt ?? DateTime.now(),
+      tags: tags ?? this.tags,
+      folderId: folderId, // Allow null to remove folder assignment
+      isFavorite: isFavorite ?? this.isFavorite,
+      isPasswordProtected: isPasswordProtected ?? this.isPasswordProtected,
+      password: password ?? this.password,
+    );
+  }
 
   Document({
     String? id,

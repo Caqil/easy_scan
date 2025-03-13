@@ -1,20 +1,18 @@
 import 'dart:io';
+import 'package:edge_detection/edge_detection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:cunning_document_scanner/cunning_document_scanner.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pro_image_editor/pro_image_editor.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 import '../../config/routes.dart';
 import '../../providers/scan_provider.dart';
-import '../../services/image_service.dart';
 import '../../services/pdf_service.dart';
-import '../../utils/permission_utils.dart';
 import '../common/app_bar.dart';
 import '../common/dialogs.dart';
-import '../widget/scan_options.dart';
-import '../../models/document.dart';
-import '../../providers/document_provider.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   const CameraScreen({super.key});
@@ -23,57 +21,26 @@ class CameraScreen extends ConsumerStatefulWidget {
   ConsumerState<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends ConsumerState<CameraScreen>
-    with WidgetsBindingObserver {
-  final ImageService _imageService = ImageService();
+class _CameraScreenState extends ConsumerState<CameraScreen> {
   final PdfService _pdfService = PdfService();
   final ImagePicker _imagePicker = ImagePicker();
   bool _isLoading = false;
   bool _scanSuccessful = false;
   String? _pdfPath;
   File? _thumbnailImage;
-
+  int _currentPageIndex = 0;
+  bool _isProcessing = false;
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _checkCameraPermission();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Reset loading state when app resumes to prevent UI being stuck in loading state
-    if (state == AppLifecycleState.resumed && _isLoading) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _checkCameraPermission() async {
-    final hasPermission = await PermissionUtils.hasCameraPermission();
-    if (!hasPermission) {
-      await PermissionUtils.requestCameraPermission();
-    }
-  }
-
   Future<void> _scanDocuments() async {
-    // Check for camera permission first
-    final hasPermission = await PermissionUtils.hasCameraPermission();
-    if (!hasPermission) {
-      final granted = await PermissionUtils.requestCameraPermission();
-      if (!granted) {
-        _showPermissionDialog();
-        return;
-      }
-    }
-
     try {
       setState(() {
         _isLoading = true;
@@ -82,129 +49,114 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
         _thumbnailImage = null;
       });
 
-      // Get the pictures - this will show the scanner UI
-      List<String> imagePaths = [];
-      try {
-        imagePaths = await CunningDocumentScanner.getPictures(
-                isGalleryImportAllowed: true) ??
-            [];
-      } catch (e) {
+      // Define the output path for the scanned image
+      final directory = await getTemporaryDirectory();
+      String outputPath =
+          '${directory.path}/scanned_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      // Use the edge_detection plugin to scan the document
+      bool success = await EdgeDetection.detectEdge(
+        outputPath,
+        canUseGallery: true,
+        androidScanTitle: 'Scan Document',
+        androidCropTitle: 'Crop Document',
+        androidCropBlackWhiteTitle: 'Black & White',
+        androidCropReset: 'Reset',
+      );
+
+      if (!success || !mounted) {
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      final File imageFile = File(outputPath);
+      if (!await imageFile.exists()) {
         if (mounted) {
-          AppDialogs.showSnackBar(
-            context,
-            message: 'Error scanning: ${e.toString()}',
-          );
+          AppDialogs.showSnackBar(context, message: 'No valid image found');
         }
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
         return;
       }
 
-      // User canceled or no images captured
-      if (imagePaths.isEmpty) {
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
-
-      // Pre-process path validation
-      List<File> validImageFiles = [];
-      for (String path in imagePaths) {
-        final File file = File(path);
-        if (await file.exists()) {
-          validImageFiles.add(file);
-        }
-      }
-
-      if (validImageFiles.isEmpty) {
-        if (mounted) {
-          AppDialogs.showSnackBar(
-            context,
-            message: 'No valid images found',
-          );
-        }
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
-
-      // Processing loading screen
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => const AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Processing scanned images...')
-              ],
-            ),
-          ),
-        );
-      }
-
-      // Process all images and add to scan provider
+      // Process the image
       final scanState = ref.read(scanProvider);
-      for (File imageFile in validImageFiles) {
-        try {
-          final File processedFile = await _imageService.enhanceImage(
-            imageFile,
-            scanState.settings.colorMode,
-            quality: scanState.settings.quality,
-          );
-          ref.read(scanProvider.notifier).addPage(processedFile);
-        } catch (e) {
-          // Just skip failed images to improve reliability
-          print('Failed to process image: $e');
-        }
-      }
 
-      // Create a PDF from the processed images
+      ref.read(scanProvider.notifier).addPage(imageFile);
+
+      // Create PDF
       if (ref.read(scanProvider).scannedPages.isNotEmpty) {
-        // Save first image as thumbnail
         _thumbnailImage = ref.read(scanProvider).scannedPages.first;
-
-        // Generate a default document name
         final documentName =
             'Scan_${DateTime.now().toString().substring(0, 19).replaceAll(':', '-')}';
-
-        // Create PDF
         _pdfPath = await _pdfService.createPdfFromImages(
           ref.read(scanProvider).scannedPages,
           documentName,
         );
       }
 
-      // Close the processing dialog
-      if (mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-
-      // Update UI to show success state
-      setState(() {
-        _isLoading = false;
-        _scanSuccessful = ref.read(scanProvider).scannedPages.isNotEmpty;
-      });
-    } catch (e) {
-      // Close the processing dialog if it's open
-      if (mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-
       if (mounted) {
-        AppDialogs.showSnackBar(
-          context,
-          message: 'Error: ${e.toString()}',
-        );
+        setState(() {
+          _isLoading = false;
+          _scanSuccessful = ref.read(scanProvider).scannedPages.isNotEmpty;
+        });
       }
+    } catch (e) {
+      if (mounted) {
+        AppDialogs.showSnackBar(context, message: 'Error: ${e.toString()}');
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _openImageEditor() async {
+    final scanState = ref.read(scanProvider);
+    if (scanState.scannedPages.isEmpty) return;
+
+    setState(() {
+      _isProcessing = true;
+    });
+
+    try {
+      final File currentPage = scanState.scannedPages[_currentPageIndex];
+      final Uint8List imageBytes = await currentPage.readAsBytes();
+
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProImageEditor.memory(
+            callbacks: ProImageEditorCallbacks(
+              onImageEditingComplete: (Uint8List bytes) async {
+                // Write the new bytes to the file
+                final File editedFile = File(currentPage.path);
+                await editedFile.writeAsBytes(bytes);
+
+                // Clear image cache to force refresh
+                imageCache.clear();
+                imageCache.clearLiveImages();
+
+                // Update the provider with the updated file
+                ref
+                    .read(scanProvider.notifier)
+                    .updatePageAt(_currentPageIndex, editedFile);
+
+                // Force UI update
+                setState(() {});
+
+                Navigator.pop(context);
+              },
+            ),
+            imageBytes,
+          ),
+        ),
+      );
+    } catch (e) {
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Error editing image: ${e.toString()}',
+      );
+    } finally {
       setState(() {
-        _isLoading = false;
+        _isProcessing = false;
       });
     }
   }
@@ -218,273 +170,54 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
         _thumbnailImage = null;
       });
 
-      // Let the gallery picker do its job
       final List<XFile> images = await _imagePicker.pickMultiImage();
-
-      // User canceled or no images selected
-      if (images.isEmpty) {
-        setState(() {
-          _isLoading = false;
-        });
+      if (images.isEmpty || !mounted) {
+        setState(() => _isLoading = false);
         return;
       }
 
-      // Show processing dialog
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => const AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Processing images...')
-              ],
-            ),
-          ),
-        );
-      }
-
-      // Process images
       final scanState = ref.read(scanProvider);
       for (var image in images) {
-        try {
-          final File imageFile = File(image.path);
-          final File processedFile = await _imageService.enhanceImage(
-            imageFile,
-            scanState.settings.colorMode,
-            quality: scanState.settings.quality,
-          );
-          ref.read(scanProvider.notifier).addPage(processedFile);
-        } catch (e) {
-          print('Failed to process image: $e');
-          // Continue with other images
-        }
+        final File imageFile = File(image.path);
+
+        ref.read(scanProvider.notifier).addPage(imageFile);
       }
 
-      // Create a PDF from the processed images
       if (ref.read(scanProvider).scannedPages.isNotEmpty) {
-        // Save first image as thumbnail
         _thumbnailImage = ref.read(scanProvider).scannedPages.first;
-
-        // Generate a default document name
         final documentName =
             'Scan_${DateTime.now().toString().substring(0, 19).replaceAll(':', '-')}';
-
-        // Create PDF
         _pdfPath = await _pdfService.createPdfFromImages(
           ref.read(scanProvider).scannedPages,
           documentName,
         );
       }
 
-      // Close the processing dialog
-      if (mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-
-      // Update UI to show success state
-      setState(() {
-        _isLoading = false;
-        _scanSuccessful = ref.read(scanProvider).scannedPages.isNotEmpty;
-      });
-    } catch (e) {
-      // Close the processing dialog if it's open
-      if (mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-
       if (mounted) {
-        AppDialogs.showSnackBar(
-          context,
-          message: 'Error importing images: ${e.toString()}',
-        );
-      }
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _navigateToEditScreen() {
-    AppRoutes.navigateToEdit(context);
-  }
-
-  void _showScanOptions() {
-    final scanState = ref.read(scanProvider);
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.8,
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: ScanOptionsWidget(
-          settings: scanState.settings,
-          onSettingsChanged: (newSettings) {
-            ref.read(scanProvider.notifier).updateSettings(newSettings);
-          },
-        ),
-      ),
-    );
-  }
-
-  void _showPermissionDialog() {
-    AppDialogs.showConfirmDialog(
-      context,
-      title: 'Permission Required',
-      message:
-          'Camera permission is needed to scan documents. Would you like to open app settings?',
-      confirmText: 'Open Settings',
-      cancelText: 'Cancel',
-    ).then((confirmed) {
-      if (confirmed) {
-        PermissionUtils.openAppSettings();
-      }
-    });
-  }
-
-  Future<void> _saveDocument() async {
-    if (ref.read(scanProvider).scannedPages.isEmpty) {
-      AppDialogs.showSnackBar(
-        context,
-        message: 'No pages to save',
-      );
-      return;
-    }
-
-    // Display a dialog to input document name
-    final TextEditingController nameController = TextEditingController(
-      text: 'Scan ${DateTime.now().toString().substring(0, 10)}',
-    );
-
-    bool shouldSave = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Save Document'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Document Name',
-                    border: OutlineInputBorder(),
-                  ),
-                  autofocus: true,
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('Save'),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-
-    if (!shouldSave || !mounted) return;
-
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      // Show saving dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 16),
-              Text('Saving document...'),
-            ],
-          ),
-        ),
-      );
-
-      // Generate thumbnail for the first page
-      final scanState = ref.read(scanProvider);
-      if (scanState.scannedPages.isNotEmpty) {
-        final File thumbnailFile = await _imageService.createThumbnail(
-          scanState.scannedPages[0],
-        );
-
-        // Create PDF from scanned images
-        final String documentName = nameController.text.trim();
-        final String pdfPath = await _pdfService.createPdfFromImages(
-          scanState.scannedPages,
-          documentName,
-        );
-
-        // Get number of pages
-        final int pageCount = await _pdfService.getPdfPageCount(pdfPath);
-
-        // Create document model
-        final document = Document(
-          name: documentName,
-          pdfPath: pdfPath,
-          pagesPaths: scanState.scannedPages.map((file) => file.path).toList(),
-          pageCount: pageCount,
-          thumbnailPath: thumbnailFile.path,
-        );
-
-        // Save document to provider
-        await ref.read(documentsProvider.notifier).addDocument(document);
-
-        // Close saving dialog
-        if (mounted && Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
-        }
-
-        // Show success and navigate to home
-        AppDialogs.showSnackBar(
-          context,
-          message: 'Document saved successfully',
-        );
-
-        // Clear the scan state and return to home
-        ref.read(scanProvider.notifier).clearPages();
-        AppRoutes.navigateToHome(context);
+        setState(() {
+          _isLoading = false;
+          _scanSuccessful = ref.read(scanProvider).scannedPages.isNotEmpty;
+        });
       }
     } catch (e) {
-      // Close saving dialog if open
-      if (mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
+      if (mounted) {
+        AppDialogs.showSnackBar(context, message: 'Error: ${e.toString()}');
+        setState(() => _isLoading = false);
       }
-
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error saving document: ${e.toString()}',
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
-
-    nameController.dispose();
   }
+
+  void _navigateToEditScreen() => AppRoutes.navigateToEdit(context);
 
   void _resetScan() {
-    setState(() {
-      _scanSuccessful = false;
-      _pdfPath = null;
-      _thumbnailImage = null;
-    });
-    ref.read(scanProvider.notifier).clearPages();
+    if (mounted) {
+      setState(() {
+        _scanSuccessful = false;
+        _pdfPath = null;
+        _thumbnailImage = null;
+      });
+      ref.read(scanProvider.notifier).clearPages();
+    }
   }
 
   @override
@@ -494,58 +227,95 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
         title: const Text('Scan Document'),
         actions: [
           if (_scanSuccessful)
-            IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: _showScanOptions,
+            TextButton(
+              onPressed: () => _navigateToEditScreen(),
+              // icon: const Icon(Icons.save),
+              child: const Text('Save as PDF'),
             ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _scanSuccessful
-              ? _buildSuccessUI()
-              : _buildScanUI(),
-      floatingActionButton: _scanSuccessful
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FloatingActionButton.small(
-                  heroTag: "addBtn",
-                  onPressed: _scanDocuments,
-                  child: const Icon(Icons.add),
-                ),
-                const SizedBox(height: 16),
-                FloatingActionButton.extended(
-                  heroTag: "saveBtn",
-                  onPressed: _saveDocument,
-                  icon: const Icon(Icons.save),
-                  label: const Text('Save PDF'),
-                ),
-              ],
-            )
-          : null,
+      body: Stack(
+        children: [
+          _scanSuccessful ? _buildSuccessUI() : _buildScanUI(),
+          if (_isLoading && _scanSuccessful)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+        ],
+      ),
     );
   }
 
   Widget _buildSuccessUI() {
+    final themeData = Theme.of(context);
+    final pages = ref.watch(scanProvider).scannedPages;
+
     return Column(
       children: [
-        // Drag and drop hint
+        // Header with instructions
         Container(
-          padding: const EdgeInsets.all(12),
-          color: Colors.grey.shade800,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: themeData.colorScheme.surface,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                offset: const Offset(0, 1),
+                blurRadius: 2,
+              ),
+            ],
+          ),
           child: Row(
             children: [
-              Icon(Icons.drag_indicator, color: Colors.grey.shade400),
-              const SizedBox(width: 8),
-              Text(
-                'Drag and drop to reorder pages',
-                style: TextStyle(color: Colors.grey.shade400),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color:
+                      themeData.colorScheme.primaryContainer.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.drag_indicator,
+                  color: themeData.colorScheme.onPrimaryContainer,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${pages.length} page${pages.length != 1 ? 's' : ''} scanned',
+                      style: themeData.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Drag and drop to reorder pages',
+                      style: themeData.textTheme.bodySmall?.copyWith(
+                        color: themeData.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () => _scanDocuments(),
+                icon: const Icon(Icons.add_a_photo, size: 16),
+                label: const Text('Add'),
+                style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
               ),
             ],
           ),
         ),
-        // Scanned pages grid with reordering
+
         Expanded(
           child: ReorderableGridView.builder(
             padding: const EdgeInsets.all(16),
@@ -560,13 +330,18 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
               final page = ref.watch(scanProvider).scannedPages[index];
               return GestureDetector(
                 key: ValueKey(page.path),
-                onTap: _navigateToEditScreen,
+                onTap: () {
+                  setState(() {
+                    _currentPageIndex = index;
+                  });
+                  _openImageEditor();
+                },
                 child: _buildPageCard(page, index),
               );
             },
-            onReorder: (oldIndex, newIndex) {
-              ref.read(scanProvider.notifier).reorderPages(oldIndex, newIndex);
-            },
+            onReorder: (oldIndex, newIndex) => ref
+                .read(scanProvider.notifier)
+                .reorderPages(oldIndex, newIndex),
           ),
         ),
       ],
@@ -575,56 +350,170 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   Widget _buildPageCard(File page, int index) {
     return Card(
-      elevation: 4,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Thumbnail
+          // Thumbnail with gradient overlay
           Expanded(
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Image.file(
-                  page,
-                  fit: BoxFit.cover,
+                // Page image
+                Hero(
+                  tag: 'scan_page_$index',
+                  child: Image.file(
+                    page,
+                    fit: BoxFit.cover,
+                    cacheHeight: 500,
+                    filterQuality: FilterQuality.medium,
+                  ),
                 ),
+
+                // Subtle gradient overlay to enhance visibility of UI elements
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.3),
+                          Colors.transparent,
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.4),
+                        ],
+                        stops: const [0.0, 0.2, 0.7, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Page number indicator
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '${index + 1}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Delete button
                 Positioned(
                   top: 8,
                   right: 8,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.red.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: IconButton(
-                      icon: const Icon(Icons.close,
-                          color: Colors.white, size: 20),
-                      onPressed: () {
-                        ref.read(scanProvider.notifier).removePage(index);
-                        if (ref.read(scanProvider).scannedPages.isEmpty) {
-                          _resetScan();
-                        }
-                      },
-                      padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
+                          // Show a confirmation dialog with haptic feedback
+                          HapticFeedback.mediumImpact();
+
+                          ref.read(scanProvider.notifier).removePage(index);
+                          if (ref.read(scanProvider).scannedPages.isEmpty) {
+                            _resetScan();
+                          }
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Edit indicator at bottom
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.7),
+                        ],
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.touch_app,
+                              color: Colors.white70,
+                              size: 14,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Tap to edit',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.9),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.drag_indicator,
+                              color: Colors.white70,
+                              size: 14,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Drag',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.9),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ],
-            ),
-          ),
-          // Page label
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            color: Colors.black.withOpacity(0.7),
-            child: Text(
-              'Page ${index + 1}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
             ),
           ),
         ],
@@ -637,6 +526,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
@@ -647,10 +537,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
             const SizedBox(height: 24),
             const Text(
               'Ready to Scan',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -659,15 +546,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 40),
-            ElevatedButton.icon(
+            OutlinedButton.icon(
               onPressed: _scanDocuments,
               icon: const Icon(Icons.camera_alt),
               label: const Text('Start Scanning'),
-              style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
             ),
             const SizedBox(height: 24),
             OutlinedButton.icon(
@@ -676,11 +558,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
               label: const Text('Import from Gallery'),
             ),
             const SizedBox(height: 16),
-            IconButton(
-              onPressed: _showScanOptions,
-              icon: const Icon(Icons.settings),
-              tooltip: 'Scan Settings',
-            ),
           ],
         ),
       ),

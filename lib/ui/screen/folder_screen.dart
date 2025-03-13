@@ -1,4 +1,6 @@
-
+import 'package:easy_scan/ui/common/add_options.dart';
+import 'package:easy_scan/ui/common/dialogs.dart';
+import 'package:easy_scan/ui/common/document_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_scan/config/routes.dart';
@@ -29,8 +31,7 @@ class FolderScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {
-            },
+            onPressed: () {},
           ),
           IconButton(
             icon: const Icon(Icons.more_vert),
@@ -40,7 +41,14 @@ class FolderScreen extends ConsumerWidget {
       ),
       body: _buildContent(context, ref, subfolders, documents),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddOptions(context, ref),
+        onPressed: () => AddOptions.showAddOptions(
+          context,
+          ref,
+          title: 'Add to This Folder',
+          onCreateSubfolder: () => _showCreateFolderDialog(context, ref),
+          onScanDocument: () => AppRoutes.navigateToCamera(context),
+          onImportDocuments: () => _showImportDocumentsDialog(context, ref),
+        ),
         child: const Icon(Icons.add),
       ),
     );
@@ -135,7 +143,7 @@ class FolderScreen extends ConsumerWidget {
                   AppRoutes.navigateToView(context, document);
                 },
                 onMorePressed: () =>
-                    _showDocumentOptions(context, ref, document),
+                    DocumentActions.showDocumentOptions(context, document, ref),
               );
             },
           ),
@@ -171,7 +179,14 @@ class FolderScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
-            onPressed: () => _showAddOptions(context, ref),
+            onPressed: () => AddOptions.showAddOptions(
+              context,
+              ref,
+              title: 'Add to This Folder',
+              onCreateSubfolder: () => _showCreateFolderDialog(context, ref),
+              onScanDocument: () => AppRoutes.navigateToCamera(context),
+              onImportDocuments: () => _showImportDocumentsDialog(context, ref),
+            ),
             icon: const Icon(Icons.add),
             label: const Text('Add Content'),
           ),
@@ -180,45 +195,97 @@ class FolderScreen extends ConsumerWidget {
     );
   }
 
-  void _showAddOptions(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
+  void _showImportDocumentsDialog(BuildContext context, WidgetRef ref) {
+    final allDocuments = ref.watch(documentsProvider);
+    // Filter to only show documents in root (folderId = null) and not in current folder
+    final rootDocuments =
+        allDocuments.where((doc) => doc.folderId == null).toList();
+    final Set<String> selectedDocumentIds = {};
+
+    showDialog(
       context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.create_new_folder),
-            title: const Text('Create Subfolder'),
-            onTap: () {
-              Navigator.pop(context);
-              _showCreateFolderDialog(context, ref);
-            },
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Import Documents from Root'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: rootDocuments.isEmpty
+                ? const Center(
+                    child: Text('No documents available in root folder'),
+                  )
+                : ListView.builder(
+                    itemCount: rootDocuments.length,
+                    itemBuilder: (context, index) {
+                      final document = rootDocuments[index];
+                      final isSelected =
+                          selectedDocumentIds.contains(document.id);
+                      return CheckboxListTile(
+                        title: Text(document.name),
+                        subtitle: Text(
+                          'Modified: ${document.modifiedAt.toString().substring(0, 10)}',
+                        ),
+                        value: isSelected,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            if (value == true) {
+                              selectedDocumentIds.add(document.id);
+                            } else {
+                              selectedDocumentIds.remove(document.id);
+                            }
+                          });
+                        },
+                      );
+                    },
+                  ),
           ),
-          ListTile(
-            leading: const Icon(Icons.camera_alt),
-            title: const Text('Scan Document'),
-            onTap: () {
-              Navigator.pop(context);
-              AppRoutes.navigateToCamera(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.upload_file),
-            title: const Text('Import Documents'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.file_copy),
-            title: const Text('Move Documents Here'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: selectedDocumentIds.isEmpty
+                  ? null
+                  : () {
+                      _importSelectedDocuments(ref, selectedDocumentIds);
+                      Navigator.pop(context);
+                      AppDialogs.showSnackBar(
+                        context,
+                        message: 'Documents imported successfully',
+                      );
+                    },
+              child: const Text('Import'),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _importSelectedDocuments(WidgetRef ref, Set<String> documentIds) {
+    final allDocuments = ref.read(documentsProvider);
+
+    for (var docId in documentIds) {
+      final document = allDocuments.firstWhere((doc) => doc.id == docId);
+      final updatedDoc = Document(
+        id: document.id,
+        name: document.name,
+        pdfPath: document.pdfPath,
+        pagesPaths: document.pagesPaths,
+        pageCount: document.pageCount,
+        thumbnailPath: document.thumbnailPath,
+        createdAt: document.createdAt,
+        modifiedAt: DateTime.now(),
+        tags: document.tags,
+        folderId: folder.id, // Move to current folder
+        isFavorite: document.isFavorite,
+        isPasswordProtected: document.isPasswordProtected,
+        password: document.password,
+      );
+
+      ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
+    }
   }
 
   void _showCreateFolderDialog(BuildContext context, WidgetRef ref) {
@@ -298,107 +365,201 @@ class FolderScreen extends ConsumerWidget {
   void _showFolderOptions(BuildContext context, WidgetRef ref, Folder folder) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text('Rename'),
-            onTap: () {
-              Navigator.pop(context);
-              _showRenameFolderDialog(context, ref, folder);
-            },
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
-          ListTile(
-            leading: const Icon(Icons.palette),
-            title: const Text('Change Color'),
-            onTap: () {
-              Navigator.pop(context);
-              _showChangeFolderColorDialog(context, ref, folder);
-            },
-          ),
-          if (folder.parentId != null)
-            ListTile(
-              leading: const Icon(Icons.drive_file_move),
-              title: const Text('Move Folder'),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              height: 4,
+              width: 40,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+
+            // Folder info header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Row(
+                children: [
+                  // Folder icon
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Color(folder.color).withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      folder.iconName != null
+                          ? IconData(
+                              int.parse('0x${folder.iconName}'),
+                              fontFamily: 'MaterialIcons',
+                            )
+                          : Icons.folder,
+                      color: Color(folder.color),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+
+                  // Folder name
+                  Expanded(
+                    child: Text(
+                      folder.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Divider(),
+
+            // Rename option
+            _buildFolderOptionTile(
+              context,
+              icon: Icons.edit_outlined,
+              title: 'Rename Folder',
+              description: 'Change folder name',
               onTap: () {
                 Navigator.pop(context);
+                _showRenameFolderDialog(context, ref, folder);
               },
             ),
-          ListTile(
-            leading: const Icon(Icons.delete, color: Colors.red),
-            title: const Text('Delete', style: TextStyle(color: Colors.red)),
-            onTap: () {
-              Navigator.pop(context);
-              _showDeleteFolderConfirmation(context, ref, folder);
-            },
-          ),
-        ],
+
+            // Change color option
+            _buildFolderOptionTile(
+              context,
+              icon: Icons.palette_outlined,
+              title: 'Change Color',
+              description: 'Customize folder appearance',
+              onTap: () {
+                Navigator.pop(context);
+                _showChangeFolderColorDialog(context, ref, folder);
+              },
+            ),
+
+            // Move folder option (only for non-root folders)
+            if (folder.parentId != null)
+              _buildFolderOptionTile(
+                context,
+                icon: Icons.drive_file_move_outlined,
+                title: 'Move Folder',
+                description: 'Change folder location',
+                onTap: () {
+                  Navigator.pop(context);
+                  // Implementation for moving folder
+                },
+              ),
+
+            const SizedBox(height: 8),
+            const Divider(),
+            const SizedBox(height: 8),
+
+            // Delete option
+            _buildFolderOptionTile(
+              context,
+              icon: Icons.delete_outlined,
+              iconColor: Colors.red,
+              title: 'Delete Folder',
+              description: 'Remove folder and move contents',
+              textColor: Colors.red,
+              onTap: () {
+                Navigator.pop(context);
+                _showDeleteFolderConfirmation(context, ref, folder);
+              },
+            ),
+
+            // Bottom padding for safe area
+            SizedBox(height: MediaQuery.of(context).padding.bottom),
+          ],
+        ),
       ),
     );
   }
 
-  void _showDocumentOptions(
-      BuildContext context, WidgetRef ref, Document document) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.remove_red_eye),
-            title: const Text('View'),
-            onTap: () {
-              Navigator.pop(context);
-              AppRoutes.navigateToView(context, document);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text('Rename'),
-            onTap: () {
-              Navigator.pop(context);
-              _showRenameDocumentDialog(context, ref, document);
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              document.isFavorite ? Icons.star : Icons.star_border,
+  Widget _buildFolderOptionTile(
+    BuildContext context, {
+    required IconData icon,
+    Color? iconColor,
+    required String title,
+    required String description,
+    Color? textColor,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: (iconColor ?? Theme.of(context).primaryColor)
+                    .withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: iconColor ?? Theme.of(context).primaryColor,
+                size: 20,
+              ),
             ),
-            title: Text(
-              document.isFavorite
-                  ? 'Remove from Favorites'
-                  : 'Add to Favorites',
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
+                  ),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            onTap: () {
-              Navigator.pop(context);
-              _toggleFavorite(ref, document);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.folder),
-            title: const Text('Move to Another Folder'),
-            onTap: () {
-              Navigator.pop(context);
-              _showMoveDocumentDialog(context, ref, document);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.share),
-            title: const Text('Share'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.delete, color: Colors.red),
-            title: const Text('Delete', style: TextStyle(color: Colors.red)),
-            onTap: () {
-              Navigator.pop(context);
-              _showDeleteDocumentConfirmation(context, ref, document);
-            },
-          ),
-        ],
+            Icon(
+              Icons.chevron_right,
+              color: Colors.grey.shade400,
+              size: 20,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -573,187 +734,6 @@ class FolderScreen extends ConsumerWidget {
               if (folder.id == this.folder.id) {
                 Navigator.pop(context);
               }
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showRenameDocumentDialog(
-      BuildContext context, WidgetRef ref, Document document) {
-    final TextEditingController controller =
-        TextEditingController(text: document.name);
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Rename Document'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'Document Name',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                final updatedDoc = Document(
-                  id: document.id,
-                  name: controller.text.trim(),
-                  pdfPath: document.pdfPath,
-                  pagesPaths: document.pagesPaths,
-                  pageCount: document.pageCount,
-                  thumbnailPath: document.thumbnailPath,
-                  createdAt: document.createdAt,
-                  modifiedAt: DateTime.now(),
-                  tags: document.tags,
-                  folderId: document.folderId,
-                  isFavorite: document.isFavorite,
-                  isPasswordProtected: document.isPasswordProtected,
-                  password: document.password,
-                );
-
-                ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('Rename'),
-          ),
-        ],
-      ),
-    ).then((_) => controller.dispose());
-  }
-
-  void _toggleFavorite(WidgetRef ref, Document document) {
-    final updatedDoc = Document(
-      id: document.id,
-      name: document.name,
-      pdfPath: document.pdfPath,
-      pagesPaths: document.pagesPaths,
-      pageCount: document.pageCount,
-      thumbnailPath: document.thumbnailPath,
-      createdAt: document.createdAt,
-      modifiedAt: DateTime.now(),
-      tags: document.tags,
-      folderId: document.folderId,
-      isFavorite: !document.isFavorite,
-      isPasswordProtected: document.isPasswordProtected,
-      password: document.password,
-    );
-
-    ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
-  }
-
-  void _showMoveDocumentDialog(
-      BuildContext context, WidgetRef ref, Document document) {
-    final folders = ref.read(foldersProvider);
-    String? selectedFolderId = document.folderId;
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Move Document'),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: folders.isEmpty
-                  ? const Center(
-                      child: Text('No folders available.'),
-                    )
-                  : ListView(
-                      shrinkWrap: true,
-                      children: [
-                        RadioListTile<String?>(
-                          title: const Text('Root (No Folder)'),
-                          value: null,
-                          groupValue: selectedFolderId,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedFolderId = value;
-                            });
-                          },
-                        ),
-                        ...folders
-                            .where((f) => f.id != folder.id)
-                            .map((folder) {
-                          return RadioListTile<String?>(
-                            title: Text(folder.name),
-                            value: folder.id,
-                            groupValue: selectedFolderId,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedFolderId = value;
-                              });
-                            },
-                          );
-                        }),
-                      ],
-                    ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  final updatedDoc = Document(
-                    id: document.id,
-                    name: document.name,
-                    pdfPath: document.pdfPath,
-                    pagesPaths: document.pagesPaths,
-                    pageCount: document.pageCount,
-                    thumbnailPath: document.thumbnailPath,
-                    createdAt: document.createdAt,
-                    modifiedAt: DateTime.now(),
-                    tags: document.tags,
-                    folderId: selectedFolderId,
-                    isFavorite: document.isFavorite,
-                    isPasswordProtected: document.isPasswordProtected,
-                    password: document.password,
-                  );
-
-                  ref
-                      .read(documentsProvider.notifier)
-                      .updateDocument(updatedDoc);
-                  Navigator.pop(context);
-                },
-                child: const Text('Move'),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  void _showDeleteDocumentConfirmation(
-      BuildContext context, WidgetRef ref, Document document) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Document'),
-        content: Text('Are you sure you want to delete "${document.name}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              ref.read(documentsProvider.notifier).deleteDocument(document.id);
-              Navigator.pop(context);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),
