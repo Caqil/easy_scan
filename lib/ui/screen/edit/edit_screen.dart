@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:easy_scan/ui/screen/camera/component/scan_initial_view.dart';
 import 'package:easy_scan/ui/screen/camera/component/scanned_documents_view.dart';
+import 'package:easy_scan/utils/file_utils.dart';
 import 'package:easy_scan/utils/permission_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +21,7 @@ import '../../common/dialogs.dart';
 import 'component/document_name_input.dart';
 import 'component/document_preview.dart';
 import 'component/save_button.dart';
+import 'package:path/path.dart' as path;
 
 class EditScreen extends ConsumerStatefulWidget {
   final Document? document; // Optional parameter
@@ -603,27 +605,56 @@ class _EditScreenState extends ConsumerState<EditScreen> {
     try {
       // Create a clean document name
       final String documentName = _documentNameController.text.trim();
+      String filePath;
+      int pageCount = _pages.length;
+      String fileExtension;
 
-      // Generate thumbnails for the first page
+      // Generate thumbnail for the first page
       final File thumbnailFile = await _imageService.createThumbnail(
         _pages[0],
         size: AppConstants.thumbnailSize,
       );
 
-      // Create PDF from images
-      final String pdfPath = await _pdfService.createPdfFromImages(
-        _pages,
-        documentName,
-      );
+      // Check file type of the first page to determine processing method
+      fileExtension =
+          path.extension(_pages[0].path).toLowerCase().replaceAll('.', '');
 
-      // Get number of pages
-      final int pageCount = await _pdfService.getPdfPageCount(pdfPath);
+      // Handle different file types
+      if (_pages.length == 1 &&
+          (fileExtension == 'txt' ||
+              fileExtension == 'html' ||
+              fileExtension == 'md' ||
+              fileExtension == 'rtf')) {
+        // For text files, just copy the file if it's a single page
+        filePath = await _copyFile(_pages[0], documentName, fileExtension);
+        pageCount = 1;
+      } else if (_pages.length == 1 &&
+          (fileExtension == 'jpg' ||
+              fileExtension == 'jpeg' ||
+              fileExtension == 'png' ||
+              fileExtension == 'webp' ||
+              fileExtension == 'gif')) {
+        // For single image files, just copy or optimize if requested
+        filePath =
+            await _processSingleImage(_pages[0], documentName, fileExtension);
+        pageCount = 1;
+      } else {
+        // For multiple pages or mixed content, convert to PDF
+        filePath = await _pdfService.createPdfFromImages(
+          _pages,
+          documentName,
+        );
+
+        // Get number of pages for PDF
+        pageCount = await _pdfService.getPdfPageCount(filePath);
+        fileExtension = 'pdf';
+      }
 
       if (_isEditingExistingDocument) {
         // Update existing document
         final updatedDocument = widget.document!.copyWith(
           name: documentName,
-          pdfPath: pdfPath,
+          pdfPath: filePath,
           pagesPaths: _pages.map((file) => file.path).toList(),
           pageCount: pageCount,
           thumbnailPath: thumbnailFile.path,
@@ -647,7 +678,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
         // Create new document model
         final document = Document(
           name: documentName,
-          pdfPath: pdfPath,
+          pdfPath: filePath, // Main file path (PDF or original format)
           pagesPaths: _pages.map((file) => file.path).toList(),
           pageCount: pageCount,
           thumbnailPath: thumbnailFile.path,
@@ -656,11 +687,12 @@ class _EditScreenState extends ConsumerState<EditScreen> {
         // Save document to storage
         await ref.read(documentsProvider.notifier).addDocument(document);
 
-        // Show success message
+        // Show success message with appropriate file type
         if (mounted) {
           AppDialogs.showSnackBar(
             context,
-            message: 'Document saved successfully',
+            message:
+                'Document saved successfully as ${fileExtension.toUpperCase()}',
             type: SnackBarType.success,
           );
         }
@@ -688,6 +720,41 @@ class _EditScreenState extends ConsumerState<EditScreen> {
           _isProcessing = false;
         });
       }
+    }
+  }
+
+// Helper to copy a single file with a new name
+  Future<String> _copyFile(
+      File sourceFile, String documentName, String extension) async {
+    final String targetPath = await FileUtils.getUniqueFilePath(
+      documentName: documentName,
+      extension: extension,
+    );
+
+    // Copy the file
+    final File newFile = await sourceFile.copy(targetPath);
+    return newFile.path;
+  }
+
+// Helper to process a single image (with optional optimization)
+  Future<String> _processSingleImage(
+      File imageFile, String documentName, String extension) async {
+    final String targetPath = await FileUtils.getUniqueFilePath(
+      documentName: documentName,
+      extension: extension,
+    );
+
+    try {
+      // For now, just copy the file
+      // You could add optimization here if needed in the future
+      final File newFile = await imageFile.copy(targetPath);
+      return newFile.path;
+    } catch (e) {
+      // If copying fails, try to read and write the bytes directly
+      final bytes = await imageFile.readAsBytes();
+      final File newFile = File(targetPath);
+      await newFile.writeAsBytes(bytes);
+      return newFile.path;
     }
   }
 }

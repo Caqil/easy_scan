@@ -1,10 +1,10 @@
-
+import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/ui/screen/conversion/conversion_screen.dart';
 import 'package:flutter/material.dart';
 import '../models/document.dart';
 import '../models/folder.dart';
 import '../ui/screen/edit/edit_screen.dart';
-import '../ui/screen/folder_screen.dart';
+import '../ui/screen/folder/folder_screen.dart';
 import '../ui/screen/home/home_screen.dart';
 import '../ui/screen/settings_screen.dart';
 import '../ui/screen/view_screen.dart';
@@ -47,7 +47,7 @@ class AppRoutes {
             builder: (_) => ViewScreen(document: document));
       case folderRoute:
         final Folder folder = routeSettings.arguments as Folder;
-        return MaterialPageRoute(builder: (_) => FolderScreen(folder: folder));
+        return MaterialPageRoute(builder: (_) => FolderScreen());
       case settings: // This line works now because 'settings' refers to the constant, not the parameter
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
       default:

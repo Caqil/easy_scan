@@ -1,4 +1,5 @@
 import 'package:easy_scan/config/routes.dart';
+import 'package:easy_scan/ui/screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,9 +23,7 @@ class DocApp extends ConsumerWidget {
             darkTheme: AppTheme.dark,
             themeMode: settings.darkMode ? ThemeMode.dark : ThemeMode.light,
             onGenerateRoute: AppRoutes.generateRoute,
-
-            // Change this to use the named route
-            initialRoute: AppRoutes.home,
+            home: const MainScreen(),
           );
         });
   }

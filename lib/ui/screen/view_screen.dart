@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:easy_scan/providers/document_provider.dart';
+import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -370,8 +371,10 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                     ),
                                     const SizedBox(height: 8),
                                     _buildInfoRow(
-                                      icon: Icons.insert_drive_file_outlined,
-                                      label: 'PDF Document',
+                                      icon: FileUtils.getFileTypeIcon(
+                                          widget.document.pdfPath),
+                                      label: FileUtils.getFileTypeLabel(
+                                          widget.document.pdfPath),
                                       isDarkMode: isDarkMode,
                                     ),
                                     _buildInfoRow(

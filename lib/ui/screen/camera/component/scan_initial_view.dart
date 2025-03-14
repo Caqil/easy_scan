@@ -16,7 +16,7 @@ class ScanInitialView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
         boxShadow: [
           BoxShadow(
@@ -68,7 +68,6 @@ class ScanInitialView extends StatelessWidget {
       style: GoogleFonts.notoSerif(
         fontSize: 24.sp,
         fontWeight: FontWeight.bold,
-        color: Colors.black87,
       ),
     );
   }

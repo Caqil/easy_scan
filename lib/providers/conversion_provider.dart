@@ -6,7 +6,6 @@ import 'package:easy_scan/models/conversion.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/models/format_category.dart';
 import 'package:easy_scan/services/conversion_service.dart';
-import 'package:easy_scan/services/image_service.dart';
 import 'package:easy_scan/services/pdf_service.dart';
 import 'package:easy_scan/services/thumbnail_service.dart';
 import 'package:easy_scan/utils/constants.dart';
@@ -161,17 +160,35 @@ class ConversionNotifier extends StateNotifier<ConversionState> {
       // Create a document name from the original filename
       final fileName = path.basename(filePath);
       final documentName = path.basenameWithoutExtension(fileName);
+      final fileExtension = outputFormat.id.toLowerCase();
 
-      // Get page count if it's a PDF
+      // Validate that the file exists
+      final file = File(filePath);
+      if (!await file.exists()) {
+        throw Exception('File does not exist: $filePath');
+      }
+
+      // Get page count based on file type
       int pageCount = 1;
-      if (outputFormat.id.toLowerCase() == 'pdf') {
+      if (fileExtension == 'pdf') {
         final pdfService = PdfService();
         pageCount = await pdfService.getPdfPageCount(filePath);
+      } else if (['doc', 'docx', 'odt', 'rtf', 'txt'].contains(fileExtension)) {
+        // Text documents typically have one page in our document model
+        pageCount = 1;
+      } else if (['ppt', 'pptx', 'odp'].contains(fileExtension)) {
+        // For presentations, we could estimate pages, but we'll default to 1
+        pageCount = 1;
+      } else if (['xls', 'xlsx', 'csv', 'ods'].contains(fileExtension)) {
+        // For spreadsheets, we'll default to 1 page
+        pageCount = 1;
       }
-      if (thumbnailPath != null && File(thumbnailPath).existsSync()) {
+
+      // Use provided thumbnail path or generate one
+      if (thumbnailPath != null && await File(thumbnailPath).exists()) {
         thumbnailFile = File(thumbnailPath);
       } else {
-        // Generate a thumbnail if not already generated
+        // Generate a thumbnail if not already provided
         final thumbnailService = ThumbnailService();
 
         try {
@@ -181,12 +198,14 @@ class ConversionNotifier extends StateNotifier<ConversionState> {
           );
         } catch (e) {
           print('Failed to generate thumbnail: $e');
+          // Continue without thumbnail - it's not critical
         }
       }
+
+      // Create the document model
       final document = Document(
         name: documentName,
-        pdfPath:
-            filePath, // This field is named pdfPath but we're using it for all file types
+        pdfPath: filePath, // This field stores the path for all file types
         pagesPaths: [filePath],
         pageCount: pageCount,
         thumbnailPath: thumbnailFile?.path,
@@ -194,53 +213,13 @@ class ConversionNotifier extends StateNotifier<ConversionState> {
 
       // Save document to Hive via provider
       await ref.read(documentsProvider.notifier).addDocument(document);
-    } catch (e) {}
-  }
 
-  Future<void> _saveConvertedFileToLibrary(
-      String filePath, String outputFormat) async {
-    try {
-      // Generate a thumbnail for the converted file
-      final imageService = ImageService();
-      File? thumbnailFile;
-
-      // Only try to create thumbnail if it's a supported format
-      if (['pdf', 'jpg', 'jpeg', 'png'].contains(outputFormat.toLowerCase())) {
-        try {
-          thumbnailFile = await imageService.createThumbnail(
-            File(filePath),
-            size: AppConstants.thumbnailSize,
-          );
-        } catch (e) {
-          print('Failed to generate thumbnail: $e');
-        }
-      }
-
-      // Create a document name from the original filename
-      final fileName = path.basename(filePath);
-      final documentName = path.basenameWithoutExtension(fileName);
-
-      // Get page count if it's a PDF
-      int pageCount = 1;
-      if (outputFormat.toLowerCase() == 'pdf') {
-        final pdfService = PdfService();
-        pageCount = await pdfService.getPdfPageCount(filePath);
-      }
-
-      // Create document model
-      final document = Document(
-        name: documentName,
-        pdfPath: filePath,
-        pagesPaths: [filePath],
-        pageCount: pageCount,
-        thumbnailPath: thumbnailFile?.path,
-      );
-
-      // Save document to Hive via provider
-      await _ref.read(documentsProvider.notifier).addDocument(document);
+      print(
+          'Document saved successfully: ${document.name} (${outputFormat.id})');
     } catch (e) {
-      print('Error saving converted file to library: $e');
-      // Don't throw, just log the error
+      print('Error saving document to library: $e');
+      // Rethrow to allow the caller to handle the error if needed
+      rethrow;
     }
   }
 

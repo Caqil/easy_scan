@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:path/path.dart' as path;
 import '../../models/document.dart';
 import '../../providers/document_provider.dart';
 import '../../utils/date_utils.dart';
@@ -57,6 +57,8 @@ class _DocumentOptionsSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final extension = path.extension(document.pdfPath).toLowerCase();
+    final isPdf = extension == '.pdf';
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -215,22 +217,23 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     }
                   },
                 ),
-                _buildOptionTile(
-                  context,
-                  icon: document.isPasswordProtected
-                      ? Icons.lock_outline
-                      : Icons.lock_open_outlined,
-                  title: document.isPasswordProtected
-                      ? 'Change Password'
-                      : 'Add Password',
-                  description: document.isPasswordProtected
-                      ? 'Update document security'
-                      : 'Protect with a password',
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showPasswordBottomSheet(context, document);
-                  },
-                ),
+                if (isPdf)
+                  _buildOptionTile(
+                    context,
+                    icon: document.isPasswordProtected
+                        ? Icons.lock_outline
+                        : Icons.lock_open_outlined,
+                    title: document.isPasswordProtected
+                        ? 'Change Password'
+                        : 'Add Password',
+                    description: document.isPasswordProtected
+                        ? 'Update document security'
+                        : 'Protect with a password',
+                    onTap: () {
+                      Navigator.pop(context);
+                      _showPasswordBottomSheet(context, document);
+                    },
+                  ),
                 const SizedBox(height: 8),
                 const Divider(),
                 const SizedBox(height: 8),
