@@ -1,16 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../models/format_category.dart';
 import '../../../providers/conversion_provider.dart';
 import '../../../utils/date_utils.dart';
 import '../../../ui/common/app_bar.dart';
 import '../../../ui/common/dialogs.dart';
-import '../../../ui/common/loading.dart';
 import 'components/format_selection.dart';
 
 class ConversionScreen extends ConsumerWidget {
@@ -299,7 +297,6 @@ class ConversionScreen extends ConsumerWidget {
                   ),
                 ],
 
-                // Success message
                 if (state.convertedFilePath != null) ...[
                   Container(
                     padding: EdgeInsets.all(16.w),
@@ -349,7 +346,7 @@ class ConversionScreen extends ConsumerWidget {
                             Expanded(
                               child: OutlinedButton.icon(
                                 onPressed: () {
-                                  // Implement share functionality
+                                  // Share functionality
                                   AppDialogs.showSnackBar(
                                     context,
                                     message: "Sharing file...",
@@ -360,6 +357,38 @@ class ConversionScreen extends ConsumerWidget {
                               ),
                             ),
                           ],
+                        ),
+                        SizedBox(height: 12.h),
+                        // Add this button to save to library
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              if (state.convertedFilePath != null &&
+                                  state.outputFormat != null) {
+                                ref
+                                    .read(conversionStateProvider.notifier)
+                                    .saveConvertedFileAsDocument(
+                                      state.convertedFilePath!,
+                                      state.outputFormat!,
+                                      ref,
+                                    );
+
+                                // Show success message
+                                AppDialogs.showSnackBar(
+                                  context,
+                                  type: SnackBarType.success,
+                                  message: 'Document saved to your library',
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.save_alt),
+                            label: const Text("Save to Library"),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.green.shade700,
+                              side: BorderSide(color: Colors.green.shade700),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -375,9 +404,26 @@ class ConversionScreen extends ConsumerWidget {
                             state.outputFormat == null ||
                             state.isConverting)
                         ? null
-                        : () => ref
-                            .read(conversionStateProvider.notifier)
-                            .convertFile(),
+                        : () {
+                            ref
+                                .read(conversionStateProvider.notifier)
+                                .convertFile(
+                              onSuccess: () async {
+                                AppDialogs.showSnackBar(
+                                  context,
+                                  message: "Conversion completed successfully!",
+                                  type: SnackBarType.success,
+                                );
+                              },
+                              onFailure: (error) {
+                                AppDialogs.showSnackBar(
+                                  context,
+                                  message: "Conversion failed: $error",
+                                  type: SnackBarType.error,
+                                );
+                              },
+                            );
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       foregroundColor: Colors.white,
@@ -437,15 +483,6 @@ class ConversionScreen extends ConsumerWidget {
               ],
             ),
           ),
-
-          // Overlay loading indicator for conversion process
-          if (state.isConverting)
-            Container(
-              color: Colors.black.withOpacity(0.3),
-              child: const Center(
-                child: LoadingIndicator(message: "Converting file..."),
-              ),
-            ),
         ],
       ),
     );
@@ -516,8 +553,9 @@ class ConversionScreen extends ConsumerWidget {
   String _formatFileSize(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024)
+    if (bytes < 1024 * 1024 * 1024) {
       return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 

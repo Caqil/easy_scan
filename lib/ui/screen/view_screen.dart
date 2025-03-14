@@ -11,7 +11,7 @@ import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_scan/utils/date_utils.dart';
-import '../widget/pdf_viewer.dart';
+import 'home/widget/document_viewer_widget.dart';
 
 class ViewScreen extends ConsumerStatefulWidget {
   final Document document;
@@ -119,13 +119,12 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
             // PDF Viewer
             Positioned.fill(
               child: Hero(
-                tag: 'document_${widget.document.id}',
-                child: PDFViewerWidget(
-                  document: widget.document,
-                  showAppBar: false,
-                  onShare: _shareDocument,
-                ),
-              ),
+                  tag: 'document_${widget.document.id}',
+                  child: DocumentViewerWidget(
+                    document: widget.document,
+                    showAppBar: false,
+                    onShare: _shareDocument,
+                  )),
             ),
 
             // Top toolbar with animation
@@ -364,7 +363,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                   children: [
                                     Text(
                                       widget.document.name,
-                                      style:  GoogleFonts.notoSerif(
+                                      style: GoogleFonts.notoSerif(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.bold,
                                       ),

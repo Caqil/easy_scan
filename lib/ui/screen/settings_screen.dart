@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_scan/providers/settings_provider.dart';
 import 'package:easy_scan/services/auth_service.dart';
-import 'package:easy_scan/services/storage_service.dart';
 import 'package:easy_scan/ui/common/app_bar.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/utils/permission_utils.dart';
@@ -16,7 +15,6 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     final authService = AuthService();
-    final storageService = StorageService();
 
     return Scaffold(
       appBar: const CustomAppBar(
@@ -262,41 +260,6 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  void _showSaveLocationDialog(
-      BuildContext context, WidgetRef ref, String currentLocation) {
-    showCupertinoDialog(
-        context: context,
-        builder: (context) => StatefulBuilder(
-              builder: (context, setState) => AlertDialog(
-                title: const Text('Default Save Location'),
-                actions: [
-                  RadioListTile<String>(
-                    title: const Text('Device Storage'),
-                    value: 'local',
-                    groupValue: currentLocation,
-                    onChanged: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setDefaultSaveLocation(value!);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  RadioListTile<String>(
-                    title: const Text('Cloud Storage'),
-                    value: 'cloud',
-                    groupValue: currentLocation,
-                    onChanged: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setDefaultSaveLocation(value!);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            ));
   }
 }
 

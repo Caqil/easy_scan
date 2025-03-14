@@ -65,7 +65,6 @@ class PdfImportService {
       extension: 'pdf',
     );
 
-    final File targetFile = await sourceFile.copy(targetPath);
     final int pageCount = await _pdfService.getPdfPageCount(targetPath);
 
     File? thumbnailFile;

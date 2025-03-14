@@ -13,6 +13,7 @@ class ConversionState {
   final bool ocrEnabled;
   final int quality;
   final String? password;
+  final String? thumbnailPath;
 
   ConversionState({
     this.inputFormat,
@@ -25,6 +26,7 @@ class ConversionState {
     this.ocrEnabled = false,
     this.quality = 90,
     this.password,
+    this.thumbnailPath,
   });
 
   ConversionState copyWith({
@@ -38,6 +40,7 @@ class ConversionState {
     bool? ocrEnabled,
     int? quality,
     String? password,
+    String? thumbnailPath,
   }) {
     return ConversionState(
       inputFormat: inputFormat ?? this.inputFormat,
@@ -50,6 +53,7 @@ class ConversionState {
       ocrEnabled: ocrEnabled ?? this.ocrEnabled,
       quality: quality ?? this.quality,
       password: password ?? this.password,
+      thumbnailPath: thumbnailPath ?? this.thumbnailPath,
     );
   }
 }

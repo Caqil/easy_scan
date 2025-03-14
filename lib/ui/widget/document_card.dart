@@ -107,7 +107,7 @@ class DocumentCard extends StatelessWidget {
                           document.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style:  GoogleFonts.notoSerif(
+                          style: GoogleFonts.notoSerif(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
