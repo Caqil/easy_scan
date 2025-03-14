@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/services/share_service.dart';
 import 'package:easy_scan/ui/common/document_actions.dart';
@@ -7,6 +8,9 @@ import 'package:easy_scan/ui/common/folder_creator.dart';
 import 'package:easy_scan/ui/common/folder_selection.dart';
 import 'package:easy_scan/ui/common/folders_grid.dart';
 import 'package:easy_scan/ui/common/import_options.dart';
+import 'package:easy_scan/ui/screen/camera/camera_screen.dart';
+import 'package:easy_scan/ui/screen/camera/component/scan_initial_view.dart';
+import 'package:easy_scan/utils/permission_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -115,7 +119,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: const EdgeInsets.all(16.0),
                 children: [
                   QuickActions(
-                    onScan: () => AppRoutes.navigateToCamera(context),
+                    onScan: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height *
+                                0.5, // Half screen height
+                            child: ScanInitialView(
+                              onScanPressed: _scanDocuments,
+                              onImportPressed: _pickImages,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                     onImport: () {
                       ImportOptions.showImportOptions(
                         context,
@@ -132,7 +155,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     RecentDocuments(
                       documents: recentDocuments,
                       onDocumentTap: (doc) =>
-                          AppRoutes.navigateToEdit(context, document: doc.id),
+                          AppRoutes.navigateToEdit(context, document: doc),
                       onMorePressed: (Document document) {
                         DocumentActions.showDocumentOptions(
                           context,
@@ -204,8 +227,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   if (recentDocuments.isEmpty &&
                       rootFolders.isEmpty &&
                       allDocuments.isEmpty)
-                    EmptyState(
-                        onScan: () => AppRoutes.navigateToCamera(context)),
+                    EmptyState(onScan: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height *
+                                0.5, // Half screen height
+                            child: ScanInitialView(
+                              onScanPressed: _scanDocuments,
+                              onImportPressed: _pickImages,
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
                 ],
               ),
             ),
@@ -217,11 +258,214 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => AppRoutes.navigateToCamera(context),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height *
+                    0.5, // Half screen height
+                child: ScanInitialView(
+                  onScanPressed: _scanDocuments,
+                  onImportPressed: _pickImages,
+                ),
+              ),
+            ),
+          );
+        },
         icon: const Icon(Icons.camera_alt),
         label: const Text('Scan'),
       ),
     );
+  }
+
+  void _showPermissionDialog() {
+    AppDialogs.showConfirmDialog(
+      context,
+      title: 'Permission Required',
+      message:
+          'Camera permission is needed to scan documents. Would you like to open app settings?',
+      confirmText: 'Open Settings',
+      cancelText: 'Cancel',
+    ).then((confirmed) {
+      if (confirmed) {
+        PermissionUtils.openAppSettings();
+      }
+    });
+  }
+
+  Future<void> _scanDocuments() async {
+    // Check for camera permission first
+    final hasPermission = await PermissionUtils.hasCameraPermission();
+    if (!hasPermission) {
+      final granted = await PermissionUtils.requestCameraPermission();
+      if (!granted) {
+        _showPermissionDialog();
+        return;
+      }
+    }
+
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Get the pictures - this will show the scanner UI
+      List<String> imagePaths = [];
+      try {
+        imagePaths = await CunningDocumentScanner.getPictures(
+                isGalleryImportAllowed: true) ??
+            [];
+      } catch (e) {
+        if (mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'Error scanning: ${e.toString()}',
+          );
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // User canceled or no images captured
+      if (imagePaths.isEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Pre-process path validation
+      List<File> validImageFiles = [];
+      for (String path in imagePaths) {
+        final File file = File(path);
+        if (await file.exists()) {
+          validImageFiles.add(file);
+        }
+      }
+
+      if (validImageFiles.isEmpty) {
+        if (mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'No valid images found',
+          );
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Processing loading screen
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Processing scanned images...')
+              ],
+            ),
+          ),
+        );
+      }
+
+      // Process all images and add to scan provider
+      ref.read(scanProvider.notifier).clearPages(); // Clear any existing pages
+
+      for (File imageFile in validImageFiles) {
+        try {
+          ref.read(scanProvider.notifier).addPage(imageFile);
+        } catch (e) {
+          // Just skip failed images to improve reliability
+          print('Failed to process image: $e');
+        }
+      }
+
+      // Close the processing dialog
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // If we have pages, navigate to edit screen
+      if (ref.read(scanProvider).hasPages) {
+        if (mounted) {
+          // Navigate to edit screen
+          AppRoutes.navigateToEdit(context);
+        }
+      }
+    } catch (e) {
+      // Close the processing dialog if it's open
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error: ${e.toString()}',
+        );
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _pickImages() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final List<XFile> images = await _imagePicker.pickMultiImage();
+      if (images.isEmpty || !mounted) {
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      // Clear any existing pages
+      ref.read(scanProvider.notifier).clearPages();
+
+      for (var image in images) {
+        final File imageFile = File(image.path);
+        ref.read(scanProvider.notifier).addPage(imageFile);
+      }
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (ref.read(scanProvider).hasPages) {
+          if (mounted) {
+            AppRoutes.navigateToEdit(context);
+            setState(() {});
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        AppDialogs.showSnackBar(context, message: 'Error: ${e.toString()}');
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   Future<void> _shareDocument(
@@ -587,8 +831,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
         // Navigate to edit screen
         if (ref.read(scanProvider).scannedPages.isNotEmpty) {
-          // ignore: use_build_context_synchronously
-          AppRoutes.navigateToEdit(context);
+          setState(() {});
         }
       }
     } catch (e) {

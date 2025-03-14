@@ -1,10 +1,8 @@
+
 import 'package:easy_scan/ui/screen/conversion/conversion_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/document.dart';
 import '../models/folder.dart';
-import '../ui/screen/camera/camera_screen.dart';
-import '../ui/screen/conversion/components/format_selection.dart';
 import '../ui/screen/edit/edit_screen.dart';
 import '../ui/screen/folder_screen.dart';
 import '../ui/screen/home/home_screen.dart';
@@ -27,12 +25,20 @@ class AppRoutes {
     switch (routeSettings.name) {
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-      case camera:
-        return MaterialPageRoute(builder: (_) => const CameraScreen());
+      // case camera:
+      //   return MaterialPageRoute(builder: (_) => const CameraScreen());
       case edit:
-        final Document document = routeSettings.arguments as Document;
-        return MaterialPageRoute(
-            builder: (_) => EditScreen(document: document));
+        // Handle both with and without document arguments
+        if (routeSettings.arguments != null) {
+          // For editing an existing document
+          return MaterialPageRoute(
+            builder: (_) =>
+                EditScreen(document: routeSettings.arguments as Document),
+          );
+        } else {
+          // For creating a new document from scan
+          return MaterialPageRoute(builder: (_) => const EditScreen());
+        }
       case conversion:
         return MaterialPageRoute(builder: (_) => const ConversionScreen());
       case view:
@@ -66,12 +72,18 @@ class AppRoutes {
     Navigator.pushNamed(context, camera);
   }
 
-  static void navigateToEdit(BuildContext context, {String? document}) {
-    Navigator.pushNamed(
-      context,
-      edit,
-      arguments: document,
-    );
+  static void navigateToEdit(BuildContext context, {Document? document}) {
+    if (document != null) {
+      // Navigate with an existing document for editing
+      Navigator.pushNamed(
+        context,
+        edit,
+        arguments: document,
+      );
+    } else {
+      // Navigate without a document for a new scan
+      Navigator.pushNamed(context, edit);
+    }
   }
 
   static void navigateToConversion(BuildContext context) {

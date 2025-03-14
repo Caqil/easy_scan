@@ -63,7 +63,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           ref,
           title: 'Add to This Folder',
           onCreateSubfolder: () => _showCreateFolderDialog(context, ref),
-          onScanDocument: () => AppRoutes.navigateToCamera(context),
+          onScanDocument: () => AppRoutes.navigateToEdit(context),
           onImportDocuments: () => _showImportDocumentsDialog(context, ref),
         ),
         child: const Icon(Icons.add),
@@ -421,7 +421,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             ),
           ),
           const SizedBox(height: 8),
-           Text(
+          Text(
             'Add documents or create subfolders',
             style: GoogleFonts.notoSerif(
               color: Colors.grey,
@@ -434,7 +434,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
               ref,
               title: 'Add to This Folder',
               onCreateSubfolder: () => _showCreateFolderDialog(context, ref),
-              onScanDocument: () => AppRoutes.navigateToCamera(context),
+              onScanDocument: () => AppRoutes.navigateToEdit(context),
               onImportDocuments: () => _showImportDocumentsDialog(context, ref),
             ),
             icon: const Icon(Icons.add),
@@ -504,7 +504,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                                     Text(document.name),
                                     Text(
                                       'Modified: ${document.modifiedAt.toString().substring(0, 10)}',
-                                      style:  GoogleFonts.notoSerif(
+                                      style: GoogleFonts.notoSerif(
                                         color: CupertinoColors.secondaryLabel,
                                         fontSize: 12.sp,
                                       ),
@@ -703,7 +703,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                   Expanded(
                     child: Text(
                       folder.name,
-                      style:  GoogleFonts.notoSerif(
+                      style: GoogleFonts.notoSerif(
                         fontWeight: FontWeight.bold,
                         fontSize: 16.sp,
                       ),

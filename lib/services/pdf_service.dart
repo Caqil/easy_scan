@@ -176,49 +176,4 @@ class PdfService {
 
     return pageCount;
   }
-
-  // Future<String?> generatePdfThumbnail(String pdfPath) async {
-  //   try {
-  //     final File file = File(pdfPath);
-  //     if (!await file.exists()) {
-  //       return null;
-  //     }
-
-  //     // Load the PDF document
-  //     final PdfDocument document = PdfDocument(
-  //       inputBytes: await file.readAsBytes(),
-  //     );
-
-  //     if (document.pages.count == 0) {
-  //       document.dispose();
-  //       return null;
-  //     }
-
-  //     // Render the first page as an image
-  //     final PdfBitmap bitmap = PdfBitmap(document.pages[0].renderAsImage(
-  //       width: 300, // Adjust as needed
-  //       height: 400, // Adjust as needed
-  //     ));
-
-  //     // Get the image bytes
-  //     final Uint8List imageBytes = bitmap.getBytes();
-
-  //     // Generate unique file path for thumbnail
-  //     final String thumbnailPath = await FileUtils.getUniqueFilePath(
-  //       documentName: '${path.basenameWithoutExtension(pdfPath)}_thumbnail',
-  //       extension: 'png',
-  //     );
-
-  //     final File thumbnailFile = File(thumbnailPath);
-  //     await thumbnailFile.writeAsBytes(imageBytes);
-
-  //     // Clean up
-  //     document.dispose();
-
-  //     return thumbnailPath;
-  //   } catch (e) {
-  //     print('Error generating thumbnail: $e');
-  //     return null;
-  //   }
-  // }
 }

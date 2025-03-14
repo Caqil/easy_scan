@@ -1,6 +1,13 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:cunning_document_scanner/cunning_document_scanner.dart';
+import 'package:easy_scan/ui/screen/camera/component/scan_initial_view.dart';
+import 'package:easy_scan/ui/screen/camera/component/scanned_documents_view.dart';
+import 'package:easy_scan/utils/permission_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:pro_image_editor/pro_image_editor.dart';
 import '../../../config/routes.dart';
 import '../../../models/document.dart';
 import '../../../providers/document_provider.dart';
@@ -15,11 +22,11 @@ import 'component/document_preview.dart';
 import 'component/save_button.dart';
 
 class EditScreen extends ConsumerStatefulWidget {
-  final Document document;
+  final Document? document; // Optional parameter
 
   const EditScreen({
     super.key,
-    required this.document,
+    this.document,
   });
 
   @override
@@ -32,10 +39,12 @@ class _EditScreenState extends ConsumerState<EditScreen> {
   final ImageService _imageService = ImageService();
   int _currentPageIndex = 0;
   bool _isProcessing = false;
+  bool _isEditView = true; // Controls view mode (preview vs. grid)
   late PageController _pageController;
   List<File> _pages = [];
   bool _isEditingExistingDocument = false;
-
+  final ImagePicker _imagePicker = ImagePicker();
+  bool _isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -43,7 +52,6 @@ class _EditScreenState extends ConsumerState<EditScreen> {
     _isEditingExistingDocument = widget.document != null;
 
     if (_isEditingExistingDocument) {
-      // Initialize with existing document data
       _documentNameController =
           TextEditingController(text: widget.document!.name);
       _loadExistingDocument();
@@ -103,15 +111,21 @@ class _EditScreenState extends ConsumerState<EditScreen> {
 
   void _checkIfEmpty() {
     final scanState = ref.read(scanProvider);
+    print("Scanned Pages: ${scanState.scannedPages}"); // Debugging
     if (scanState.scannedPages.isEmpty && !_isEditingExistingDocument) {
-      // No pages to edit, go back
       Navigator.pop(context);
     } else if (!_isEditingExistingDocument) {
-      // Load pages from scan provider
       setState(() {
         _pages = scanState.scannedPages;
       });
     }
+    print("_pages after check: $_pages"); // Debugging
+  }
+
+  void _toggleViewMode() {
+    setState(() {
+      _isEditView = !_isEditView;
+    });
   }
 
   @override
@@ -133,40 +147,205 @@ class _EditScreenState extends ConsumerState<EditScreen> {
       appBar: CustomAppBar(
         title: _buildAppBarTitle(colorScheme),
         elevation: 0,
-      ),
-      body: Column(
-        children: [
-          // Document name input
-          DocumentNameInput(
-            controller: _documentNameController,
-            colorScheme: colorScheme,
-          ),
-
-          // Document preview area
-          Expanded(
-            child: DocumentPreview(
-              pages: _pages,
-              currentPageIndex: _currentPageIndex,
-              pageController: _pageController,
-              isProcessing: _isProcessing,
-              colorScheme: colorScheme,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPageIndex = index;
-                });
-              },
-              onDeletePage: _deletePageAtIndex,
-            ),
-          ),
-
-          // Save button
-          SaveButton(
-            onSave: _saveDocument,
-            colorScheme: colorScheme,
+        actions: [
+          // Toggle view mode button
+          IconButton(
+            icon: Icon(_isEditView ? Icons.grid_view : Icons.edit),
+            tooltip: _isEditView ? 'Grid View' : 'Edit View',
+            onPressed: _toggleViewMode,
           ),
         ],
       ),
+      body: _isEditView
+          ? _buildEditView(colorScheme)
+          : _buildGridView(colorScheme),
     );
+  }
+
+  void _showPermissionDialog() {
+    AppDialogs.showConfirmDialog(
+      context,
+      title: 'Permission Required',
+      message:
+          'Camera permission is needed to scan documents. Would you like to open app settings?',
+      confirmText: 'Open Settings',
+      cancelText: 'Cancel',
+    ).then((confirmed) {
+      if (confirmed) {
+        PermissionUtils.openAppSettings();
+      }
+    });
+  }
+
+  Future<void> _scanDocuments() async {
+    // Check for camera permission first
+    final hasPermission = await PermissionUtils.hasCameraPermission();
+    if (!hasPermission) {
+      final granted = await PermissionUtils.requestCameraPermission();
+      if (!granted) {
+        _showPermissionDialog();
+        return;
+      }
+    }
+
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Get the pictures - this will show the scanner UI
+      List<String> imagePaths = [];
+      try {
+        imagePaths = await CunningDocumentScanner.getPictures(
+                isGalleryImportAllowed: true) ??
+            [];
+      } catch (e) {
+        if (mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'Error scanning: ${e.toString()}',
+          );
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // User canceled or no images captured
+      if (imagePaths.isEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Pre-process path validation
+      List<File> validImageFiles = [];
+      for (String path in imagePaths) {
+        final File file = File(path);
+        if (await file.exists()) {
+          validImageFiles.add(file);
+        }
+      }
+
+      if (validImageFiles.isEmpty) {
+        if (mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'No valid images found',
+          );
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Processing loading screen
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Processing scanned images...')
+              ],
+            ),
+          ),
+        );
+      }
+
+      // Process all images and add to scan provider
+      ref.read(scanProvider.notifier).clearPages(); // Clear any existing pages
+
+      for (File imageFile in validImageFiles) {
+        try {
+          ref.read(scanProvider.notifier).addPage(imageFile);
+        } catch (e) {
+          // Just skip failed images to improve reliability
+          print('Failed to process image: $e');
+        }
+      }
+
+      // Close the processing dialog
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // If we have pages, navigate to edit screen
+      if (ref.read(scanProvider).hasPages) {
+        if (mounted) {
+          _pages.isNotEmpty
+              ? Navigator.pop(context)
+              : AppRoutes.navigateToEdit(context);
+        }
+      }
+    } catch (e) {
+      // Close the processing dialog if it's open
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error: ${e.toString()}',
+        );
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _pickImages() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final List<XFile> images = await _imagePicker.pickMultiImage();
+      if (images.isEmpty || !mounted) {
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      // Clear any existing pages
+      ref.read(scanProvider.notifier).clearPages();
+
+      for (var image in images) {
+        final File imageFile = File(image.path);
+        ref.read(scanProvider.notifier).addPage(imageFile);
+      }
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (ref.read(scanProvider).hasPages) {
+          if (mounted) {
+            _pages.isNotEmpty
+                ? Navigator.pop(context)
+                : AppRoutes.navigateToEdit(context);
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        AppDialogs.showSnackBar(context, message: 'Error: ${e.toString()}');
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   Widget _buildAppBarTitle(ColorScheme colorScheme) {
@@ -176,6 +355,95 @@ class _EditScreenState extends ConsumerState<EditScreen> {
         fontWeight: FontWeight.bold,
       ),
     );
+  }
+
+  Widget _buildEditView(ColorScheme colorScheme) {
+    return Column(
+      children: [
+        DocumentNameInput(
+          controller: _documentNameController,
+          colorScheme: colorScheme,
+        ),
+        Expanded(
+          child: DocumentPreview(
+            pages: _pages,
+            currentPageIndex: _currentPageIndex,
+            pageController: _pageController,
+            isProcessing: _isProcessing,
+            colorScheme: colorScheme,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPageIndex = index;
+              });
+            },
+            onDeletePage: _deletePageAtIndex,
+          ),
+        ),
+
+        // Save button
+        SaveButton(
+          onSave: _saveDocument,
+          colorScheme: colorScheme,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGridView(ColorScheme colorScheme) {
+    return Column(
+      children: [
+        // Document name input at top
+        DocumentNameInput(
+          controller: _documentNameController,
+          colorScheme: colorScheme,
+        ),
+
+        // Grid view of scanned pages
+        Expanded(
+          child: ScannedDocumentsView(
+            pages: _pages,
+            currentIndex: _currentPageIndex,
+            isProcessing: _isProcessing,
+            onPageTap: (index) {
+              setState(() {
+                _currentPageIndex = index;
+              });
+              _openImageEditor();
+            },
+            onPageRemove: _deletePageAtIndex,
+            onPagesReorder: _reorderPages,
+            onAddMore: _addMorePages,
+          ),
+        ),
+
+        // Save button
+        SaveButton(
+          onSave: _saveDocument,
+          colorScheme: colorScheme,
+        ),
+      ],
+    );
+  }
+
+  void _reorderPages(int oldIndex, int newIndex) {
+    if (oldIndex < 0 || oldIndex >= _pages.length) return;
+    if (newIndex < 0 || newIndex > _pages.length) return;
+
+    setState(() {
+      final File page = _pages.removeAt(oldIndex);
+
+      // Adjust for the shifting after removal
+      if (newIndex > oldIndex) {
+        newIndex -= 1;
+      }
+
+      _pages.insert(newIndex, page);
+
+      // Also update in scan provider if not editing existing document
+      if (!_isEditingExistingDocument) {
+        ref.read(scanProvider.notifier).reorderPages(oldIndex, newIndex);
+      }
+    });
   }
 
   void _deletePageAtIndex(int index) {
@@ -211,6 +479,104 @@ class _EditScreenState extends ConsumerState<EditScreen> {
         });
       }
     });
+  }
+
+  Future<void> _addMorePages() async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: ScanInitialView(
+            onScanPressed: _scanDocuments,
+            onImportPressed: _pickImages,
+          ),
+        ),
+      ),
+    );
+    if (!mounted) return;
+
+    final scanState = ref.read(scanProvider);
+    if (scanState.hasPages) {
+      // Get newly scanned pages
+      final newPages = List<File>.from(scanState.scannedPages);
+
+      // Add new pages to our current pages list
+      setState(() {
+        _pages.addAll(newPages);
+      });
+
+      // Always clear the scan provider since we've transferred the pages to our local state
+      ref.read(scanProvider.notifier).clearPages();
+
+      // Show success message
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Added ${newPages.length} new page(s)',
+        type: SnackBarType.success,
+      );
+    }
+  }
+
+  Future<void> _openImageEditor() async {
+    if (_pages.isEmpty) return;
+
+    setState(() {
+      _isProcessing = true;
+    });
+
+    try {
+      final File currentPage = _pages[_currentPageIndex];
+      final Uint8List imageBytes = await currentPage.readAsBytes();
+
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProImageEditor.memory(
+            callbacks: ProImageEditorCallbacks(
+              onImageEditingComplete: (Uint8List bytes) async {
+                // Write the new bytes to the file
+                final File editedFile = File(currentPage.path);
+                await editedFile.writeAsBytes(bytes);
+
+                // Clear image cache to force refresh
+                imageCache.clear();
+                imageCache.clearLiveImages();
+
+                // Update our state with the edited file
+                setState(() {
+                  _pages[_currentPageIndex] = editedFile;
+                });
+
+                // Also update in scan provider if not editing existing document
+                if (!_isEditingExistingDocument) {
+                  ref
+                      .read(scanProvider.notifier)
+                      .updatePageAt(_currentPageIndex, editedFile);
+                }
+
+                Navigator.pop(context);
+              },
+            ),
+            imageBytes,
+          ),
+        ),
+      );
+    } catch (e) {
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Error editing image: ${e.toString()}',
+      );
+    } finally {
+      setState(() {
+        _isProcessing = false;
+      });
+    }
   }
 
   Future<void> _saveDocument() async {
@@ -274,6 +640,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
           AppDialogs.showSnackBar(
             context,
             message: 'Document updated successfully',
+            type: SnackBarType.success,
           );
         }
       } else {
@@ -294,6 +661,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
           AppDialogs.showSnackBar(
             context,
             message: 'Document saved successfully',
+            type: SnackBarType.success,
           );
         }
 
@@ -311,6 +679,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
         AppDialogs.showSnackBar(
           context,
           message: 'Error saving document: ${e.toString()}',
+          type: SnackBarType.error,
         );
       }
     } finally {
