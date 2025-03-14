@@ -18,6 +18,7 @@ class DocumentActions {
     Document document,
     WidgetRef ref, {
     Function(Document)? onRename,
+    Function(Document)? onEdit,
     Function(Document)? onMoveToFolder,
     Function(Document)? onShare,
     Function(Document)? onDelete,
@@ -30,6 +31,7 @@ class DocumentActions {
         document: document,
         ref: ref,
         onRename: onRename,
+        onEdit: onEdit,
         onMoveToFolder: onMoveToFolder,
         onShare: onShare,
         onDelete: onDelete,
@@ -42,6 +44,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
   final Document document;
   final WidgetRef ref;
   final Function(Document)? onRename;
+  final Function(Document)? onEdit;
   final Function(Document)? onMoveToFolder;
   final Function(Document)? onShare;
   final Function(Document)? onDelete;
@@ -50,6 +53,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
     required this.document,
     required this.ref,
     this.onRename,
+    this.onEdit,
     this.onMoveToFolder,
     this.onShare,
     this.onDelete,
@@ -59,6 +63,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final extension = path.extension(document.pdfPath).toLowerCase();
     final isPdf = extension == '.pdf';
+    final List<String> editableExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -163,6 +168,20 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     }
                   },
                 ),
+                !editableExtensions.contains(extension)
+                    ? _buildOptionTile(
+                        context,
+                        icon: Icons.share_outlined,
+                        title: 'Edit',
+                        description: 'Edit document',
+                        onTap: () {
+                          Navigator.pop(context);
+                          if (onEdit != null) {
+                            onEdit!(document);
+                          }
+                        },
+                      )
+                    : SizedBox.shrink(),
                 _buildOptionTile(
                   context,
                   icon: document.isFavorite ? Icons.star : Icons.star_outline,

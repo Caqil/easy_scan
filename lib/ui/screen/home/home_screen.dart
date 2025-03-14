@@ -84,8 +84,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: _searchQuery.isEmpty
-            ? Text('ScanConvert Pro',
-                style: GoogleFonts.lilitaOne(fontSize: 25.sp))
+            ? Text('ScanPro', style: GoogleFonts.lilitaOne(fontSize: 25.sp))
             : CupertinoSearchTextField(
                 controller: _searchController,
                 placeholder: 'Search documents..',
@@ -145,7 +144,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   setLoading: (isLoading) =>
                                       setState(() => _isLoading = isLoading),
                                   onSuccess: () {
-                                    // Optional: Custom logic after successful scan
+                                    AppRoutes.navigateToEdit(context);
                                   },
                                 );
                               },
@@ -156,7 +155,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   setLoading: (isLoading) =>
                                       setState(() => _isLoading = isLoading),
                                   onSuccess: () {
-                                    // Optional: Custom logic after successful image pick
+                                    AppRoutes.navigateToEdit(context);
                                   },
                                 );
                               },
@@ -181,7 +180,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     RecentDocuments(
                       documents: recentDocuments,
                       onDocumentTap: (doc) =>
-                          navigateByDocumentType(context, doc),
+                          AppRoutes.navigateToView(context, doc),
                       onMorePressed: (Document document) {
                         DocumentActions.showDocumentOptions(
                           context,
@@ -195,6 +194,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           },
                           onRename: (p0) {
                             showRenameDocumentDialog(context, p0, ref);
+                          },
+                          onEdit: (p0) {
+                            navigateByDocumentType(context, p0);
                           },
                           onShare: (p0) {
                             _shareDocument(context, p0, ref);
@@ -273,7 +275,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   setLoading: (isLoading) =>
                                       setState(() => _isLoading = isLoading),
                                   onSuccess: () {
-                                    // Optional: Custom logic after successful scan
+                                    AppRoutes.navigateToEdit(context);
                                   },
                                 );
                               },
@@ -284,7 +286,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   setLoading: (isLoading) =>
                                       setState(() => _isLoading = isLoading),
                                   onSuccess: () {
-                                    // Optional: Custom logic after successful image pick
+                                    AppRoutes.navigateToEdit(context);
                                   },
                                 );
                               },
@@ -302,50 +304,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: const Center(child: CircularProgressIndicator()),
             ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) => Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height *
-                    0.5, // Half screen height
-                child: ScanInitialView(
-                  onScanPressed: () {
-                    scanService.scanDocuments(
-                      context: context,
-                      ref: ref,
-                      setLoading: (isLoading) =>
-                          setState(() => _isLoading = isLoading),
-                      onSuccess: () {
-                        // Optional: Custom logic after successful scan
-                      },
-                    );
-                  },
-                  onImportPressed: () {
-                    scanService.pickImages(
-                      context: context,
-                      ref: ref,
-                      setLoading: (isLoading) =>
-                          setState(() => _isLoading = isLoading),
-                      onSuccess: () {
-                        // Optional: Custom logic after successful image pick
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-          );
-        },
-        icon: const Icon(Icons.camera_alt),
-        label: const Text('Scan'),
       ),
     );
   }

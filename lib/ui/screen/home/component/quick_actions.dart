@@ -68,7 +68,7 @@ class QuickActions extends StatelessWidget {
                 Text(
                   'What would you like to do?',
                   style: GoogleFonts.notoSerif(
-                    fontSize: 16.sp.sp,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                     letterSpacing: -0.5,
                   ),

@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/ui/screen/camera/component/scan_initial_view.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
@@ -105,7 +104,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
       floatingActionButton: ScaleTransition(
         scale: _fabAnimation,
         child: FloatingActionButton(
-          heroTag: 'scanFab',
+          heroTag: 'mainScreenFab',
           elevation: 8,
           backgroundColor: colorScheme.primary,
           foregroundColor: Colors.white,
@@ -126,8 +125,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
                   bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height *
-                      0.5, // Half screen height
+                  height: MediaQuery.of(context).size.height * 0.5,
                   child: ScanInitialView(
                     onScanPressed: () {
                       scanService.scanDocuments(
@@ -158,6 +156,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
           },
         ),
       ),
+
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar.builder(
         itemCount: _iconList.length,

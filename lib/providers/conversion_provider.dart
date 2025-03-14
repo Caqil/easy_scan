@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
-
+import 'package:http/http.dart' as http;
+import 'package:easy_scan/config/api_config.dart';
 import 'package:easy_scan/models/conversion.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/models/format_category.dart';
@@ -12,6 +14,7 @@ import 'package:easy_scan/utils/constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'document_provider.dart';
 
 final conversionServiceProvider = Provider<ConversionService>((ref) {
