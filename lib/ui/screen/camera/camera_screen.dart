@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
+import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/utils/permission_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +17,11 @@ import 'component/scan_initial_view.dart';
 import 'component/scanned_documents_view.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
-  const CameraScreen({super.key});
+  final Document? document;
+  const CameraScreen({
+    super.key,
+    this.document,
+  });
 
   @override
   ConsumerState<CameraScreen> createState() => _CameraScreenState();
@@ -40,7 +45,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
         actions: [
           if (_scanSuccessful)
             TextButton(
-              onPressed: () => _navigateToEditScreen(),
+              onPressed: () => AppRoutes.navigateToEdit(context,
+                  document: widget.document!.id),
               child: const Text('Save as PDF'),
             ),
         ],
@@ -340,8 +346,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
       }
     }
   }
-
-  void _navigateToEditScreen() => AppRoutes.navigateToEdit(context);
 
   void _resetScan() {
     if (mounted) {

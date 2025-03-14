@@ -15,27 +15,83 @@ import 'component/document_preview.dart';
 import 'component/save_button.dart';
 
 class EditScreen extends ConsumerStatefulWidget {
-  const EditScreen({super.key});
+  final Document document;
+
+  const EditScreen({
+    super.key,
+    required this.document,
+  });
 
   @override
   ConsumerState<EditScreen> createState() => _EditScreenState();
 }
 
 class _EditScreenState extends ConsumerState<EditScreen> {
-  final TextEditingController _documentNameController = TextEditingController(
-      text: 'Scan ${DateTime.now().toString().substring(0, 10)}');
+  late TextEditingController _documentNameController;
   final PdfService _pdfService = PdfService();
   final ImageService _imageService = ImageService();
   int _currentPageIndex = 0;
   bool _isProcessing = false;
-  final PageController _pageController = PageController();
+  late PageController _pageController;
+  List<File> _pages = [];
+  bool _isEditingExistingDocument = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkIfEmpty();
+    _pageController = PageController();
+    _isEditingExistingDocument = widget.document != null;
+
+    if (_isEditingExistingDocument) {
+      // Initialize with existing document data
+      _documentNameController =
+          TextEditingController(text: widget.document!.name);
+      _loadExistingDocument();
+    } else {
+      // Initialize with default name for new document
+      _documentNameController = TextEditingController(
+          text: 'Scan ${DateTime.now().toString().substring(0, 10)}');
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkIfEmpty();
+      });
+    }
+  }
+
+  Future<void> _loadExistingDocument() async {
+    setState(() {
+      _isProcessing = true;
     });
+
+    try {
+      // Load pages from the document
+      final document = widget.document!;
+      _pages = [];
+
+      for (String path in document.pagesPaths) {
+        final file = File(path);
+        if (await file.exists()) {
+          _pages.add(file);
+        }
+      }
+
+      if (_pages.isEmpty) {
+        throw Exception('No valid pages found in document');
+      }
+    } catch (e) {
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error loading document: ${e.toString()}',
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
+    }
   }
 
   @override
@@ -47,19 +103,22 @@ class _EditScreenState extends ConsumerState<EditScreen> {
 
   void _checkIfEmpty() {
     final scanState = ref.read(scanProvider);
-    if (scanState.scannedPages.isEmpty) {
+    if (scanState.scannedPages.isEmpty && !_isEditingExistingDocument) {
       // No pages to edit, go back
       Navigator.pop(context);
+    } else if (!_isEditingExistingDocument) {
+      // Load pages from scan provider
+      setState(() {
+        _pages = scanState.scannedPages;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final scanState = ref.watch(scanProvider);
-    final pages = scanState.scannedPages;
     final colorScheme = Theme.of(context).colorScheme;
 
-    if (pages.isEmpty) {
+    if (_pages.isEmpty && _isProcessing) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(
@@ -86,7 +145,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
           // Document preview area
           Expanded(
             child: DocumentPreview(
-              pages: pages,
+              pages: _pages,
               currentPageIndex: _currentPageIndex,
               pageController: _pageController,
               isProcessing: _isProcessing,
@@ -112,7 +171,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
 
   Widget _buildAppBarTitle(ColorScheme colorScheme) {
     return Text(
-      'Edit Document',
+      _isEditingExistingDocument ? 'Edit Document' : 'New Document',
       style: const TextStyle(
         fontWeight: FontWeight.bold,
       ),
@@ -120,8 +179,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
   }
 
   void _deletePageAtIndex(int index) {
-    final scanState = ref.read(scanProvider);
-    if (scanState.scannedPages.length <= 1) {
+    if (_pages.length <= 1) {
       // Can't delete the only page
       AppDialogs.showSnackBar(
         context,
@@ -138,14 +196,19 @@ class _EditScreenState extends ConsumerState<EditScreen> {
       isDangerous: true,
     ).then((confirmed) {
       if (confirmed) {
-        ref.read(scanProvider.notifier).removePage(index);
+        setState(() {
+          _pages.removeAt(index);
 
-        // Adjust current page index if needed
-        if (_currentPageIndex >= ref.read(scanProvider).scannedPages.length) {
-          setState(() {
-            _currentPageIndex = ref.read(scanProvider).scannedPages.length - 1;
-          });
-        }
+          // If not editing existing document, also update scan provider
+          if (!_isEditingExistingDocument) {
+            ref.read(scanProvider.notifier).removePage(index);
+          }
+
+          // Adjust current page index if needed
+          if (_currentPageIndex >= _pages.length) {
+            _currentPageIndex = _pages.length - 1;
+          }
+        });
       }
     });
   }
@@ -159,8 +222,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
       return;
     }
 
-    final scanState = ref.read(scanProvider);
-    if (scanState.scannedPages.isEmpty) {
+    if (_pages.isEmpty) {
       AppDialogs.showSnackBar(
         context,
         message: 'No pages to save',
@@ -178,55 +240,85 @@ class _EditScreenState extends ConsumerState<EditScreen> {
 
       // Generate thumbnails for the first page
       final File thumbnailFile = await _imageService.createThumbnail(
-        scanState.scannedPages[0],
+        _pages[0],
         size: AppConstants.thumbnailSize,
       );
 
-      // Create PDF from scanned images
+      // Create PDF from images
       final String pdfPath = await _pdfService.createPdfFromImages(
-        scanState.scannedPages,
+        _pages,
         documentName,
       );
 
       // Get number of pages
       final int pageCount = await _pdfService.getPdfPageCount(pdfPath);
 
-      // Create document model
-      final document = Document(
-        name: documentName,
-        pdfPath: pdfPath,
-        pagesPaths: scanState.scannedPages.map((file) => file.path).toList(),
-        pageCount: pageCount,
-        thumbnailPath: thumbnailFile.path,
-      );
+      if (_isEditingExistingDocument) {
+        // Update existing document
+        final updatedDocument = widget.document!.copyWith(
+          name: documentName,
+          pdfPath: pdfPath,
+          pagesPaths: _pages.map((file) => file.path).toList(),
+          pageCount: pageCount,
+          thumbnailPath: thumbnailFile.path,
+          modifiedAt: DateTime.now(),
+        );
 
-      // Save document to storage
-      await ref.read(documentsProvider.notifier).addDocument(document);
+        // Save updated document to storage
+        await ref
+            .read(documentsProvider.notifier)
+            .updateDocument(updatedDocument);
 
-      // Show success message
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Document saved successfully',
-      );
+        // Show success message
+        if (mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'Document updated successfully',
+          );
+        }
+      } else {
+        // Create new document model
+        final document = Document(
+          name: documentName,
+          pdfPath: pdfPath,
+          pagesPaths: _pages.map((file) => file.path).toList(),
+          pageCount: pageCount,
+          thumbnailPath: thumbnailFile.path,
+        );
 
-      // Clear scan state
-      ref.read(scanProvider.notifier).clearPages();
+        // Save document to storage
+        await ref.read(documentsProvider.notifier).addDocument(document);
+
+        // Show success message
+        if (mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'Document saved successfully',
+          );
+        }
+
+        // Clear scan state
+        ref.read(scanProvider.notifier).clearPages();
+      }
 
       // Navigate back to home
-      // ignore: use_build_context_synchronously
-      AppRoutes.navigateToHome(context);
+      if (mounted) {
+        AppRoutes.navigateToHome(context);
+      }
     } catch (e) {
       // Show error
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error saving document: ${e.toString()}',
-      );
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error saving document: ${e.toString()}',
+        );
+      }
     } finally {
-      setState(() {
-        _isProcessing = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
     }
   }
 }

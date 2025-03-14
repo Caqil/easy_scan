@@ -132,7 +132,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     RecentDocuments(
                       documents: recentDocuments,
                       onDocumentTap: (doc) =>
-                          AppRoutes.navigateToView(context, doc),
+                          AppRoutes.navigateToEdit(context, document: doc.id),
                       onMorePressed: (Document document) {
                         DocumentActions.showDocumentOptions(
                           context,

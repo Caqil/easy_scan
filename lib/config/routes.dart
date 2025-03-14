@@ -30,7 +30,9 @@ class AppRoutes {
       case camera:
         return MaterialPageRoute(builder: (_) => const CameraScreen());
       case edit:
-        return MaterialPageRoute(builder: (_) => const EditScreen());
+        final Document document = routeSettings.arguments as Document;
+        return MaterialPageRoute(
+            builder: (_) => EditScreen(document: document));
       case conversion:
         return MaterialPageRoute(builder: (_) => const ConversionScreen());
       case view:
@@ -64,8 +66,12 @@ class AppRoutes {
     Navigator.pushNamed(context, camera);
   }
 
-  static void navigateToEdit(BuildContext context) {
-    Navigator.pushNamed(context, edit);
+  static void navigateToEdit(BuildContext context, {String? document}) {
+    Navigator.pushNamed(
+      context,
+      edit,
+      arguments: document,
+    );
   }
 
   static void navigateToConversion(BuildContext context) {
