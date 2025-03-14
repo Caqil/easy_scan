@@ -62,22 +62,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: _searchQuery.isEmpty
-            ? Text('CamScanner App', style: GoogleFonts.notoSerif())
-            : TextField(
+            ? Text('ScanConvert Pro',
+                style: GoogleFonts.lilitaOne(fontSize: 25.sp))
+            : CupertinoSearchTextField(
                 controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search documents...',
-                  border: InputBorder.none,
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() {
-                        _searchQuery = '';
-                      });
-                    },
-                  ),
-                ),
+                placeholder: 'Search documents..',
                 onChanged: (value) {
                   setState(() {
                     _searchQuery = value;

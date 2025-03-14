@@ -1,20 +1,79 @@
+import 'package:easy_scan/models/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_scan/providers/settings_provider.dart';
 import 'package:easy_scan/services/auth_service.dart';
 import 'package:easy_scan/ui/common/app_bar.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/utils/permission_utils.dart';
+import 'package:local_auth/local_auth.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  final AuthService _authService = AuthService();
+  bool _isCheckingBiometrics = false;
+  bool _biometricsAvailable = false;
+  String? _biometricType;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometricCapabilities();
+  }
+
+  Future<void> _checkBiometricCapabilities() async {
+    setState(() {
+      _isCheckingBiometrics = true;
+    });
+
+    try {
+      // Check if device supports biometric authentication
+      final isAvailable = await _authService.isBiometricAvailable();
+      final types = await _authService.getAvailableBiometrics();
+
+      setState(() {
+        _biometricsAvailable = isAvailable && types.isNotEmpty;
+
+        // Determine biometric type for display purposes
+        if (types.isNotEmpty) {
+          if (types.contains(BiometricType.face)) {
+            _biometricType = "Face ID";
+          } else if (types.contains(BiometricType.fingerprint)) {
+            _biometricType = "Fingerprint";
+          } else if (types.contains(BiometricType.iris)) {
+            _biometricType = "Iris";
+          } else if (types.contains(BiometricType.strong)) {
+            _biometricType = "Biometrics";
+          } else {
+            _biometricType = "Biometrics";
+          }
+        }
+      });
+    } catch (e) {
+      debugPrint('Error checking biometrics: $e');
+      setState(() {
+        _biometricsAvailable = false;
+      });
+    } finally {
+      setState(() {
+        _isCheckingBiometrics = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
-    final authService = AuthService();
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: const CustomAppBar(
@@ -35,38 +94,35 @@ class SettingsScreen extends ConsumerWidget {
 
           // Security section
           const _SectionHeader(title: 'Security'),
-          SwitchListTile(
-            title: const Text('Biometric Authentication'),
-            subtitle: const Text('Require fingerprint or face ID to open app'),
-            value: settings.biometricAuthEnabled,
-            onChanged: (value) async {
-              final biometricAvailable =
-                  await authService.isBiometricAvailable();
-
-              if (biometricAvailable) {
-                final authenticated =
-                    await authService.authenticateWithBiometrics();
-                if (authenticated) {
-                  ref.read(settingsProvider.notifier).toggleBiometricAuth();
-                }
-              } else {
-                // ignore: use_build_context_synchronously
-                AppDialogs.showSnackBar(
-                  context,
-                  message:
-                      'Biometric authentication not available on this device',
-                );
-              }
-            },
-          ),
-          // ListTile(
-          //   title: const Text('Document Passwords'),
-          //   subtitle: const Text('Manage default password settings'),
-          //   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-          //   onTap: () {
-          //     // TODO: Show password settings
-          //   },
-          // ),
+          _isCheckingBiometrics
+              ? const ListTile(
+                  title: Text('Checking biometric capabilities...'),
+                  trailing: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              : _biometricsAvailable
+                  ? _buildBiometricTile(settings, colorScheme)
+                  : ListTile(
+                      title: const Text('Biometric Authentication'),
+                      subtitle: const Text(
+                          'Requires fingerprint or face ID to access the app'),
+                      trailing: Chip(
+                        label: const Text('Not Available'),
+                        backgroundColor: Colors.grey.withOpacity(0.2),
+                        labelStyle: TextStyle(color: Colors.grey.shade700),
+                      ),
+                      onTap: () {
+                        AppDialogs.showSnackBar(
+                          context,
+                          message:
+                              'Biometric authentication is not available on this device',
+                          type: SnackBarType.warning,
+                        );
+                      },
+                    ),
 
           // Scan settings section
           const _SectionHeader(title: 'Scan Settings'),
@@ -96,63 +152,6 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          // ListTile(
-          //   title: const Text('Default Save Location'),
-          //   subtitle: Text(settings.defaultSaveLocation == 'local'
-          //       ? 'Device Storage'
-          //       : 'Cloud Storage'),
-          //   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-          //   onTap: () {
-          //     _showSaveLocationDialog(
-          //         context, ref, settings.defaultSaveLocation);
-          //   },
-          // ),
-
-          // // Storage section
-          // const _SectionHeader(title: 'Storage'),
-          // FutureBuilder<double>(
-          //   future: storageService.getAvailableStorage(),
-          //   builder: (context, snapshot) {
-          //     final available = snapshot.data ?? 0;
-          //     return ListTile(
-          //       title: const Text('Available Storage'),
-          //       subtitle: Text('${available.toStringAsFixed(1)} MB'),
-          //       leading: const Icon(Icons.storage),
-          //     );
-          //   },
-          // ),
-          // ListTile(
-          //   title: const Text('Clear Temporary Files'),
-          //   subtitle: const Text('Free up space by removing cache'),
-          //   leading: const Icon(Icons.cleaning_services),
-          //   onTap: () async {
-          //     final confirmed = await AppDialogs.showConfirmDialog(
-          //       context,
-          //       title: 'Clear Temporary Files',
-          //       message:
-          //           'This will delete all temporary files. This action cannot be undone.',
-          //       confirmText: 'Clear',
-          //     );
-
-          //     if (confirmed) {
-          //       await storageService.clearTempFiles();
-          //       // ignore: use_build_context_synchronously
-          //       AppDialogs.showSnackBar(
-          //         context,
-          //         message: 'Temporary files cleared successfully',
-          //       );
-          //     }
-          //   },
-          // ),
-          // SwitchListTile(
-          //   title: const Text('Cloud Backup'),
-          //   subtitle: const Text('Automatically backup documents to cloud'),
-          //   value: settings.cloudBackupEnabled,
-          //   secondary: const Icon(Icons.cloud_upload),
-          //   onChanged: (value) {
-          //     ref.read(settingsProvider.notifier).toggleCloudBackup();
-          //   },
-          // ),
 
           // Permissions section
           const _SectionHeader(title: 'Permissions'),
@@ -261,6 +260,76 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+
+  Widget _buildBiometricTile(AppSettings settings, ColorScheme colorScheme) {
+    final IconData biometricIcon = _biometricType == "Face ID"
+        ? Icons.face
+        : (_biometricType == "Iris" ? Icons.remove_red_eye : Icons.fingerprint);
+
+    return SwitchListTile(
+      title: Row(
+        children: [
+          Text('$_biometricType Authentication'),
+          const SizedBox(width: 8),
+          Icon(
+            biometricIcon,
+            color: settings.biometricAuthEnabled
+                ? colorScheme.primary
+                : Colors.grey,
+            size: 20,
+          ),
+        ],
+      ),
+      subtitle:
+          Text('Require $_biometricType authentication when opening the app'),
+      value: settings.biometricAuthEnabled,
+      onChanged: (value) async {
+        if (value) {
+          // If turning on, test authentication first
+          final authenticated = await _authService.authenticateWithBiometrics();
+          if (authenticated) {
+            ref.read(settingsProvider.notifier).toggleBiometricAuth();
+            if (mounted) {
+              AppDialogs.showSnackBar(
+                context,
+                type: SnackBarType.success,
+                message: '$_biometricType authentication enabled',
+              );
+            }
+          } else {
+            if (mounted) {
+              AppDialogs.showSnackBar(
+                context,
+                type: SnackBarType.error,
+                message: 'Authentication failed. Please try again.',
+              );
+            }
+          }
+        } else {
+          // If turning off, confirm with authentication first
+          final authenticated = await _authService.authenticateWithBiometrics();
+          if (authenticated) {
+            ref.read(settingsProvider.notifier).toggleBiometricAuth();
+            if (mounted) {
+              AppDialogs.showSnackBar(
+                context,
+                type: SnackBarType.success,
+                message: '$_biometricType authentication disabled',
+              );
+            }
+          } else {
+            if (mounted) {
+              AppDialogs.showSnackBar(
+                context,
+                type: SnackBarType.error,
+                message: 'Authentication failed. Setting was not changed.',
+              );
+            }
+          }
+        }
+      },
+    );
+  }
 }
 
 class _SectionHeader extends StatelessWidget {
@@ -268,7 +337,8 @@ class _SectionHeader extends StatelessWidget {
 
   const _SectionHeader({
     required this.title,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +347,7 @@ class _SectionHeader extends StatelessWidget {
       child: Text(
         title,
         style: GoogleFonts.notoSerif(
-          fontSize: 14,
+          fontSize: 14.sp,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.primary,
         ),

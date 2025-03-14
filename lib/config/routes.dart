@@ -45,9 +45,7 @@ class AppRoutes {
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
-            body: Center(
-              child: Text('No route defined for ${routeSettings.name}'),
-            ),
+            body: Center(child: Text('Unknown route: ${routeSettings.name}')),
           ),
         );
     }
@@ -73,7 +71,6 @@ class AppRoutes {
   static void navigateToConversion(BuildContext context) {
     Navigator.pushNamed(context, conversion);
   }
-
 
   static void navigateToView(BuildContext context, Document document) {
     Navigator.pushNamed(

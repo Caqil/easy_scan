@@ -21,7 +21,7 @@ class QuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     // Create a gradient background instead of using a Card
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,

@@ -1,4 +1,12 @@
 import 'dart:io';
+import 'dart:ui';
+
+class TextElementData {
+  final String text;
+  final Rect boundingBox;
+
+  TextElementData({required this.text, required this.boundingBox});
+}
 
 class ScanResult {
   final List<File> scannedPages;

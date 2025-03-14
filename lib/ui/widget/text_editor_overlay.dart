@@ -1,8 +1,6 @@
 import 'dart:io';
-
-import 'package:easy_scan/utils/scan_result.dart';
+import 'package:easy_scan/models/scan_result.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TextEditorOverlay extends StatefulWidget {

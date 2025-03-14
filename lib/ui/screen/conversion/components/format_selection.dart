@@ -35,7 +35,7 @@ class FormatSelector extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? format.color.withOpacity(0.2)
-                      : Colors.grey.shade100,
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: isSelected ? format.color : Colors.grey.shade300,
