@@ -62,7 +62,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         path.extension(document.pdfPath).toLowerCase().replaceAll('.', '');
 
     // List of editable extensions
-    final List<String> editableExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
+    final List<String> editableExtensions = ['pdf'];
 
     // Navigate to Edit or View based on extension
     if (editableExtensions.contains(extension)) {
@@ -165,11 +165,68 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       );
                     },
                     onImport: () {
+                      // Access providers using the ref
+                      final pdfImportService =
+                          ref.read(pdfImportServiceProvider);
+                      final scanService = ref.read(scanServiceProvider);
+                      final documentsNotifier =
+                          ref.read(documentsProvider.notifier);
+
                       ImportOptions.showImportOptions(
                         context,
-                        onImportFromGallery: _pickImageForScan,
-                        onImportPdf: _importPdfFromLocal,
-                        onImportFromCloud: _importPdfFromICloud,
+                        onImportFromGallery: () async {
+                          setState(() => _isLoading = true);
+                          try {
+                            await scanService.pickImages(
+                                context: context,
+                                ref: ref,
+                                setLoading: (isLoading) =>
+                                    setState(() => _isLoading = isLoading));
+                            if (ref.read(scanProvider).hasPages) {
+                              AppRoutes.navigateToEdit(context);
+                            }
+                          } catch (e) {
+                            AppDialogs.showSnackBar(context,
+                                message: 'Error importing images: $e');
+                          } finally {
+                            setState(() => _isLoading = false);
+                          }
+                        },
+                        onImportPdf: () async {
+                          setState(() => _isLoading = true);
+                          try {
+                            final document =
+                                await pdfImportService.importPdfFromLocal();
+                            if (document != null) {
+                              await documentsNotifier.addDocument(document);
+                              AppDialogs.showSnackBar(context,
+                                  message: 'PDF imported successfully');
+                            }
+                          } catch (e) {
+                            AppDialogs.showSnackBar(context,
+                                message: 'Error importing PDF: $e');
+                          } finally {
+                            setState(() => _isLoading = false);
+                          }
+                        },
+                        onImportFromCloud: () async {
+                          setState(() => _isLoading = true);
+                          try {
+                            final document =
+                                await pdfImportService.importPdfFromICloud();
+                            if (document != null) {
+                              await documentsNotifier.addDocument(document);
+                              AppDialogs.showSnackBar(context,
+                                  message:
+                                      'PDF imported from cloud successfully');
+                            }
+                          } catch (e) {
+                            AppDialogs.showSnackBar(context,
+                                message: 'Error importing from cloud: $e');
+                          } finally {
+                            setState(() => _isLoading = false);
+                          }
+                        },
                       );
                     },
                     onFolders: () => _showFolderSelectionDialog(rootFolders),
@@ -578,114 +635,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         );
       },
     );
-  }
-
-  Future<void> _importPdfFromLocal() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      final pdfImportService = PdfImportService();
-      final document = await pdfImportService.importPdfFromLocal();
-
-      if (document != null) {
-        // Add the document to storage
-        await ref.read(documentsProvider.notifier).addDocument(document);
-
-        // Show success message
-        // ignore: use_build_context_synchronously
-        AppDialogs.showSnackBar(
-          context,
-          message: 'PDF imported successfully',
-        );
-      }
-    } catch (e) {
-      // Show error
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error importing PDF: ${e.toString()}',
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  /// Import PDF from iCloud (iOS only)
-  Future<void> _importPdfFromICloud() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      final pdfImportService = PdfImportService();
-      final document = await pdfImportService.importPdfFromICloud();
-
-      if (document != null) {
-        // Add the document to storage
-        await ref.read(documentsProvider.notifier).addDocument(document);
-
-        // Show success message
-        // ignore: use_build_context_synchronously
-        AppDialogs.showSnackBar(
-          context,
-          message: 'PDF imported from iCloud successfully',
-        );
-      }
-    } catch (e) {
-      // Show error
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error importing PDF from iCloud: ${e.toString()}',
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  /// Pick image from gallery for scanning
-  Future<void> _pickImageForScan() async {
-    try {
-      final List<XFile> images = await _imagePicker.pickMultiImage();
-      if (images.isNotEmpty) {
-        setState(() {
-          _isProcessing = true;
-        });
-
-        // Process images
-        ref.read(scanProvider.notifier).setScanning(true);
-
-        for (var image in images) {
-          final File imageFile = File(image.path);
-
-          ref.read(scanProvider.notifier).addPage(imageFile);
-        }
-
-        ref.read(scanProvider.notifier).setScanning(false);
-
-        // Navigate to edit screen
-        if (ref.read(scanProvider).scannedPages.isNotEmpty) {
-          setState(() {});
-        }
-      }
-    } catch (e) {
-      // Show error
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error importing images: ${e.toString()}',
-      );
-    } finally {
-      setState(() {
-        _isProcessing = false;
-      });
-    }
   }
 
   void _showFavorites() {

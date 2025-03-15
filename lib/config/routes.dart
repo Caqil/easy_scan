@@ -73,16 +73,21 @@ class AppRoutes {
   }
 
   static void navigateToEdit(BuildContext context, {Document? document}) {
+    print('navigateToEdit called with context: $context');
     if (document != null) {
+      print('Navigating to edit with existing document: ${document.pdfPath}');
       // Navigate with an existing document for editing
       Navigator.pushNamed(
         context,
         edit,
         arguments: document,
       );
+      print('Navigation pushed with document');
     } else {
+      print('Navigating to edit without document (new scan)');
       // Navigate without a document for a new scan
       Navigator.pushNamed(context, edit);
+      print('Navigation pushed without document');
     }
   }
 

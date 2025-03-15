@@ -9,24 +9,40 @@ import '../utils/constants.dart';
 class StorageService {
   /// Initialize the storage and required boxes
   Future<void> initialize() async {
-    // Initialize Hive
-    final appDocDir = await getApplicationDocumentsDirectory();
-    Hive.init('${appDocDir.path}/db');
+    try {
+      // Initialize Hive
+      final appDocDir = await getApplicationDocumentsDirectory();
+      final dbPath = '${appDocDir.path}/db';
 
-    // Register type adapters
-    Hive.registerAdapter(DocumentAdapter());
-    Hive.registerAdapter(FolderAdapter());
-    Hive.registerAdapter(AppSettingsAdapter());
+      // Create DB directory if it doesn't exist
+      final dbDir = Directory(dbPath);
+      if (!await dbDir.exists()) {
+        await dbDir.create(recursive: true);
+      }
 
-    // Open boxes
-    await Hive.openBox<Document>(AppConstants.documentsBoxName);
-    await Hive.openBox<Folder>(AppConstants.foldersBoxName);
-    await Hive.openBox(AppConstants.settingsBoxName);
+      Hive.init(dbPath);
 
-    // Create documents directory if it doesn't exist
-    final Directory documentsDir = Directory('${appDocDir.path}/documents');
-    if (!await documentsDir.exists()) {
-      await documentsDir.create(recursive: true);
+      // Register type adapters
+      Hive.registerAdapter(DocumentAdapter());
+      Hive.registerAdapter(FolderAdapter());
+      Hive.registerAdapter(AppSettingsAdapter());
+
+      // Open boxes
+      await Hive.openBox<Document>(AppConstants.documentsBoxName);
+      await Hive.openBox<Folder>(AppConstants.foldersBoxName);
+      await Hive.openBox(AppConstants.settingsBoxName);
+
+      // Create documents directory if it doesn't exist
+      final Directory documentsDir = Directory('${appDocDir.path}/documents');
+      if (!await documentsDir.exists()) {
+        await documentsDir.create(recursive: true);
+      }
+
+      print(
+          'Storage initialized successfully. Documents directory: ${documentsDir.path}');
+    } catch (e) {
+      print('Error initializing storage: $e');
+      rethrow;
     }
   }
 

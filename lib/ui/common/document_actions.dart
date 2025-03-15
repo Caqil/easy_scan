@@ -63,7 +63,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final extension = path.extension(document.pdfPath).toLowerCase();
     final isPdf = extension == '.pdf';
-    final List<String> editableExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
+    final List<String> editableExtensions = ['jpg', 'jpeg', 'png'];
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,

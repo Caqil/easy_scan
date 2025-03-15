@@ -1,3 +1,4 @@
+// Updated document_preview.dart with conditional PDF rendering
 import 'dart:io';
 import 'package:flutter/material.dart';
 
@@ -5,6 +6,7 @@ import 'document_page_preview.dart';
 import 'loading_overlay.dart';
 import 'page_controls.dart';
 import 'page_navigation_buttons.dart';
+import 'pdf_edit_preview.dart'; // Import the new PDF preview widget
 
 /// Container widget for document preview with all controls
 class DocumentPreview extends StatelessWidget {
@@ -15,6 +17,8 @@ class DocumentPreview extends StatelessWidget {
   final ColorScheme colorScheme;
   final Function(int) onPageChanged;
   final Function(int) onDeletePage;
+  final bool isPdfPreviewMode; // Add this flag
+  final String? password; // Add password for PDF viewing
 
   const DocumentPreview({
     super.key,
@@ -25,6 +29,9 @@ class DocumentPreview extends StatelessWidget {
     required this.colorScheme,
     required this.onPageChanged,
     required this.onDeletePage,
+    this.isPdfPreviewMode =
+        false, // Default to false for backward compatibility
+    this.password,
   });
 
   @override
@@ -47,36 +54,48 @@ class DocumentPreview extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Document page view
-          PageView.builder(
-            controller: pageController,
-            itemCount: pages.length,
-            onPageChanged: onPageChanged,
-            itemBuilder: (context, index) {
-              return DocumentPagePreview(page: pages[index]);
-            },
-          ),
+          // Check if we should show PDF preview or image preview
+          if (isPdfPreviewMode && pages.isNotEmpty)
+            // PDF Preview Mode
+            PdfEditPreview(
+              pdfFile: pages[0], // We only have the PDF file in pages[0]
+              isProcessing: isProcessing,
+              colorScheme: colorScheme,
+              password: password,
+            )
+          else
+            // Original Image Preview Mode - Document page view
+            PageView.builder(
+              controller: pageController,
+              itemCount: pages.length,
+              onPageChanged: onPageChanged,
+              itemBuilder: (context, index) {
+                return DocumentPagePreview(page: pages[index]);
+              },
+            ),
 
-          // Page navigation buttons
-          if (pages.length > 1)
+          // Only show navigation buttons for multi-page image previews
+          if (!isPdfPreviewMode && pages.length > 1)
             PageNavigationButtons(
               currentPageIndex: currentPageIndex,
               pageCount: pages.length,
               pageController: pageController,
             ),
 
-          // Page counter and delete controls
-          PageControls(
-            currentPageIndex: currentPageIndex,
-            pageCount: pages.length,
-            onDeletePage: onDeletePage,
-          ),
+          // Page counter and delete controls (only for image preview mode)
+          if (!isPdfPreviewMode)
+            PageControls(
+              currentPageIndex: currentPageIndex,
+              pageCount: pages.length,
+              onDeletePage: onDeletePage,
+            ),
 
-          // Loading overlay
-          LoadingOverlay(
-            isVisible: isProcessing,
-            colorScheme: colorScheme,
-          ),
+          // Processing overlay is handled within PdfEditPreview for PDF mode
+          if (!isPdfPreviewMode)
+            LoadingOverlay(
+              isVisible: isProcessing,
+              colorScheme: colorScheme,
+            ),
         ],
       ),
     );

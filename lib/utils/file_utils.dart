@@ -6,35 +6,50 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 class FileUtils {
-  /// Get a unique file path with a timestamp
   static Future<String> getUniqueFilePath({
     required String documentName,
     required String extension,
     bool inTempDirectory = false,
   }) async {
-    final Directory directory = inTempDirectory
-        ? await getTemporaryDirectory()
-        : Directory(
-            '${(await getApplicationDocumentsDirectory()).path}/documents');
+    try {
+      final Directory baseDir = await getApplicationDocumentsDirectory();
 
-    // Create the directory if it doesn't exist
-    if (!await directory.exists()) {
-      await directory.create(recursive: true);
+      // Define directory path based on whether it's a temp file or not
+      final String dirPath;
+      if (inTempDirectory) {
+        final tempDir = await getTemporaryDirectory();
+        dirPath = tempDir.path;
+      } else {
+        dirPath = path.join(baseDir.path, 'documents');
+      }
+
+      debugPrint('Creating file in directory: $dirPath');
+
+      // Create directory if it doesn't exist
+      final Directory directory = Directory(dirPath);
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+        debugPrint('Created directory: $dirPath');
+      }
+
+      // Clean the document name (remove invalid characters)
+      final String cleanName = documentName
+          .replaceAll(RegExp(r'[<>:"/\\|?*]'), '_')
+          .replaceAll(RegExp(r'\s+'), '_');
+
+      // Generate a timestamp
+      final String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+
+      // Create the file path using proper path joining
+      final String filePath =
+          path.join(dirPath, '${cleanName}_$timestamp.$extension');
+
+      debugPrint('Generated file path: $filePath');
+      return filePath;
+    } catch (e) {
+      debugPrint('Error in getUniqueFilePath: $e');
+      rethrow;
     }
-
-    // Clean the document name (remove invalid characters)
-    final String cleanName = documentName
-        .replaceAll(RegExp(r'[<>:"/\\|?*]'), '_')
-        .replaceAll(RegExp(r'\s+'), '_');
-
-    // Generate a timestamp
-    final String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-
-    // Create the file path
-    final String filePath =
-        '${directory.path}/${cleanName}_$timestamp.$extension';
-
-    return filePath;
   }
 
   Future<String> calculateFolderSize(String directoryPath) async {
@@ -137,118 +152,138 @@ class FileUtils {
   }
 
 // Helper method to get appropriate icon for file type
-static IconData getFileTypeIcon(String filePath) {
-  final extension = path.extension(filePath).toLowerCase().replaceAll('.', '');
+  static IconData getFileTypeIcon(String filePath) {
+    final extension =
+        path.extension(filePath).toLowerCase().replaceAll('.', '');
 
-  switch (extension) {
-    case 'pdf':
-      return Icons.picture_as_pdf_outlined;
-    case 'doc':
-    case 'docx':
-    case 'odt':
-    case 'rtf':
-      return Icons.description_outlined;
-    case 'txt':
-      return Icons.text_snippet_outlined;
-    case 'jpg':
-    case 'jpeg':
-    case 'png':
-    case 'gif':
-    case 'webp':
-      return Icons.image_outlined;
-    case 'mp4':
-    case 'mov':
-    case 'avi':
-      return Icons.video_file_outlined;
-    case 'xls':
-    case 'xlsx':
-    case 'csv':
-    case 'ods':
-      return Icons.table_chart_outlined;
-    case 'ppt':
-    case 'pptx':
-    case 'odp':
-      return Icons.slideshow_outlined;
-    case 'html':
-    case 'htm':
-    case 'xml':
-      return Icons.code_outlined;
-    default:
-      return Icons.insert_drive_file_outlined;
+    switch (extension) {
+      case 'pdf':
+        return Icons.picture_as_pdf_outlined;
+      case 'doc':
+      case 'docx':
+      case 'odt':
+      case 'rtf':
+        return Icons.description_outlined;
+      case 'txt':
+        return Icons.text_snippet_outlined;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'webp':
+        return Icons.image_outlined;
+      case 'mp4':
+      case 'mov':
+      case 'avi':
+        return Icons.video_file_outlined;
+      case 'xls':
+      case 'xlsx':
+      case 'csv':
+      case 'ods':
+        return Icons.table_chart_outlined;
+      case 'ppt':
+      case 'pptx':
+      case 'odp':
+        return Icons.slideshow_outlined;
+      case 'html':
+      case 'htm':
+      case 'xml':
+        return Icons.code_outlined;
+      default:
+        return Icons.insert_drive_file_outlined;
+    }
   }
-}
 
 // Helper method to get descriptive label for file type
-static String getFileTypeLabel(String filePath) {
-  final extension = path.extension(filePath).toLowerCase().replaceAll('.', '');
+  static String getFileTypeLabel(String filePath) {
+    final extension =
+        path.extension(filePath).toLowerCase().replaceAll('.', '');
 
-  switch (extension) {
-    case 'pdf':
-      return 'PDF Document';
-    case 'doc':
-    case 'docx':
-      return 'Word Document';
-    case 'odt':
-      return 'OpenDocument Text';
-    case 'rtf':
-      return 'Rich Text Format';
-    case 'txt':
-      return 'Text Document';
-    case 'jpg':
-    case 'jpeg':
-      return 'JPEG Image';
-    case 'png':
-      return 'PNG Image';
-    case 'gif':
-      return 'GIF Image';
-    case 'webp':
-      return 'WebP Image';
-    case 'mp4':
-    case 'mov':
-    case 'avi':
-      return 'Video File';
-    case 'xls':
-    case 'xlsx':
-      return 'Excel Spreadsheet';
-    case 'csv':
-      return 'CSV Spreadsheet';
-    case 'ods':
-      return 'OpenDocument Spreadsheet';
-    case 'ppt':
-    case 'pptx':
-      return 'PowerPoint Presentation';
-    case 'odp':
-      return 'OpenDocument Presentation';
-    case 'html':
-    case 'htm':
-      return 'HTML Document';
-    case 'xml':
-      return 'XML Document';
-    default:
-      return extension.toUpperCase() + ' Document';
+    switch (extension) {
+      case 'pdf':
+        return 'PDF Document';
+      case 'doc':
+      case 'docx':
+        return 'Word Document';
+      case 'odt':
+        return 'OpenDocument Text';
+      case 'rtf':
+        return 'Rich Text Format';
+      case 'txt':
+        return 'Text Document';
+      case 'jpg':
+      case 'jpeg':
+        return 'JPEG Image';
+      case 'png':
+        return 'PNG Image';
+      case 'gif':
+        return 'GIF Image';
+      case 'webp':
+        return 'WebP Image';
+      case 'mp4':
+      case 'mov':
+      case 'avi':
+        return 'Video File';
+      case 'xls':
+      case 'xlsx':
+        return 'Excel Spreadsheet';
+      case 'csv':
+        return 'CSV Spreadsheet';
+      case 'ods':
+        return 'OpenDocument Spreadsheet';
+      case 'ppt':
+      case 'pptx':
+        return 'PowerPoint Presentation';
+      case 'odp':
+        return 'OpenDocument Presentation';
+      case 'html':
+      case 'htm':
+        return 'HTML Document';
+      case 'xml':
+        return 'XML Document';
+      default:
+        return extension.toUpperCase() + ' Document';
+    }
   }
-}
 
-  /// Copy file to new location
   static Future<File> copyFile(
       String sourcePath, String destinationPath) async {
-    return await File(sourcePath).copy(destinationPath);
+    try {
+      final sourceFile = File(sourcePath);
+      if (!await sourceFile.exists()) {
+        throw Exception('Source file does not exist: $sourcePath');
+      }
+
+      // Ensure destination directory exists
+      final destDir = path.dirname(destinationPath);
+      final directory = Directory(destDir);
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      return await sourceFile.copy(destinationPath);
+    } catch (e) {
+      debugPrint('Error copying file: $e');
+      rethrow;
+    }
   }
 
-  /// Create a directory if it doesn't exist
   static Future<Directory> createDirectory(String directoryPath) async {
-    final directory = Directory(directoryPath);
-    if (!await directory.exists()) {
-      return await directory.create(recursive: true);
+    try {
+      final directory = Directory(directoryPath);
+      if (!await directory.exists()) {
+        return await directory.create(recursive: true);
+      }
+      return directory;
+    } catch (e) {
+      debugPrint('Error creating directory: $e');
+      rethrow;
     }
-    return directory;
   }
 }
 
 extension DocumentTypeExtension on Document {
-  /// Check if this document is a PDF file
   bool get isPdf {
-    // Get file extension from path
     final extension = path.extension(pdfPath).toLowerCase();
     return extension == '.pdf';
   }

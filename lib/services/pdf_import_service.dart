@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
+import 'package:flutter/material.dart';
 import '../models/document.dart';
 import '../utils/file_utils.dart';
 import 'pdf_service.dart';
@@ -28,8 +30,15 @@ class PdfImportService {
         return null;
       }
 
-      return await _processPdfFile(File(file.path!), file.name);
+      // Verify source file exists before proceeding
+      final sourceFile = File(file.path!);
+      if (!await sourceFile.exists()) {
+        throw Exception('Selected PDF file does not exist at ${file.path}');
+      }
+
+      return await _processPdfFile(sourceFile, file.name);
     } catch (e) {
+      debugPrint('Failed to import PDF: $e');
       throw Exception('Failed to import PDF: $e');
     }
   }
@@ -52,39 +61,102 @@ class PdfImportService {
         return null;
       }
 
-      return await _processPdfFile(File(file.path!), file.name);
+      // Verify source file exists before proceeding
+      final sourceFile = File(file.path!);
+      if (!await sourceFile.exists()) {
+        throw Exception('Selected PDF file does not exist at ${file.path}');
+      }
+
+      return await _processPdfFile(sourceFile, file.name);
     } catch (e) {
+      debugPrint('Failed to import PDF from iCloud: $e');
       throw Exception('Failed to import PDF from iCloud: $e');
     }
   }
 
   Future<Document> _processPdfFile(File sourceFile, String originalName) async {
+    // Create a name for the document based on original filename
     final String docName = path.basenameWithoutExtension(originalName);
-    final String targetPath = await FileUtils.getUniqueFilePath(
-      documentName: docName,
-      extension: 'pdf',
-    );
 
-    final int pageCount = await _pdfService.getPdfPageCount(targetPath);
-
-    File? thumbnailFile;
     try {
-      thumbnailFile = await _imageService.createThumbnail(
-        File(targetPath),
-        size: 300,
+      // Get a unique target path
+      final String targetPath = await FileUtils.getUniqueFilePath(
+        documentName: docName,
+        extension: 'pdf',
+      );
+
+      debugPrint('Copying PDF to: $targetPath');
+
+      // Ensure target directory exists
+      final targetDir = Directory(path.dirname(targetPath));
+      if (!await targetDir.exists()) {
+        await targetDir.create(recursive: true);
+      }
+
+      // Copy the file to the target path
+      final targetFile = await sourceFile.copy(targetPath);
+
+      // Verify the file was copied correctly
+      if (!await targetFile.exists()) {
+        throw Exception('Failed to copy PDF file to $targetPath');
+      }
+
+      debugPrint('PDF copied successfully to: $targetPath');
+
+      // Read file size to verify it's not empty
+      final fileSize = await targetFile.length();
+      if (fileSize == 0) {
+        throw Exception('Copied PDF file is empty');
+      }
+
+      // Get page count
+      int pageCount = 1;
+      try {
+        pageCount = await _pdfService.getPdfPageCount(targetPath);
+        debugPrint('PDF page count: $pageCount');
+      } catch (e) {
+        debugPrint('Error getting PDF page count: $e');
+        // Continue with default page count 1
+      }
+
+      // Initialize thumbnailPath as null
+      String? thumbnailPath;
+
+      // Generate thumbnail
+      try {
+        final thumbnailFile = await _imageService.createThumbnail(
+          targetFile,
+          size: 300,
+        );
+
+        thumbnailPath = thumbnailFile.path;
+        debugPrint('Thumbnail created at: $thumbnailPath');
+
+        // Verify thumbnail exists
+        if (!await File(thumbnailPath).exists()) {
+          debugPrint('Warning: Thumbnail file does not exist after creation');
+          thumbnailPath = null;
+        }
+      } catch (e) {
+        debugPrint('Failed to generate thumbnail: $e');
+        // Continue without thumbnail - it's not critical
+      }
+
+      // Create and return document model
+      return Document(
+        name: docName,
+        pdfPath: targetPath,
+        pagesPaths: [targetPath],
+        pageCount: pageCount,
+        thumbnailPath: thumbnailPath,
       );
     } catch (e) {
-      print('Failed to generate thumbnail: $e');
+      debugPrint('Error in _processPdfFile: $e');
+      throw Exception('Error processing PDF file: $e');
     }
-
-    return Document(
-      name: docName,
-      pdfPath: targetPath,
-      pagesPaths: [
-        targetPath
-      ], 
-      pageCount: pageCount,
-      thumbnailPath: thumbnailFile?.path,
-    );
   }
 }
+
+final pdfImportServiceProvider = Provider<PdfImportService>((ref) {
+  return PdfImportService();
+});

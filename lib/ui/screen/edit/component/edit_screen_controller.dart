@@ -85,15 +85,44 @@ class EditScreenController {
     try {
       final doc = document!;
       pages = [];
+
+      if (doc.pagesPaths.isEmpty) {
+        throw Exception('Document has no pages defined');
+      }
+
       for (String path in doc.pagesPaths) {
         final file = File(path);
         if (await file.exists()) {
           pages.add(file);
+        } else {
+          print('Warning: Page file does not exist at path: $path');
+
+          // If the primary document path exists and it's a PDF, we can still work with it
+          if (doc.pdfPath.isNotEmpty && await File(doc.pdfPath).exists()) {
+            pages.add(File(doc.pdfPath));
+            // Break after adding the PDF once - no need to add it multiple times
+            break;
+          }
         }
       }
-      if (pages.isEmpty) throw Exception('No valid pages found in document');
+
+      if (pages.isEmpty && doc.pdfPath.isNotEmpty) {
+        // Try the main PDF path if individual page paths are missing
+        final pdfFile = File(doc.pdfPath);
+        if (await pdfFile.exists()) {
+          pages.add(pdfFile);
+        } else {
+          throw Exception('Primary PDF file not found at ${doc.pdfPath}');
+        }
+      }
+
+      if (pages.isEmpty) {
+        throw Exception(
+            'No valid pages found in document. All file paths are invalid or missing.');
+      }
     } catch (e) {
-      AppDialogs.showSnackBar(context, message: 'Error loading document: $e');
+      AppDialogs.showSnackBar(context,
+          message: 'Error loading document: $e', type: SnackBarType.error);
     } finally {
       isProcessing = false;
       _notifyStateChanged();
@@ -343,6 +372,7 @@ class EditScreenController {
         message: 'Error saving document: $e',
         type: SnackBarType.error,
       );
+      debugPrint('Error saving document: $e');
     } finally {
       isProcessing = false;
       _notifyStateChanged();
