@@ -3,7 +3,6 @@ import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/services/image_service.dart';
 import 'package:easy_scan/services/pdf_service.dart';
 import 'package:easy_scan/utils/constants.dart';
-import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,7 +72,7 @@ class PdfMergerService {
         pdfPath: mergedPdfPath,
         pagesPaths: [mergedPdfPath], // The merged PDF is a single file
         pageCount: totalPageCount,
-        thumbnailPath: thumbnailFile!.path,
+        thumbnailPath: thumbnailFile.path,
       );
     } catch (e) {
       debugPrint('Error merging PDFs: $e');

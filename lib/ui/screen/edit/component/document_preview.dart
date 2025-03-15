@@ -8,7 +8,7 @@ import 'page_controls.dart';
 import 'page_navigation_buttons.dart';
 import 'pdf_edit_preview.dart'; // Import the new PDF preview widget
 
-/// Container widget for document preview with all controls
+// In document_preview.dart
 class DocumentPreview extends StatelessWidget {
   final List<File> pages;
   final int currentPageIndex;

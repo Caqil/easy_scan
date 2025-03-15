@@ -118,45 +118,126 @@ class DocumentActionHandler {
       return;
     }
 
-    final String fileExtension = path
-        .extension(controller.pages[0].path)
-        .toLowerCase()
-        .replaceAll('.', '');
+    final String fileExtension =
+        path.extension(controller.pages[0].path).toLowerCase();
 
-    await showModalBottomSheet(
-      context: controller.context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _buildWatermarkBottomSheet(context),
-    ).then((watermarkInfo) async {
-      if (watermarkInfo != null) {
-        await _addWatermarkToPdf(
-          controller.pages[0].path,
-          watermarkInfo['text'],
-          watermarkInfo['type'],
-          watermarkInfo['opacity'],
-          watermarkInfo['color'],
-          watermarkInfo['fontSize'],
-          watermarkInfo['imageBytes'],
-        );
+    // Make sure we have a PDF file when in PDF edit mode
+    if (controller.currentEditMode == EditMode.pdfEdit) {
+      // Check if we need to create a PDF first
+      if (fileExtension != '.pdf') {
+        controller.isProcessing = true;
+        controller.updateUI();
+
+        try {
+          // Convert images to PDF first
+          await controller.preparePdfPreview();
+
+          // Now we should have a PDF file to work with
+          if (path.extension(controller.pages[0].path).toLowerCase() !=
+              '.pdf') {
+            throw Exception('Could not create PDF for watermarking');
+          }
+        } catch (e) {
+          AppDialogs.showSnackBar(
+            controller.context,
+            message: 'Could not prepare PDF for watermarking: $e',
+            type: SnackBarType.error,
+          );
+          controller.isProcessing = false;
+          controller.updateUI();
+          return;
+        }
+
+        controller.isProcessing = false;
+        controller.updateUI();
       }
-    });
-  }
+    } else {
+      // In image mode, we need to warn that watermarking is only for PDFs
+      AppDialogs.showSnackBar(
+        controller.context,
+        message: 'Switching to PDF mode for watermarking',
+      );
 
-  Widget _buildWatermarkBottomSheet(BuildContext context) {
-    final textController = TextEditingController();
+      // Switch to PDF mode
+      controller.switchEditMode(EditMode.pdfEdit);
+      return; // Return and let user try again after mode switch
+    }
+
+    // Create variables outside of the bottom sheet
     String watermarkType = 'text';
+    String watermarkText = "WATERMARK";
     double opacity = 0.2;
     Color watermarkColor = Colors.red;
     double fontSize = 72;
     Uint8List? imageBytes;
 
-    return StatefulBuilder(
-      builder: (context, setState) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        builder: (context, scrollController) => Container(
+    // Now show the watermark options dialog
+    final result = await showModalBottomSheet(
+      context: controller.context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return _buildCustomWatermarkBottomSheet(
+          context: context,
+          watermarkType: watermarkType,
+          watermarkText: watermarkText,
+          opacity: opacity,
+          watermarkColor: watermarkColor,
+          fontSize: fontSize,
+          imageBytes: imageBytes,
+          onWatermarkTypeChanged: (type) => watermarkType = type,
+          onWatermarkTextChanged: (text) => watermarkText = text,
+          onOpacityChanged: (value) => opacity = value,
+          onColorChanged: (color) => watermarkColor = color,
+          onFontSizeChanged: (size) => fontSize = size,
+          onImageChanged: (bytes) => imageBytes = bytes,
+        );
+      },
+    );
+
+    if (result == true) {
+      // User tapped Apply
+      await _addWatermarkToPdf(
+        controller.pages[0].path,
+        watermarkText,
+        watermarkType,
+        opacity,
+        watermarkColor,
+        fontSize,
+        imageBytes,
+      );
+    }
+  }
+
+  Widget _buildCustomWatermarkBottomSheet({
+    required BuildContext context,
+    required String watermarkType,
+    required String watermarkText,
+    required double opacity,
+    required Color watermarkColor,
+    required double fontSize,
+    required Uint8List? imageBytes,
+    required Function(String) onWatermarkTypeChanged,
+    required Function(String) onWatermarkTextChanged,
+    required Function(double) onOpacityChanged,
+    required Function(Color) onColorChanged,
+    required Function(double) onFontSizeChanged,
+    required Function(Uint8List?) onImageChanged,
+  }) {
+    // Create a TextEditingController with the initial text
+    final textController = TextEditingController(text: watermarkText);
+
+    // Add listener to update the text whenever it changes
+    textController.addListener(() {
+      onWatermarkTextChanged(textController.text);
+    });
+
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      maxChildSize: 0.9,
+      minChildSize: 0.5,
+      builder: (context, scrollController) {
+        return Container(
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: const BorderRadius.only(
@@ -166,17 +247,21 @@ class DocumentActionHandler {
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Handle bar
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 12),
-                height: 4,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(4),
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  height: 4,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
               ),
+
               // Header
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -193,12 +278,14 @@ class DocumentActionHandler {
                   ],
                 ),
               ),
+
               // Content
               Expanded(
                 child: ListView(
                   controller: scrollController,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: [
+                    // Watermark Type Selection
                     Row(
                       children: [
                         Text('Watermark Type:',
@@ -217,12 +304,19 @@ class DocumentActionHandler {
                           ],
                           selected: {watermarkType},
                           onSelectionChanged: (newSelection) {
-                            setState(() => watermarkType = newSelection.first);
+                            // Update the type
+                            onWatermarkTypeChanged(newSelection.first);
+
+                            // Force rebuild
+                            controller.updateUI();
                           },
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 20),
+
+                    // Text or Image input based on type
                     if (watermarkType == 'text')
                       TextField(
                         controller: textController,
@@ -230,12 +324,10 @@ class DocumentActionHandler {
                           labelText: 'Watermark Text',
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.text_fields),
+                          hintText: 'Enter watermark text here',
                         ),
-                        onChanged: (value) {
-                          // This ensures the preview updates as the user types
-                          setState(() {});
-                        },
                       ),
+
                     if (watermarkType == 'image')
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +344,7 @@ class DocumentActionHandler {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Image.memory(
-                                    imageBytes!,
+                                    imageBytes,
                                     fit: BoxFit.contain,
                                   ),
                                 ),
@@ -262,9 +354,10 @@ class DocumentActionHandler {
                                   child: IconButton(
                                     icon: Icon(Icons.delete, color: Colors.red),
                                     onPressed: () {
-                                      setState(() {
-                                        imageBytes = null;
-                                      });
+                                      // Update to null
+                                      onImageChanged(null);
+                                      // Force rebuild
+                                      controller.updateUI();
                                     },
                                     style: IconButton.styleFrom(
                                       backgroundColor: Colors.white70,
@@ -283,9 +376,10 @@ class DocumentActionHandler {
                                 );
                                 if (image != null) {
                                   final bytes = await image.readAsBytes();
-                                  setState(() {
-                                    imageBytes = bytes;
-                                  });
+                                  // Update with new image
+                                  onImageChanged(bytes);
+                                  // Force rebuild
+                                  controller.updateUI();
                                 }
                               } catch (e) {
                                 AppDialogs.showSnackBar(
@@ -302,7 +396,10 @@ class DocumentActionHandler {
                           ),
                         ],
                       ),
+
                     const SizedBox(height: 20),
+
+                    // Opacity slider
                     Row(
                       children: [
                         Text('Opacity:',
@@ -314,14 +411,21 @@ class DocumentActionHandler {
                             max: 0.5,
                             divisions: 9,
                             label: '${(opacity * 100).round()}%',
-                            onChanged: (value) =>
-                                setState(() => opacity = value),
+                            onChanged: (value) {
+                              // Update opacity
+                              onOpacityChanged(value);
+                              // Force rebuild
+                              controller.updateUI();
+                            },
                           ),
                         ),
                         Text('${(opacity * 100).round()}%'),
                       ],
                     ),
+
                     const SizedBox(height: 20),
+
+                    // Text-specific options
                     if (watermarkType == 'text')
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,35 +442,65 @@ class DocumentActionHandler {
                                   runSpacing: 12,
                                   children: [
                                     _buildColorOption(
-                                        Colors.red,
-                                        watermarkColor,
-                                        (color) => setState(
-                                            () => watermarkColor = color)),
+                                      color: Colors.red,
+                                      selectedColor: watermarkColor,
+                                      onSelect: (color) {
+                                        // Update color
+                                        onColorChanged(color);
+                                        // Force rebuild
+                                        controller.updateUI();
+                                      },
+                                    ),
                                     _buildColorOption(
-                                        Colors.blue,
-                                        watermarkColor,
-                                        (color) => setState(
-                                            () => watermarkColor = color)),
+                                      color: Colors.blue,
+                                      selectedColor: watermarkColor,
+                                      onSelect: (color) {
+                                        // Update color
+                                        onColorChanged(color);
+                                        // Force rebuild
+                                        controller.updateUI();
+                                      },
+                                    ),
                                     _buildColorOption(
-                                        Colors.green,
-                                        watermarkColor,
-                                        (color) => setState(
-                                            () => watermarkColor = color)),
+                                      color: Colors.green,
+                                      selectedColor: watermarkColor,
+                                      onSelect: (color) {
+                                        // Update color
+                                        onColorChanged(color);
+                                        // Force rebuild
+                                        controller.updateUI();
+                                      },
+                                    ),
                                     _buildColorOption(
-                                        Colors.orange,
-                                        watermarkColor,
-                                        (color) => setState(
-                                            () => watermarkColor = color)),
+                                      color: Colors.orange,
+                                      selectedColor: watermarkColor,
+                                      onSelect: (color) {
+                                        // Update color
+                                        onColorChanged(color);
+                                        // Force rebuild
+                                        controller.updateUI();
+                                      },
+                                    ),
                                     _buildColorOption(
-                                        Colors.purple,
-                                        watermarkColor,
-                                        (color) => setState(
-                                            () => watermarkColor = color)),
+                                      color: Colors.purple,
+                                      selectedColor: watermarkColor,
+                                      onSelect: (color) {
+                                        // Update color
+                                        onColorChanged(color);
+                                        // Force rebuild
+                                        controller.updateUI();
+                                      },
+                                    ),
                                     _buildColorOption(
-                                        Colors.grey,
-                                        watermarkColor,
-                                        (color) => setState(
-                                            () => watermarkColor = color)),
+                                      color: Colors.grey,
+                                      selectedColor: watermarkColor,
+                                      onSelect: (color) {
+                                        // Update color
+                                        onColorChanged(color);
+                                        // Force rebuild
+                                        controller.updateUI();
+                                      },
+                                    ),
                                   ],
                                 ),
                               ),
@@ -385,8 +519,12 @@ class DocumentActionHandler {
                                   max: 144,
                                   divisions: 6,
                                   label: fontSize.round().toString(),
-                                  onChanged: (value) =>
-                                      setState(() => fontSize = value),
+                                  onChanged: (value) {
+                                    // Update font size
+                                    onFontSizeChanged(value);
+                                    // Force rebuild
+                                    controller.updateUI();
+                                  },
                                 ),
                               ),
                               Text(fontSize.round().toString()),
@@ -394,7 +532,10 @@ class DocumentActionHandler {
                           ),
                         ],
                       ),
+
                     const SizedBox(height: 20),
+
+                    // Preview area
                     if (watermarkType == 'text')
                       Container(
                         height: 120,
@@ -406,9 +547,9 @@ class DocumentActionHandler {
                           child: RotationTransition(
                             turns: const AlwaysStoppedAnimation(-45 / 360),
                             child: Text(
-                              textController.text.isEmpty
+                              watermarkText.isEmpty
                                   ? 'WATERMARK'
-                                  : textController.text,
+                                  : watermarkText,
                               style: TextStyle(
                                 fontSize: fontSize / 3,
                                 color: watermarkColor.withOpacity(opacity),
@@ -418,6 +559,7 @@ class DocumentActionHandler {
                           ),
                         ),
                       ),
+
                     if (watermarkType == 'image' && imageBytes != null)
                       Container(
                         height: 120,
@@ -431,7 +573,7 @@ class DocumentActionHandler {
                             Opacity(
                               opacity: opacity,
                               child: Image.memory(
-                                imageBytes!,
+                                imageBytes,
                                 height: 100,
                                 fit: BoxFit.contain,
                               ),
@@ -453,6 +595,7 @@ class DocumentActionHandler {
                   ],
                 ),
               ),
+
               // Footer buttons
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -461,7 +604,7 @@ class DocumentActionHandler {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text('Cancel'),
+                      child: const Text('Cancel'),
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton(
@@ -483,31 +626,32 @@ class DocumentActionHandler {
                           );
                           return;
                         }
-                        Navigator.pop(context, {
-                          'type': watermarkType,
-                          'text': textController.text.trim(),
-                          'opacity': opacity,
-                          'color': watermarkColor,
-                          'fontSize': fontSize,
-                          'imageBytes': imageBytes,
-                        });
+
+                        // Close dialog with success result
+                        Navigator.pop(context, true);
                       },
-                      child: Text('Apply Watermark'),
+                      child: const Text('Apply Watermark'),
                     ),
                   ],
                 ),
               ),
+
               SizedBox(height: MediaQuery.of(context).padding.bottom),
             ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildColorOption(
-      Color color, Color selectedColor, Function(Color) onSelect) {
-    final bool isSelected = color.value == selectedColor.value;
+// Helper function to build color option
+  Widget _buildColorOption({
+    required Color color,
+    required Color selectedColor,
+    required Function(Color) onSelect,
+  }) {
+    final bool isSelected = selectedColor.value == color.value;
+
     return GestureDetector(
       onTap: () => onSelect(color),
       child: Container(
@@ -523,9 +667,10 @@ class DocumentActionHandler {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                      color: color.withOpacity(0.5),
-                      blurRadius: 8,
-                      spreadRadius: 1)
+                    color: color.withOpacity(0.6),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  )
                 ]
               : null,
         ),
@@ -544,87 +689,154 @@ class DocumentActionHandler {
       Color color,
       double fontSize,
       Uint8List? imageBytes) async {
+    // Set processing state to true
     controller.isProcessing = true;
+    // This will trigger UI update since controller manages state
+    controller.updateUI();
 
     try {
-      final PdfDocument document = controller.passwordController.text.isNotEmpty
-          ? PdfDocument(
-              inputBytes: File(pdfPath).readAsBytesSync(),
-              password: controller.passwordController.text,
-            )
-          : PdfDocument(inputBytes: File(pdfPath).readAsBytesSync());
+      // Load the PDF document - handle password protected PDFs
+      PdfDocument document;
+      try {
+        document = controller.passwordController.text.isNotEmpty
+            ? PdfDocument(
+                inputBytes: await File(pdfPath).readAsBytes(),
+                password: controller.passwordController.text,
+              )
+            : PdfDocument(inputBytes: await File(pdfPath).readAsBytes());
+      } catch (e) {
+        debugPrint('Error opening PDF: $e');
+        throw Exception('Could not open PDF file: $e');
+      }
 
-      if (type == 'text') {
-        final PdfColor pdfColor = PdfColor(
-            color.red, color.green, color.blue, (opacity * 255).round());
-        final PdfFont font = PdfStandardFont(PdfFontFamily.helvetica, fontSize);
+      // Load graphics for PDF manipulation
+      if (type == 'text' && text.isNotEmpty) {
+        // Convert color to PdfColor with proper opacity
+        int alpha = (opacity * 255).round();
+        final PdfColor pdfColor =
+            PdfColor(color.red, color.green, color.blue, alpha);
+
+        // Use a safer font size value - scale down if too large
+        double safeFontSize = fontSize;
+        if (safeFontSize > 144) safeFontSize = 144; // Cap maximum size
+
+        final PdfStandardFont font =
+            PdfStandardFont(PdfFontFamily.helvetica, safeFontSize);
+
         final PdfSolidBrush brush = PdfSolidBrush(pdfColor);
 
+        // Apply watermark to each page
         for (int i = 0; i < document.pages.count; i++) {
           final PdfPage page = document.pages[i];
           final PdfGraphics graphics = page.graphics;
+
+          // Calculate center of page
           final double x = page.size.width / 2;
           final double y = page.size.height / 2;
-          final Size textSize = font.measureString(text);
 
+          // Set up text for measuring
+          final PdfStringFormat format = PdfStringFormat(
+              alignment: PdfTextAlignment.center,
+              lineAlignment: PdfVerticalAlignment.middle);
+
+          // Measure text size
+          Size textSize = font.measureString(text, format: format);
+
+          // Save graphics state
           graphics.save();
+
+          // Translate to center of page
           graphics.translateTransform(x, y);
+
+          // Rotate -45 degrees for diagonal watermark
           graphics.rotateTransform(-45);
+
+          // Draw the string at the center point (with offset to account for rotation)
           graphics.drawString(
             text,
             font,
             brush: brush,
+            format: format,
             bounds: Rect.fromCenter(
-                center: Offset.zero,
-                width: textSize.width,
-                height: textSize.height),
+              center: Offset.zero,
+              width: textSize.width,
+              height: textSize.height,
+            ),
           );
+
+          // Restore graphics state
           graphics.restore();
         }
       } else if (type == 'image' && imageBytes != null) {
-        final PdfBitmap watermarkImage = PdfBitmap(imageBytes);
+        try {
+          // Create a bitmap from the image bytes
+          final PdfBitmap watermarkImage = PdfBitmap(imageBytes);
 
-        for (int i = 0; i < document.pages.count; i++) {
-          final PdfPage page = document.pages[i];
-          final PdfGraphics graphics = page.graphics;
+          // Apply to each page
+          for (int i = 0; i < document.pages.count; i++) {
+            final PdfPage page = document.pages[i];
+            final PdfGraphics graphics = page.graphics;
 
-          // Calculate dimensions to maintain aspect ratio
-          final double pageWidth = page.size.width;
-          final double pageHeight = page.size.height;
-          final double imageWidth = watermarkImage.width.toDouble();
-          final double imageHeight = watermarkImage.height.toDouble();
+            // Calculate dimensions for the watermark
+            final double pageWidth = page.size.width;
+            final double pageHeight = page.size.height;
 
-          // Calculate the scaling factor to fit the image properly
-          double scaleFactor;
-          if (imageWidth > imageHeight) {
-            scaleFactor = (pageWidth * 0.8) / imageWidth;
-          } else {
-            scaleFactor = (pageHeight * 0.8) / imageHeight;
+            // Calculate watermark size (50% of page size)
+            double watermarkWidth = pageWidth * 0.5;
+            double watermarkHeight =
+                (watermarkWidth / watermarkImage.width) * watermarkImage.height;
+
+            // Keep aspect ratio but limit size
+            if (watermarkHeight > pageHeight * 0.5) {
+              watermarkHeight = pageHeight * 0.5;
+              watermarkWidth = (watermarkHeight / watermarkImage.height) *
+                  watermarkImage.width;
+            }
+
+            // Center the watermark on the page
+            final double x = (pageWidth - watermarkWidth) / 2;
+            final double y = (pageHeight - watermarkHeight) / 2;
+
+            // Set transparency for the watermark
+            graphics.save();
+            graphics.setTransparency(opacity);
+
+            // Draw the image watermark
+            graphics.drawImage(
+              watermarkImage,
+              Rect.fromLTWH(x, y, watermarkWidth, watermarkHeight),
+            );
+
+            graphics.restore();
           }
-
-          final double targetWidth = imageWidth * scaleFactor;
-          final double targetHeight = imageHeight * scaleFactor;
-
-          // Position image in center of page
-          final double x = (pageWidth - targetWidth) / 2;
-          final double y = (pageHeight - targetHeight) / 2;
-
-          // Set transparency for the image
-          graphics.save();
-          graphics.setTransparency(opacity);
-          graphics.drawImage(
-              watermarkImage, Rect.fromLTWH(x, y, targetWidth, targetHeight));
-          graphics.restore();
+        } catch (e) {
+          debugPrint('Error applying image watermark: $e');
+          throw Exception('Failed to apply image watermark: $e');
         }
       }
 
-      final Directory tempDir = await getTemporaryDirectory();
-      final String tempPath =
-          '${tempDir.path}/watermarked_${path.basename(pdfPath)}';
-      File(tempPath).writeAsBytesSync(await document.save());
-      await File(tempPath).copy(pdfPath);
-      await File(tempPath).delete();
-      document.dispose();
+      // Save the watermarked PDF
+      try {
+        // Create a temporary path
+        final Directory tempDir = await getTemporaryDirectory();
+        final String tempPath =
+            '${tempDir.path}/watermarked_${path.basename(pdfPath)}';
+
+        // Save the document
+        File(tempPath).writeAsBytesSync(await document.save());
+
+        // Copy back to original location
+        await File(tempPath).copy(pdfPath);
+
+        // Clean up temp file
+        await File(tempPath).delete();
+
+        // Dispose the document properly
+        document.dispose();
+      } catch (e) {
+        debugPrint('Error saving watermarked PDF: $e');
+        throw Exception('Failed to save watermarked document: $e');
+      }
 
       AppDialogs.showSnackBar(
         controller.context,
@@ -638,7 +850,10 @@ class DocumentActionHandler {
         type: SnackBarType.error,
       );
     } finally {
+      // Set processing state to false
       controller.isProcessing = false;
+      // This will trigger UI update
+      controller.updateUI();
     }
   }
 

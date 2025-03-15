@@ -88,17 +88,19 @@ class EditScreenController {
     }
   }
 
-  void dispose() {
-    documentNameController.dispose();
-    passwordController.dispose();
-    pageController.dispose();
+  String? _tempPreviewPdfPath;
+  List<File>? _originalPages;
+
+// Add this method to check if the current pages contain any PDF files
+  bool _containsPdfFiles() {
+    for (File page in pages) {
+      final extension = path.extension(page.path).toLowerCase();
+      if (extension == '.pdf') return true;
+    }
+    return false;
   }
 
-  void toggleViewMode() {
-    isEditView = !isEditView;
-    _notifyStateChanged();
-  }
-
+// Modify the switchEditMode method to update the preview when switching modes
   void switchEditMode(EditMode newMode) {
     if (!_canSwitchEditMode) {
       AppDialogs.showSnackBar(
@@ -109,8 +111,28 @@ class EditScreenController {
       return;
     }
 
+    // Clean up any temporary preview files when switching modes
+    if (_tempPreviewPdfPath != null && _originalPages != null) {
+      // Restore original pages
+      pages = _originalPages!;
+
+      // Schedule temp file for deletion
+      File(_tempPreviewPdfPath!).delete().catchError((e) {
+        debugPrint('Error deleting temp PDF: $e');
+      });
+
+      _tempPreviewPdfPath = null;
+      _originalPages = null;
+    }
+
     _currentEditMode = newMode;
-    _notifyStateChanged();
+
+    // If switching to PDF mode, prepare a PDF preview
+    if (newMode == EditMode.pdfEdit) {
+      preparePdfPreview();
+    }
+
+    updateUI();
 
     AppDialogs.showSnackBar(
       context,
@@ -118,6 +140,76 @@ class EditScreenController {
           'Now editing as ${newMode == EditMode.imageEdit ? 'images' : 'PDF'}',
       type: SnackBarType.success,
     );
+  }
+
+// Cleanup method - make sure to call this when disposing
+  void cleanupTempFiles() {
+    if (_tempPreviewPdfPath != null) {
+      try {
+        File(_tempPreviewPdfPath!).deleteSync();
+      } catch (e) {
+        debugPrint('Error cleaning up temp files: $e');
+      }
+      _tempPreviewPdfPath = null;
+    }
+  }
+
+  Future<void> preparePdfPreview() async {
+    if (_currentEditMode == EditMode.pdfEdit && !_containsPdfFiles()) {
+      // Only create a temp PDF if we're in PDF mode and don't already have a PDF file
+      isProcessing = true;
+      updateUI();
+
+      try {
+        // Create a list of files to include in the PDF
+        List<File> imageFiles = [];
+        for (File page in pages) {
+          String ext = path.extension(page.path).toLowerCase();
+          if (ext != '.pdf') {
+            imageFiles.add(page);
+          }
+        }
+
+        if (imageFiles.isNotEmpty) {
+          // Create a temporary PDF from the images
+          final pdfService = PdfService();
+          final String tempPdfPath = await pdfService.createPdfFromImages(
+              imageFiles,
+              'temp_preview_${DateTime.now().millisecondsSinceEpoch}');
+
+          // Store the original pages
+          List<File> originalPages = List.from(pages);
+
+          // Replace pages with just the PDF for preview purposes
+          pages = [File(tempPdfPath)];
+
+          // Store the temp PDF path to clean up later
+          _tempPreviewPdfPath = tempPdfPath;
+          _originalPages = originalPages;
+        }
+      } catch (e) {
+        debugPrint('Error creating PDF preview: $e');
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Could not create PDF preview: $e',
+          type: SnackBarType.error,
+        );
+      } finally {
+        isProcessing = false;
+        updateUI();
+      }
+    }
+  }
+
+  void dispose() {
+    documentNameController.dispose();
+    passwordController.dispose();
+    pageController.dispose();
+  }
+
+  void toggleViewMode() {
+    isEditView = !isEditView;
+    _notifyStateChanged();
   }
 
   Future<void> _loadExistingDocument() async {
@@ -212,6 +304,10 @@ class EditScreenController {
   }
 
   void _notifyStateChanged() {
+    _onStateChanged?.call();
+  }
+
+  void updateUI() {
     _onStateChanged?.call();
   }
 
@@ -433,29 +529,79 @@ class EditScreenController {
           'Processing ${imageFiles.length} images and ${pdfFiles.length} PDFs');
 
       // Step 2: Handle based on edit mode and content
-      if (_currentEditMode == EditMode.pdfEdit &&
-          isPdfInputFile &&
-          pdfFiles.length == 1 &&
-          imageFiles.isEmpty) {
-        // Case 1: PDF Edit Mode with a single PDF - use directly
-        debugPrint('PDF Edit Mode - using original PDF directly');
-        filePath = pdfFiles[0].path;
-        pageCount = await pdfService.getPdfPageCount(filePath);
-      } else {
-        // Case 2: Need to merge content
-        debugPrint('Creating or merging PDFs from content');
+      // Check if we're in PDF edit mode
+      if (_currentEditMode == EditMode.pdfEdit) {
+        // PDF Edit Mode - For both PDF and image inputs
 
-        // Step 2a: Prepare all PDFs that need to be merged
-        List<String> allPdfPaths = [];
+        // When in PDF Edit Mode, we want to either:
+        // 1. Use a single existing PDF file directly (if that's all we have)
+        // 2. Convert all images to a single PDF (if we have no PDFs)
+        // 3. Merge PDFs and image-converted-PDFs together
 
-        // Add existing PDFs if in PDF edit mode
-        if (_currentEditMode == EditMode.pdfEdit) {
-          allPdfPaths.addAll(pdfFiles.map((file) => file.path));
+        if (pdfFiles.length == 1 && imageFiles.isEmpty && isPdfInputFile) {
+          // Case 1: Single PDF file only - use it directly
+          debugPrint('PDF Edit Mode - using single PDF directly');
+          filePath = pdfFiles[0].path;
+          pageCount = await pdfService.getPdfPageCount(filePath);
+        } else {
+          // Case 2 & 3: Create or merge PDFs
+          debugPrint('PDF Edit Mode - creating/merging PDFs');
+          List<String> allPdfPaths = [];
+
+          // Add existing PDFs
+          if (pdfFiles.isNotEmpty) {
+            allPdfPaths.addAll(pdfFiles.map((file) => file.path));
+          }
+
+          // Convert images to PDFs if we have any
+          if (imageFiles.isNotEmpty) {
+            try {
+              String imagesPdfPath = await pdfService.createPdfFromImages(
+                  imageFiles,
+                  '${documentName}_images_${DateTime.now().millisecondsSinceEpoch}');
+              allPdfPaths.add(imagesPdfPath);
+              tempPaths.add(imagesPdfPath);
+            } catch (e) {
+              debugPrint('Error batch converting images: $e');
+              // Fallback: convert images individually
+              for (int i = 0; i < imageFiles.length; i++) {
+                try {
+                  String singleImagePdfPath =
+                      await pdfService.createPdfFromImages(
+                    [imageFiles[i]],
+                    '${documentName}_image${i}_${DateTime.now().millisecondsSinceEpoch}',
+                  );
+                  allPdfPaths.add(singleImagePdfPath);
+                  tempPaths.add(singleImagePdfPath);
+                } catch (e) {
+                  debugPrint('Error converting image ${i}: $e');
+                  // Skip problematic image
+                }
+              }
+            }
+          }
+
+          // Check if we have any PDFs to work with
+          if (allPdfPaths.isEmpty) {
+            throw Exception('No valid content to save');
+          } else if (allPdfPaths.length == 1) {
+            // Only one PDF, use it directly
+            filePath = allPdfPaths[0];
+          } else {
+            // Merge multiple PDFs
+            filePath = await pdfService.mergePdfs(allPdfPaths, documentName);
+          }
+
+          // Get final page count
+          pageCount = await pdfService.getPdfPageCount(filePath);
         }
+      } else {
+        // Image Edit Mode - Convert all to PDFs and merge if needed
+        debugPrint('Image Edit Mode - converting to PDF');
+        List<String> allPdfPaths = [];
 
         // Convert images to PDFs
         if (imageFiles.isNotEmpty) {
-          // Try batch conversion first
           try {
             String imagesPdfPath = await pdfService.createPdfFromImages(
                 imageFiles,
@@ -467,10 +613,11 @@ class EditScreenController {
             // Fallback: convert images individually
             for (int i = 0; i < imageFiles.length; i++) {
               try {
-                String singleImagePdfPath = await pdfService
-                    .createPdfFromImages([
-                  imageFiles[i]
-                ], '${documentName}_image${i}_${DateTime.now().millisecondsSinceEpoch}');
+                String singleImagePdfPath =
+                    await pdfService.createPdfFromImages(
+                  [imageFiles[i]],
+                  '${documentName}_image${i}_${DateTime.now().millisecondsSinceEpoch}',
+                );
                 allPdfPaths.add(singleImagePdfPath);
                 tempPaths.add(singleImagePdfPath);
               } catch (e) {
@@ -481,18 +628,20 @@ class EditScreenController {
           }
         }
 
-        // Step 2b: Merge all PDFs if needed
+        // Add existing PDFs if any
+        if (pdfFiles.isNotEmpty) {
+          allPdfPaths.addAll(pdfFiles.map((file) => file.path));
+        }
+
+        // Finalize the PDF path
         if (allPdfPaths.isEmpty) {
           throw Exception('No valid content to save');
         } else if (allPdfPaths.length == 1) {
-          // Only one PDF, use it directly
           filePath = allPdfPaths[0];
         } else {
-          // Merge multiple PDFs
           filePath = await pdfService.mergePdfs(allPdfPaths, documentName);
         }
 
-        // Get final page count
         pageCount = await pdfService.getPdfPageCount(filePath);
       }
 
@@ -588,7 +737,7 @@ class EditScreenController {
           pdfPath: filePath,
           pagesPaths: pagesPaths, // Now storing PDF + original images
           pageCount: pageCount,
-          thumbnailPath: thumbnailFile?.path,
+          thumbnailPath: thumbnailFile.path,
           isPasswordProtected: isPasswordProtectionEnabled,
           password:
               isPasswordProtectionEnabled ? passwordController.text : null,
