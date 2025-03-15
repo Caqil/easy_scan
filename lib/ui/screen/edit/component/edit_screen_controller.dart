@@ -105,7 +105,7 @@ class EditScreenController {
     if (!_canSwitchEditMode) {
       AppDialogs.showSnackBar(
         context,
-        message: 'This document can only be edited as a PDF',
+        message: 'Please save the document before switching modes',
         type: SnackBarType.warning,
       );
       return;

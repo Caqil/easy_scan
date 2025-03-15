@@ -165,7 +165,7 @@ class DocumentActionHandler {
 
     // Create variables outside of the bottom sheet
     String watermarkType = 'text';
-    String watermarkText = "WATERMARK";
+    String watermarkText = "ScanPro";
     double opacity = 0.2;
     Color watermarkColor = Colors.red;
     double fontSize = 72;
@@ -177,21 +177,35 @@ class DocumentActionHandler {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return _buildCustomWatermarkBottomSheet(
-          context: context,
-          watermarkType: watermarkType,
-          watermarkText: watermarkText,
-          opacity: opacity,
-          watermarkColor: watermarkColor,
-          fontSize: fontSize,
-          imageBytes: imageBytes,
-          onWatermarkTypeChanged: (type) => watermarkType = type,
-          onWatermarkTextChanged: (text) => watermarkText = text,
-          onOpacityChanged: (value) => opacity = value,
-          onColorChanged: (color) => watermarkColor = color,
-          onFontSizeChanged: (size) => fontSize = size,
-          onImageChanged: (bytes) => imageBytes = bytes,
-        );
+        return StatefulBuilder(builder: (context, setState) {
+          return _buildCustomWatermarkBottomSheet(
+            context: context,
+            watermarkType: watermarkType,
+            watermarkText: watermarkText,
+            opacity: opacity,
+            watermarkColor: watermarkColor,
+            fontSize: fontSize,
+            imageBytes: imageBytes,
+            onWatermarkTypeChanged: (type) {
+              setState(() => watermarkType = type);
+            },
+            onWatermarkTextChanged: (text) {
+              setState(() => watermarkText = text);
+            },
+            onOpacityChanged: (value) {
+              setState(() => opacity = value);
+            },
+            onColorChanged: (color) {
+              setState(() => watermarkColor = color);
+            },
+            onFontSizeChanged: (size) {
+              setState(() => fontSize = size);
+            },
+            onImageChanged: (bytes) {
+              setState(() => imageBytes = bytes);
+            },
+          );
+        });
       },
     );
 
@@ -378,7 +392,7 @@ class DocumentActionHandler {
                                   final bytes = await image.readAsBytes();
                                   // Update with new image
                                   onImageChanged(bytes);
-                                  // Force rebuild
+                                  debugPrint('Opacity slider value: $opacity');
                                   controller.updateUI();
                                 }
                               } catch (e) {
@@ -711,19 +725,12 @@ class DocumentActionHandler {
 
       // Load graphics for PDF manipulation
       if (type == 'text' && text.isNotEmpty) {
-        // Convert color to PdfColor with proper opacity
-        int alpha = (opacity * 255).round();
-        final PdfColor pdfColor =
-            PdfColor(color.red, color.green, color.blue, alpha);
-
         // Use a safer font size value - scale down if too large
         double safeFontSize = fontSize;
         if (safeFontSize > 144) safeFontSize = 144; // Cap maximum size
 
         final PdfStandardFont font =
             PdfStandardFont(PdfFontFamily.helvetica, safeFontSize);
-
-        final PdfSolidBrush brush = PdfSolidBrush(pdfColor);
 
         // Apply watermark to each page
         for (int i = 0; i < document.pages.count; i++) {
@@ -745,11 +752,19 @@ class DocumentActionHandler {
           // Save graphics state
           graphics.save();
 
+          // Set transparency directly on the graphics context
+          graphics.setTransparency(opacity);
+
           // Translate to center of page
           graphics.translateTransform(x, y);
 
           // Rotate -45 degrees for diagonal watermark
           graphics.rotateTransform(-45);
+
+          // Create PDF color without alpha parameter
+          final PdfColor pdfColor =
+              PdfColor(color.red, color.green, color.blue);
+          final PdfSolidBrush brush = PdfSolidBrush(pdfColor);
 
           // Draw the string at the center point (with offset to account for rotation)
           graphics.drawString(

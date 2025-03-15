@@ -57,14 +57,10 @@ class QuickActions extends ConsumerWidget {
 
   Widget _buildActionGrid(BuildContext context) {
     final actions = [
-      _ActionItem(Icons.qr_code_scanner, 'Scan\nCode', onScan),
-      _ActionItem(Icons.water_drop, 'Water\nmark', onImport),
-      _ActionItem(Icons.edit, 'eSign\nPDF', onFolders),
-      _ActionItem(Icons.content_cut, 'Split\nPDF', onFavorites),
-      _ActionItem(Icons.merge_type, 'Merge\nPDF', onMerge),
-      _ActionItem(Icons.lock, 'Protect\nPDF', onImport),
-      _ActionItem(Icons.compress, 'Compress\nPDF', onCompress),
-      _ActionItem(Icons.apps, 'All\nTools', onFavorites),
+      _ActionItem(Icons.qr_code_scanner, 'Scan Code', onScan),
+      _ActionItem(Icons.merge_type, 'Merge PDF', onMerge),
+      _ActionItem(Icons.lock, 'Protect PDF', onImport),
+      _ActionItem(Icons.compress, 'Compress PDF', onCompress),
     ];
 
     return Column(
@@ -74,14 +70,6 @@ class QuickActions extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: actions
               .sublist(0, 4)
-              .map((action) => _buildActionButton(action, context))
-              .toList(),
-        ),
-        SizedBox(height: 16.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: actions
-              .sublist(4, 8)
               .map((action) => _buildActionButton(action, context))
               .toList(),
         ),
@@ -113,21 +101,21 @@ class QuickActions extends ConsumerWidget {
                 highlightColor: color.withOpacity(0.1),
                 onTap: action.onTap,
                 child: Container(
-                  width: 60.w,
-                  height: 60.h,
+                  width: 50.w,
+                  height: 50.h,
                   child: Icon(
                     action.icon,
-                    size: 28.r,
+                    size: 25.r,
                   ),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 4.h),
           Text(
             action.label,
             style: GoogleFonts.notoSans(
-              fontSize: 12.sp,
+              fontSize: 10.sp,
               fontWeight: FontWeight.w500,
               height: 1.2,
             ),
