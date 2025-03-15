@@ -10,7 +10,7 @@ class QuickActions extends ConsumerWidget {
   final VoidCallback onFavorites;
   final VoidCallback onMerge;
   final VoidCallback onCompress;
-
+  final VoidCallback onProtect;
   const QuickActions({
     super.key,
     required this.onScan,
@@ -19,13 +19,13 @@ class QuickActions extends ConsumerWidget {
     required this.onFavorites,
     required this.onMerge,
     required this.onCompress,
+    required this.onProtect,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding: EdgeInsets.all(16.w),
-      margin: EdgeInsets.symmetric(horizontal: 8.w),
+      padding: EdgeInsets.all(15.w),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(24.r),
@@ -59,7 +59,7 @@ class QuickActions extends ConsumerWidget {
     final actions = [
       _ActionItem(Icons.qr_code_scanner, 'Scan Code', onScan),
       _ActionItem(Icons.merge_type, 'Merge PDF', onMerge),
-      _ActionItem(Icons.lock, 'Protect PDF', onImport),
+      _ActionItem(Icons.lock, 'Protect PDF', onProtect),
       _ActionItem(Icons.compress, 'Compress PDF', onCompress),
     ];
 
