@@ -19,13 +19,11 @@ class MainScreen extends ConsumerStatefulWidget {
   ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends ConsumerState<MainScreen>
-    with TickerProviderStateMixin {
+class _MainScreenState extends ConsumerState<MainScreen> {
   int _selectedIndex = 0;
-  late AnimationController _fabAnimationController;
-  late Animation<double> _fabAnimation;
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   bool _isLoading = false;
+
   final _iconList = <IconData>[
     Icons.home_rounded,
     Icons.folder_rounded,
@@ -40,10 +38,8 @@ class _MainScreenState extends ConsumerState<MainScreen>
     'Settings',
   ];
 
-  // Define pages
   static final List<Widget> _pages = [
     const HomeScreen(),
-    // Use a placeholder for the Folder screen since we navigate to it with folder parameters
     FolderScreen(),
     const ConversionScreen(),
     const SettingsScreen(),
@@ -52,32 +48,17 @@ class _MainScreenState extends ConsumerState<MainScreen>
   @override
   void initState() {
     super.initState();
-
-    _fabAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-
-    _fabAnimation = CurvedAnimation(
-      parent: _fabAnimationController,
-      curve: Curves.easeInOut,
-    );
-
-    _fabAnimationController.forward();
   }
 
   @override
   void dispose() {
-    _fabAnimationController.dispose();
     super.dispose();
   }
 
   void _onItemTapped(int index) {
-    // Handle tap on folders tab (index 1)
     if (index == 1) {
       _showFoldersScreen(context);
     } else {
-      // All other tabs are handled normally
       setState(() {
         _selectedIndex = index;
       });
@@ -85,84 +66,103 @@ class _MainScreenState extends ConsumerState<MainScreen>
   }
 
   void _showFoldersScreen(BuildContext context) {
-    // This would typically navigate to the folder screen with root folder
     setState(() {
       _selectedIndex = 1;
     });
+  }
+
+  void _handleScanAction() {
+    final scanService = ref.read(scanServiceProvider);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: ScanInitialView(
+            onScanPressed: () {
+              scanService.scanDocuments(
+                context: context,
+                ref: ref,
+                setLoading: (isLoading) =>
+                    setState(() => _isLoading = isLoading),
+                onSuccess: () {
+                  AppRoutes.navigateToEdit(context);
+                },
+              );
+            },
+            onImportPressed: () {
+              scanService.pickImages(
+                context: context,
+                ref: ref,
+                setLoading: (isLoading) =>
+                    setState(() => _isLoading = isLoading),
+                onSuccess: () {
+                  AppRoutes.navigateToEdit(context);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final scanService = ref.read(scanServiceProvider);
+
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
       ),
-      extendBody: true, // Important for transparent effect
-      floatingActionButton: ScaleTransition(
-        scale: _fabAnimation,
-        child: FloatingActionButton(
-          heroTag: 'mainScreenFab',
-          elevation: 8,
-          backgroundColor: colorScheme.primary,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(100),
+      extendBody: true,
+      floatingActionButton: GestureDetector(
+        onTap: _handleScanAction,
+        child: Container(
+          width: 60.sp,
+          height: 60.sp,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: colorScheme.primary,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Icon(
-            Icons.document_scanner_rounded,
-            size: 28.sp,
-          ),
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (context) => Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  child: ScanInitialView(
-                    onScanPressed: () {
-                      scanService.scanDocuments(
-                        context: context,
-                        ref: ref,
-                        setLoading: (isLoading) =>
-                            setState(() => _isLoading = isLoading),
-                        onSuccess: () {
-                          AppRoutes.navigateToEdit(context);
-                        },
-                      );
-                    },
-                    onImportPressed: () {
-                      scanService.pickImages(
-                        context: context,
-                        ref: ref,
-                        setLoading: (isLoading) =>
-                            setState(() => _isLoading = isLoading),
-                        onSuccess: () {
-                          AppRoutes.navigateToEdit(context);
-                        },
-                      );
-                    },
-                  ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.document_scanner_rounded,
+                size: 24.sp,
+                color: Colors.white,
+              ),
+              Text(
+                'Scan',
+                style: GoogleFonts.notoSerif(
+                  fontSize: 10.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
-
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar.builder(
         itemCount: _iconList.length,
         tabBuilder: (int index, bool isActive) {
-          // Custom tab item with icon and label
           return Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -198,7 +198,6 @@ class _MainScreenState extends ConsumerState<MainScreen>
           color: Colors.black.withOpacity(0.1),
         ),
         onTap: _onItemTapped,
-        // Height for the bottom navigation bar
         height: 65.h,
       ),
     );

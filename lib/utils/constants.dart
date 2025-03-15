@@ -22,5 +22,13 @@ class AppConstants {
     0xFF795548, // Brown
     0xFF607D8B, // Blue Grey
     0xFF009688, // Teal
+    0xFFFFEB3B, // Yellow
+    0xFFE91E63, // Pink
+    0xFF00BCD4, // Cyan
+    0xFF8BC34A, // Light Green
+    0xFFFF5722, // Deep Orange
+    0xFF673AB7, // Deep Purple
+    0xFFCDDC39, // Lime
+    0xFF03A9F4, // Light Blue
   ];
 }

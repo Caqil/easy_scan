@@ -166,6 +166,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: const EdgeInsets.all(16.0),
                 children: [
                   QuickActions(
+                    onProtect: () {},
                     onScan: () {
                       showModalBottomSheet(
                         context: context,

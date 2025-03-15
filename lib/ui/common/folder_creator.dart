@@ -1,5 +1,3 @@
-// Add this to your lib/ui/common/folder_creator.dart
-
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,7 +16,6 @@ class FolderCreator {
     String title = 'Create New Folder',
     String? parentId,
   }) async {
-    final TextEditingController controller = TextEditingController();
     Folder? createdFolder;
 
     await showModalBottomSheet<void>(
@@ -26,37 +23,28 @@ class FolderCreator {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return _CreateFolderBottomSheet(
-              controller: controller,
-              parentId: parentId,
-              title: title,
-              ref: ref,
-              onFolderCreated: (folder) {
-                createdFolder = folder;
-                setState(() {});
-              },
-            );
+        return _CreateFolderBottomSheet(
+          parentId: parentId,
+          title: title,
+          ref: ref,
+          onFolderCreated: (folder) {
+            createdFolder = folder;
           },
         );
       },
     );
 
-    controller.dispose();
     return createdFolder;
   }
 }
 
 class _CreateFolderBottomSheet extends StatefulWidget {
-  final TextEditingController controller;
   final String? parentId;
   final String title;
   final WidgetRef ref;
   final Function(Folder) onFolderCreated;
 
   const _CreateFolderBottomSheet({
-    required this.controller,
     required this.parentId,
     required this.title,
     required this.ref,
@@ -69,8 +57,21 @@ class _CreateFolderBottomSheet extends StatefulWidget {
 }
 
 class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
+  late final TextEditingController _controller; // Managed internally
   int selectedColor = AppConstants.folderColors[0];
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(); // Initialize here
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose(); // Dispose here
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +132,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                   Text(
                     widget.title,
                     style: GoogleFonts.notoSerif(
-                      fontSize: 16.sp.sp,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -151,7 +152,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
-                      controller: widget.controller,
+                      controller: _controller, // Use internal controller
                       autofocus: true,
                       decoration: InputDecoration(
                         labelText: 'Folder Name',
@@ -161,7 +162,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                         hintText: 'Enter folder name',
                         prefixIcon: const Icon(Icons.folder_outlined),
                       ),
-                      style:  GoogleFonts.notoSerif(fontSize: 14.sp),
+                      style: GoogleFonts.notoSerif(fontSize: 14.sp),
                     ),
                     const SizedBox(height: 20),
                     Text(
@@ -228,7 +229,9 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () {
+                              Navigator.pop(context); // Simply pop the context
+                            },
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
@@ -266,7 +269,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
   }
 
   Future<void> _createFolder() async {
-    if (widget.controller.text.trim().isEmpty) {
+    if (_controller.text.trim().isEmpty) {
       AppDialogs.showSnackBar(context,
           type: SnackBarType.error, message: 'Folder name cannot be empty');
       return;
@@ -278,7 +281,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
 
     try {
       final newFolder = Folder(
-        name: widget.controller.text.trim(),
+        name: _controller.text.trim(),
         color: selectedColor,
         parentId: widget.parentId,
       );
@@ -286,21 +289,19 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
       await widget.ref.read(foldersProvider.notifier).addFolder(newFolder);
       widget.onFolderCreated(newFolder);
 
-      if (mounted) {
-        Navigator.pop(context);
+      if (!mounted) return; // Ensure widget is still mounted
+      Navigator.pop(context);
 
-        AppDialogs.showSnackBar(context,
-            type: SnackBarType.success, message: 'Folder created successfully');
-      }
+      AppDialogs.showSnackBar(context,
+          type: SnackBarType.success, message: 'Folder created successfully');
     } catch (e) {
+      if (!mounted) return; // Ensure widget is still mounted
       setState(() {
         isLoading = false;
       });
 
-      if (mounted) {
-        AppDialogs.showSnackBar(context,
-            type: SnackBarType.error, message: 'Error creating folder');
-      }
+      AppDialogs.showSnackBar(context,
+          type: SnackBarType.error, message: 'Error creating folder: $e');
     }
   }
 }

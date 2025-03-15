@@ -25,7 +25,6 @@ class EnhancedBreadcrumbs extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // Back button when not at root
             if (currentParentId != null) _buildBackButton(context),

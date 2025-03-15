@@ -119,7 +119,13 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             },
           ),
           IconButton(
-            icon: Icon(_isGridView ? Icons.view_list : Icons.grid_view),
+            icon: Icon(Icons.create_new_folder),
+            onPressed: () {
+              _createNewFolder(context);
+            },
+          ),
+          IconButton(
+            icon: Icon(!_isGridView ? Icons.view_list : Icons.grid_view),
             onPressed: () {
               setState(() {
                 _isGridView = !_isGridView;
@@ -143,15 +149,11 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           Expanded(
             child: _searchQuery.isNotEmpty
                 ? _buildSearchResults(filteredFolders, filteredDocuments)
-                : _isGridView
+                : !_isGridView
                     ? _buildGridView(folders, documents)
                     : _buildListView(folders, documents),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _createNewFolder(context),
-        child: const Icon(Icons.create_new_folder),
       ),
     );
   }
