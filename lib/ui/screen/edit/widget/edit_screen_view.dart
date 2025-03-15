@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:easy_scan/ui/common/app_bar.dart';
 import 'package:easy_scan/ui/screen/camera/component/scanned_documents_view.dart';
 import 'package:easy_scan/ui/screen/edit/component/document_action_button.dart';
@@ -7,6 +8,7 @@ import 'package:easy_scan/ui/screen/edit/component/document_preview.dart';
 import 'package:easy_scan/ui/screen/edit/component/edit_screen_controller.dart';
 import 'package:easy_scan/ui/screen/edit/component/save_button.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
 
 class EditScreenView extends StatefulWidget {
   final EditScreenController controller;
@@ -45,15 +47,61 @@ class _EditScreenViewState extends State<EditScreenView> {
         title: _buildAppBarTitle(colorScheme),
         elevation: 0,
         actions: [
-          IconButton(
-            icon: Icon(
-                widget.controller.isEditView ? Icons.grid_view : Icons.edit),
-            tooltip: widget.controller.isEditView ? 'Grid View' : 'Edit View',
-            onPressed: () {
-              widget.controller.toggleViewMode();
-              setState(() {});
-            },
-          ),
+          // Edit mode toggle - only show if switching is allowed
+          if (widget.controller.canSwitchEditMode)
+            PopupMenuButton<EditMode>(
+              tooltip: 'Change Edit Mode',
+              icon: Icon(
+                widget.controller.currentEditMode == EditMode.imageEdit
+                    ? Icons.image
+                    : Icons.picture_as_pdf,
+              ),
+              onSelected: (EditMode mode) {
+                widget.controller.switchEditMode(mode);
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: EditMode.imageEdit,
+                  child: ListTile(
+                    leading: Icon(Icons.image,
+                        color: widget.controller.currentEditMode ==
+                                EditMode.imageEdit
+                            ? colorScheme.primary
+                            : null),
+                    title: Text('Edit as Images'),
+                    selected:
+                        widget.controller.currentEditMode == EditMode.imageEdit,
+                  ),
+                ),
+                PopupMenuItem(
+                  value: EditMode.pdfEdit,
+                  child: ListTile(
+                    leading: Icon(Icons.picture_as_pdf,
+                        color: widget.controller.currentEditMode ==
+                                EditMode.pdfEdit
+                            ? colorScheme.primary
+                            : null),
+                    title: Text('Edit as PDF'),
+                    selected:
+                        widget.controller.currentEditMode == EditMode.pdfEdit,
+                  ),
+                ),
+              ],
+            ),
+
+          !widget.controller.canSwitchEditMode &&
+                  widget.controller.isPdfInputFile
+              ? SizedBox.shrink()
+              : IconButton(
+                  icon: Icon(widget.controller.isEditView
+                      ? Icons.grid_view
+                      : Icons.edit),
+                  tooltip:
+                      widget.controller.isEditView ? 'Grid View' : 'Edit View',
+                  onPressed: () {
+                    widget.controller.toggleViewMode();
+                  },
+                ),
         ],
       ),
       body: widget.controller.isEditView
@@ -63,11 +111,28 @@ class _EditScreenViewState extends State<EditScreenView> {
   }
 
   Widget _buildAppBarTitle(ColorScheme colorScheme) {
-    return Text(
-      widget.controller.isEditingExistingDocument
-          ? 'Edit Document'
-          : 'New Document',
-      style: const TextStyle(fontWeight: FontWeight.bold),
+    // Show edit mode indicator in the title
+    return Row(
+      children: [
+        Text(
+          widget.controller.isEditingExistingDocument
+              ? 'Edit Document'
+              : 'New Document',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        if (!widget.controller.canSwitchEditMode &&
+            widget.controller.isPdfInputFile) ...[
+          const SizedBox(width: 8),
+          Chip(
+            label: Text('PDF Only', style: TextStyle(fontSize: 10)),
+            backgroundColor: colorScheme.primaryContainer,
+            labelStyle: TextStyle(color: colorScheme.onPrimaryContainer),
+            padding: EdgeInsets.zero,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            visualDensity: VisualDensity.compact,
+          ),
+        ],
+      ],
     );
   }
 
@@ -90,6 +155,13 @@ class _EditScreenViewState extends State<EditScreenView> {
               setState(() {});
             },
             onDeletePage: widget.controller.deletePageAtIndex,
+            // Add these properties for PDF preview mode
+            isPdfPreviewMode:
+                widget.controller.currentEditMode == EditMode.pdfEdit &&
+                    _containsPdfFiles(),
+            password: widget.controller.isPasswordProtected
+                ? widget.controller.passwordController.text
+                : null,
           ),
         ),
         DocumentActionButtons(
@@ -137,5 +209,18 @@ class _EditScreenViewState extends State<EditScreenView> {
         ),
       ],
     );
+  }
+
+// Helper method to check if we're dealing with PDF files
+  bool _containsPdfFiles() {
+    if (widget.controller.pages.isEmpty) return false;
+
+    // Check if any of the pages is a PDF file
+    for (final page in widget.controller.pages) {
+      final extension = path.extension(page.path).toLowerCase();
+      if (extension == '.pdf') return true;
+    }
+
+    return false;
   }
 }

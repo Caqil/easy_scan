@@ -29,11 +29,8 @@ class DocumentActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 100.h,
+      height: 80.h,
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.grey.shade900
-            : Colors.grey.shade50,
         border: Border(
           top: BorderSide(
             color: colorScheme.outlineVariant.withOpacity(0.3),
@@ -95,12 +92,12 @@ class DocumentActionButtons extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(8.r),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 4.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.all(8.w),
+                padding: EdgeInsets.all(4.w),
                 decoration: BoxDecoration(
                   color: isActive
                       ? colorScheme.primary.withOpacity(0.2)
@@ -115,14 +112,14 @@ class DocumentActionButtons extends StatelessWidget {
                   size: 24.sp,
                 ),
               ),
-              SizedBox(height: 6.h),
+              SizedBox(height: 1.h),
               Text(
                 label,
                 style: GoogleFonts.notoSerif(
                   color: isActive
                       ? colorScheme.primary
                       : colorScheme.onSurfaceVariant,
-                  fontSize: 10.sp,
+                  fontSize: 8.sp,
                   fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                 ),
               ),

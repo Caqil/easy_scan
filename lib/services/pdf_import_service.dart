@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_scan/utils/constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
@@ -10,7 +11,6 @@ import 'image_service.dart';
 
 class PdfImportService {
   final PdfService _pdfService = PdfService();
-  final ImageService _imageService = ImageService();
 
   Future<Document?> importPdfFromLocal() async {
     try {
@@ -121,15 +121,14 @@ class PdfImportService {
 
       // Initialize thumbnailPath as null
       String? thumbnailPath;
-
+      final imageService = ImageService();
       // Generate thumbnail
       try {
-        final thumbnailFile = await _imageService.createThumbnail(
-          targetFile,
-          size: 300,
-        );
+        final thumbnailFile = await imageService.createThumbnail(
+            File(targetPath),
+            size: AppConstants.thumbnailSize);
 
-        thumbnailPath = thumbnailFile.path;
+        thumbnailPath = thumbnailFile!.path;
         debugPrint('Thumbnail created at: $thumbnailPath');
 
         // Verify thumbnail exists

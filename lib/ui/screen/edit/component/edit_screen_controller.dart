@@ -14,10 +14,17 @@ import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
 import 'package:path/path.dart' as path;
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'dart:ui' as ui;
+
+enum EditMode {
+  imageEdit, // Edit as individual images
+  pdfEdit // Edit as PDF document
+}
 
 class EditScreenController {
   final WidgetRef ref;
@@ -38,6 +45,13 @@ class EditScreenController {
   bool isLoading = false;
   bool isPasswordProtected = false;
   VoidCallback? _onStateChanged;
+
+  // Document type tracking
+  bool isPdfInputFile = false;
+  EditMode _currentEditMode = EditMode.imageEdit;
+  EditMode get currentEditMode => _currentEditMode;
+  bool _canSwitchEditMode = false;
+  bool get canSwitchEditMode => _canSwitchEditMode;
 
   EditScreenController({
     required this.ref,
@@ -60,11 +74,17 @@ class EditScreenController {
       if (isPasswordProtected && document!.password != null) {
         passwordController.text = document!.password!;
       }
+
+      // When editing existing documents, check if we have both PDF and original images
       _loadExistingDocument();
     } else {
       documentNameController = TextEditingController(
           text: 'Scan ${DateTime.now().toString().substring(0, 10)}');
       WidgetsBinding.instance.addPostFrameCallback((_) => _checkIfEmpty());
+
+      // For new scans, we always start in image edit mode and can't switch
+      _canSwitchEditMode = false;
+      _currentEditMode = EditMode.imageEdit;
     }
   }
 
@@ -79,41 +99,93 @@ class EditScreenController {
     _notifyStateChanged();
   }
 
+  void switchEditMode(EditMode newMode) {
+    if (!_canSwitchEditMode) {
+      AppDialogs.showSnackBar(
+        context,
+        message: 'This document can only be edited as a PDF',
+        type: SnackBarType.warning,
+      );
+      return;
+    }
+
+    _currentEditMode = newMode;
+    _notifyStateChanged();
+
+    AppDialogs.showSnackBar(
+      context,
+      message:
+          'Now editing as ${newMode == EditMode.imageEdit ? 'images' : 'PDF'}',
+      type: SnackBarType.success,
+    );
+  }
+
   Future<void> _loadExistingDocument() async {
     isProcessing = true;
     _notifyStateChanged();
+
     try {
       final doc = document!;
       pages = [];
+      bool hasOriginalImages = false;
+      bool hasPdfFile = false;
 
-      if (doc.pagesPaths.isEmpty) {
-        throw Exception('Document has no pages defined');
-      }
-
-      for (String path in doc.pagesPaths) {
-        final file = File(path);
-        if (await file.exists()) {
-          pages.add(file);
-        } else {
-          print('Warning: Page file does not exist at path: $path');
-
-          // If the primary document path exists and it's a PDF, we can still work with it
-          if (doc.pdfPath.isNotEmpty && await File(doc.pdfPath).exists()) {
-            pages.add(File(doc.pdfPath));
-            // Break after adding the PDF once - no need to add it multiple times
-            break;
-          }
-        }
-      }
-
-      if (pages.isEmpty && doc.pdfPath.isNotEmpty) {
-        // Try the main PDF path if individual page paths are missing
+      // First check if PDF exists
+      if (doc.pdfPath.isNotEmpty) {
         final pdfFile = File(doc.pdfPath);
         if (await pdfFile.exists()) {
           pages.add(pdfFile);
-        } else {
-          throw Exception('Primary PDF file not found at ${doc.pdfPath}');
+          hasPdfFile = true;
+          debugPrint('Loaded PDF file: ${pdfFile.path}');
         }
+      }
+
+      // Then check for original images (excluding the first path which might be the PDF)
+      if (doc.pagesPaths.length > 1) {
+        List<String> imagePaths =
+            doc.pagesPaths.sublist(1); // Skip first path if it's the PDF
+        List<File> imageFiles = [];
+
+        for (String path in imagePaths) {
+          final file = File(path);
+          if (await file.exists()) {
+            String ext = extension(file.path).toLowerCase();
+            if (ext != '.pdf') {
+              // Make sure it's not another PDF
+              imageFiles.add(file);
+              hasOriginalImages = true;
+              debugPrint('Found original image: ${file.path}');
+            }
+          }
+        }
+
+        // If in image mode, use the image files
+        if (_currentEditMode == EditMode.imageEdit && imageFiles.isNotEmpty) {
+          pages = imageFiles;
+        }
+      }
+
+      // Determine edit mode capabilities
+      if (hasPdfFile && hasOriginalImages) {
+        // We have both PDF and original images, so we can switch modes
+        _canSwitchEditMode = true;
+        _currentEditMode =
+            EditMode.imageEdit; // Start in image edit mode by default
+        isPdfInputFile = true; // We do have a PDF file
+        debugPrint(
+            'Document has both PDF and original images - edit mode switching enabled');
+      } else if (hasPdfFile) {
+        // Only PDF available
+        isPdfInputFile = true;
+        _currentEditMode = EditMode.pdfEdit;
+        _canSwitchEditMode = false;
+        debugPrint('Document has only PDF - restricting to PDF edit mode');
+      } else if (hasOriginalImages) {
+        // Only original images available
+        isPdfInputFile = false;
+        _currentEditMode = EditMode.imageEdit;
+        _canSwitchEditMode = false;
+        debugPrint('Document has only images - restricting to image edit mode');
       }
 
       if (pages.isEmpty) {
@@ -187,6 +259,17 @@ class EditScreenController {
   }
 
   Future<void> addMorePages() async {
+    // Don't allow adding more pages if we're in PDF edit mode with a PDF input
+    if (isPdfInputFile && _currentEditMode == EditMode.pdfEdit) {
+      AppDialogs.showSnackBar(
+        context,
+        message:
+            'Cannot add pages to an imported PDF. Try switching to image edit mode.',
+        type: SnackBarType.warning,
+      );
+      return;
+    }
+
     final scanService = ref.read(scanServiceProvider);
     await showModalBottomSheet(
       context: context,
@@ -237,6 +320,27 @@ class EditScreenController {
 
   Future<void> openImageEditor() async {
     if (pages.isEmpty) return;
+
+    // Check if we're trying to edit a PDF file directly
+    if (_currentEditMode == EditMode.pdfEdit) {
+      AppDialogs.showSnackBar(
+        context,
+        message:
+            'PDF files cannot be edited directly. Switch to image edit mode for image editing.',
+        type: SnackBarType.warning,
+      );
+      return;
+    }
+
+    // Check if the current page is a PDF file
+    if (path.extension(pages[currentPageIndex].path).toLowerCase() == '.pdf') {
+      AppDialogs.showSnackBar(
+        context,
+        message: 'PDF pages cannot be edited directly.',
+        type: SnackBarType.warning,
+      );
+      return;
+    }
 
     isProcessing = true;
     _notifyStateChanged();
@@ -302,33 +406,168 @@ class EditScreenController {
     try {
       final String documentName = documentNameController.text.trim();
       String filePath;
-      int pageCount = pages.length;
-      String fileExtension;
+      int pageCount;
+      String fileExtension = 'pdf'; // We're always saving as PDF
+      File? thumbnailFile;
 
-      final File thumbnailFile = await imageService.createThumbnail(
-        pages[0],
-        size: AppConstants.thumbnailSize,
-      );
+      // Step 1: Categorize all files
+      List<File> imageFiles = [];
+      List<File> pdfFiles = [];
+      List<String> tempPaths = []; // Track temp files to clean up later
 
-      fileExtension =
-          path.extension(pages[0].path).toLowerCase().replaceAll('.', '');
+      for (File page in pages) {
+        String ext = path.extension(page.path).toLowerCase();
+        if (ext == '.pdf') {
+          pdfFiles.add(page);
+        } else if (['.jpg', '.jpeg', '.png', '.bmp', '.webp', '.gif']
+            .contains(ext)) {
+          imageFiles.add(page);
+        } else {
+          debugPrint('Warning: Unrecognized file type: $ext');
+          // For other file types, try to treat as image
+          imageFiles.add(page);
+        }
+      }
 
-      filePath = await pdfService.createPdfFromImages(pages, documentName);
-      pageCount = await pdfService.getPdfPageCount(filePath);
-      fileExtension = 'pdf';
+      debugPrint(
+          'Processing ${imageFiles.length} images and ${pdfFiles.length} PDFs');
 
-      if (isPasswordProtectionEnabled && fileExtension == 'pdf') {
+      // Step 2: Handle based on edit mode and content
+      if (_currentEditMode == EditMode.pdfEdit &&
+          isPdfInputFile &&
+          pdfFiles.length == 1 &&
+          imageFiles.isEmpty) {
+        // Case 1: PDF Edit Mode with a single PDF - use directly
+        debugPrint('PDF Edit Mode - using original PDF directly');
+        filePath = pdfFiles[0].path;
+        pageCount = await pdfService.getPdfPageCount(filePath);
+      } else {
+        // Case 2: Need to merge content
+        debugPrint('Creating or merging PDFs from content');
+
+        // Step 2a: Prepare all PDFs that need to be merged
+        List<String> allPdfPaths = [];
+
+        // Add existing PDFs if in PDF edit mode
+        if (_currentEditMode == EditMode.pdfEdit) {
+          allPdfPaths.addAll(pdfFiles.map((file) => file.path));
+        }
+
+        // Convert images to PDFs
+        if (imageFiles.isNotEmpty) {
+          // Try batch conversion first
+          try {
+            String imagesPdfPath = await pdfService.createPdfFromImages(
+                imageFiles,
+                '${documentName}_images_${DateTime.now().millisecondsSinceEpoch}');
+            allPdfPaths.add(imagesPdfPath);
+            tempPaths.add(imagesPdfPath);
+          } catch (e) {
+            debugPrint('Error batch converting images: $e');
+            // Fallback: convert images individually
+            for (int i = 0; i < imageFiles.length; i++) {
+              try {
+                String singleImagePdfPath = await pdfService
+                    .createPdfFromImages([
+                  imageFiles[i]
+                ], '${documentName}_image${i}_${DateTime.now().millisecondsSinceEpoch}');
+                allPdfPaths.add(singleImagePdfPath);
+                tempPaths.add(singleImagePdfPath);
+              } catch (e) {
+                debugPrint('Error converting image ${i}: $e');
+                // Skip problematic image
+              }
+            }
+          }
+        }
+
+        // Step 2b: Merge all PDFs if needed
+        if (allPdfPaths.isEmpty) {
+          throw Exception('No valid content to save');
+        } else if (allPdfPaths.length == 1) {
+          // Only one PDF, use it directly
+          filePath = allPdfPaths[0];
+        } else {
+          // Merge multiple PDFs
+          filePath = await pdfService.mergePdfs(allPdfPaths, documentName);
+        }
+
+        // Get final page count
+        pageCount = await pdfService.getPdfPageCount(filePath);
+      }
+
+      // Step 3: Apply password protection if needed
+      if (isPasswordProtectionEnabled) {
+        // For single PDF that's an input, make a copy before applying password
+        if (isPdfInputFile && pdfFiles.length == 1 && imageFiles.isEmpty) {
+          final tempDir = await getTemporaryDirectory();
+          final tempPath =
+              '${tempDir.path}/temp_password_${DateTime.now().millisecondsSinceEpoch}.pdf';
+          await File(filePath).copy(tempPath);
+          filePath = tempPath;
+          tempPaths.add(tempPath);
+        }
+
+        // Apply password
         filePath =
             await pdfService.protectPdf(filePath, passwordController.text);
+      }
+
+      // Step 4: Generate thumbnail
+      try {
+        thumbnailFile = await imageService.createThumbnail(File(filePath),
+            size: AppConstants.thumbnailSize);
+      } catch (e) {
+        debugPrint('Error creating thumbnail: $e');
+        // Create fallback thumbnail
+        thumbnailFile = await _createSimpleThumbnail(documentName);
+      }
+
+      // Step 5: Save document to repository
+      List<String> pagesPaths = [];
+
+      // First path is always the PDF
+      pagesPaths.add(filePath);
+
+      // For newly created documents, store the original image paths
+      // This allows future editing as either images or PDF
+      if (!isEditingExistingDocument && imageFiles.isNotEmpty) {
+        // Add all original image paths
+        for (File imageFile in imageFiles) {
+          pagesPaths.add(imageFile.path);
+        }
+
+        debugPrint(
+            'Saving document with ${pagesPaths.length} paths: PDF + ${pagesPaths.length - 1} original images');
+      } else if (isEditingExistingDocument) {
+        // For existing documents, preserve the original image paths if available
+        if (document!.pagesPaths.length > 1) {
+          // Check if the original image paths still exist
+          List<String> validOriginalPaths = [];
+
+          for (int i = 1; i < document!.pagesPaths.length; i++) {
+            String originalPath = document!.pagesPaths[i];
+            if (await File(originalPath).exists()) {
+              validOriginalPaths.add(originalPath);
+            }
+          }
+
+          // Only include valid image paths
+          if (validOriginalPaths.isNotEmpty) {
+            pagesPaths.addAll(validOriginalPaths);
+            debugPrint(
+                'Preserving ${validOriginalPaths.length} original image paths');
+          }
+        }
       }
 
       if (isEditingExistingDocument) {
         final updatedDocument = document!.copyWith(
           name: documentName,
           pdfPath: filePath,
-          pagesPaths: pages.map((file) => file.path).toList(),
+          pagesPaths: pagesPaths, // Now storing PDF + original images
           pageCount: pageCount,
-          thumbnailPath: thumbnailFile.path,
+          thumbnailPath: thumbnailFile?.path,
           modifiedAt: DateTime.now(),
           isPasswordProtected: isPasswordProtectionEnabled,
           password:
@@ -347,9 +586,9 @@ class EditScreenController {
         final newDocument = Document(
           name: documentName,
           pdfPath: filePath,
-          pagesPaths: pages.map((file) => file.path).toList(),
+          pagesPaths: pagesPaths, // Now storing PDF + original images
           pageCount: pageCount,
-          thumbnailPath: thumbnailFile.path,
+          thumbnailPath: thumbnailFile?.path,
           isPasswordProtected: isPasswordProtectionEnabled,
           password:
               isPasswordProtectionEnabled ? passwordController.text : null,
@@ -359,10 +598,26 @@ class EditScreenController {
         AppDialogs.showSnackBar(
           context,
           message:
-              'Document saved successfully as ${fileExtension.toUpperCase()}${isPasswordProtectionEnabled ? ' with password protection' : ''}',
+              'Document saved successfully as PDF${isPasswordProtectionEnabled ? ' with password protection' : ''}',
           type: SnackBarType.success,
         );
         ref.read(scanProvider.notifier).clearPages();
+      }
+
+      // Clean up temporary files
+      for (String tempPath in tempPaths) {
+        if (tempPath != filePath) {
+          // Don't delete the final PDF
+          try {
+            final tempFile = File(tempPath);
+            if (await tempFile.exists()) {
+              await tempFile.delete();
+            }
+          } catch (e) {
+            // Ignore cleanup errors
+            debugPrint('Warning: Could not clean up temp file: $tempPath');
+          }
+        }
       }
 
       AppRoutes.navigateToHome(context);
@@ -379,36 +634,89 @@ class EditScreenController {
     }
   }
 
-  bool _isTextFile(String extension) =>
-      ['txt', 'html', 'md', 'rtf'].contains(extension);
-
-  bool _isImageFile(String extension) =>
-      ['jpg', 'jpeg', 'png', 'webp', 'gif'].contains(extension);
-
-  Future<String> _copyFile(
-      File sourceFile, String documentName, String extension) async {
-    final String targetPath = await FileUtils.getUniqueFilePath(
-      documentName: documentName,
-      extension: extension,
-    );
-    final File newFile = await sourceFile.copy(targetPath);
-    return newFile.path;
-  }
-
-  Future<String> _processSingleImage(
-      File imageFile, String documentName, String extension) async {
-    final String targetPath = await FileUtils.getUniqueFilePath(
-      documentName: documentName,
-      extension: extension,
-    );
+  // Create a simple fallback thumbnail when all else fails
+  Future<File> _createSimpleThumbnail(String documentName) async {
     try {
-      final File newFile = await imageFile.copy(targetPath);
-      return newFile.path;
+      // Create a simple colored rectangle with text
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+      final size = 300.0; // Standard thumbnail size
+
+      // Fill background
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, size, size),
+        Paint()..color = Colors.blueGrey.shade100,
+      );
+
+      // Draw PDF icon (as text emoji)
+      final TextPainter iconPainter = TextPainter(
+        text: TextSpan(
+          text: '📄',
+          style: TextStyle(fontSize: size * 0.4),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      iconPainter.layout();
+      iconPainter.paint(
+        canvas,
+        Offset((size - iconPainter.width) / 2, size * 0.25),
+      );
+
+      // Draw document name
+      final TextPainter namePainter = TextPainter(
+        text: TextSpan(
+          text: documentName.length > 15
+              ? '${documentName.substring(0, 15)}...'
+              : documentName,
+          style: TextStyle(
+            fontSize: size * 0.08,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      namePainter.layout(maxWidth: size - 30);
+      namePainter.paint(
+        canvas,
+        Offset((size - namePainter.width) / 2, size * 0.7),
+      );
+
+      // Convert to image
+      final picture = recorder.endRecording();
+      final image = await picture.toImage(size.toInt(), size.toInt());
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+
+      if (byteData == null) {
+        throw Exception('Failed to generate fallback thumbnail');
+      }
+
+      // Save to file
+      final outputPath = await FileUtils.getUniqueFilePath(
+        documentName:
+            'thumbnail_fallback_${DateTime.now().millisecondsSinceEpoch}',
+        extension: 'png',
+        inTempDirectory: false,
+      );
+
+      final file = File(outputPath);
+      await file.writeAsBytes(byteData.buffer.asUint8List());
+
+      return file;
     } catch (e) {
-      final bytes = await imageFile.readAsBytes();
-      final File newFile = File(targetPath);
-      await newFile.writeAsBytes(bytes);
-      return newFile.path;
+      // If all else fails, create a 1x1 pixel image as an absolute last resort
+      final outputPath = await FileUtils.getUniqueFilePath(
+        documentName:
+            'thumbnail_empty_${DateTime.now().millisecondsSinceEpoch}',
+        extension: 'png',
+        inTempDirectory: false,
+      );
+
+      final List<int> pixels = [0, 0, 0, 255]; // Simple black pixel
+      final File file = File(outputPath);
+      await file.writeAsBytes(Uint8List.fromList(pixels));
+
+      return file;
     }
   }
 }

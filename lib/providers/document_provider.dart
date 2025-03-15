@@ -39,11 +39,19 @@ class DocumentNotifier extends StateNotifier<List<Document>> {
   }
 
   List<Document> searchDocuments(String query) {
+    if (query.trim().isEmpty) {
+      return [];
+    }
+
     final lowercaseQuery = query.toLowerCase();
     return state
         .where((doc) =>
+            // Search in document name
             doc.name.toLowerCase().contains(lowercaseQuery) ||
-            doc.tags.any((tag) => tag.toLowerCase().contains(lowercaseQuery)))
+            // Search in tags
+            doc.tags.any((tag) => tag.toLowerCase().contains(lowercaseQuery)) ||
+            // Search in file path (to check file type/extension)
+            doc.pdfPath.toLowerCase().contains(lowercaseQuery))
         .toList();
   }
 }

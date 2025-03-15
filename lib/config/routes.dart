@@ -1,65 +1,54 @@
-import 'package:easy_scan/providers/document_provider.dart';
-import 'package:easy_scan/ui/screen/conversion/conversion_screen.dart';
+import 'package:easy_scan/ui/screen/compression/compression_screen.dart';
+import 'package:easy_scan/ui/screen/merger/pdf_merge_screen.dart';
 import 'package:flutter/material.dart';
 import '../models/document.dart';
 import '../models/folder.dart';
 import '../ui/screen/edit/edit_screen.dart';
 import '../ui/screen/folder/folder_screen.dart';
 import '../ui/screen/home/home_screen.dart';
-import '../ui/screen/settings_screen.dart';
 import '../ui/screen/view_screen.dart';
 
 class AppRoutes {
-  // Named routes
   static const String home = '/';
-  static const String camera = '/camera';
   static const String edit = '/edit';
-  static const String conversion = '/conversion';
   static const String view = '/view';
-  static const String folderRoute =
-      '/folder'; // Renamed to avoid naming conflict
-  static const String settings = '/settings';
-// Route generator
-  static Route<dynamic> generateRoute(RouteSettings routeSettings) {
-    // Renamed from 'settings' to 'routeSettings'
-    switch (routeSettings.name) {
+  static const String folder = '/folder';
+  static const String pdfMerger = '/pdf_merger';
+  static const String compression = '/compression';
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    switch (settings.name) {
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-      // case camera:
-      //   return MaterialPageRoute(builder: (_) => const CameraScreen());
       case edit:
-        // Handle both with and without document arguments
-        if (routeSettings.arguments != null) {
-          // For editing an existing document
-          return MaterialPageRoute(
-            builder: (_) =>
-                EditScreen(document: routeSettings.arguments as Document),
-          );
-        } else {
-          // For creating a new document from scan
-          return MaterialPageRoute(builder: (_) => const EditScreen());
-        }
-      case conversion:
-        return MaterialPageRoute(builder: (_) => const ConversionScreen());
+        final document = settings.arguments as Document?;
+        return MaterialPageRoute(
+            builder: (_) => EditScreen(document: document));
       case view:
-        final Document document = routeSettings.arguments as Document;
+        final document = settings.arguments as Document;
         return MaterialPageRoute(
             builder: (_) => ViewScreen(document: document));
-      case folderRoute:
-        final Folder folder = routeSettings.arguments as Folder;
-        return MaterialPageRoute(builder: (_) => FolderScreen());
-      case settings: // This line works now because 'settings' refers to the constant, not the parameter
-        return MaterialPageRoute(builder: (_) => const SettingsScreen());
+      case folder:
+        final folder = settings.arguments as Folder;
+        return MaterialPageRoute(builder: (_) => FolderScreen(folder: folder));
+      case compression:
+        final args = settings.arguments as Map<String, dynamic>;
+        final document = args['document'] as Document;
+        return MaterialPageRoute(
+          builder: (_) => CompressionScreen(document: document),
+        );
+      case pdfMerger:
+        return MaterialPageRoute(builder: (_) => const PdfMergerScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
-            body: Center(child: Text('Unknown route: ${routeSettings.name}')),
+            body: Center(
+              child: Text('No route defined for ${settings.name}'),
+            ),
           ),
         );
     }
   }
 
-  // Navigation helpers
   static void navigateToHome(BuildContext context) {
     Navigator.pushNamedAndRemoveUntil(
       context,
@@ -68,31 +57,21 @@ class AppRoutes {
     );
   }
 
-  static void navigateToCamera(BuildContext context) {
-    Navigator.pushNamed(context, camera);
+  static void navigateToCompression(BuildContext context, Document document) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CompressionScreen(document: document),
+      ),
+    );
   }
 
   static void navigateToEdit(BuildContext context, {Document? document}) {
-    print('navigateToEdit called with context: $context');
-    if (document != null) {
-      print('Navigating to edit with existing document: ${document.pdfPath}');
-      // Navigate with an existing document for editing
-      Navigator.pushNamed(
-        context,
-        edit,
-        arguments: document,
-      );
-      print('Navigation pushed with document');
-    } else {
-      print('Navigating to edit without document (new scan)');
-      // Navigate without a document for a new scan
-      Navigator.pushNamed(context, edit);
-      print('Navigation pushed without document');
-    }
-  }
-
-  static void navigateToConversion(BuildContext context) {
-    Navigator.pushNamed(context, conversion);
+    Navigator.pushNamed(
+      context,
+      edit,
+      arguments: document,
+    );
   }
 
   static void navigateToView(BuildContext context, Document document) {
@@ -103,15 +82,16 @@ class AppRoutes {
     );
   }
 
-  static void navigateToFolder(BuildContext context, Folder folderObj) {
-    Navigator.pushNamed(
+  static void navigateToFolder(BuildContext context, Folder folder) {
+    Navigator.push(
       context,
-      folderRoute, // Using the renamed constant
-      arguments: folderObj,
+      MaterialPageRoute(
+        builder: (context) => FolderScreen(folder: folder),
+      ),
     );
   }
 
-  static void navigateToSettings(BuildContext context) {
-    Navigator.pushNamed(context, settings);
+  static void navigateToPdfMerger(BuildContext context) {
+    Navigator.pushNamed(context, pdfMerger);
   }
 }

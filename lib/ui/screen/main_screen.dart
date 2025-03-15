@@ -4,6 +4,7 @@ import 'package:easy_scan/ui/screen/conversion/conversion_screen.dart';
 import 'package:easy_scan/ui/screen/folder/folder_screen.dart';
 import 'package:easy_scan/ui/screen/home/home_screen.dart';
 import 'package:easy_scan/ui/screen/settings_screen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,6 +24,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
   int _selectedIndex = 0;
   late AnimationController _fabAnimationController;
   late Animation<double> _fabAnimation;
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   bool _isLoading = false;
   final _iconList = <IconData>[
     Icons.home_rounded,
@@ -51,7 +53,6 @@ class _MainScreenState extends ConsumerState<MainScreen>
   void initState() {
     super.initState();
 
-    // Set up animation for FAB
     _fabAnimationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,

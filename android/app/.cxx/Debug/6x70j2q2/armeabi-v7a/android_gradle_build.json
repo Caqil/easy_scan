@@ -1,0 +1,28 @@
+{
+  "buildFiles": [
+    "/Users/cakra/Documents/developer/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/cakra/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/cakra/Documents/app/easy_scan/android/app/.cxx/Debug/6x70j2q2/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/cakra/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/cakra/Documents/app/easy_scan/android/app/.cxx/Debug/6x70j2q2/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {},
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/cakra/Library/Android/sdk/ndk/26.2.11394342/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/cakra/Library/Android/sdk/ndk/26.2.11394342/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": []
+}

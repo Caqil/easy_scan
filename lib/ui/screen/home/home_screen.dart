@@ -9,8 +9,10 @@ import 'package:easy_scan/ui/common/folder_creator.dart';
 import 'package:easy_scan/ui/common/folder_selection.dart';
 import 'package:easy_scan/ui/common/folders_grid.dart';
 import 'package:easy_scan/ui/common/import_options.dart';
+import 'package:easy_scan/ui/common/pdf_merger.dart';
 import 'package:easy_scan/ui/screen/camera/camera_screen.dart';
 import 'package:easy_scan/ui/screen/camera/component/scan_initial_view.dart';
+import 'package:easy_scan/ui/screen/compression/components/compression_bottomsheet.dart';
 import 'package:easy_scan/utils/permission_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -72,6 +74,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  void showCompressionOptions(
+      BuildContext context, Document document, WidgetRef ref) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: CompressionBottomSheet(document: document),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final recentDocuments = ref.watch(recentDocumentsProvider);
@@ -86,9 +103,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: _searchQuery.isEmpty
             ? Text('ScanPro', style: GoogleFonts.lilitaOne(fontSize: 25.sp))
             : CupertinoSearchTextField(
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodySmall?.color),
                 controller: _searchController,
-                placeholder: 'Search documents..',
+                placeholder: 'Search all documents...',
                 onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+                onSubmitted: (value) {
+                  // Explicitly search when user presses enter key
                   setState(() {
                     _searchQuery = value;
                   });
@@ -99,11 +124,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
-                // Simply set an empty search query to activate search mode
-                // without immediately clearing it
                 setState(() {
-                  _searchQuery = ' '; // Trigger search mode with a space
-                  _searchController.text = ' '; // Set controller text to match
+                  _searchQuery = ''; // Set empty to activate search field
+                  _searchController.text = ''; // Clear text
+                  // Focusing search field after setting state
+                  Future.delayed(Duration.zero, () {
+                    FocusScope.of(context).unfocus();
+                    _searchController.clear();
+                    setState(() {
+                      _searchQuery = ' '; // Space to trigger search mode
+                      _searchController.text = '';
+                    });
+                  });
+                });
+              },
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                setState(() {
+                  _searchQuery = '';
+                  _searchController.clear();
                 });
               },
             ),
@@ -231,6 +273,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                     onFolders: () => _showFolderSelectionDialog(rootFolders),
                     onFavorites: _showFavorites,
+                    onMerge: () => PdfMerger.showMergeOptions(context, ref),
+                    onCompress: () async {
+                      final pdfImportService =
+                          ref.read(pdfImportServiceProvider);
+                      final document =
+                          await pdfImportService.importPdfFromLocal();
+                      showCompressionOptions(context, document!, ref);
+                    },
                   ),
                   const SizedBox(height: 24),
                   if (recentDocuments.isNotEmpty)
@@ -565,7 +615,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  // Search results builder
   Widget _buildSearchResults(List<Document> documents) {
     if (documents.isEmpty) {
       return Center(
@@ -592,46 +641,102 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       itemCount: documents.length,
       itemBuilder: (context, index) {
         final document = documents[index];
-        return ListTile(
-          leading: document.thumbnailPath != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Image.file(
-                    File(document.thumbnailPath!),
-                    width: 30.w,
-                    height: 30.h,
-                    fit: BoxFit.cover,
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(8),
+            leading: Container(
+              width: 60,
+              height: 60,
+              child: document.thumbnailPath != null &&
+                      File(document.thumbnailPath!).existsSync()
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(
+                        File(document.thumbnailPath!),
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.picture_as_pdf,
+                        size: 30,
+                        color: Colors.grey,
+                      ),
+                    ),
+            ),
+            title: Text(
+              document.name,
+              style: GoogleFonts.notoSerif(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  DateTimeUtils.getFriendlyDate(document.modifiedAt),
+                  style: GoogleFonts.notoSerif(
+                    fontSize: 12.sp,
+                    color: Colors.grey.shade600,
                   ),
-                )
-              : const Icon(Icons.picture_as_pdf),
-          title: Text(
-            document.name,
-            style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(
-            DateTimeUtils.getFriendlyDate(document.modifiedAt),
-          ),
-          trailing: IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () => DocumentActions.showDocumentOptions(
-              context,
-              document,
-              ref,
-              onDelete: (p0) {
-                showDeleteConfirmation(context, p0, ref);
-              },
-              onMoveToFolder: (p0) {
-                showMoveToFolderDialog(context, p0, ref);
-              },
-              onRename: (p0) {
-                showRenameDocumentDialog(context, p0, ref);
-              },
-              onShare: (p0) {
-                _shareDocument(context, p0, ref);
+                ),
+                Row(
+                  children: [
+                    Text(
+                      '${document.pageCount} pages',
+                      style: GoogleFonts.notoSerif(
+                        fontSize: 12.sp,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    if (document.isFavorite) ...[
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.star,
+                        size: 14,
+                        color: Colors.amber,
+                      )
+                    ],
+                    if (document.isPasswordProtected) ...[
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.lock,
+                        size: 14,
+                        color: Colors.blue,
+                      )
+                    ],
+                  ],
+                ),
+              ],
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: () {
+                DocumentActions.showDocumentOptions(
+                  context,
+                  document,
+                  ref,
+                  onDelete: (doc) => showDeleteConfirmation(context, doc, ref),
+                  onMoveToFolder: (doc) =>
+                      showMoveToFolderDialog(context, doc, ref),
+                  onRename: (doc) =>
+                      showRenameDocumentDialog(context, doc, ref),
+                  onShare: (doc) => _shareDocument(context, doc, ref),
+                  onEdit: (doc) => navigateByDocumentType(context, doc),
+                );
               },
             ),
+            onTap: () => AppRoutes.navigateToView(context, document),
           ),
-          onTap: () => AppRoutes.navigateToView(context, document),
         );
       },
     );

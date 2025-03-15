@@ -1,20 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
-import 'package:http/http.dart' as http;
-import 'package:easy_scan/config/api_config.dart';
+import 'package:easy_scan/services/image_service.dart';
 import 'package:easy_scan/models/conversion.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/models/format_category.dart';
 import 'package:easy_scan/services/conversion_service.dart';
 import 'package:easy_scan/services/pdf_service.dart';
-import 'package:easy_scan/services/thumbnail_service.dart';
 import 'package:easy_scan/utils/constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 import 'document_provider.dart';
 
 final conversionServiceProvider = Provider<ConversionService>((ref) {
@@ -192,13 +188,11 @@ class ConversionNotifier extends StateNotifier<ConversionState> {
         thumbnailFile = File(thumbnailPath);
       } else {
         // Generate a thumbnail if not already provided
-        final thumbnailService = ThumbnailService();
+        final imageService = ImageService();
 
         try {
-          thumbnailFile = await thumbnailService.generateThumbnail(
-            filePath,
-            size: AppConstants.thumbnailSize,
-          );
+          thumbnailFile = await imageService.createThumbnail(File(filePath),
+              size: AppConstants.thumbnailSize);
         } catch (e) {
           print('Failed to generate thumbnail: $e');
           // Continue without thumbnail - it's not critical

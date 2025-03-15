@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:easy_scan/utils/file_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class PdfService {
@@ -57,47 +58,121 @@ class PdfService {
     return pdfPath;
   }
 
-  /// Merge multiple PDFs into one
   Future<String> mergePdfs(List<String> pdfPaths, String outputName) async {
-    // Create a new PDF document
-    final PdfDocument document = PdfDocument();
-
-    // Import all pages from each PDF
-    for (var pdfPath in pdfPaths) {
-      final PdfDocument importDoc =
-          PdfDocument(inputBytes: await File(pdfPath).readAsBytes());
-
-      for (int i = 0; i < importDoc.pages.count; i++) {
-        // Copy each page - use copyPage or addPage instead of importPage
-        final PdfPage newPage = document.pages.add();
-        final PdfPage sourcePage = importDoc.pages[i];
-
-        // Copy content from source page to new page
-        final PdfTemplate template = sourcePage.createTemplate();
-        newPage.graphics.drawPdfTemplate(
-          template,
-          Offset(0, 0),
-          Size(sourcePage.size.width, sourcePage.size.height),
-        );
-      }
-
-      importDoc.dispose();
-    }
-
-    // Get the documents directory
+    // Create output path
     final String outputPath = await FileUtils.getUniqueFilePath(
       documentName: outputName,
       extension: 'pdf',
     );
 
-    // Save the merged document
-    final File file = File(outputPath);
-    await file.writeAsBytes(await document.save());
+    try {
+      // Check if we only have one path (no merge needed)
+      if (pdfPaths.length == 1) {
+        final File source = File(pdfPaths[0]);
+        final File target = File(outputPath);
+        await source.copy(outputPath);
+        return outputPath;
+      }
 
-    // Dispose the document
-    document.dispose();
+      List<String> validPaths = [];
+      for (String path in pdfPaths) {
+        File file = File(path);
+        if (await file.exists()) {
+          validPaths.add(path);
+        } else {
+          debugPrint('Warning: PDF file does not exist: $path');
+        }
+      }
 
-    return outputPath;
+      if (pdfPaths.isEmpty) {
+        throw Exception('No valid PDF files to merge');
+      }
+
+      // Create a new PDF document
+      final PdfDocument document = PdfDocument();
+
+      // Import all pages from each PDF
+      for (var pdfPath in pdfPaths) {
+        try {
+          debugPrint('Importing pages from: $pdfPath');
+          final File pdfFile = File(pdfPath);
+
+          // Skip if file doesn't exist
+          if (!await pdfFile.exists()) {
+            debugPrint('Skipping non-existent file: $pdfPath');
+            continue;
+          }
+
+          // Read file bytes
+          final Uint8List fileBytes = await pdfFile.readAsBytes();
+
+          // Skip empty files
+          if (fileBytes.isEmpty) {
+            debugPrint('Skipping empty file: $pdfPath');
+            continue;
+          }
+
+          // Load the source PDF
+          final PdfDocument importDoc = PdfDocument(inputBytes: fileBytes);
+
+          // Import all pages
+          for (int i = 0; i < importDoc.pages.count; i++) {
+            // Get source page
+            final PdfPage sourcePage = importDoc.pages[i];
+
+            // Add a new page to the destination document
+            final PdfPage newPage = document.pages.add();
+
+            // Copy content using template
+            final PdfTemplate template = sourcePage.createTemplate();
+            newPage.graphics.drawPdfTemplate(
+              template,
+              Offset.zero,
+              Size(sourcePage.size.width, sourcePage.size.height),
+            );
+          }
+
+          // Dispose the source document
+          importDoc.dispose();
+        } catch (e) {
+          // Log error but continue with other PDFs
+          debugPrint('Error importing pages from $pdfPath: $e');
+        }
+      }
+
+      // Check if we successfully imported any pages
+      if (document.pages.count == 0) {
+        throw Exception('Failed to import any pages from the source PDFs');
+      }
+
+      // Save the merged document
+      final File outputFile = File(outputPath);
+      await outputFile.writeAsBytes(await document.save());
+
+      // Dispose the document
+      document.dispose();
+
+      return outputPath;
+    } catch (e) {
+      debugPrint('Error in mergePdfs: $e');
+
+      // Fallback: if merge fails, just copy the first PDF
+      if (pdfPaths.isNotEmpty) {
+        try {
+          final File source = File(pdfPaths[0]);
+          if (await source.exists()) {
+            final File target = File(outputPath);
+            await source.copy(outputPath);
+            return outputPath;
+          }
+        } catch (copyError) {
+          debugPrint('Error in fallback copy: $copyError');
+        }
+      }
+
+      // Re-throw the original error if we couldn't recover
+      rethrow;
+    }
   }
 
   Future<String> protectPdf(String pdfPath, String password) async {
