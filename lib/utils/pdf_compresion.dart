@@ -241,7 +241,7 @@ extension PdfCompression on PdfService {
       final int originalSize = await originalFile.length();
 
       debugPrint('Starting compression of PDF: $pdfPath');
-      debugPrint('Original size: ${_formatFileSize(originalSize)}');
+      debugPrint('Original size: ${FileUtils.formatFileSize(originalSize)}');
 
       // Try different compression approaches to get the best result
 
@@ -291,8 +291,10 @@ extension PdfCompression on PdfService {
               ((originalSize - compressedSize) / originalSize) * 100;
 
           debugPrint('PDF Compression Results:');
-          debugPrint('Original size: ${_formatFileSize(originalSize)}');
-          debugPrint('Compressed size: ${_formatFileSize(compressedSize)}');
+          debugPrint(
+              'Original size: ${FileUtils.formatFileSize(originalSize)}');
+          debugPrint(
+              'Compressed size: ${FileUtils.formatFileSize(compressedSize)}');
           debugPrint(
               'Compression ratio: ${compressionRatio.toStringAsFixed(2)}x');
           debugPrint('Size reduction: ${percentReduction.toStringAsFixed(1)}%');
@@ -354,8 +356,10 @@ extension PdfCompression on PdfService {
               ((originalSize - compressedSize) / originalSize) * 100;
 
           debugPrint('PDF Compression Results (SyncFusion):');
-          debugPrint('Original size: ${_formatFileSize(originalSize)}');
-          debugPrint('Compressed size: ${_formatFileSize(compressedSize)}');
+          debugPrint(
+              'Original size: ${FileUtils.formatFileSize(originalSize)}');
+          debugPrint(
+              'Compressed size: ${FileUtils.formatFileSize(compressedSize)}');
           debugPrint(
               'Compression ratio: ${compressionRatio.toStringAsFixed(2)}x');
           debugPrint('Size reduction: ${percentReduction.toStringAsFixed(1)}%');
@@ -380,13 +384,6 @@ extension PdfCompression on PdfService {
       debugPrint('Error compressing PDF: $e');
       return pdfPath; // Return original on error
     }
-  }
-
-  /// Format file size for display
-  String _formatFileSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 
   /// Intelligent PDF compression that analyzes content and applies optimal settings

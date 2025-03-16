@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:easy_scan/ui/common/dialogs.dart';
+import 'package:easy_scan/ui/screen/compression/components/compression_tools.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +23,7 @@ class DocumentActions {
     Function(Document)? onMoveToFolder,
     Function(Document)? onShare,
     Function(Document)? onDelete,
+    Function(Document)? onCompress,
   }) {
     showModalBottomSheet(
       context: context,
@@ -35,6 +37,7 @@ class DocumentActions {
         onMoveToFolder: onMoveToFolder,
         onShare: onShare,
         onDelete: onDelete,
+        onCompress: onCompress,
       ),
     );
   }
@@ -48,7 +51,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
   final Function(Document)? onMoveToFolder;
   final Function(Document)? onShare;
   final Function(Document)? onDelete;
-
+  final Function(Document)? onCompress;
   const _DocumentOptionsSheet({
     required this.document,
     required this.ref,
@@ -57,6 +60,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
     this.onMoveToFolder,
     this.onShare,
     this.onDelete,
+    this.onCompress,
   });
 
   @override
@@ -235,6 +239,22 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     }
                   },
                 ),
+                if (isPdf)
+                  _buildOptionTile(
+                    context,
+                    icon: Icons.compress,
+                    title: 'Compress PDF',
+                    description: 'Reduce file size for sharing',
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (onCompress != null) {
+                        onCompress!(document);
+                      } else {
+                        PdfCompressionUtils.showQuickCompressionDialog(
+                            context, ref, document);
+                      }
+                    },
+                  ),
                 if (isPdf)
                   _buildOptionTile(
                     context,

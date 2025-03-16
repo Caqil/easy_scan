@@ -5,6 +5,7 @@ import 'package:easy_scan/services/scan_service.dart';
 import 'package:easy_scan/services/share_service.dart';
 import 'package:easy_scan/ui/common/document_actions.dart';
 import 'package:easy_scan/ui/common/folder_actions.dart';
+import 'package:easy_scan/ui/screen/compression/components/compression_tools.dart';
 import 'package:easy_scan/ui/screen/folder/components/folder_creator.dart';
 import 'package:easy_scan/ui/common/folder_selection.dart';
 import 'package:easy_scan/ui/common/folders_grid.dart';
@@ -275,11 +276,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onFavorites: _showFavorites,
                     onMerge: () => PdfMerger.showMergeOptions(context, ref),
                     onCompress: () async {
-                      final pdfImportService =
-                          ref.read(pdfImportServiceProvider);
-                      final document =
-                          await pdfImportService.importPdfFromLocal();
-                      showCompressionOptions(context, document!, ref);
+                      PdfCompressionUtils.showCompressionOptions(context, ref);
                     },
                   ),
                   const SizedBox(height: 24),
