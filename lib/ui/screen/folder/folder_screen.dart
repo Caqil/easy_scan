@@ -94,9 +94,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
       appBar: CustomAppBar(
         title: _searchQuery.isEmpty
             ? Text(
-                widget.folder!.name.isEmpty
-                    ? 'Folder ${widget.folder!.name}'
-                    : 'Folder Browser',
+                'Folder Browser',
                 style: GoogleFonts.lilitaOne(fontSize: 25.sp),
               )
             : CupertinoSearchTextField(

@@ -53,7 +53,7 @@ class QuickActions extends ConsumerWidget {
 
   Widget _buildActionGrid(BuildContext context) {
     final actions = [
-      _ActionItem(Icons.qr_code_scanner, 'Scan', onScan),
+      _ActionItem(Icons.qr_code_scanner, 'Barcode', onScan),
       _ActionItem(Icons.merge_type, 'Merge PDF', onMerge),
       _ActionItem(Icons.favorite_border, 'Favorite', onFavorites),
       _ActionItem(Icons.compress, 'Compress PDF', onCompress),

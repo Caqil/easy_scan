@@ -5,29 +5,26 @@ import 'package:easy_scan/services/share_service.dart';
 import 'package:easy_scan/ui/common/component/scan_initial_view.dart';
 import 'package:easy_scan/ui/common/document_actions.dart';
 import 'package:easy_scan/ui/common/folder_actions.dart';
+import 'package:easy_scan/ui/screen/barcode/widget/recent_barcodes.dart';
 import 'package:easy_scan/ui/screen/compression/components/compression_tools.dart';
 import 'package:easy_scan/ui/screen/folder/components/folder_creator.dart';
 import 'package:easy_scan/ui/common/folder_selection.dart';
 import 'package:easy_scan/ui/common/folders_grid.dart';
-import 'package:easy_scan/ui/common/import_options.dart';
 import 'package:easy_scan/ui/common/pdf_merger.dart';
 import 'package:easy_scan/ui/screen/compression/components/compression_bottomsheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../../config/routes.dart';
 import '../../../models/folder.dart';
 import '../../../providers/document_provider.dart';
 import '../../../providers/folder_provider.dart';
-import '../../../providers/scan_provider.dart';
-import '../../../services/pdf_import_service.dart';
 import '../../../utils/date_utils.dart';
 import '../../common/app_bar.dart';
 import '../../common/dialogs.dart';
+import '../barcode/widget/barcode_scan_options_view.dart';
 import 'component/all_documents.dart';
 import 'component/empty_state.dart';
 import 'component/folders_section.dart';
@@ -47,8 +44,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController controller = TextEditingController();
   bool _isLoading = false;
-  final ImagePicker _imagePicker = ImagePicker();
-  bool _isProcessing = false;
   final ShareService _shareService = ShareService();
   @override
   void dispose() {
@@ -167,46 +162,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   QuickActions(
                     onScan: () {
                       showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => Padding(
-                          padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom,
-                          ),
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height *
-                                0.5, // Half screen height
-                            child: ScanInitialView(
-                              onScanPressed: () {
-                                Navigator.pop(context);
-                                scanService.scanDocuments(
-                                  context: context,
-                                  ref: ref,
-                                  setLoading: (isLoading) =>
-                                      setState(() => _isLoading = isLoading),
-                                  onSuccess: () {
-                                    AppRoutes.navigateToEdit(context);
-                                  },
-                                );
-                              },
-                              onImportPressed: () {
-                                Navigator.pop(context);
-                                scanService.pickImages(
-                                  context: context,
-                                  ref: ref,
-                                  setLoading: (isLoading) =>
-                                      setState(() => _isLoading = isLoading),
-                                  onSuccess: () {
-                                    AppRoutes.navigateToEdit(context);
-                                  },
-                                );
-                                AppRoutes.navigateToEdit(context);
-                              },
-                            ),
-                          ),
-                        ),
-                      );
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => Padding(
+                                padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom,
+                                ),
+                                child: SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
+                                  child: BarcodeScanOptionsView(
+                                    onScanPressed: () {
+                                      Navigator.pop(context);
+                                      AppRoutes.navigateToBarcodeScan(context);
+                                    },
+                                    onGeneratePressed: () {
+                                      Navigator.pop(context);
+                                      AppRoutes.navigateToBarcodeGenerator(
+                                          context);
+                                    },
+                                    onHistoryPressed: () {
+                                      Navigator.pop(context);
+                                      AppRoutes.navigateToBarcodeHistory(
+                                          context);
+                                    },
+                                  ),
+                                ),
+                              ));
                     },
                     onFolders: () => _showFolderSelectionDialog(rootFolders),
                     onFavorites: _showFavorites,
@@ -244,6 +228,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         );
                       },
                     ),
+                  const RecentBarcodesWidget(),
                   if (rootFolders.isNotEmpty)
                     FoldersSection(
                       folders: rootFolders,

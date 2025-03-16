@@ -1,5 +1,8 @@
 import 'package:easy_scan/config/app_transition.dart';
 import 'package:easy_scan/ui/screen/all_documents.dart';
+import 'package:easy_scan/ui/screen/barcode/barcode_generator_screen.dart';
+import 'package:easy_scan/ui/screen/barcode/barcode_history_screen.dart';
+import 'package:easy_scan/ui/screen/barcode/barcode_scanner_screen.dart';
 import 'package:easy_scan/ui/screen/compression/compression_screen.dart';
 import 'package:easy_scan/ui/screen/conversion/conversion_screen.dart';
 import 'package:easy_scan/ui/screen/merger/pdf_merge_screen.dart';
@@ -27,7 +30,9 @@ class AppRoutes {
   static const String allDocuments = '/all_documents';
   static const String compression = '/compression';
   static const String scan = '/scan';
-
+  static const String barcodeScan = '/barcode/scan';
+  static const String barcodeGenerate = '/barcode/generate';
+  static const String barcodeHistory = '/barcode/history';
   // GoRouter configuration
   static final router = GoRouter(
     initialLocation: home,
@@ -77,6 +82,18 @@ class AppRoutes {
             pageBuilder: (context, state) => const NoTransitionPage(
               child: SettingsScreen(),
             ),
+          ),
+          GoRoute(
+            path: barcodeScan,
+            builder: (context, state) => const BarcodeScannerScreen(),
+          ),
+          GoRoute(
+            path: barcodeGenerate,
+            builder: (context, state) => const BarcodeGeneratorScreen(),
+          ),
+          GoRoute(
+            path: barcodeHistory,
+            builder: (context, state) => const BarcodeHistoryScreen(),
           ),
         ],
       ),
@@ -244,5 +261,17 @@ class AppRoutes {
 
   static void navigateToConvert(BuildContext context) {
     context.go(convert);
+  }
+
+  static void navigateToBarcodeScan(BuildContext context) {
+    context.go(barcodeScan);
+  }
+
+  static void navigateToBarcodeGenerator(BuildContext context) {
+    context.go(barcodeGenerate);
+  }
+
+  static void navigateToBarcodeHistory(BuildContext context) {
+    context.go(barcodeHistory);
   }
 }

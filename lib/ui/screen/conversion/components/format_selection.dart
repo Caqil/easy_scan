@@ -512,7 +512,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
         decoration: BoxDecoration(
           color: isSelected
               ? format.color.withOpacity(0.1)
-              : colorScheme.surfaceVariant.withOpacity(0.1),
+              : colorScheme.surfaceContainerHighest.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: isSelected
@@ -556,16 +556,14 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
     for (var format in widget.formats) {
       String category = 'Other';
 
-      if (['pdf', 'doc', 'docx', 'txt', 'rtf', 'odt']
-          .contains(format.id.toLowerCase())) {
+      if (['pdf', 'docx', 'txt', 'rtf'].contains(format.id.toLowerCase())) {
         category = 'Documents';
       } else if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'tiff']
           .contains(format.id.toLowerCase())) {
         category = 'Images';
-      } else if (['xlsx', 'xls', 'csv', 'ods']
-          .contains(format.id.toLowerCase())) {
+      } else if (['xlsx'].contains(format.id.toLowerCase())) {
         category = 'Spreadsheets';
-      } else if (['pptx', 'ppt', 'odp'].contains(format.id.toLowerCase())) {
+      } else if (['pptx'].contains(format.id.toLowerCase())) {
         category = 'Presentations';
       }
 
