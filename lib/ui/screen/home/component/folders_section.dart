@@ -34,7 +34,7 @@ class FoldersSection extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-             Text(
+            Text(
               'Folders',
               style: GoogleFonts.notoSerif(
                   fontSize: 16.sp, fontWeight: FontWeight.bold),
@@ -43,7 +43,7 @@ class FoldersSection extends ConsumerWidget {
               children: [
                 TextButton(
                   onPressed: onCreateFolder,
-                  child: const Text('Create New'),
+                  child: Text('Create New', style: GoogleFonts.notoSerif()),
                 ),
                 if (folders.length > 5)
                   TextButton(

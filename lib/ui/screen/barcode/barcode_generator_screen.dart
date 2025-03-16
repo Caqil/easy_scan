@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:easy_scan/models/barcode_scan.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
+import 'package:easy_scan/ui/screen/barcode/qr_code_customization_screen.dart';
 import 'package:easy_scan/ui/screen/barcode/widget/custom_qr_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -680,6 +681,12 @@ class _BarcodeGeneratorScreenState
                 color: Colors.blue,
                 onTap: _shareQrCode,
               ),
+              _buildActionButton(
+                icon: Icons.edit,
+                label: 'Customize',
+                color: Colors.purple,
+                onTap: () => _navigateToCustomization(),
+              ),
             ],
           ),
         ],
@@ -687,7 +694,22 @@ class _BarcodeGeneratorScreenState
     );
   }
 
-// Helper method to determine which QR code style to use based on selected type
+  // Navigate to customization screen
+  void _navigateToCustomization() {
+    if (_generatedData.isEmpty) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRCodeCustomizationScreen(
+          data: _generatedData,
+          contentType: _selectedType.toString().split('.').last,
+        ),
+      ),
+    );
+  }
+
+  // Helper method to determine which QR code style to use based on selected type
   Widget _buildTypeSpecificQRCode() {
     final Color accentColor = _getColorForType(_selectedType);
 
@@ -803,14 +825,6 @@ class _BarcodeGeneratorScreenState
         ),
       ),
     );
-  }
-
-  // Helper method to get embedded logo for QR code
-  AssetImage? _getLogoForType() {
-    // In a real implementation, you'd return different logos based on type
-    // For example, for WiFi you might use a wifi icon, for email an envelope, etc.
-    // Since assets depend on your project structure, returning null for now
-    return null;
   }
 
   void _validateAndGenerate() {
@@ -998,34 +1012,24 @@ class _BarcodeGeneratorScreenState
     ref.read(barcodeScanHistoryProvider.notifier).addScan(scan);
 
     // Show confirmation
-    if (mounted) {
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Barcode saved to history',
-        type: SnackBarType.success,
-      );
-    }
+    AppDialogs.showSnackBar(
+      context,
+      message: 'Barcode saved to history',
+      type: SnackBarType.success,
+    );
   }
 
   String _getBarcodeFormat() {
     // Return an appropriate format based on barcode type
     switch (_selectedType) {
       case BarcodeType.qrCode:
-        return 'QR_CODE';
       case BarcodeType.url:
-        return 'QR_CODE';
       case BarcodeType.email:
-        return 'QR_CODE';
       case BarcodeType.phone:
-        return 'QR_CODE';
       case BarcodeType.sms:
-        return 'QR_CODE';
       case BarcodeType.wifi:
-        return 'QR_CODE';
       case BarcodeType.location:
-        return 'QR_CODE';
       case BarcodeType.contact:
-        return 'QR_CODE';
       case BarcodeType.plainText:
         return 'QR_CODE';
     }
@@ -1064,20 +1068,18 @@ class _BarcodeGeneratorScreenState
       await file.writeAsBytes(pngBytes);
 
       // Show success message
-      if (mounted) {
-        AppDialogs.showSnackBar(
-          context,
-          message: 'QR code saved successfully',
-          type: SnackBarType.success,
-          action: SnackBarAction(
-            label: 'View',
-            onPressed: () {
-              _showSavedQrCode(file);
-            },
-            textColor: Colors.white,
-          ),
-        );
-      }
+      AppDialogs.showSnackBar(
+        context,
+        message: 'QR code saved successfully',
+        type: SnackBarType.success,
+        action: SnackBarAction(
+          label: 'View',
+          onPressed: () {
+            _showSavedQrCode(file);
+          },
+          textColor: Colors.white,
+        ),
+      );
     } catch (e) {
       AppDialogs.showSnackBar(
         context,

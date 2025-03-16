@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:easy_scan/models/content_type.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
 import 'package:easy_scan/ui/screen/barcode/barcode_scanner_screen.dart';
+import 'package:easy_scan/utils/code_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -112,7 +116,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
   }
 
   Widget _buildHistoryItem(BarcodeScan scan) {
-    final contentType = _getContentTypeIcon(scan.barcodeValue);
+    final contentType = getContentTypeIcon(scan.barcodeValue);
 
     return Card(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -138,20 +142,22 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
           padding: EdgeInsets.all(16.w),
           child: Row(
             children: [
-              // Left icon
-              Container(
-                width: 48.w,
-                height: 48.w,
-                decoration: BoxDecoration(
-                  color: contentType.color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Icon(
-                  contentType.icon,
-                  color: contentType.color,
-                  size: 24.sp,
-                ),
-              ),
+              // Left icon or custom QR thumbnail
+              scan.isCustomized && scan.customImagePath != null
+                  ? _buildCustomizedThumbnail(scan.customImagePath!)
+                  : Container(
+                      width: 48.w,
+                      height: 48.w,
+                      decoration: BoxDecoration(
+                        color: contentType.color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Icon(
+                        contentType.icon,
+                        color: contentType.color,
+                        size: 24.sp,
+                      ),
+                    ),
               SizedBox(width: 16.w),
 
               // Content
@@ -168,7 +174,9 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      '${contentType.label} • ${_formatDate(scan.timestamp)}',
+                      scan.isCustomized
+                          ? 'Customized • ${_formatDate(scan.timestamp)}'
+                          : '${contentType.label} • ${_formatDate(scan.timestamp)}',
                       style: GoogleFonts.notoSerif(
                         color: Colors.grey.shade600,
                         fontSize: 12.sp,
@@ -185,6 +193,34 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomizedThumbnail(String imagePath) {
+    return Container(
+      width: 48.w,
+      height: 48.w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: Colors.purple.withOpacity(0.3)),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(7.r),
+        child: Image.file(
+          File(imagePath),
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: Colors.purple.withOpacity(0.1),
+              child: Icon(
+                Icons.qr_code,
+                color: Colors.purple,
+                size: 24.sp,
+              ),
+            );
+          },
         ),
       ),
     );
@@ -210,30 +246,30 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
     }
   }
 
-  _ContentTypeInfo _getContentTypeIcon(String value) {
+  ContentTypeInfo getContentTypeIcon(String value) {
     if (value.startsWith('http://') || value.startsWith('https://')) {
-      return _ContentTypeInfo(Icons.language, Colors.blue, 'URL');
+      return ContentTypeInfo(Icons.language, Colors.blue, 'URL');
     } else if (value.startsWith('tel:') ||
         RegExp(r'^\+?[0-9\s\-\(\)]+$').hasMatch(value)) {
-      return _ContentTypeInfo(Icons.phone, Colors.green, 'Phone');
+      return ContentTypeInfo(Icons.phone, Colors.green, 'Phone');
     } else if (value.contains('@') && value.contains('.')) {
-      return _ContentTypeInfo(Icons.email, Colors.orange, 'Email');
+      return ContentTypeInfo(Icons.email, Colors.orange, 'Email');
     } else if (value.startsWith('WIFI:')) {
-      return _ContentTypeInfo(Icons.wifi, Colors.purple, 'WiFi');
+      return ContentTypeInfo(Icons.wifi, Colors.purple, 'WiFi');
     } else if (value.startsWith('MATMSG:') || value.startsWith('mailto:')) {
-      return _ContentTypeInfo(Icons.email, Colors.orange, 'Email');
+      return ContentTypeInfo(Icons.email, Colors.orange, 'Email');
     } else if (value.startsWith('geo:') ||
         RegExp(r'^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$')
             .hasMatch(value)) {
-      return _ContentTypeInfo(Icons.location_on, Colors.red, 'Location');
+      return ContentTypeInfo(Icons.location_on, Colors.red, 'Location');
     } else if (value.startsWith('BEGIN:VCARD')) {
-      return _ContentTypeInfo(Icons.contact_page, Colors.indigo, 'Contact');
+      return ContentTypeInfo(Icons.contact_page, Colors.indigo, 'Contact');
     } else if (value.startsWith('BEGIN:VEVENT')) {
-      return _ContentTypeInfo(Icons.event, Colors.teal, 'Event');
+      return ContentTypeInfo(Icons.event, Colors.teal, 'Event');
     } else if (RegExp(r'^[0-9]+$').hasMatch(value)) {
-      return _ContentTypeInfo(Icons.qr_code, Colors.black, 'Product');
+      return ContentTypeInfo(Icons.qr_code, Colors.black, 'Product');
     } else {
-      return _ContentTypeInfo(Icons.text_fields, Colors.grey, 'Text');
+      return ContentTypeInfo(Icons.text_fields, Colors.grey, 'Text');
     }
   }
 
@@ -262,12 +298,4 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
       ),
     );
   }
-}
-
-class _ContentTypeInfo {
-  final IconData icon;
-  final Color color;
-  final String label;
-
-  _ContentTypeInfo(this.icon, this.color, this.label);
 }

@@ -1,4 +1,4 @@
-// lib/providers/barcode_scan_provider.dart
+// lib/providers/barcode_provider.dart
 
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,8 +11,29 @@ class BarcodeScanHistoryNotifier extends StateNotifier<List<BarcodeScan>> {
 
   /// Add a new scan to the history
   void addScan(BarcodeScan scan) {
-    // Add to beginning of list (most recent first)
-    state = [scan, ...state];
+    // Check if we're updating an existing scan with the same value
+    final existingIndex =
+        state.indexWhere((s) => s.barcodeValue == scan.barcodeValue);
+
+    if (existingIndex >= 0) {
+      // If this is a customized version of an existing scan, update it
+      if (scan.isCustomized) {
+        final updatedList = [...state];
+        updatedList[existingIndex] = scan;
+        state = updatedList;
+      } else {
+        // Move existing scan to the top of the list
+        final updatedList = [...state];
+        final existingScan = updatedList.removeAt(existingIndex);
+        state = [
+          existingScan.copyWith(timestamp: DateTime.now()),
+          ...updatedList
+        ];
+      }
+    } else {
+      // Add to beginning of list (most recent first)
+      state = [scan, ...state];
+    }
 
     // Limit history to 50 items
     if (state.length > 50) {
@@ -33,6 +54,16 @@ class BarcodeScanHistoryNotifier extends StateNotifier<List<BarcodeScan>> {
   void clearHistory() {
     state = [];
     _saveToStorage();
+  }
+
+  /// Get customized QR codes
+  List<BarcodeScan> getCustomizedScans() {
+    return state.where((scan) => scan.isCustomized).toList();
+  }
+
+  /// Get QR codes (excluding linear barcodes)
+  List<BarcodeScan> getQrCodes() {
+    return state.where((scan) => scan.isQrCode).toList();
   }
 
   /// Load history from Hive storage
@@ -79,4 +110,52 @@ final barcodeScanHistoryProvider =
   // Load history from storage when provider is created
   notifier.loadHistory();
   return notifier;
+});
+
+/// Provider for recent barcode scans (limited to 5)
+final recentBarcodesProvider = Provider<List<BarcodeScan>>((ref) {
+  final allScans = ref.watch(barcodeScanHistoryProvider);
+
+  // Return up to 5 most recent scans
+  if (allScans.isEmpty) {
+    return [];
+  }
+
+  return allScans.take(5).toList();
+});
+
+/// Provider for recent QR codes only
+final recentQrCodesProvider = Provider<List<BarcodeScan>>((ref) {
+  final allScans = ref.watch(barcodeScanHistoryProvider);
+
+  // Filter for QR codes only and take up to 5
+  final qrCodes = allScans.where((scan) => scan.isQrCode).take(5).toList();
+  return qrCodes;
+});
+
+/// Provider for customized QR codes
+final customizedQrCodesProvider = Provider<List<BarcodeScan>>((ref) {
+  final allScans = ref.watch(barcodeScanHistoryProvider);
+
+  // Filter for customized QR codes only
+  final customized = allScans.where((scan) => scan.isCustomized).toList();
+  return customized;
+});
+
+/// Provider for recent generated barcodes (from creation, not scanning)
+final recentGeneratedBarcodesProvider = Provider<List<BarcodeScan>>((ref) {
+  final allScans = ref.watch(barcodeScanHistoryProvider);
+
+  // Filter for generated barcodes and take up to 3
+  final generated = allScans
+      .where((scan) =>
+          scan.barcodeType == 'QR Code' ||
+          scan.barcodeType == 'URL' ||
+          scan.barcodeType == 'Email' ||
+          scan.barcodeType == 'WiFi' ||
+          scan.barcodeType == 'Contact')
+      .take(3)
+      .toList();
+
+  return generated;
 });

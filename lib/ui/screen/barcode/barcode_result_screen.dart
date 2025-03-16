@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:easy_scan/models/barcode_scan.dart';
+import 'package:easy_scan/providers/barcode_provider.dart';
+import 'package:easy_scan/ui/screen/barcode/qr_code_customization_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,8 +11,6 @@ import 'package:easy_scan/ui/common/app_bar.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -28,12 +30,63 @@ class BarcodeResultScreen extends ConsumerWidget {
     required this.barcodeType,
     required this.barcodeFormat,
   }) : super(key: key);
+  BarcodeScan? _findCustomizedScan(WidgetRef ref) {
+    final barcodeHistory = ref.watch(barcodeScanHistoryProvider);
+
+    // Find the most recent customized version matching this barcode value
+    for (final scan in barcodeHistory) {
+      if (scan.barcodeValue == barcodeValue &&
+          scan.isCustomized == true &&
+          scan.customImagePath != null) {
+        return scan;
+      }
+    }
+
+    return null;
+  }
+
+  Widget _buildCustomizedQRDisplay(String imagePath) {
+    final file = File(imagePath);
+
+    return RepaintBoundary(
+      key: _qrKey, // Keep the key for sharing functionality
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Customized QR Code',
+            style: GoogleFonts.notoSerif(
+              color: Colors.white,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Image.file(
+            file,
+            width: 250.w,
+            height: 250.w,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) {
+              // Fallback if the image can't be loaded
+              return BarcodeResultQRCode(
+                barcodeValue: barcodeValue,
+                barcodeType: _determineContentType().toLowerCase(),
+                qrKey: _qrKey,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final actionButtons = _getActionButtons(context);
+    final actionButtons = _getActionButtons(context, ref);
     final contentType = _determineContentType();
-
+    final isQrCode = _isQrCodeFormat();
+    final customizedScan = _findCustomizedScan(ref);
     return Scaffold(
       appBar: CustomAppBar(
         title: Text(
@@ -59,35 +112,66 @@ class BarcodeResultScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Content Type
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      child: Text(
-                        contentType,
-                        style: GoogleFonts.notoSerif(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.sp,
+                    // Content Type with format indicator
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 12.w, vertical: 4.h),
+                          decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).primaryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          child: Text(
+                            contentType,
+                            style: GoogleFonts.notoSerif(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.sp,
+                            ),
+                          ),
                         ),
-                      ),
+                        SizedBox(width: 8.w),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.w, vertical: 2.h),
+                          decoration: BoxDecoration(
+                            color: isQrCode
+                                ? Colors.green.withOpacity(0.1)
+                                : Colors.orange.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(
+                              color: isQrCode
+                                  ? Colors.green.withOpacity(0.3)
+                                  : Colors.orange.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Text(
+                            isQrCode ? 'QR Code' : 'Barcode',
+                            style: GoogleFonts.notoSerif(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w500,
+                              color: isQrCode ? Colors.green : Colors.orange,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
 
                     SizedBox(height: 24.h),
 
-                    // QR Code Display - New addition
                     Center(
-                      child: BarcodeResultQRCode(
-                        barcodeValue: barcodeValue,
-                        barcodeType: contentType.toLowerCase(),
-                        qrKey: _qrKey,
-                      ),
+                      child: customizedScan != null &&
+                              customizedScan.customImagePath != null
+                          ? _buildCustomizedQRDisplay(
+                              customizedScan.customImagePath!)
+                          : BarcodeResultQRCode(
+                              barcodeValue: barcodeValue,
+                              barcodeType: contentType.toLowerCase(),
+                              qrKey: _qrKey,
+                            ),
                     ),
-
                     SizedBox(height: 24.h),
 
                     // Barcode Value
@@ -175,6 +259,12 @@ class BarcodeResultScreen extends ConsumerWidget {
     );
   }
 
+  // Helper method to check if this is a QR code (vs linear barcode)
+  bool _isQrCodeFormat() {
+    final qrFormats = ['QR_CODE', 'AZTEC', 'DATA_MATRIX'];
+    return qrFormats.contains(barcodeFormat) || barcodeFormat.contains('QR');
+  }
+
   String _determineContentType() {
     if (barcodeValue.startsWith('http://') ||
         barcodeValue.startsWith('https://')) {
@@ -204,9 +294,10 @@ class BarcodeResultScreen extends ConsumerWidget {
     }
   }
 
-  List<Widget> _getActionButtons(BuildContext context) {
+  List<Widget> _getActionButtons(BuildContext context, WidgetRef ref) {
     final List<Widget> buttons = [];
     final contentType = _determineContentType();
+    final isQrCode = _isQrCodeFormat();
 
     // Copy button is always available
     buttons.add(
@@ -231,6 +322,27 @@ class BarcodeResultScreen extends ConsumerWidget {
     );
 
     buttons.add(SizedBox(height: 12.h));
+
+    // Add QR Code Customization button if this is a QR code
+    if (isQrCode) {
+      buttons.add(
+        ElevatedButton.icon(
+          onPressed: () => _navigateToCustomizationScreen(context, ref),
+          icon: const Icon(Icons.edit),
+          label: const Text('Customize QR Code'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(vertical: 12.h),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+          ),
+        ),
+      );
+
+      buttons.add(SizedBox(height: 12.h));
+    }
 
     // Add content-specific buttons
     switch (contentType) {
@@ -411,6 +523,34 @@ class BarcodeResultScreen extends ConsumerWidget {
     );
 
     return buttons;
+  }
+
+  void _navigateToCustomizationScreen(BuildContext context, WidgetRef ref) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRCodeCustomizationScreen(
+          data: barcodeValue,
+          contentType: _determineContentType(),
+        ),
+      ),
+    ).then((customImagePath) {
+      // Only update if we got a result back (the custom image path)
+      if (customImagePath != null && customImagePath is String) {
+        // Create a new scan to update the history with the customized QR code
+        final updatedScan = BarcodeScan(
+          barcodeValue: barcodeValue,
+          barcodeType: _determineContentType(),
+          barcodeFormat: barcodeFormat,
+          timestamp: DateTime.now(),
+          isCustomized: true,
+          customImagePath: customImagePath, // Save the image path
+        );
+
+        // Add to provider to update recent scans
+        ref.read(barcodeScanHistoryProvider.notifier).addScan(updatedScan);
+      }
+    });
   }
 
   Future<void> _launchUrl(String url, BuildContext context) async {

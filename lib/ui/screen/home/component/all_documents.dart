@@ -32,52 +32,48 @@ class AllDocuments extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header with View All option
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.folder_special_rounded,
-                    size: 24.sp,
-                    color: colorScheme.primary,
-                  ),
-                  SizedBox(width: 8.w),
-                  Text(
-                    'All Documents',
-                    style: GoogleFonts.notoSerif(
-                      fontSize: 16.sp.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              if (showViewAll && documents.length > 5)
-                TextButton(
-                  onPressed: onViewAllPressed,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'View All',
-                        style: GoogleFonts.notoSerif(
-                          color: colorScheme.primary,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 12.sp,
-                        color: colorScheme.primary,
-                      ),
-                    ],
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.folder_special_rounded,
+                  size: 24.sp,
+                  color: colorScheme.primary,
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  'All Documents',
+                  style: GoogleFonts.notoSerif(
+                    fontSize: 16.sp.sp,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-            ],
-          ),
+              ],
+            ),
+            if (showViewAll && documents.length > 5)
+              TextButton(
+                onPressed: onViewAllPressed,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'View All',
+                      style: GoogleFonts.notoSerif(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12.sp,
+                      color: colorScheme.primary,
+                    ),
+                  ],
+                ),
+              ),
+          ],
         ),
 
         // Count indicator

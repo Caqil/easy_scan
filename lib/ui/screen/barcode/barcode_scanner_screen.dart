@@ -1,6 +1,3 @@
-// lib/ui/screen/barcode/barcode_scanner_screen.dart
-
-import 'dart:io';
 import 'package:easy_scan/models/barcode_scan.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
 import 'package:flutter/material.dart';

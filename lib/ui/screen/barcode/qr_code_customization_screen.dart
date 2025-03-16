@@ -1,5 +1,12 @@
 import 'dart:io';
+import 'package:easy_scan/models/barcode_scan.dart';
+import 'package:easy_scan/models/document.dart';
+import 'package:easy_scan/providers/barcode_provider.dart';
+import 'package:easy_scan/providers/document_provider.dart';
+import 'package:easy_scan/services/image_service.dart';
 import 'package:easy_scan/ui/screen/barcode/widget/customizable_qrcode.dart';
+import 'package:easy_scan/utils/constants.dart';
+import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,11 +19,15 @@ import 'package:flutter/services.dart';
 class QRCodeCustomizationScreen extends ConsumerStatefulWidget {
   final String data;
   final String contentType;
+  final String? barcodeFormat;
+  final bool saveToLibrary;
 
   const QRCodeCustomizationScreen({
     Key? key,
     required this.data,
     required this.contentType,
+    this.barcodeFormat,
+    this.saveToLibrary = true,
   }) : super(key: key);
 
   @override
@@ -27,6 +38,19 @@ class QRCodeCustomizationScreen extends ConsumerStatefulWidget {
 class _QRCodeCustomizationScreenState
     extends ConsumerState<QRCodeCustomizationScreen> {
   bool _isSaving = false;
+  final TextEditingController _nameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = 'Custom ${_getTitle()}';
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +104,30 @@ class _QRCodeCustomizationScreenState
 
               SizedBox(height: 24.h),
 
+              // Custom name input field
+              if (widget.saveToLibrary) ...[
+                Text(
+                  'QR Code Name',
+                  style: GoogleFonts.notoSerif(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    hintText: 'Enter a name for your QR code',
+                    prefixIcon: Icon(Icons.edit_note),
+                  ),
+                ),
+                SizedBox(height: 24.h),
+              ],
+
               // Customizable QR Code
               CustomizableQRCode(
                 data: widget.data,
@@ -125,14 +173,51 @@ class _QRCodeCustomizationScreenState
     });
 
     try {
+      // Show a processing dialog
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: Text('Processing'),
+            content: Row(
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 16),
+                Text('Saving QR code...'),
+              ],
+            ),
+          ),
+        );
+      }
+
+      // Save to library if enabled
+      if (widget.saveToLibrary) {
+        await _saveToLibrary(qrFile);
+      }
+
+      // Close the processing dialog
+      if (context.mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
       // Show saving options dialog
-      _showSavingOptionsDialog(qrFile);
+      if (context.mounted) {
+        _showSavingOptionsDialog(qrFile);
+      }
     } catch (e) {
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error saving QR code: $e',
-        type: SnackBarType.error,
-      );
+      // Close the processing dialog
+      if (context.mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      if (context.mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error saving QR code: $e',
+          type: SnackBarType.error,
+        );
+      }
     } finally {
       setState(() {
         _isSaving = false;
@@ -140,14 +225,90 @@ class _QRCodeCustomizationScreenState
     }
   }
 
+  Future<void> _saveToLibrary(File qrFile) async {
+    try {
+      // 1. Get a permanent file path in the app's documents directory
+      final String documentName = _nameController.text.trim();
+      final String qrImagePath = await FileUtils.getUniqueFilePath(
+        documentName: documentName,
+        extension: 'png',
+        inTempDirectory: false,
+      );
+
+      // Copy the QR image to the permanent location
+      final File permanentFile = await qrFile.copy(qrImagePath);
+
+      // 2. Add to barcode history
+      final BarcodeScan customizedScan = BarcodeScan(
+        barcodeValue: widget.data,
+        barcodeType: widget.contentType,
+        barcodeFormat: widget.barcodeFormat ?? 'QR_CODE',
+        timestamp: DateTime.now(),
+        isCustomized: true,
+        customImagePath: permanentFile.path,
+      );
+
+      ref.read(barcodeScanHistoryProvider.notifier).addScan(customizedScan);
+
+      // 3. Create a document entry if appropriate
+      // For QR codes, we can save them as documents too for better management
+      final imageService = ImageService();
+      final File thumbnailFile = await imageService.createThumbnail(
+        permanentFile,
+        size: AppConstants.thumbnailSize,
+      );
+
+      final Document qrDocument = Document(
+        name: documentName,
+        pdfPath: permanentFile.path, // Using image path since it's not a PDF
+        pagesPaths: [permanentFile.path],
+        pageCount: 1,
+        thumbnailPath: thumbnailFile.path,
+        tags: [
+          'qr_code',
+          widget.contentType.toLowerCase().replaceAll(' ', '_')
+        ],
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now(),
+      );
+
+      ref.read(barcodeScanHistoryProvider.notifier).addScan(customizedScan);
+    } catch (e) {
+      throw Exception('Failed to save to library: $e');
+    }
+  }
+
   void _showSavingOptionsDialog(File qrFile) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Save QR Code'),
-        content: Text('Choose how you want to save your QR code'),
+        title: Text('QR Code Created'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('What would you like to do next?'),
+            if (widget.saveToLibrary) ...[
+              SizedBox(height: 8),
+              Text(
+                'Your QR code has been saved to your library',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ],
+        ),
         actions: [
-          
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context, true); // Return true to indicate success
+            },
+            child: Text('Done'),
+          ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
@@ -160,13 +321,12 @@ class _QRCodeCustomizationScreenState
               Navigator.pop(context);
               _copyToClipboard(qrFile);
             },
-            child: Text('Copy to Clipboard'),
+            child: Text('Copy Content'),
           ),
         ],
       ),
     );
   }
-
 
   Future<void> _shareQRCode(File qrFile) async {
     try {
@@ -240,7 +400,7 @@ class _QRCodeCustomizationScreenState
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
-                  'You can save to gallery, share with others, or copy the data to clipboard.'),
+                  'Your customized QR code will be saved to your library automatically. You can also share it or copy the content.'),
               SizedBox(height: 12),
               Text(
                 'Scanning',
