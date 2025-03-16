@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:super_tooltip/super_tooltip.dart';
 
 class PdfMergerScreen extends ConsumerStatefulWidget {
   const PdfMergerScreen({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
   final List<Document> _selectedDocuments = [];
   bool _isProcessing = false;
   bool _isShowingLibraryDocs = true;
-
+  final _controller = SuperTooltipController();
   @override
   void dispose() {
     _outputNameController.dispose();
@@ -110,11 +111,34 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Selected: ${_selectedDocuments.length} PDFs',
-                            style: GoogleFonts.notoSerif(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                'Selected: ${_selectedDocuments.length} PDFs',
+                                style: GoogleFonts.notoSerif(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(width: 2),
+                              GestureDetector(
+                                onTap: () async {
+                                  await _controller.showTooltip();
+                                },
+                                child: SuperTooltip(
+                                  showBarrier: true,
+                                  controller: _controller,
+                                  content: Text(
+                                    "Files will be merged in the order displayed. Drag items to reorder.",
+                                    softWrap: true,
+                                    style: GoogleFonts.notoSerif(),
+                                  ),
+                                  child: Icon(
+                                    Icons.info_outline,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           TextButton.icon(
                             icon: const Icon(Icons.clear),
@@ -128,25 +152,6 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.info_outline,
-                            size: 16,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Files will be merged in the order displayed. Drag items to reorder.',
-                              style: GoogleFonts.notoSerif(
-                                fontSize: 12,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),
@@ -517,30 +522,25 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                     ),
                   ),
                   title: Padding(
-                    padding: const EdgeInsets.only(left: 16),
+                    padding: const EdgeInsets.only(left: 5),
                     child: Row(
                       children: [
-                        document.thumbnailPath != null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: Image.file(
-                                  File(document.thumbnailPath!),
-                                  width: 40,
-                                  height: 40,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade200,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: const Icon(Icons.picture_as_pdf,
-                                    color: Colors.grey),
-                              ),
-                        const SizedBox(width: 12),
+                        if (document.thumbnailPath != null &&
+                            File(document.thumbnailPath!).existsSync())
+                          Image.file(
+                            File(document.thumbnailPath!),
+                            fit: BoxFit.cover,
+                          )
+                        else
+                          Container(
+                            color: Colors.grey.shade200,
+                            child: const Icon(
+                              Icons.picture_as_pdf,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        const SizedBox(width: 4),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -656,10 +656,6 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
         setState(() {
           _selectedDocuments.addAll(newDocuments);
         });
-
-        if (newDocuments.isNotEmpty) {
-          _showOrderingTip();
-        }
       }
     } catch (e) {
       AppDialogs.showSnackBar(
@@ -674,17 +670,17 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
     }
   }
 
-  void _showOrderingTip() {
-    if (_selectedDocuments.length < 2) return;
+  // void _showOrderingTip() {
+  //   if (_selectedDocuments.length < 2) return;
 
-    AppDialogs.showSnackBar(
-      context,
-      message:
-          'Files will be merged in the order shown. Drag items to reorder.',
-      type: SnackBarType.normal,
-      duration: const Duration(seconds: 5),
-    );
-  }
+  //   AppDialogs.showSnackBar(
+  //     context,
+  //     message:
+  //         'Files will be merged in the order shown. Drag items to reorder.',
+  //     type: SnackBarType.normal,
+  //     duration: const Duration(seconds: 5),
+  //   );
+  // }
 
   Future<void> _mergePdfs() async {
     if (_selectedDocuments.length < 2) {
