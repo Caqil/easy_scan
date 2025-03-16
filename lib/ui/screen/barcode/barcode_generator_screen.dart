@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:easy_scan/models/barcode_scan.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
+import 'package:easy_scan/ui/screen/barcode/widget/custom_qr_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -277,8 +278,6 @@ class _BarcodeGeneratorScreenState
         return Colors.indigo;
       case BarcodeType.plainText:
         return Colors.blueGrey;
-      default:
-        return Colors.grey;
     }
   }
 
@@ -524,14 +523,6 @@ class _BarcodeGeneratorScreenState
           icon: Icons.text_fields,
           maxLines: 5,
         );
-
-      default:
-        return _buildImprovedTextField(
-          controller: _contentController,
-          label: 'Content',
-          hintText: 'Enter content',
-          icon: Icons.text_fields,
-        );
     }
   }
 
@@ -612,85 +603,22 @@ class _BarcodeGeneratorScreenState
     );
   }
 
-  // New method for improved barcode display
   Widget _buildImprovedBarcodeDisplay() {
-    final Color accentColor = _getColorForType(_selectedType);
+    if (_generatedData.isEmpty) return SizedBox.shrink();
 
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+    // Create a repaint boundary to capture the QR code for saving/sharing
+    return RepaintBoundary(
+      key: _qrKey,
       child: Column(
         children: [
-          // Barcode header
-          Row(
-            children: [
-              Icon(
-                Icons.qr_code,
-                color: accentColor,
-                size: 20.sp,
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                'Generated Barcode',
-                style: GoogleFonts.notoSerif(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: accentColor,
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 24.h),
-
-          // Barcode container
-          Container(
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: accentColor.withOpacity(0.3), width: 1),
-            ),
-            child: RepaintBoundary(
-              key: _qrKey,
-              child: QrImageView(
-                data: _generatedData,
-                version: QrVersions.auto,
-                size: 200.w,
-                backgroundColor: Colors.white,
-                errorStateBuilder: (ctx, err) {
-                  return Center(
-                    child: Text(
-                      'Error generating QR code',
-                      style: GoogleFonts.notoSerif(
-                        color: Colors.red,
-                      ),
-                    ),
-                  );
-                },
-                padding: EdgeInsets.zero,
-                embeddedImage: _getLogoForType(),
-                embeddedImageStyle: QrEmbeddedImageStyle(
-                  size: Size(40.w, 40.w),
-                ),
-              ),
-            ),
-          ),
+          // Determine which QR code to show based on content type
+          _buildTypeSpecificQRCode(),
 
           SizedBox(height: 16.h),
 
-          // Data display
+          // Data display below the QR code
           Container(
+            margin: EdgeInsets.symmetric(horizontal: 16.w),
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
               color: Colors.grey.shade50,
@@ -730,7 +658,7 @@ class _BarcodeGeneratorScreenState
               _buildActionButton(
                 icon: Icons.save_alt,
                 label: 'Save',
-                color: accentColor,
+                color: _getColorForType(_selectedType),
                 onTap: _saveQrCode,
               ),
               _buildActionButton(
@@ -750,16 +678,89 @@ class _BarcodeGeneratorScreenState
                 icon: Icons.share,
                 label: 'Share',
                 color: Colors.blue,
-                onTap: () {
-                  // Implement share functionality
-                  _shareQrCode();
-                },
+                onTap: _shareQrCode,
               ),
             ],
           ),
         ],
       ),
     );
+  }
+
+// Helper method to determine which QR code style to use based on selected type
+  Widget _buildTypeSpecificQRCode() {
+    final Color accentColor = _getColorForType(_selectedType);
+
+    // Choose different QR code styles based on content type
+    switch (_selectedType) {
+      case BarcodeType.wifi:
+        return GradientQRCode(
+          data: _generatedData,
+          title: 'WiFi Connection',
+          gradientColors: [Colors.purple, Colors.deepPurple],
+          size: 230.w,
+        );
+
+      case BarcodeType.url:
+        return GradientQRCode(
+          data: _generatedData,
+          title: 'Website URL',
+          gradientColors: [Colors.blue.shade600, Colors.blue.shade900],
+          size: 230.w,
+        );
+
+      case BarcodeType.email:
+        return GradientQRCode(
+          data: _generatedData,
+          title: 'Email Link',
+          gradientColors: [Colors.orange, Colors.deepOrange],
+          size: 230.w,
+        );
+
+      case BarcodeType.phone:
+        return GradientQRCode(
+          data: _generatedData,
+          title: 'Phone Number',
+          gradientColors: [Colors.green.shade600, Colors.green.shade900],
+          size: 230.w,
+        );
+
+      case BarcodeType.sms:
+        return GradientQRCode(
+          data: _generatedData,
+          title: 'SMS Message',
+          gradientColors: [Colors.deepPurple, Colors.purple],
+          size: 230.w,
+        );
+
+      case BarcodeType.location:
+        return GradientQRCode(
+          data: _generatedData,
+          title: 'Location',
+          gradientColors: [Colors.red.shade600, Colors.red.shade900],
+          size: 230.w,
+        );
+
+      case BarcodeType.contact:
+        return GradientQRCode(
+          data: _generatedData,
+          title: 'Contact Information',
+          gradientColors: [Colors.indigo, Colors.blueAccent],
+          size: 230.w,
+        );
+
+      case BarcodeType.qrCode:
+      case BarcodeType.plainText:
+        return CustomQRCode(
+          data: _generatedData,
+          title:
+              _selectedType == BarcodeType.qrCode ? 'QR Code' : 'Text Content',
+          primaryColor: accentColor,
+          backgroundColor: Colors.white,
+          size: 230.w,
+          showShadow: true,
+        );
+    }
   }
 
   // Helper method for action buttons
@@ -1027,14 +1028,12 @@ class _BarcodeGeneratorScreenState
         return 'QR_CODE';
       case BarcodeType.plainText:
         return 'QR_CODE';
-      default:
-        return 'QR_CODE';
     }
   }
 
   Future<void> _saveQrCode() async {
     try {
-      // Capture the QR code as an image
+      // Using a GlobalKey for RepaintBoundary makes it easy to capture
       final RenderRepaintBoundary boundary =
           _qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
@@ -1051,10 +1050,11 @@ class _BarcodeGeneratorScreenState
       final directory = await getApplicationDocumentsDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
       final typeName = _selectedType.toString().split('.').last;
-      final filePath = '${directory.path}/qrcodes/${typeName}_$timestamp.png';
+      final folderPath = '${directory.path}/qrcodes';
+      final filePath = '$folderPath/${typeName}_$timestamp.png';
 
       // Create directory if it doesn't exist
-      final dir = Directory('${directory.path}/qrcodes');
+      final dir = Directory(folderPath);
       if (!await dir.exists()) {
         await dir.create(recursive: true);
       }
@@ -1072,9 +1072,9 @@ class _BarcodeGeneratorScreenState
           action: SnackBarAction(
             label: 'View',
             onPressed: () {
-              // Show the image in a dialog or navigate to a viewer
               _showSavedQrCode(file);
             },
+            textColor: Colors.white,
           ),
         );
       }
@@ -1137,7 +1137,7 @@ class _BarcodeGeneratorScreenState
 
   Future<void> _shareQrCode() async {
     try {
-      // First capture QR code as image
+      // Capture QR code as image
       final RenderRepaintBoundary boundary =
           _qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
@@ -1162,7 +1162,7 @@ class _BarcodeGeneratorScreenState
       // Share the file
       await Share.shareXFiles(
         [XFile(file.path)],
-        text: 'Generated QR Code: $_generatedData',
+        text: 'Generated QR Code',
         subject: 'QR Code - ${_selectedType.toString().split('.').last}',
       );
     } catch (e) {

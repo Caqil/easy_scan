@@ -5,14 +5,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_scan/ui/common/app_bar.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/rendering.dart';
 
 class BarcodeResultScreen extends ConsumerWidget {
   final String barcodeValue;
   final String barcodeType;
   final String barcodeFormat;
 
-  const BarcodeResultScreen({
+  // GlobalKey for capturing the QR code for sharing
+  final GlobalKey _qrKey = GlobalKey();
+
+  BarcodeResultScreen({
     Key? key,
     required this.barcodeValue,
     required this.barcodeType,
@@ -67,7 +77,18 @@ class BarcodeResultScreen extends ConsumerWidget {
                       ),
                     ),
 
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 24.h),
+
+                    // QR Code Display - New addition
+                    Center(
+                      child: BarcodeResultQRCode(
+                        barcodeValue: barcodeValue,
+                        barcodeType: contentType.toLowerCase(),
+                        qrKey: _qrKey,
+                      ),
+                    ),
+
+                    SizedBox(height: 24.h),
 
                     // Barcode Value
                     Text(
@@ -377,11 +398,9 @@ class BarcodeResultScreen extends ConsumerWidget {
     buttons.add(SizedBox(height: 12.h));
     buttons.add(
       OutlinedButton.icon(
-        onPressed: () {
-          // Share the barcode value
-        },
+        onPressed: () => _shareResult(context),
         icon: const Icon(Icons.share),
-        label: const Text('Share'),
+        label: const Text('Share QR Code'),
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 12.h),
           shape: RoundedRectangleBorder(
@@ -416,6 +435,220 @@ class BarcodeResultScreen extends ConsumerWidget {
           type: SnackBarType.error,
         );
       }
+    }
+  }
+
+  // Share the QR code image and barcode data
+  void _shareResult(BuildContext context) async {
+    try {
+      // Check if the QR code is rendered
+      if (_qrKey.currentContext == null) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'QR code not ready for sharing',
+          type: SnackBarType.error,
+        );
+        return;
+      }
+
+      // Show a loading indicator
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Preparing QR code for sharing...',
+        type: SnackBarType.normal,
+      );
+
+      // 1. Capture the QR code as an image
+      final RenderRepaintBoundary boundary =
+          _qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final ui.Image image =
+          await boundary.toImage(pixelRatio: 3.0); // Higher quality
+      final ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+
+      if (byteData == null) {
+        throw Exception('Failed to capture QR code image');
+      }
+
+      final Uint8List pngBytes = byteData.buffer.asUint8List();
+
+      // 2. Save to a temporary file
+      final tempDir = await getTemporaryDirectory();
+      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+      final filePath = '${tempDir.path}/qrcode_$timestamp.png';
+
+      final file = File(filePath);
+      await file.writeAsBytes(pngBytes);
+
+      // 3. Share the file and the barcode data
+      final String contentTypeStr = _determineContentType();
+      final String shareText = '$contentTypeStr QR Code\n$barcodeValue';
+
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        text: shareText,
+        subject: 'QR Code: $contentTypeStr',
+      );
+    } catch (e) {
+      if (context.mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error sharing QR code: $e',
+          type: SnackBarType.error,
+        );
+      }
+    }
+  }
+}
+
+// QR Code Widget
+class BarcodeResultQRCode extends StatelessWidget {
+  final String barcodeValue;
+  final String barcodeType;
+  final GlobalKey qrKey;
+
+  const BarcodeResultQRCode({
+    Key? key,
+    required this.barcodeValue,
+    required this.barcodeType,
+    required this.qrKey,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      key: qrKey,
+      child: Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: _getColorsForType(barcodeType),
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20.r),
+          boxShadow: [
+            BoxShadow(
+              color: _getColorsForType(barcodeType)[0].withOpacity(0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 5),
+              spreadRadius: 5,
+            )
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // QR Code header with icon
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  _getIconForType(barcodeType),
+                  color: Colors.white,
+                  size: 20.sp,
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  barcodeType,
+                  style: GoogleFonts.notoSerif(
+                    color: Colors.white,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withOpacity(0.3),
+                        offset: const Offset(0, 1),
+                        blurRadius: 2,
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.h),
+            // QR Code with white background
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: QrImageView(
+                data: barcodeValue,
+                version: QrVersions.auto,
+                size: 200.w,
+                backgroundColor: Colors.white,
+                eyeStyle: QrEyeStyle(
+                  eyeShape: QrEyeShape.square,
+                  color: _getColorsForType(barcodeType)[1],
+                ),
+                dataModuleStyle: QrDataModuleStyle(
+                  dataModuleShape: QrDataModuleShape.square,
+                  color: _getColorsForType(barcodeType)[0],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Helper methods to determine colors based on barcode type
+  List<Color> _getColorsForType(String type) {
+    switch (type.toLowerCase()) {
+      case 'url/website':
+        return [Colors.blue.shade600, Colors.blue.shade900];
+      case 'phone number':
+        return [Colors.green.shade600, Colors.green.shade900];
+      case 'email address':
+      case 'email message':
+        return [Colors.orange, Colors.deepOrange];
+      case 'wifi network':
+        return [Colors.purple, Colors.deepPurple];
+      case 'location':
+        return [Colors.red.shade600, Colors.red.shade900];
+      case 'contact':
+        return [Colors.indigo, Colors.blueAccent];
+      case 'calendar event':
+        return [Colors.teal, Colors.tealAccent];
+      case 'product code':
+        return [Colors.brown, Colors.brown.shade700];
+      default:
+        return [Colors.blueGrey, Colors.blueGrey.shade800];
+    }
+  }
+
+  // Helper method to get the appropriate icon
+  IconData _getIconForType(String type) {
+    switch (type.toLowerCase()) {
+      case 'url/website':
+        return Icons.language;
+      case 'phone number':
+        return Icons.phone;
+      case 'email address':
+      case 'email message':
+        return Icons.email;
+      case 'wifi network':
+        return Icons.wifi;
+      case 'location':
+        return Icons.location_on;
+      case 'contact':
+        return Icons.contact_page;
+      case 'calendar event':
+        return Icons.event;
+      case 'product code':
+        return Icons.qr_code_scanner;
+      default:
+        return Icons.qr_code;
     }
   }
 }
