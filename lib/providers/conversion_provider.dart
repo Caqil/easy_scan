@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:easy_scan/services/image_service.dart';
-import 'package:easy_scan/models/conversion.dart';
+import 'package:easy_scan/models/conversion_state.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/models/format_category.dart';
 import 'package:easy_scan/services/conversion_service.dart';
@@ -30,7 +30,7 @@ class ConversionNotifier extends StateNotifier<ConversionState> {
   void setInputFormat(FormatOption format) {
     state = state.copyWith(
       inputFormat: format,
-      selectedFile: null,
+      selectedFilePath: null,
       convertedFilePath: null,
       error: null,
     );
@@ -63,7 +63,7 @@ class ConversionNotifier extends StateNotifier<ConversionState> {
 
       if (result != null) {
         state = state.copyWith(
-          selectedFile: File(result.files.single.path!),
+          selectedFilePath: result.files.single.path!,
           error: null,
           convertedFilePath: null,
         );

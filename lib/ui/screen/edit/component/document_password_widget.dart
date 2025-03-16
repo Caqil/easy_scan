@@ -50,7 +50,6 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
       decoration: BoxDecoration(
         color: widget.colorScheme.surfaceVariant.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12.r),
@@ -81,7 +80,7 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
               ),
             ),
             value: _isProtectionEnabled,
-            activeColor: widget.colorScheme.primary,
+            activeColor: widget.colorScheme.inversePrimary,
             onChanged: (value) {
               setState(() {
                 _isProtectionEnabled = value;

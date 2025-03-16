@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../models/conversion.dart';
+import '../../../../models/conversion_state.dart';
 import '../../../../providers/conversion_provider.dart';
 import '../components/section_container.dart';
 import '../components/help_dialog.dart';
@@ -69,26 +69,6 @@ class AdvancedOptionsSection extends StatelessWidget {
               ),
             ),
           ],
-
-          // Password field (for PDF inputs)
-          if (_showPasswordField()) ...[
-            SizedBox(height: 16.h),
-            TextField(
-              decoration: InputDecoration(
-                labelText: "PDF Password (if protected)",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                hintText: "Leave empty if not password-protected",
-                prefixIcon: const Icon(Icons.lock_outline),
-              ),
-              obscureText: true,
-              enabled: !state.isConverting,
-              onChanged: (value) => ref
-                  .read(conversionStateProvider.notifier)
-                  .setPassword(value.isNotEmpty ? value : null),
-            ),
-          ],
         ],
       ),
     );
@@ -99,11 +79,6 @@ class AdvancedOptionsSection extends StatelessWidget {
     return outputFormatId == 'jpg' ||
         outputFormatId == 'png' ||
         outputFormatId == 'jpeg';
-  }
-
-  bool _showPasswordField() {
-    final inputFormatId = state.inputFormat?.id.toLowerCase();
-    return inputFormatId == 'pdf';
   }
 
   void _showHelpDialog(BuildContext context) {

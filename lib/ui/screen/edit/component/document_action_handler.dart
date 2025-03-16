@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/ui/screen/edit/component/document_password_widget.dart';
 import 'package:easy_scan/ui/screen/edit/component/edit_screen_controller.dart';
+import 'package:easy_scan/ui/widget/color_selector.dart';
+import 'package:easy_scan/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -451,71 +452,16 @@ class DocumentActionHandler {
                                       TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(width: 16),
                               Expanded(
-                                child: Wrap(
+                                child: ColorSelector(
+                                  selectedColor: watermarkColor,
+                                  onColorSelected: (color) {
+                                    onColorChanged(color);
+                                    controller.updateUI();
+                                  },
+                                  colorValues: AppConstants
+                                      .folderColors, // Consistent with folders
+                                  itemSize: 36,
                                   spacing: 12,
-                                  runSpacing: 12,
-                                  children: [
-                                    _buildColorOption(
-                                      color: Colors.red,
-                                      selectedColor: watermarkColor,
-                                      onSelect: (color) {
-                                        // Update color
-                                        onColorChanged(color);
-                                        // Force rebuild
-                                        controller.updateUI();
-                                      },
-                                    ),
-                                    _buildColorOption(
-                                      color: Colors.blue,
-                                      selectedColor: watermarkColor,
-                                      onSelect: (color) {
-                                        // Update color
-                                        onColorChanged(color);
-                                        // Force rebuild
-                                        controller.updateUI();
-                                      },
-                                    ),
-                                    _buildColorOption(
-                                      color: Colors.green,
-                                      selectedColor: watermarkColor,
-                                      onSelect: (color) {
-                                        // Update color
-                                        onColorChanged(color);
-                                        // Force rebuild
-                                        controller.updateUI();
-                                      },
-                                    ),
-                                    _buildColorOption(
-                                      color: Colors.orange,
-                                      selectedColor: watermarkColor,
-                                      onSelect: (color) {
-                                        // Update color
-                                        onColorChanged(color);
-                                        // Force rebuild
-                                        controller.updateUI();
-                                      },
-                                    ),
-                                    _buildColorOption(
-                                      color: Colors.purple,
-                                      selectedColor: watermarkColor,
-                                      onSelect: (color) {
-                                        // Update color
-                                        onColorChanged(color);
-                                        // Force rebuild
-                                        controller.updateUI();
-                                      },
-                                    ),
-                                    _buildColorOption(
-                                      color: Colors.grey,
-                                      selectedColor: watermarkColor,
-                                      onSelect: (color) {
-                                        // Update color
-                                        onColorChanged(color);
-                                        // Force rebuild
-                                        controller.updateUI();
-                                      },
-                                    ),
-                                  ],
                                 ),
                               ),
                             ],
@@ -621,7 +567,7 @@ class DocumentActionHandler {
                       child: const Text('Cancel'),
                     ),
                     const SizedBox(width: 16),
-                    ElevatedButton(
+                    OutlinedButton(
                       onPressed: () {
                         if (watermarkType == 'text' &&
                             textController.text.trim().isEmpty) {

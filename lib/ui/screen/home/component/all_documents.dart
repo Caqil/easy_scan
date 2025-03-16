@@ -26,7 +26,7 @@ class AllDocuments extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Limit to 10 items
-    final limitedDocuments = documents.take(10).toList();
+    final limitedDocuments = documents.take(5).toList();
     final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
@@ -55,7 +55,7 @@ class AllDocuments extends StatelessWidget {
                   ),
                 ],
               ),
-              if (showViewAll && documents.length > 10)
+              if (showViewAll && documents.length > 5)
                 TextButton(
                   onPressed: onViewAllPressed,
                   child: Row(

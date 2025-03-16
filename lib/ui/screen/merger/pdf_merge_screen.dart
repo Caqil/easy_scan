@@ -39,6 +39,9 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
     final pdfMergerService = ref.read(pdfMergerServiceProvider);
     final pdfDocuments = pdfMergerService.filterPdfDocuments(allDocuments);
 
+    // Sort by most recent first
+    pdfDocuments.sort((a, b) => b.modifiedAt.compareTo(a.modifiedAt));
+
     return Scaffold(
       appBar: CustomAppBar(
         title: const Text('PDF Merger'),
@@ -97,31 +100,56 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                 ),
               ),
 
-              // Selected documents counter
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Selected PDFs: ${_selectedDocuments.length}',
-                      style: GoogleFonts.notoSerif(
-                        fontWeight: FontWeight.bold,
+              // Selected documents counter and tip
+              if (_selectedDocuments.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Selected: ${_selectedDocuments.length} PDFs',
+                            style: GoogleFonts.notoSerif(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextButton.icon(
+                            icon: const Icon(Icons.clear),
+                            label: const Text('Clear'),
+                            onPressed: () {
+                              setState(() {
+                                _selectedDocuments.clear();
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                    ),
-                    if (_selectedDocuments.isNotEmpty)
-                      TextButton.icon(
-                        icon: const Icon(Icons.clear),
-                        label: const Text('Clear'),
-                        onPressed: () {
-                          setState(() {
-                            _selectedDocuments.clear();
-                          });
-                        },
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Files will be merged in the order displayed. Drag items to reorder.',
+                              style: GoogleFonts.notoSerif(
+                                fontSize: 12,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
               // Library documents display (when in library mode)
               if (_isShowingLibraryDocs)
@@ -139,7 +167,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                 ),
 
               // Merge button
-              _buildMergeButton(colorScheme),
+              if (_selectedDocuments.isNotEmpty) _buildMergeButton(colorScheme),
             ],
           ),
 
@@ -246,6 +274,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
       itemBuilder: (context, index) {
         final document = documents[index];
         final isSelected = _selectedDocuments.contains(document);
+        final selectedIndex =
+            isSelected ? _selectedDocuments.indexOf(document) : -1;
 
         return InkWell(
           onTap: () => _toggleDocumentSelection(document),
@@ -296,21 +326,53 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                               ),
                       ),
 
-                      // Selection indicator
+                      // Selection overlay with order number
                       if (isSelected)
-                        Positioned(
-                          top: 8,
-                          right: 8,
+                        Positioned.fill(
                           child: Container(
-                            padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
-                              shape: BoxShape.circle,
+                              color: Colors.black38,
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(11),
+                                topRight: Radius.circular(11),
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: 16,
+                            child: Center(
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '${selectedIndex + 1}',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      Text(
+                                        'ORDER',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -360,64 +422,171 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
   }
 
   Widget _buildSelectedDocsList() {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemCount: _selectedDocuments.length,
-      itemBuilder: (context, index) {
-        final document = _selectedDocuments[index];
-
-        return Card(
-          margin: const EdgeInsets.only(bottom: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+    return Column(
+      children: [
+        // Info banner
+        Container(
+          margin: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color:
+                Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
           ),
-          elevation: 1,
-          child: ListTile(
-            leading: document.thumbnailPath != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: Image.file(
-                      File(document.thumbnailPath!),
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                : Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Icon(Icons.picture_as_pdf, color: Colors.grey),
+          child: Row(
+            children: [
+              Icon(
+                Icons.drag_indicator,
+                color: Theme.of(context).colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Drag files to reorder. PDFs will be merged in this sequence.',
+                  style: GoogleFonts.notoSerif(
+                    fontSize: 12.sp,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-            title: Text(
-              document.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.notoSerif(
-                fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            subtitle: Text(
-              '${document.pageCount} pages',
-              style: GoogleFonts.notoSerif(
-                fontSize: 12,
-                color: Colors.grey.shade600,
-              ),
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete_outline, color: Colors.red),
-              onPressed: () {
-                setState(() {
-                  _selectedDocuments.remove(document);
-                });
-              },
-            ),
+            ],
           ),
-        );
-      },
+        ),
+
+        // Reorderable list with order numbers
+        Expanded(
+          child: ReorderableListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            itemCount: _selectedDocuments.length,
+            onReorder: (oldIndex, newIndex) {
+              setState(() {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                final Document item = _selectedDocuments.removeAt(oldIndex);
+                _selectedDocuments.insert(newIndex, item);
+              });
+            },
+            itemBuilder: (context, index) {
+              final document = _selectedDocuments[index];
+
+              return Card(
+                key: ValueKey(document.id),
+                margin: const EdgeInsets.only(bottom: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    width: 48,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                      ),
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${index + 1}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const Text(
+                            'ORDER',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Row(
+                      children: [
+                        document.thumbnailPath != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: Image.file(
+                                  File(document.thumbnailPath!),
+                                  width: 40,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: const Icon(Icons.picture_as_pdf,
+                                    color: Colors.grey),
+                              ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                document.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.notoSerif(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                '${document.pageCount} pages',
+                                style: GoogleFonts.notoSerif(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.drag_handle, color: Colors.grey),
+                      IconButton(
+                        icon:
+                            const Icon(Icons.delete_outline, color: Colors.red),
+                        onPressed: () {
+                          setState(() {
+                            _selectedDocuments.remove(document);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -461,7 +630,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
       final List<String> selectedPaths = await pdfMergerService.selectPdfs();
 
       if (selectedPaths.isNotEmpty) {
-        // We need to create temporary Document objects from the selected files
+        // Create temporary Document objects from the selected files
         int pageCount = 0;
         List<Document> newDocuments = [];
 
@@ -488,11 +657,9 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           _selectedDocuments.addAll(newDocuments);
         });
 
-        AppDialogs.showSnackBar(
-          context,
-          message: 'Added ${newDocuments.length} PDF files',
-          type: SnackBarType.success,
-        );
+        if (newDocuments.isNotEmpty) {
+          _showOrderingTip();
+        }
       }
     } catch (e) {
       AppDialogs.showSnackBar(
@@ -505,6 +672,18 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
         _isProcessing = false;
       });
     }
+  }
+
+  void _showOrderingTip() {
+    if (_selectedDocuments.length < 2) return;
+
+    AppDialogs.showSnackBar(
+      context,
+      message:
+          'Files will be merged in the order shown. Drag items to reorder.',
+      type: SnackBarType.normal,
+      duration: const Duration(seconds: 5),
+    );
   }
 
   Future<void> _mergePdfs() async {
@@ -526,6 +705,10 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
       return;
     }
 
+    // Show confirmation with ordered file list
+    final bool confirmMerge = await _confirmMergeOrder();
+    if (!confirmMerge) return;
+
     setState(() {
       _isProcessing = true;
     });
@@ -545,7 +728,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
       if (mounted) {
         AppDialogs.showSnackBar(
           context,
-          message: 'PDFs merged successfully into $outputName',
+          message: 'PDFs merged successfully into "$outputName"',
           type: SnackBarType.success,
         );
 
@@ -572,6 +755,95 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
     }
   }
 
+  Future<bool> _confirmMergeOrder() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.merge_type,
+                    color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 8),
+                const Text('Confirm PDF Order'),
+              ],
+            ),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Files will be merged in this order:',
+                    style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _selectedDocuments.length,
+                      itemBuilder: (context, index) {
+                        final doc = _selectedDocuments[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 24,
+                                height: 24,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${index + 1}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  doc.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Text(
+                                '${doc.pageCount} pages',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Merge Now'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   void _showHelpDialog() {
     showDialog(
       context: context,
@@ -591,7 +863,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             _buildHelpItem('1', 'Enter a name for the merged file'),
             _buildHelpItem('2', 'Choose PDFs from your library or device'),
             _buildHelpItem('3', 'Select at least 2 PDFs to merge'),
-            _buildHelpItem('4', 'Tap "Merge PDFs" button'),
+            _buildHelpItem('4', 'Drag PDFs to change the merge order'),
+            _buildHelpItem('5', 'Tap "Merge PDFs" button'),
             const SizedBox(height: 16),
             const Text(
               'The merged PDF will be saved to your document library.',

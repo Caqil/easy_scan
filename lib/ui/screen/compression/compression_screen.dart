@@ -1,10 +1,12 @@
 // lib/ui/screen/conversion/compression_screen.dart
 
 import 'dart:io';
+import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../models/document.dart';
 import '../../../providers/document_provider.dart';
 import '../../../services/pdf_service.dart';
@@ -438,7 +440,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'File size: ${_formatFileSize(_originalFileSize)}',
+                  'File size: ${FileUtils.formatFileSize(_originalFileSize)}',
                   style: GoogleFonts.notoSerif(
                     fontSize: 12.sp,
                     color: Colors.grey.shade700,
@@ -698,7 +700,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
             children: [
               _buildStatColumn(
                 label: 'Original Size',
-                value: _formatFileSize(_originalFileSize),
+                value: FileUtils.formatFileSize(_originalFileSize),
               ),
               Icon(
                 Icons.arrow_forward,
@@ -706,7 +708,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               ),
               _buildStatColumn(
                 label: 'Estimated Size',
-                value: _formatFileSize(_estimatedFileSize),
+                value: FileUtils.formatFileSize(_estimatedFileSize),
                 valueColor: Theme.of(context).colorScheme.secondary,
               ),
             ],
@@ -719,7 +721,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
             children: [
               _buildStatColumn(
                 label: 'Size Reduction',
-                value: _formatFileSize(sizeDifference),
+                value: FileUtils.formatFileSize(sizeDifference),
                 valueColor: Colors.green.shade700,
               ),
               _buildStatColumn(
@@ -848,12 +850,6 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
     }
   }
 
-  String _formatFileSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
-  }
-
   Future<void> _compressPdf() async {
     if (_isCompressing) return;
 
@@ -873,18 +869,50 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
       final String? password =
           widget.document.isPasswordProtected ? widget.document.password : null;
 
+      // Get original file size before compression
+      final File originalFile = File(widget.document.pdfPath);
+      final int originalSize = await originalFile.length();
+
       // Determine which compression method to use based on mode
       final String compressedPdfPath;
 
       if (_isAdvancedMode) {
-        // Use custom quality settings in advanced mode
+        // Extract images from PDF, optimize them, then rebuild the PDF
+        // For advanced mode, we'll take a more aggressive approach
+
+        // First create a temporary directory to work with
+        final tempDir = await getTemporaryDirectory();
+        final tempPath =
+            '${tempDir.path}/temp_${DateTime.now().millisecondsSinceEpoch}.pdf';
+
+        // Copy the original file to a temp location so we don't modify the original yet
+        await originalFile.copy(tempPath);
+
+        // Compress the PDF with more aggressive image optimization
         compressedPdfPath = await pdfService.compressPdf(
-          widget.document.pdfPath,
+          tempPath,
           quality: _qualitySliderValue.round(),
           imageQuality: _imageQualitySliderValue.round(),
           password: password,
         );
+
+        // Clean up the temp file if it's not the result
+        if (tempPath != compressedPdfPath) {
+          try {
+            await File(tempPath).delete();
+          } catch (e) {
+            // Ignore cleanup errors
+            debugPrint('Warning: Could not clean up temp file: $tempPath');
+          }
+        }
       } else {
+        // For simple mode, we'll use preset compression levels
+        // First create a temporary copy of the file
+        final tempDir = await getTemporaryDirectory();
+        final tempPath =
+            '${tempDir.path}/temp_${DateTime.now().millisecondsSinceEpoch}.pdf';
+        await originalFile.copy(tempPath);
+
         // Map our UI compression level to the one defined in pdf_compresion.dart
         CompressionLevel compressionLevel;
         switch (_compressionLevel) {
@@ -904,10 +932,20 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
 
         // Use preset compression level in simple mode
         compressedPdfPath = await pdfService.smartCompressPdf(
-          widget.document.pdfPath,
+          tempPath,
           level: compressionLevel,
           password: password,
         );
+
+        // Clean up the temp file if it's not the result
+        if (tempPath != compressedPdfPath) {
+          try {
+            await File(tempPath).delete();
+          } catch (e) {
+            // Ignore cleanup errors
+            debugPrint('Warning: Could not clean up temp file: $tempPath');
+          }
+        }
       }
 
       // Update the progress to indicate completion
@@ -920,10 +958,32 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
       final int actualCompressedSize = await compressedFile.length();
 
       // Calculate actual compression results
-      final int sizeDifference = _originalFileSize - actualCompressedSize;
-      final double compressionPercentage = (_originalFileSize > 0)
-          ? (sizeDifference / _originalFileSize * 100)
-          : 0.0;
+      final int sizeDifference = originalSize - actualCompressedSize;
+      final double compressionPercentage =
+          (_originalFileSize > 0) ? (sizeDifference / originalSize * 100) : 0.0;
+
+      // Check if compression was effective
+      if (actualCompressedSize >= originalSize) {
+        // Compression didn't reduce the size
+        AppDialogs.showSnackBar(
+          context,
+          message:
+              'The PDF is already optimized or cannot be compressed further.',
+          type: SnackBarType.warning,
+        );
+
+        // Delete the ineffective compressed file
+        try {
+          await compressedFile.delete();
+        } catch (e) {
+          // Ignore cleanup errors
+        }
+
+        setState(() {
+          _isCompressing = false;
+        });
+        return;
+      }
 
       // Create a new document model for the compressed PDF
       final compressedDocument = widget.document.copyWith(

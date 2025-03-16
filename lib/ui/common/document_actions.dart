@@ -63,7 +63,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final extension = path.extension(document.pdfPath).toLowerCase();
     final isPdf = extension == '.pdf';
-    final List<String> editableExtensions = ['jpg', 'jpeg', 'png'];
+    final List<String> editableExtensions = ['.pdf', '.jpg', '.jpeg', '.png'];
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -168,20 +168,19 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     }
                   },
                 ),
-                !editableExtensions.contains(extension)
-                    ? _buildOptionTile(
-                        context,
-                        icon: Icons.share_outlined,
-                        title: 'Edit',
-                        description: 'Edit document',
-                        onTap: () {
-                          Navigator.pop(context);
-                          if (onEdit != null) {
-                            onEdit!(document);
-                          }
-                        },
-                      )
-                    : SizedBox.shrink(),
+                if (editableExtensions.contains(extension))
+                  _buildOptionTile(
+                    context,
+                    icon: Icons.share_outlined,
+                    title: 'Edit',
+                    description: 'Edit document',
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (onEdit != null) {
+                        onEdit!(document);
+                      }
+                    },
+                  ),
                 _buildOptionTile(
                   context,
                   icon: document.isFavorite ? Icons.star : Icons.star_outline,
@@ -194,10 +193,10 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                       : 'Easy access in favorites',
                   onTap: () {
                     Navigator.pop(context);
-                    // Toggle favorite status
                     final updatedDoc = document.copyWith(
                       isFavorite: !document.isFavorite,
                       modifiedAt: DateTime.now(),
+                      folderId: document.folderId, // Preserve the folder ID
                     );
                     ref
                         .read(documentsProvider.notifier)

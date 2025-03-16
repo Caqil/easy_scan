@@ -1,18 +1,34 @@
-import 'dart:io';
+import 'package:hive/hive.dart';
 import 'dart:ui';
 
-class TextElementData {
+part 'scan_result.g.dart';
+
+@HiveType(typeId: 4)
+class TextElementData extends HiveObject {
+  @HiveField(0)
   final String text;
+
+  @HiveField(1)
   final Rect boundingBox;
 
   TextElementData({required this.text, required this.boundingBox});
 }
 
-class ScanResult {
-  final List<File> scannedPages;
+@HiveType(typeId: 5)
+class ScanResult extends HiveObject {
+  @HiveField(0)
+  final List<String> scannedPages; // Store file paths instead of File objects
+
+  @HiveField(1)
   final List<String> recognizedText;
+
+  @HiveField(2)
   final String? documentName;
+
+  @HiveField(3)
   final bool isSuccess;
+
+  @HiveField(4)
   final String? errorMessage;
 
   ScanResult({
@@ -23,9 +39,7 @@ class ScanResult {
     this.errorMessage,
   });
 
-  // Check if scan has any pages
   bool get hasPages => scannedPages.isNotEmpty;
 
-  // Check if OCR results are available
   bool get hasText => recognizedText.isNotEmpty;
 }

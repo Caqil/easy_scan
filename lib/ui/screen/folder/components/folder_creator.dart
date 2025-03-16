@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../models/folder.dart';
-import '../../providers/folder_provider.dart';
-import '../../utils/constants.dart';
+import '../../../../models/folder.dart';
+import '../../../../providers/folder_provider.dart';
+import '../../../../utils/constants.dart';
 
 /// A globally accessible class to handle folder creation
 class FolderCreator {

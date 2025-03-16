@@ -5,7 +5,7 @@ import 'package:easy_scan/services/scan_service.dart';
 import 'package:easy_scan/services/share_service.dart';
 import 'package:easy_scan/ui/common/document_actions.dart';
 import 'package:easy_scan/ui/common/folder_actions.dart';
-import 'package:easy_scan/ui/common/folder_creator.dart';
+import 'package:easy_scan/ui/screen/folder/components/folder_creator.dart';
 import 'package:easy_scan/ui/common/folder_selection.dart';
 import 'package:easy_scan/ui/common/folders_grid.dart';
 import 'package:easy_scan/ui/common/import_options.dart';
@@ -166,7 +166,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: const EdgeInsets.all(16.0),
                 children: [
                   QuickActions(
-                    onProtect: () {},
                     onScan: () {
                       showModalBottomSheet(
                         context: context,
@@ -358,6 +357,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             _shareDocument(context, p0, ref);
                           },
                         );
+                      },
+                      onViewAllPressed: () {
+                        AppRoutes.navigateToAllDoc(context);
                       },
                     ),
                   if (recentDocuments.isEmpty &&

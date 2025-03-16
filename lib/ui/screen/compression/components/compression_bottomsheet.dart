@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/services/pdf_service.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/ui/screen/compression/compression_screen.dart';
+import 'package:easy_scan/utils/file_utils.dart';
 import 'package:easy_scan/utils/pdf_compresion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 class CompressionBottomSheet extends ConsumerStatefulWidget {
   final Document document;
@@ -256,8 +260,8 @@ class _CompressionBottomSheetState
                 label: 'Maximum',
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.maximum,
-                onTap: () =>
-                    setState(() => _compressionLevel = CompressionLevel.maximum),
+                onTap: () => setState(
+                    () => _compressionLevel = CompressionLevel.maximum),
               ),
             ),
           ],
@@ -350,7 +354,7 @@ class _CompressionBottomSheetState
     });
 
     try {
-      // Simulate progress updates
+      // Simulate progress updates for UI feedback
       _startProgressSimulation();
 
       // Create a PDF service instance
@@ -360,7 +364,100 @@ class _CompressionBottomSheetState
       final String? password =
           widget.document.isPasswordProtected ? widget.document.password : null;
 
-      // Compress the PDF
+      // Get original file size for later comparison
+      final File originalFile = File(widget.document.pdfPath);
+      final int originalSize = await originalFile.length();
+
+      // Show a debug message with file info
+      debugPrint('Starting compression for ${widget.document.name}');
+      debugPrint(
+          'Original file size: ${FileUtils.formatFileSize(originalSize)}');
+      debugPrint('Compression level: $_compressionLevel');
+
+      // First attempt: Try direct compression with FileCompressor
+      File? compressedFile;
+      try {
+        // Create a temporary copy to work with
+        final tempDir = await getTemporaryDirectory();
+        final tempFilePath = path.join(tempDir.path,
+            'temp_pre_compress_${DateTime.now().millisecondsSinceEpoch}.pdf');
+        await originalFile.copy(tempFilePath);
+
+        // Compress using the FileCompressor
+        compressedFile = await FileCompressor.compressPdf(
+          file: File(tempFilePath),
+          compressionLevel: PdfCompressionLevel.best,
+        );
+
+        // Update progress
+        setState(() {
+          _compressionProgress = 0.6;
+        });
+      } catch (e) {
+        debugPrint('FileCompressor error: $e');
+        // We'll fall back to other methods
+      }
+
+      // If FileCompressor was successful and reduced file size
+      if (compressedFile != null && await compressedFile.exists()) {
+        final int compressedSize = await compressedFile.length();
+
+        if (compressedSize < originalSize) {
+          // Create the document name for the final destination
+          final String outputPath = await FileUtils.getUniqueFilePath(
+            documentName: '${widget.document.name}_compressed',
+            extension: 'pdf',
+          );
+
+          // Copy to final path
+          await compressedFile.copy(outputPath);
+
+          // Calculate reduction
+          final double percentReduction =
+              ((originalSize - compressedSize) / originalSize) * 100;
+
+          // Create the document
+          final compressedDocument = widget.document.copyWith(
+            name: '${widget.document.name} (Compressed)',
+            pdfPath: outputPath,
+            pagesPaths: [outputPath],
+            modifiedAt: DateTime.now(),
+          );
+
+          // Add to document provider
+          await ref
+              .read(documentsProvider.notifier)
+              .addDocument(compressedDocument);
+
+          // Clean up
+          try {
+            await compressedFile.delete();
+          } catch (e) {
+            // Ignore cleanup errors
+          }
+
+          // Show success message
+          if (mounted) {
+            Navigator.pop(context);
+            AppDialogs.showSnackBar(
+              context,
+              type: SnackBarType.success,
+              message:
+                  'PDF compressed successfully (${percentReduction.toStringAsFixed(1)}% reduction)',
+            );
+          }
+
+          return;
+        } else {
+          // Clean up the ineffective result
+          await compressedFile.delete();
+          debugPrint(
+              'FileCompressor did not reduce size, trying alternative method...');
+        }
+      }
+
+      // Second attempt: Use the PdfService's smartCompressPdf method
+      // This will try different compression techniques
       final String compressedPdfPath = await pdfService.smartCompressPdf(
         widget.document.pdfPath,
         level: _compressionLevel,
@@ -371,6 +468,33 @@ class _CompressionBottomSheetState
       setState(() {
         _compressionProgress = 1.0;
       });
+
+      // Check if the compression was successful (path is different)
+      if (compressedPdfPath == widget.document.pdfPath) {
+        // No compression occurred - original file was returned
+        if (mounted) {
+          Navigator.pop(context);
+
+          AppDialogs.showSnackBar(
+            context,
+            message: 'The PDF could not be compressed further.',
+            type: SnackBarType.warning,
+          );
+        }
+        return;
+      }
+
+      // Get the compressed file size
+      final File compressedResult = File(compressedPdfPath);
+      final int compressedSize = await compressedResult.length();
+
+      // Calculate compression percentage
+      final double percentReduction =
+          ((originalSize - compressedSize) / originalSize) * 100;
+
+      debugPrint(
+          'Compression complete. New size: ${FileUtils.formatFileSize(compressedSize)}');
+      debugPrint('Size reduction: ${percentReduction.toStringAsFixed(1)}%');
 
       // Create a new document model for the compressed PDF
       final compressedDocument = widget.document.copyWith(
@@ -393,7 +517,8 @@ class _CompressionBottomSheetState
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.success,
-          message: 'PDF compressed successfully',
+          message:
+              'PDF compressed successfully (${percentReduction.toStringAsFixed(1)}% reduction)',
         );
       }
     } catch (e) {

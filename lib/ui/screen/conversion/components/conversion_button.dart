@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../models/conversion.dart';
+import '../../../../models/conversion_state.dart';
 import '../../../../providers/conversion_provider.dart';
 import '../../../../ui/common/dialogs.dart';
 

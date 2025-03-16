@@ -1,3 +1,4 @@
+import 'package:easy_scan/ui/screen/all_documents.dart';
 import 'package:easy_scan/ui/screen/compression/compression_screen.dart';
 import 'package:easy_scan/ui/screen/merger/pdf_merge_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class AppRoutes {
   static const String view = '/view';
   static const String folder = '/folder';
   static const String pdfMerger = '/pdf_merger';
+  static const String allDocuments = '/all_documents';
   static const String compression = '/compression';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -27,6 +29,8 @@ class AppRoutes {
         final document = settings.arguments as Document;
         return MaterialPageRoute(
             builder: (_) => ViewScreen(document: document));
+      case allDocuments:
+        return MaterialPageRoute(builder: (_) => AllDocumentsScreen());
       case folder:
         final folder = settings.arguments as Folder;
         return MaterialPageRoute(builder: (_) => FolderScreen(folder: folder));
@@ -93,5 +97,9 @@ class AppRoutes {
 
   static void navigateToPdfMerger(BuildContext context) {
     Navigator.pushNamed(context, pdfMerger);
+  }
+
+  static void navigateToAllDoc(BuildContext context) {
+    Navigator.pushNamed(context, allDocuments);
   }
 }

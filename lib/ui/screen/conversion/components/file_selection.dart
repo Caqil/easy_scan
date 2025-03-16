@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path/path.dart' as path;
-import '../../../../models/conversion.dart';
+import '../../../../models/conversion_state.dart';
 import '../../../../providers/conversion_provider.dart';
 import '../../../../utils/date_utils.dart';
 import '../components/section_container.dart';
@@ -31,7 +32,7 @@ class FileSelectionSection extends StatelessWidget {
           else
             _buildEmptyFileSelector(),
           SizedBox(height: 16.h),
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: state.isConverting
                 ? null
                 : () => ref.read(conversionStateProvider.notifier).pickFile(),
@@ -132,7 +133,7 @@ class FileSelectionSection extends StatelessWidget {
   Future<String> _getFileInfo(File file) async {
     try {
       final size = await file.length();
-      final sizeStr = _formatFileSize(size);
+      final sizeStr = FileUtils.formatFileSize(size);
       final dateModified = await file.lastModified();
       return "$sizeStr • Modified ${DateTimeUtils.getRelativeTime(dateModified)}";
     } catch (e) {
@@ -140,12 +141,5 @@ class FileSelectionSection extends StatelessWidget {
     }
   }
 
-  String _formatFileSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024) {
-      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
-    }
-    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
-  }
+
 }

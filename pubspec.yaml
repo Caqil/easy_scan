@@ -61,7 +61,6 @@ dependencies:
   animated_bottom_navigation_bar: ^1.4.0
   firebase_core: ^3.12.1
   firebase_analytics: ^11.4.4
-  pdf_manipulator: ^0.5.9
 
 dev_dependencies:
   flutter_test:

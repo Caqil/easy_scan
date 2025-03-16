@@ -10,7 +10,6 @@ class QuickActions extends ConsumerWidget {
   final VoidCallback onFavorites;
   final VoidCallback onMerge;
   final VoidCallback onCompress;
-  final VoidCallback onProtect;
   const QuickActions({
     super.key,
     required this.onScan,
@@ -19,7 +18,6 @@ class QuickActions extends ConsumerWidget {
     required this.onFavorites,
     required this.onMerge,
     required this.onCompress,
-    required this.onProtect,
   });
 
   @override
@@ -57,9 +55,9 @@ class QuickActions extends ConsumerWidget {
 
   Widget _buildActionGrid(BuildContext context) {
     final actions = [
-      _ActionItem(Icons.qr_code_scanner, 'Scan Code', onScan),
+      _ActionItem(Icons.qr_code_scanner, 'Scan', onScan),
       _ActionItem(Icons.merge_type, 'Merge PDF', onMerge),
-      _ActionItem(Icons.lock, 'Protect PDF', onProtect),
+      _ActionItem(Icons.favorite_border, 'Favorite', onFavorites),
       _ActionItem(Icons.compress, 'Compress PDF', onCompress),
     ];
 
@@ -100,8 +98,8 @@ class QuickActions extends ConsumerWidget {
                 splashColor: color.withOpacity(0.2),
                 highlightColor: color.withOpacity(0.1),
                 onTap: action.onTap,
-                child: Container(
-                  width: 50.w,
+                child: SizedBox(
+                  width: 60.w,
                   height: 50.h,
                   child: Icon(
                     action.icon,
