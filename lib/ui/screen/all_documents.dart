@@ -286,26 +286,6 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
     });
   }
 
-  // Helper to format dates in a user-friendly way
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-
-    if (difference.inDays == 0) {
-      return 'Today';
-    } else if (difference.inDays == 1) {
-      return 'Yesterday';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
-    } else if (difference.inDays < 30) {
-      return '${(difference.inDays / 7).floor()} weeks ago';
-    } else if (difference.inDays < 365) {
-      return '${(difference.inDays / 30).floor()} months ago';
-    } else {
-      return '${(difference.inDays / 365).floor()} years ago';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     // Use watch to listen for documents changes
@@ -350,7 +330,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                 decoration: InputDecoration(
                   hintText: 'Search documents...',
                   border: InputBorder.none,
-                  hintStyle: TextStyle(color: Colors.grey.shade400),
+                  hintStyle: GoogleFonts.notoSerif(color: Colors.grey.shade400),
                   prefixIcon: Icon(Icons.search, color: primaryColor),
                 ),
                 style: GoogleFonts.notoSerif(
@@ -470,7 +450,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                                 padding: EdgeInsets.symmetric(horizontal: 4.w),
                                 child: Text(
                                   '...',
-                                  style: TextStyle(
+                                  style: GoogleFonts.notoSerif(
                                     color: primaryColor,
                                     fontWeight: FontWeight.bold,
                                   ),

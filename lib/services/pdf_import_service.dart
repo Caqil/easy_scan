@@ -128,7 +128,7 @@ class PdfImportService {
             File(targetPath),
             size: AppConstants.thumbnailSize);
 
-        thumbnailPath = thumbnailFile!.path;
+        thumbnailPath = thumbnailFile.path;
         debugPrint('Thumbnail created at: $thumbnailPath');
 
         // Verify thumbnail exists

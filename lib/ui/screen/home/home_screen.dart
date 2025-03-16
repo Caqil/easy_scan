@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/services/scan_service.dart';
 import 'package:easy_scan/services/share_service.dart';
+import 'package:easy_scan/ui/common/component/scan_initial_view.dart';
 import 'package:easy_scan/ui/common/document_actions.dart';
 import 'package:easy_scan/ui/common/folder_actions.dart';
 import 'package:easy_scan/ui/screen/compression/components/compression_tools.dart';
@@ -11,12 +11,10 @@ import 'package:easy_scan/ui/common/folder_selection.dart';
 import 'package:easy_scan/ui/common/folders_grid.dart';
 import 'package:easy_scan/ui/common/import_options.dart';
 import 'package:easy_scan/ui/common/pdf_merger.dart';
-import 'package:easy_scan/ui/screen/camera/camera_screen.dart';
-import 'package:easy_scan/ui/screen/camera/component/scan_initial_view.dart';
 import 'package:easy_scan/ui/screen/compression/components/compression_bottomsheet.dart';
-import 'package:easy_scan/utils/permission_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -65,7 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         path.extension(document.pdfPath).toLowerCase().replaceAll('.', '');
 
     // List of editable extensions
-    final List<String> editableExtensions = ['pdf'];
+    final List<String> editableExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
 
     // Navigate to Edit or View based on extension
     if (editableExtensions.contains(extension)) {
@@ -104,7 +102,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: _searchQuery.isEmpty
             ? Text('ScanPro', style: GoogleFonts.lilitaOne(fontSize: 25.sp))
             : CupertinoSearchTextField(
-                style: TextStyle(
+                style: GoogleFonts.notoSerif(
                     color: Theme.of(context).textTheme.bodySmall?.color),
                 controller: _searchController,
                 placeholder: 'Search all documents...',
@@ -181,6 +179,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 0.5, // Half screen height
                             child: ScanInitialView(
                               onScanPressed: () {
+                                Navigator.pop(context);
                                 scanService.scanDocuments(
                                   context: context,
                                   ref: ref,
@@ -192,6 +191,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 );
                               },
                               onImportPressed: () {
+                                Navigator.pop(context);
                                 scanService.pickImages(
                                   context: context,
                                   ref: ref,
@@ -201,75 +201,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     AppRoutes.navigateToEdit(context);
                                   },
                                 );
+                                AppRoutes.navigateToEdit(context);
                               },
                             ),
                           ),
                         ),
-                      );
-                    },
-                    onImport: () {
-                      // Access providers using the ref
-                      final pdfImportService =
-                          ref.read(pdfImportServiceProvider);
-                      final scanService = ref.read(scanServiceProvider);
-                      final documentsNotifier =
-                          ref.read(documentsProvider.notifier);
-
-                      ImportOptions.showImportOptions(
-                        context,
-                        onImportFromGallery: () async {
-                          setState(() => _isLoading = true);
-                          try {
-                            await scanService.pickImages(
-                                context: context,
-                                ref: ref,
-                                setLoading: (isLoading) =>
-                                    setState(() => _isLoading = isLoading));
-                            if (ref.read(scanProvider).hasPages) {
-                              AppRoutes.navigateToEdit(context);
-                            }
-                          } catch (e) {
-                            AppDialogs.showSnackBar(context,
-                                message: 'Error importing images: $e');
-                          } finally {
-                            setState(() => _isLoading = false);
-                          }
-                        },
-                        onImportPdf: () async {
-                          setState(() => _isLoading = true);
-                          try {
-                            final document =
-                                await pdfImportService.importPdfFromLocal();
-                            if (document != null) {
-                              await documentsNotifier.addDocument(document);
-                              AppDialogs.showSnackBar(context,
-                                  message: 'PDF imported successfully');
-                            }
-                          } catch (e) {
-                            AppDialogs.showSnackBar(context,
-                                message: 'Error importing PDF: $e');
-                          } finally {
-                            setState(() => _isLoading = false);
-                          }
-                        },
-                        onImportFromCloud: () async {
-                          setState(() => _isLoading = true);
-                          try {
-                            final document =
-                                await pdfImportService.importPdfFromICloud();
-                            if (document != null) {
-                              await documentsNotifier.addDocument(document);
-                              AppDialogs.showSnackBar(context,
-                                  message:
-                                      'PDF imported from cloud successfully');
-                            }
-                          } catch (e) {
-                            AppDialogs.showSnackBar(context,
-                                message: 'Error importing from cloud: $e');
-                          } finally {
-                            setState(() => _isLoading = false);
-                          }
-                        },
                       );
                     },
                     onFolders: () => _showFolderSelectionDialog(rootFolders),
@@ -323,7 +259,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ref,
                         title: 'My Folders',
                         onFolderTap: (folder) {
-                          AppRoutes.navigateToFolder(context, folder);
+                          AppRoutes.navigateToFolders(context);
                         },
                         onFolderOptions: (folder) {
                           FolderActions.showFolderOptions(context, folder, ref);
@@ -611,7 +547,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
 
     if (selectedFolder != null) {
-      AppRoutes.navigateToFolder(context, selectedFolder);
+      AppRoutes.navigateToFolders(context);
     }
   }
 

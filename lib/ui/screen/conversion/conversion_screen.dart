@@ -21,7 +21,7 @@ class ConversionScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: const Text("Document Converter"),
+        title:  Text("Document Converter",style: GoogleFonts.lilitaOne(fontSize: 25.sp),),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -46,7 +46,6 @@ class ConversionScreen extends ConsumerWidget {
                 // Format selection
                 FormatSelectionSection(
                   state: state,
-                  ref: ref,
                 ),
 
                 SizedBox(height: 24.h),

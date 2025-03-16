@@ -8,12 +8,10 @@ import '../../../../providers/conversion_provider.dart';
 
 class FormatSelectionSection extends ConsumerWidget {
   final ConversionState state;
-  final WidgetRef ref;
 
   const FormatSelectionSection({
     super.key,
     required this.state,
-    required this.ref,
   });
 
   @override
@@ -22,47 +20,48 @@ class FormatSelectionSection extends ConsumerWidget {
 
     return Card(
       elevation: 0,
+      margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(12.r),
         side: BorderSide(
           color: colorScheme.outlineVariant.withOpacity(0.3),
-          width: 1,
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.all(10.w),
+        padding: EdgeInsets.all(12.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Section title with icon
+            // More compact header
             Row(
               children: [
                 Icon(
                   Icons.swap_horiz_rounded,
                   color: colorScheme.primary,
-                  size: 22.sp,
+                  size: 18.sp,
                 ),
-                SizedBox(width: 12.w),
+                SizedBox(width: 8.w),
                 Text(
                   "Format Selection",
                   style: GoogleFonts.notoSerif(
-                    fontSize: 18.sp,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
                   ),
                 ),
               ],
             ),
 
-            SizedBox(height: 20.h),
+            SizedBox(height: 12.h),
 
-            // Format selectors
+            // Format selectors using chips
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Input format
-                Expanded(
-                  child: _buildFormatSelector(
+                // From format
+                _buildChipSelector(
+                  context: context,
+                  label: "From",
+                  selectedFormat: state.inputFormat,
+                  onTap: () => _showFormatPicker(
                     context: context,
                     formats: inputFormats,
                     selectedFormat: state.inputFormat,
@@ -70,12 +69,26 @@ class FormatSelectionSection extends ConsumerWidget {
                         .read(conversionStateProvider.notifier)
                         .setInputFormat(format),
                     label: "From",
-                    colorScheme: colorScheme,
+                  ),
+                  colorScheme: colorScheme,
+                ),
+
+                // Arrow indicator
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    size: 16.sp,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
-                SizedBox(width: 4.h),
-                Expanded(
-                  child: _buildFormatSelector(
+
+                // To format
+                _buildChipSelector(
+                  context: context,
+                  label: "To",
+                  selectedFormat: state.outputFormat,
+                  onTap: () => _showFormatPicker(
                     context: context,
                     formats: outputFormats,
                     selectedFormat: state.outputFormat,
@@ -83,174 +96,163 @@ class FormatSelectionSection extends ConsumerWidget {
                         .read(conversionStateProvider.notifier)
                         .setOutputFormat(format),
                     label: "To",
-                    colorScheme: colorScheme,
                   ),
+                  colorScheme: colorScheme,
                 ),
               ],
             ),
 
-            SizedBox(height: 7.h),
+            SizedBox(height: 8.h),
 
-            // Format info or hint
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: state.inputFormat != null && state.outputFormat != null
-                  ? _buildFormatInfo(context, colorScheme)
-                  : _buildFormatSelectionHint(colorScheme),
-            ),
+            // Format info hint (more compact)
+            if (state.inputFormat != null && state.outputFormat != null)
+              _buildCompactFormatInfo(colorScheme),
+
+            // Hint when formats not selected
+            if (state.inputFormat == null || state.outputFormat == null)
+              _buildCompactHint(colorScheme),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFormatSelector({
+  Widget _buildChipSelector({
     required BuildContext context,
-    required List<FormatOption> formats,
-    required FormatOption? selectedFormat,
-    required Function(FormatOption) onFormatSelected,
     required String label,
+    required FormatOption? selectedFormat,
+    required VoidCallback onTap,
     required ColorScheme colorScheme,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Label
-        Text(
-          label,
-          style: GoogleFonts.notoSerif(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-
-        SizedBox(height: 8.h),
-
-        // Selector button
-        InkWell(
-          onTap: () => _showFormatPicker(
-            context: context,
-            formats: formats,
-            selectedFormat: selectedFormat,
-            onFormatSelected: onFormatSelected,
-            label: label,
-          ),
-          borderRadius: BorderRadius.circular(12.r),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 7.h),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: selectedFormat != null
-                    ? colorScheme.primary.withOpacity(0.5)
-                    : colorScheme.outlineVariant.withOpacity(0.5),
-                width: 1.5,
-              ),
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16.r),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
+          decoration: BoxDecoration(
+            color: selectedFormat != null
+                ? selectedFormat.color.withOpacity(0.1)
+                : colorScheme.surfaceVariant.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
               color: selectedFormat != null
-                  ? colorScheme.primaryContainer.withOpacity(0.1)
-                  : Colors.transparent,
+                  ? selectedFormat.color.withOpacity(0.6)
+                  : colorScheme.outlineVariant.withOpacity(0.3),
             ),
-            child: Row(
-              children: [
-                if (selectedFormat != null) ...[
-                  Container(
-                    padding: EdgeInsets.all(6.w),
-                    decoration: BoxDecoration(
-                      color: selectedFormat.color.withOpacity(0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      selectedFormat.icon,
-                      color: selectedFormat.color,
-                      size: 18.sp,
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      selectedFormat.name,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Format icon or label icon
+              Container(
+                padding: EdgeInsets.all(4.w),
+                decoration: BoxDecoration(
+                  color: selectedFormat != null
+                      ? selectedFormat.color.withOpacity(0.2)
+                      : colorScheme.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  selectedFormat?.icon ?? Icons.file_present_outlined,
+                  size: 14.sp,
+                  color: selectedFormat?.color ?? colorScheme.primary,
+                ),
+              ),
+
+              SizedBox(width: 6.w),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Label text
+                    Text(
+                      label,
                       style: GoogleFonts.notoSerif(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 10.sp,
+                        color: colorScheme.onSurfaceVariant.withOpacity(0.7),
+                      ),
+                    ),
+
+                    // Format name or placeholder
+                    Text(
+                      selectedFormat?.name ?? "Select",
+                      style: GoogleFonts.notoSerif(
+                        fontSize: 13.sp,
+                        fontWeight: selectedFormat != null
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                        color: selectedFormat != null
+                            ? colorScheme.onSurface
+                            : colorScheme.onSurfaceVariant.withOpacity(0.8),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ] else
-                  Expanded(
-                    child: Text(
-                      'Select $label Format',
-                      style: GoogleFonts.notoSerif(
-                        fontSize: 14.sp,
-                        color: colorScheme.onSurfaceVariant.withOpacity(0.8),
-                      ),
-                    ),
-                  ),
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: colorScheme.onSurfaceVariant,
-                  size: 20.sp,
+                  ],
                 ),
-              ],
-            ),
+              ),
+
+              Icon(
+                Icons.keyboard_arrow_down,
+                size: 16.sp,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildFormatInfo(BuildContext context, ColorScheme colorScheme) {
+  Widget _buildCompactFormatInfo(ColorScheme colorScheme) {
     final inputFormat = state.inputFormat!;
     final outputFormat = state.outputFormat!;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withOpacity(0.3),
-        ),
+        color: colorScheme.primaryContainer.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.info_outline_rounded,
-            size: 18.sp,
+            Icons.info_outline,
+            size: 14.sp,
             color: colorScheme.primary,
           ),
-          SizedBox(width: 10.w),
-          Text(
-            "Converting ",
-            style: GoogleFonts.notoSerif(
-              fontSize: 13.sp,
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-          Text(
-            inputFormat.name,
-            style: GoogleFonts.notoSerif(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.bold,
-              color: inputFormat.color,
-            ),
-          ),
-          Text(
-            " to ",
-            style: GoogleFonts.notoSerif(
-              fontSize: 13.sp,
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-          Text(
-            outputFormat.name,
-            style: GoogleFonts.notoSerif(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.bold,
-              color: outputFormat.color,
+          SizedBox(width: 8.w),
+          Flexible(
+            child: RichText(
+              text: TextSpan(
+                style: GoogleFonts.notoSerif(
+                  fontSize: 12.sp,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                children: [
+                  const TextSpan(text: "Converting "),
+                  TextSpan(
+                    text: inputFormat.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: inputFormat.color,
+                    ),
+                  ),
+                  const TextSpan(text: " to "),
+                  TextSpan(
+                    text: outputFormat.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: outputFormat.color,
+                    ),
+                  ),
+                ],
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -258,31 +260,30 @@ class FormatSelectionSection extends ConsumerWidget {
     );
   }
 
-  Widget _buildFormatSelectionHint(ColorScheme colorScheme) {
+  Widget _buildCompactHint(ColorScheme colorScheme) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: Colors.amber.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: Colors.amber.withOpacity(0.3),
-        ),
+        borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(
         children: [
           Icon(
-            Icons.info_outline_rounded,
-            size: 18.sp,
+            Icons.info_outline,
+            size: 14.sp,
             color: Colors.amber.shade800,
           ),
-          SizedBox(width: 10.w),
-          Expanded(
+          SizedBox(width: 6.w),
+          Flexible(
             child: Text(
-              "Please select both input and output formats to continue",
+              "Select both formats to continue",
               style: GoogleFonts.notoSerif(
-                fontSize: 13.sp,
+                fontSize: 12.sp,
                 color: Colors.amber.shade800,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -297,13 +298,11 @@ class FormatSelectionSection extends ConsumerWidget {
     required Function(FormatOption) onFormatSelected,
     required String label,
   }) {
-    // Show the format picker bottom sheet here
-    // You can implement this using showModalBottomSheet
+    // Show format picker
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => FormatPickerBottomSheet(
+      builder: (context) => FormatPickerSheet(
         formats: formats,
         selectedFormat: selectedFormat,
         onFormatSelected: onFormatSelected,
@@ -313,207 +312,155 @@ class FormatSelectionSection extends ConsumerWidget {
   }
 }
 
-class FormatPickerBottomSheet extends StatefulWidget {
+class FormatPickerSheet extends StatefulWidget {
   final List<FormatOption> formats;
   final FormatOption? selectedFormat;
   final Function(FormatOption) onFormatSelected;
   final String label;
 
-  const FormatPickerBottomSheet({
-    Key? key,
+  const FormatPickerSheet({
+    super.key,
     required this.formats,
     required this.selectedFormat,
     required this.onFormatSelected,
     required this.label,
-  }) : super(key: key);
+  });
 
   @override
-  State<FormatPickerBottomSheet> createState() =>
-      _FormatPickerBottomSheetState();
+  State<FormatPickerSheet> createState() => _FormatPickerSheetState();
 }
 
-class _FormatPickerBottomSheetState extends State<FormatPickerBottomSheet> {
-  late TextEditingController _searchController;
+class _FormatPickerSheetState extends State<FormatPickerSheet> {
   String _searchQuery = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController = TextEditingController();
-  }
+  final _controller = TextEditingController();
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
-    // Group formats by category
+    // Group formats
     Map<String, List<FormatOption>> groupedFormats = _groupFormats();
-
-    // Filter formats based on search query
-    final List<FormatOption> filteredFormats = _searchQuery.isEmpty
+    // Filtered formats for search
+    final filteredFormats = _searchQuery.isEmpty
         ? widget.formats
         : widget.formats
-            .where((format) =>
-                format.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+            .where((f) =>
+                f.name.toLowerCase().contains(_searchQuery.toLowerCase()))
             .toList();
 
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.r),
-          topRight: Radius.circular(20.r),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.75,
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Handle bar
-          Center(
-            child: Container(
-              margin: EdgeInsets.only(top: 12.h),
-              height: 4.h,
-              width: 40.w,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2.r),
-              ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 8.h),
+            height: 4.h,
+            width: 40.w,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(2.r),
             ),
           ),
 
           // Header
           Padding(
-            padding: EdgeInsets.all(20.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
             child: Row(
               children: [
-                Icon(Icons.format_shapes_rounded, color: colorScheme.primary),
-                SizedBox(width: 12.w),
                 Text(
                   "Select ${widget.label} Format",
                   style: GoogleFonts.notoSerif(
-                    fontSize: 18.sp,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Spacer(),
+                // Search field
+                Container(
+                  width: 140.w,
+                  height: 36.h,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceVariant.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(18.r),
+                    border: Border.all(
+                      color: colorScheme.outlineVariant.withOpacity(0.3),
+                    ),
+                  ),
+                  child: TextField(
+                    controller: _controller,
+                    onChanged: (v) => setState(() => _searchQuery = v),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                      hintText: 'Search...',
+                      hintStyle: TextStyle(fontSize: 13.sp),
+                      prefixIcon: Icon(Icons.search, size: 16.sp),
+                      border: InputBorder.none,
+                      suffixIcon: _searchQuery.isNotEmpty
+                          ? GestureDetector(
+                              onTap: () {
+                                _controller.clear();
+                                setState(() => _searchQuery = '');
+                              },
+                              child: Icon(Icons.clear, size: 16.sp),
+                            )
+                          : null,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
 
-          // Search box
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (value) => setState(() => _searchQuery = value),
-              decoration: InputDecoration(
-                hintText: 'Search formats...',
-                prefixIcon: Icon(Icons.search, color: colorScheme.primary),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchQuery = '');
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: colorScheme.surfaceVariant.withOpacity(0.1),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(
-                    color: colorScheme.outlineVariant.withOpacity(0.3),
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(
-                    color: colorScheme.primary,
-                    width: 1.5,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          SizedBox(height: 16.h),
+          const Divider(),
 
           // Format list
           Expanded(
             child: _searchQuery.isNotEmpty
-                ? _buildSearchResults(filteredFormats, colorScheme)
-                : _buildCategorizedFormats(groupedFormats, colorScheme),
+                ? _buildSearchResults(filteredFormats)
+                : _buildCategoryList(groupedFormats),
           ),
-
-          // Safe area padding at bottom
-          SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
       ),
     );
   }
 
-  Widget _buildSearchResults(
-      List<FormatOption> formats, ColorScheme colorScheme) {
+  Widget _buildSearchResults(List<FormatOption> formats) {
     if (formats.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.search_off_rounded,
-              size: 48.sp,
-              color: Colors.grey,
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              'No formats found',
-              style: GoogleFonts.notoSerif(
-                fontSize: 16.sp,
-                color: Colors.grey.shade600,
-              ),
-            ),
-          ],
+        child: Text(
+          'No formats found',
+          style: GoogleFonts.notoSerif(color: Colors.grey),
         ),
       );
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 2.5,
-          crossAxisSpacing: 12.w,
-          mainAxisSpacing: 12.h,
-        ),
-        itemCount: formats.length,
-        itemBuilder: (context, index) {
-          return _buildFormatChip(formats[index], colorScheme);
-        },
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Wrap(
+        spacing: 8.w,
+        runSpacing: 8.h,
+        children: formats.map((format) => _buildFormatChip(format)).toList(),
       ),
     );
   }
 
-  Widget _buildCategorizedFormats(
-    Map<String, List<FormatOption>> groupedFormats,
-    ColorScheme colorScheme,
-  ) {
+  Widget _buildCategoryList(Map<String, List<FormatOption>> groupedFormats) {
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       itemCount: groupedFormats.length,
       itemBuilder: (context, index) {
         final category = groupedFormats.keys.elementAt(index);
@@ -524,119 +471,79 @@ class _FormatPickerBottomSheetState extends State<FormatPickerBottomSheet> {
           children: [
             // Category header
             Padding(
-              padding: EdgeInsets.only(bottom: 12.h, top: index > 0 ? 24.h : 0),
-              child: Row(
-                children: [
-                  Container(
-                    width: 6.w,
-                    height: 24.h,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary,
-                      borderRadius: BorderRadius.circular(3.r),
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Text(
-                    category,
-                    style: GoogleFonts.notoSerif(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
-                ],
+              padding: EdgeInsets.only(top: 8.h, bottom: 8.h),
+              child: Text(
+                category,
+                style: GoogleFonts.notoSerif(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-
-            // Formats grid
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 2.5,
-                crossAxisSpacing: 12.w,
-                mainAxisSpacing: 12.h,
-              ),
-              itemCount: formats.length,
-              itemBuilder: (context, formatIndex) {
-                return _buildFormatChip(formats[formatIndex], colorScheme);
-              },
+            // Format chips
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children:
+                  formats.map((format) => _buildFormatChip(format)).toList(),
             ),
+            SizedBox(height: 16.h),
           ],
         );
       },
     );
   }
 
-  Widget _buildFormatChip(FormatOption format, ColorScheme colorScheme) {
-    final bool isSelected = widget.selectedFormat?.id == format.id;
+  Widget _buildFormatChip(FormatOption format) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isSelected = widget.selectedFormat?.id == format.id;
 
     return InkWell(
       onTap: () {
         widget.onFormatSelected(format);
         Navigator.pop(context);
       },
-      borderRadius: BorderRadius.circular(12.r),
+      borderRadius: BorderRadius.circular(16.r),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(
+          horizontal: 10.w,
+          vertical: 6.h,
+        ),
         decoration: BoxDecoration(
-          color:
-              isSelected ? format.color.withOpacity(0.1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12.r),
+          color: isSelected
+              ? format.color.withOpacity(0.1)
+              : colorScheme.surfaceVariant.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: isSelected
                 ? format.color
-                : colorScheme.outlineVariant.withOpacity(0.5),
-            width: isSelected ? 1.5 : 1,
+                : colorScheme.outlineVariant.withOpacity(0.3),
           ),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: EdgeInsets.all(6.w),
-              decoration: BoxDecoration(
-                color: format.color.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                format.icon,
-                color: format.color,
-                size: 18.sp,
+            Icon(
+              format.icon,
+              size: 16.sp,
+              color: format.color,
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              format.name,
+              style: GoogleFonts.notoSerif(
+                fontSize: 13.sp,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    format.name,
-                    style: GoogleFonts.notoSerif(
-                      fontSize: 13.sp,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    format.id.toUpperCase(),
-                    style: GoogleFonts.notoSerif(
-                      fontSize: 10.sp,
-                      color: isSelected ? format.color : Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (isSelected)
+            if (isSelected) ...[
+              SizedBox(width: 4.w),
               Icon(
                 Icons.check_circle,
+                size: 14.sp,
                 color: format.color,
-                size: 18.sp,
               ),
+            ],
           ],
         ),
       ),
@@ -646,11 +553,9 @@ class _FormatPickerBottomSheetState extends State<FormatPickerBottomSheet> {
   Map<String, List<FormatOption>> _groupFormats() {
     Map<String, List<FormatOption>> grouped = {};
 
-    // Group formats by type
     for (var format in widget.formats) {
       String category = 'Other';
 
-      // Determine category based on format
       if (['pdf', 'doc', 'docx', 'txt', 'rtf', 'odt']
           .contains(format.id.toLowerCase())) {
         category = 'Documents';
@@ -667,7 +572,7 @@ class _FormatPickerBottomSheetState extends State<FormatPickerBottomSheet> {
       grouped.putIfAbsent(category, () => []).add(format);
     }
 
-    // Sort formats within each category
+    // Sort formats in each category
     for (var category in grouped.keys) {
       grouped[category]!.sort((a, b) => a.name.compareTo(b.name));
     }

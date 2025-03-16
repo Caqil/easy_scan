@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
@@ -54,7 +55,7 @@ class DocumentPagePreview extends StatelessWidget {
               SizedBox(height: 16),
               Text(
                 'Unable to display image',
-                style: TextStyle(color: Colors.white70),
+                style: GoogleFonts.notoSerif(color: Colors.white70),
               ),
             ],
           ),

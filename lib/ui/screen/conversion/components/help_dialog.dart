@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HelpDialog extends StatelessWidget {
   const HelpDialog({super.key});
@@ -37,7 +38,7 @@ class HelpDialog extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: GoogleFonts.notoSerif(
             fontWeight: FontWeight.bold,
             fontSize: 16.sp,
           ),

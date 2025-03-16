@@ -3,6 +3,7 @@ import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
 import '../../../../models/conversion_state.dart';
 import '../../../../providers/conversion_provider.dart';
@@ -70,7 +71,7 @@ class FileSelectionSection extends StatelessWidget {
                 Text(
                   path.basename(state.selectedFile!.path),
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: GoogleFonts.notoSerif(
                     fontWeight: FontWeight.bold,
                     fontSize: 16.sp,
                   ),
@@ -82,7 +83,7 @@ class FileSelectionSection extends StatelessWidget {
                     final info = snapshot.data ?? 'Loading file info...';
                     return Text(
                       info,
-                      style: TextStyle(
+                      style: GoogleFonts.notoSerif(
                         color: Colors.grey,
                         fontSize: 14.sp,
                       ),
@@ -118,12 +119,12 @@ class FileSelectionSection extends StatelessWidget {
           SizedBox(height: 12.h),
           Text(
             "No file selected",
-            style: TextStyle(fontSize: 16.sp),
+            style: GoogleFonts.notoSerif(fontSize: 16.sp),
           ),
           SizedBox(height: 8.h),
           Text(
             "Select a file to convert",
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+            style: GoogleFonts.notoSerif(fontSize: 14.sp, color: Colors.grey),
           ),
         ],
       ),
@@ -140,6 +141,4 @@ class FileSelectionSection extends StatelessWidget {
       return "Error getting file info";
     }
   }
-
-
 }

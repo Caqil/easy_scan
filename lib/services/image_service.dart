@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as path;
 import 'dart:ui' as ui;
@@ -312,11 +313,9 @@ class ImageService {
       final TextPainter iconPainter = TextPainter(
         text: TextSpan(
           text: String.fromCharCode(icon.codePoint),
-          style: TextStyle(
+          style: GoogleFonts.notoSerif(
             color: color,
             fontSize: thumbnailSize * 0.4,
-            fontFamily: icon.fontFamily,
-            package: icon.fontPackage,
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -334,7 +333,7 @@ class ImageService {
       final TextPainter labelPainter = TextPainter(
         text: TextSpan(
           text: label,
-          style: TextStyle(
+          style: GoogleFonts.notoSerif(
             color: color,
             fontSize: thumbnailSize * 0.15,
             fontWeight: FontWeight.bold,
@@ -420,7 +419,7 @@ class ImageService {
       TextPainter textPainter = TextPainter(
         text: TextSpan(
           text: extension == '.pdf' ? '📄' : '🖼️',
-          style: TextStyle(fontSize: size * 0.5),
+          style: GoogleFonts.notoSerif(fontSize: size * 0.5),
         ),
         textDirection: TextDirection.ltr,
       );
@@ -436,7 +435,7 @@ class ImageService {
           text: fileName.length > 10
               ? '${fileName.substring(0, 10)}...'
               : fileName,
-          style: TextStyle(fontSize: size * 0.1, color: Colors.black),
+          style: GoogleFonts.notoSerif(fontSize: size * 0.1, color: Colors.black),
         ),
         textDirection: TextDirection.ltr,
       );

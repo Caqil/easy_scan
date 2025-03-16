@@ -8,7 +8,6 @@ import 'page_controls.dart';
 import 'page_navigation_buttons.dart';
 import 'pdf_edit_preview.dart'; // Import the new PDF preview widget
 
-// In document_preview.dart
 class DocumentPreview extends StatelessWidget {
   final List<File> pages;
   final int currentPageIndex;
@@ -17,8 +16,9 @@ class DocumentPreview extends StatelessWidget {
   final ColorScheme colorScheme;
   final Function(int) onPageChanged;
   final Function(int) onDeletePage;
-  final bool isPdfPreviewMode; // Add this flag
-  final String? password; // Add password for PDF viewing
+  final bool isPdfPreviewMode; // Flag for PDF preview mode
+  final bool isImageOnlyDocument; // New flag for image-only documents
+  final String? password; // Password for PDF viewing
 
   const DocumentPreview({
     super.key,
@@ -29,8 +29,8 @@ class DocumentPreview extends StatelessWidget {
     required this.colorScheme,
     required this.onPageChanged,
     required this.onDeletePage,
-    this.isPdfPreviewMode =
-        false, // Default to false for backward compatibility
+    this.isPdfPreviewMode = false,
+    this.isImageOnlyDocument = false, // Add this parameter
     this.password,
   });
 
@@ -64,7 +64,7 @@ class DocumentPreview extends StatelessWidget {
               password: password,
             )
           else
-            // Original Image Preview Mode - Document page view
+            // Image Preview Mode - Document page view
             PageView.builder(
               controller: pageController,
               itemCount: pages.length,
@@ -75,15 +75,15 @@ class DocumentPreview extends StatelessWidget {
             ),
 
           // Only show navigation buttons for multi-page image previews
-          if (!isPdfPreviewMode && pages.length > 1)
+          if ((!isPdfPreviewMode || isImageOnlyDocument) && pages.length > 1)
             PageNavigationButtons(
               currentPageIndex: currentPageIndex,
               pageCount: pages.length,
               pageController: pageController,
             ),
 
-          // Page counter and delete controls (only for image preview mode)
-          if (!isPdfPreviewMode)
+          // Page counter and delete controls (for image previews or image-only documents)
+          if (!isPdfPreviewMode || isImageOnlyDocument)
             PageControls(
               currentPageIndex: currentPageIndex,
               pageCount: pages.length,

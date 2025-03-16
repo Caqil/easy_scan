@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
 
 import '../providers/scan_provider.dart';
 import '../ui/common/dialogs.dart';
@@ -52,9 +53,16 @@ class ScanService {
       // Get the pictures - this will show the scanner UI
       List<String> imagePaths = [];
       try {
-        imagePaths = await CunningDocumentScanner.getPictures(
-                isGalleryImportAllowed: true) ??
-            [];
+        // Get scanned document paths (as images)
+        dynamic result = await FlutterDocScanner().getScannedDocumentAsImages(
+          page: 2, // Default to 4 pages, adjust as needed
+        );
+
+        if (result != null && result is List) {
+          // Convert dynamic list to List<String>
+          imagePaths = result.map((path) => path.toString()).toList();
+          debugPrint('Scanned images: $imagePaths');
+        }
       } catch (e) {
         if (context.mounted) {
           AppDialogs.showSnackBar(
@@ -134,7 +142,6 @@ class ScanService {
         if (onSuccess != null) {
           onSuccess();
         } else if (context.mounted) {
-          // Navigate to edit screen as default behavior
           AppRoutes.navigateToEdit(context);
         }
       }

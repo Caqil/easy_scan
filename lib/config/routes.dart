@@ -1,105 +1,248 @@
+import 'package:easy_scan/config/app_transition.dart';
 import 'package:easy_scan/ui/screen/all_documents.dart';
 import 'package:easy_scan/ui/screen/compression/compression_screen.dart';
+import 'package:easy_scan/ui/screen/conversion/conversion_screen.dart';
 import 'package:easy_scan/ui/screen/merger/pdf_merge_screen.dart';
+import 'package:easy_scan/ui/screen/settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/document.dart';
 import '../models/folder.dart';
 import '../ui/screen/edit/edit_screen.dart';
 import '../ui/screen/folder/folder_screen.dart';
 import '../ui/screen/home/home_screen.dart';
 import '../ui/screen/view_screen.dart';
+import '../ui/screen/main_screen.dart';
 
 class AppRoutes {
+  // Route path constants
   static const String home = '/';
   static const String edit = '/edit';
+  static const String convert = '/convert';
   static const String view = '/view';
-  static const String folder = '/folder';
+  static const String settings = '/settings';
+  static const String folders = '/folders';
   static const String pdfMerger = '/pdf_merger';
   static const String allDocuments = '/all_documents';
   static const String compression = '/compression';
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
-      case edit:
-        final document = settings.arguments as Document?;
-        return MaterialPageRoute(
-            builder: (_) => EditScreen(document: document));
-      case view:
-        final document = settings.arguments as Document;
-        return MaterialPageRoute(
-            builder: (_) => ViewScreen(document: document));
-      case allDocuments:
-        return MaterialPageRoute(builder: (_) => AllDocumentsScreen());
-      case folder:
-        final folder = settings.arguments as Folder;
-        return MaterialPageRoute(builder: (_) => FolderScreen(folder: folder));
-      case compression:
-        final args = settings.arguments as Map<String, dynamic>;
-        final document = args['document'] as Document;
-        return MaterialPageRoute(
-          builder: (_) => CompressionScreen(document: document),
-        );
-      case pdfMerger:
-        return MaterialPageRoute(builder: (_) => const PdfMergerScreen());
-      default:
-        return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(
-              child: Text('No route defined for ${settings.name}'),
+  static const String scan = '/scan';
+
+  // GoRouter configuration
+  static final router = GoRouter(
+    initialLocation: home,
+    routes: [
+      // Main shell route with bottom navigation
+      ShellRoute(
+        builder: (context, state, child) => MainScreen(child: child),
+        // Use a clean transition for shell route pages
+        pageBuilder: (context, state, child) {
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: MainScreen(child: child),
+          );
+        },
+        routes: [
+          // Home route
+          GoRoute(
+            path: home,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: HomeScreen(),
             ),
           ),
-        );
-    }
-  }
+          // Folders route
+          GoRoute(
+            path: folders,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: FolderScreen(),
+            ),
+          ),
+          // Convert route
+          GoRoute(
+            path: convert,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ConversionScreen(),
+            ),
+          ),
+          // Convert route
+          GoRoute(
+            path: pdfMerger,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: PdfMergerScreen(),
+            ),
+          ),
+          // Settings route
+          GoRoute(
+            path: settings,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: SettingsScreen(),
+            ),
+          ),
+        ],
+      ),
 
+      // Edit document route - smooth slide transition
+      GoRoute(
+        path: edit,
+        pageBuilder: (context, state) {
+          final document = state.extra as Document?;
+          return AppTransitions.buildSlideTransition(
+            context: context,
+            state: state,
+            child: EditScreen(document: document),
+          );
+        },
+      ),
+
+      // View document route - hero transition for smooth document viewing
+      GoRoute(
+        path: view,
+        pageBuilder: (context, state) {
+          // Make document nullable and handle null case
+          final document = state.extra as Document?;
+          if (document == null) {
+            // Return error screen when document is null
+            return AppTransitions.buildPageTransition(
+              context: context,
+              state: state,
+              child: Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline,
+                          size: 64, color: Colors.red),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Document not found or invalid',
+                        style: GoogleFonts.notoSerif(fontSize: 16),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => navigateToHome(context),
+                        child: const Text('Go to Home'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // Only create ViewScreen with a valid document
+          return AppTransitions.buildHeroTransition(
+            context: context,
+            state: state,
+            child: ViewScreen(document: document),
+          );
+        },
+      ),
+
+      // All documents route - fade + slide transition
+      GoRoute(
+        path: allDocuments,
+        pageBuilder: (context, state) => AppTransitions.buildPageTransition(
+          context: context,
+          state: state,
+          child: const AllDocumentsScreen(),
+        ),
+      ),
+
+      // Folder route - slide transition
+      GoRoute(
+        path: '/folder/:folderId',
+        name: 'specificFolder',
+        pageBuilder: (context, state) {
+          final folder = state.extra as Folder?;
+          return AppTransitions.buildSlideTransition(
+            context: context,
+            state: state,
+            child: FolderScreen(folder: folder),
+          );
+        },
+      ),
+
+      // Compression route - modal scale transition
+      GoRoute(
+        path: compression,
+        pageBuilder: (context, state) {
+          final document = state.extra as Document;
+          return AppTransitions.buildModalTransition(
+            context: context,
+            state: state,
+            child: CompressionScreen(document: document),
+          );
+        },
+      ),
+    ],
+    // Custom error page with animation
+    errorBuilder: (context, state) => Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              'Route not found: ${state.error}',
+              style: GoogleFonts.notoSerif(fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => navigateToHome(context),
+              child: const Text('Go to Home'),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  // Navigation helper methods
   static void navigateToHome(BuildContext context) {
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      home,
-      (route) => false,
-    );
+    context.go(home);
   }
 
   static void navigateToCompression(BuildContext context, Document document) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CompressionScreen(document: document),
-      ),
-    );
+    context.push(compression, extra: document);
   }
 
   static void navigateToEdit(BuildContext context, {Document? document}) {
-    Navigator.pushNamed(
-      context,
-      edit,
-      arguments: document,
-    );
+    context.push(edit, extra: document);
   }
 
-  static void navigateToView(BuildContext context, Document document) {
-    Navigator.pushNamed(
-      context,
-      view,
-      arguments: document,
-    );
+  static void navigateToView(BuildContext context, Document? document) {
+    if (document == null) {
+      // Show error or navigate to home if document is null
+      navigateToHome(context);
+      return;
+    }
+    context.push(view, extra: document);
   }
 
   static void navigateToFolder(BuildContext context, Folder folder) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FolderScreen(folder: folder),
-      ),
-    );
+    // Push to the specific folder route and pass the folder object as extra
+    context.pushNamed('specificFolder',
+        pathParameters: {'folderId': folder.id}, extra: folder);
   }
 
   static void navigateToPdfMerger(BuildContext context) {
-    Navigator.pushNamed(context, pdfMerger);
+    context.push(pdfMerger);
   }
 
   static void navigateToAllDoc(BuildContext context) {
-    Navigator.pushNamed(context, allDocuments);
+    context.push(allDocuments);
+  }
+
+  static void navigateToFolders(BuildContext context) {
+    context.go(folders);
+  }
+
+  static void navigateToSettings(BuildContext context) {
+    context.go(settings);
+  }
+
+  static void navigateToConvert(BuildContext context) {
+    context.go(convert);
   }
 }

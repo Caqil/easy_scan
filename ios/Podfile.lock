@@ -1,8 +1,6 @@
 PODS:
   - camera_avfoundation (0.0.1):
     - Flutter
-  - cunning_document_scanner (1.0.0):
-    - Flutter
   - device_info_plus (0.0.1):
     - Flutter
   - DKImagePickerController/Core (4.3.9):
@@ -85,6 +83,8 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
   - Flutter (1.0.0)
+  - flutter_doc_scanner (0.0.1):
+    - Flutter
   - flutter_image_compress_common (1.0.0):
     - Flutter
     - Mantle
@@ -193,13 +193,13 @@ PODS:
 
 DEPENDENCIES:
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
-  - cunning_document_scanner (from `.symlinks/plugins/cunning_document_scanner/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
+  - flutter_doc_scanner (from `.symlinks/plugins/flutter_doc_scanner/ios`)
   - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - local_auth_darwin (from `.symlinks/plugins/local_auth_darwin/darwin`)
@@ -235,8 +235,6 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
-  cunning_document_scanner:
-    :path: ".symlinks/plugins/cunning_document_scanner/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   emoji_picker_flutter:
@@ -249,6 +247,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   Flutter:
     :path: Flutter
+  flutter_doc_scanner:
+    :path: ".symlinks/plugins/flutter_doc_scanner/ios"
   flutter_image_compress_common:
     :path: ".symlinks/plugins/flutter_image_compress_common/ios"
   image_picker_ios:
@@ -276,7 +276,6 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
-  cunning_document_scanner: 7cb9bd173f7cc7b11696dde98d01492187fc3a67
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
@@ -290,6 +289,7 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: df24ce5af28864660ecbd13596fc8dd3a8c34629
   FirebaseInstallations: 6c963bd2a86aca0481eef4f48f5a4df783ae5917
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_doc_scanner: cd7ad8a27227cd7e8ccce50951623678cbde0ec6
   flutter_image_compress_common: ec1d45c362c9d30a3f6a0426c297f47c52007e3e
   GoogleAppMeasurement: fc0817122bd4d4189164f85374e06773b9561896
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d

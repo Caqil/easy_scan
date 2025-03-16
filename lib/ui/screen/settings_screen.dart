@@ -76,8 +76,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: Text('Settings'),
+      appBar:  CustomAppBar(
+        title: Text('Settings',style: GoogleFonts.lilitaOne(fontSize: 25.sp),),
       ),
       body: ListView(
         children: [
@@ -112,7 +112,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       trailing: Chip(
                         label: const Text('Not Available'),
                         backgroundColor: Colors.grey.withOpacity(0.2),
-                        labelStyle: TextStyle(color: Colors.grey.shade700),
+                        labelStyle:
+                            GoogleFonts.notoSerif(color: Colors.grey.shade700),
                       ),
                       onTap: () {
                         AppDialogs.showSnackBar(

@@ -116,7 +116,6 @@ class AppDialogs {
         snackBarColor = backgroundColor ?? Colors.amber.shade900;
         break;
       case SnackBarType.normal:
-      default:
         snackBarColor = backgroundColor ?? const Color(0xFF323232);
         break;
     }

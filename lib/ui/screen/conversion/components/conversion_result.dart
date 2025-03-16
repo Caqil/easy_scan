@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
 import '../../../../models/conversion_state.dart';
@@ -48,7 +49,7 @@ class ConversionResultSection extends StatelessWidget {
               SizedBox(width: 8.w),
               Text(
                 "Conversion Failed",
-                style: TextStyle(
+                style: GoogleFonts.notoSerif(
                   fontWeight: FontWeight.bold,
                   color: Colors.red.shade700,
                   fontSize: 16.sp,
@@ -59,7 +60,7 @@ class ConversionResultSection extends StatelessWidget {
           SizedBox(height: 8.h),
           Text(
             state.error!,
-            style: TextStyle(color: Colors.red.shade700),
+            style: GoogleFonts.notoSerif(color: Colors.red.shade700),
           ),
         ],
       ),
@@ -85,7 +86,7 @@ class ConversionResultSection extends StatelessWidget {
               SizedBox(width: 8.w),
               Text(
                 "Conversion Successful",
-                style: TextStyle(
+                style: GoogleFonts.notoSerif(
                   fontWeight: FontWeight.bold,
                   color: Colors.green.shade700,
                   fontSize: 16.sp,

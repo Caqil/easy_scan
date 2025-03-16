@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// A reusable container for sections in the conversion screen
 class SectionContainer extends StatelessWidget {
@@ -38,7 +39,7 @@ class SectionContainer extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: GoogleFonts.notoSerif(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                   ),

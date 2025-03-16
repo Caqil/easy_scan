@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class QuickActions extends ConsumerWidget {
   final VoidCallback onScan;
-  final VoidCallback onImport;
   final VoidCallback onFolders;
   final VoidCallback onFavorites;
   final VoidCallback onMerge;
@@ -13,7 +12,6 @@ class QuickActions extends ConsumerWidget {
   const QuickActions({
     super.key,
     required this.onScan,
-    required this.onImport,
     required this.onFolders,
     required this.onFavorites,
     required this.onMerge,

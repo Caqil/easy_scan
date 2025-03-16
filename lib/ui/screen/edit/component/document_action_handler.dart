@@ -6,6 +6,7 @@ import 'package:easy_scan/ui/widget/color_selector.dart';
 import 'package:easy_scan/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -304,7 +305,8 @@ class DocumentActionHandler {
                     Row(
                       children: [
                         Text('Watermark Type:',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                            style: GoogleFonts.notoSerif(
+                                fontWeight: FontWeight.bold)),
                         const SizedBox(width: 16),
                         SegmentedButton<String>(
                           segments: const [
@@ -418,7 +420,8 @@ class DocumentActionHandler {
                     Row(
                       children: [
                         Text('Opacity:',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                            style: GoogleFonts.notoSerif(
+                                fontWeight: FontWeight.bold)),
                         Expanded(
                           child: Slider(
                             value: opacity,
@@ -510,7 +513,7 @@ class DocumentActionHandler {
                               watermarkText.isEmpty
                                   ? 'WATERMARK'
                                   : watermarkText,
-                              style: TextStyle(
+                              style: GoogleFonts.notoSerif(
                                 fontSize: fontSize / 3,
                                 color: watermarkColor.withOpacity(opacity),
                                 fontWeight: FontWeight.bold,

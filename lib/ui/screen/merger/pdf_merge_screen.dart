@@ -356,7 +356,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                     children: [
                                       Text(
                                         '${selectedIndex + 1}',
-                                        style: TextStyle(
+                                        style: GoogleFonts.notoSerif(
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onPrimary,
@@ -366,7 +366,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                       ),
                                       Text(
                                         'ORDER',
-                                        style: TextStyle(
+                                        style: GoogleFonts.notoSerif(
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onPrimary,
@@ -509,9 +509,9 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                               fontSize: 18,
                             ),
                           ),
-                          const Text(
+                           Text(
                             'ORDER',
-                            style: TextStyle(
+                            style: GoogleFonts.notoSerif(
                               color: Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -811,7 +811,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                               ),
                               Text(
                                 '${doc.pageCount} pages',
-                                style: TextStyle(
+                                style: GoogleFonts.notoSerif(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
                                 ),
@@ -849,9 +849,9 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+             Text(
               'This tool allows you to combine multiple PDF files into a single document.',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             const Text('Steps:'),
@@ -862,9 +862,9 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             _buildHelpItem('4', 'Drag PDFs to change the merge order'),
             _buildHelpItem('5', 'Tap "Merge PDFs" button'),
             const SizedBox(height: 16),
-            const Text(
+             Text(
               'The merged PDF will be saved to your document library.',
-              style: TextStyle(fontStyle: FontStyle.italic),
+              style: GoogleFonts.notoSerif(fontStyle: FontStyle.italic),
             ),
           ],
         ),

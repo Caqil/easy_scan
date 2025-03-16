@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../models/conversion_state.dart';
 import '../../../../providers/conversion_provider.dart';
 import '../../../../ui/common/dialogs.dart';
@@ -75,7 +76,7 @@ class ConversionButton extends StatelessWidget {
         SizedBox(width: 8.w),
         Text(
           "Convert",
-          style: TextStyle(fontSize: 16.sp),
+          style: GoogleFonts.notoSerif(fontSize: 16.sp),
         ),
         SizedBox(width: 8.w),
         Icon(state.outputFormat?.icon ?? Icons.file_present, size: 20.sp),

@@ -1,6 +1,5 @@
 // In app.dart
 import 'package:easy_scan/config/routes.dart';
-import 'package:easy_scan/ui/screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,19 +20,19 @@ class DocApp extends ConsumerWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
-        return MaterialApp(
+        return MaterialApp.router(
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           themeMode: settings.darkMode ? ThemeMode.dark : ThemeMode.light,
-          onGenerateRoute: AppRoutes.generateRoute,
-          home: const MainScreen(),
+          // Use GoRouter instead of onGenerateRoute
+          routerConfig: AppRoutes.router,
           builder: (context, child) {
             return AuthWrapper(
               builder: (context) {
                 return Stack(
                   children: [
                     if (child != null) child,
-                    const AuthOverlay(), // Pastikan ini dipanggil di dalam Stack
+                    const AuthOverlay(),
                   ],
                 );
               },

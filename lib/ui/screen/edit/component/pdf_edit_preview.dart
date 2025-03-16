@@ -1,6 +1,7 @@
 // lib/ui/screen/edit/component/pdf_edit_preview.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'loading_overlay.dart';
 
@@ -87,7 +88,7 @@ class _PdfEditPreviewState extends State<PdfEditPreview> {
                   Text(
                     _errorMessage!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16),
+                    style: GoogleFonts.notoSerif(fontSize: 16),
                   ),
                 ],
               ),

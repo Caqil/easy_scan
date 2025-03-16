@@ -93,7 +93,12 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: _searchQuery.isEmpty
-            ? const Text('Folder Browser')
+            ? Text(
+                widget.folder!.name.isEmpty
+                    ? 'Folder ${widget.folder!.name}'
+                    : 'Folder Browser',
+                style: GoogleFonts.lilitaOne(fontSize: 25.sp),
+              )
             : CupertinoSearchTextField(
                 controller: _searchController,
                 placeholder: 'Search folders',
@@ -529,13 +534,14 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                       ],
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'delete',
                     child: Row(
                       children: [
                         Icon(Icons.delete, color: Colors.red),
                         SizedBox(width: 8),
-                        Text('Delete', style: TextStyle(color: Colors.red)),
+                        Text('Delete',
+                            style: GoogleFonts.notoSerif(color: Colors.red)),
                       ],
                     ),
                   ),

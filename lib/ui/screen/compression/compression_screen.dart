@@ -18,9 +18,9 @@ class CompressionScreen extends ConsumerStatefulWidget {
   final Document document;
 
   const CompressionScreen({
-    Key? key,
+    super.key,
     required this.document,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<CompressionScreen> createState() => _CompressionScreenState();

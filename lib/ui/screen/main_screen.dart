@@ -1,19 +1,22 @@
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:easy_scan/config/routes.dart';
 import 'package:easy_scan/services/scan_service.dart';
-import 'package:easy_scan/ui/screen/conversion/conversion_screen.dart';
-import 'package:easy_scan/ui/screen/folder/folder_screen.dart';
-import 'package:easy_scan/ui/screen/home/home_screen.dart';
-import 'package:easy_scan/ui/screen/settings_screen.dart';
+import 'package:easy_scan/ui/widget/component/scan_initial_view.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_scan/ui/screen/camera/component/scan_initial_view.dart';
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
-  const MainScreen({super.key});
+  // Add child parameter for GoRouter's ShellRoute
+  final Widget child;
+
+  const MainScreen({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
 
   @override
   ConsumerState<MainScreen> createState() => _MainScreenState();
@@ -24,25 +27,31 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   bool _isLoading = false;
 
+  // Updated to include 5 items with Scan in the middle
   final _iconList = <IconData>[
     Icons.home_rounded,
     Icons.folder_rounded,
+    Icons.document_scanner_rounded, // Scan icon in the middle
     Icons.compare_arrows_rounded,
     Icons.settings_rounded,
   ];
 
+  // Updated to include 5 labels with Scan in the middle
   final _labelList = <String>[
     'Home',
     'Folders',
+    'Scan',
     'Convert',
     'Settings',
   ];
 
-  static final List<Widget> _pages = [
-    const HomeScreen(),
-    FolderScreen(),
-    const ConversionScreen(),
-    const SettingsScreen(),
+  // Define list of routes that correspond to bottom nav items
+  final List<String> _routes = [
+    AppRoutes.home,
+    AppRoutes.folders,
+    '/scan', // Placeholder route for scan action
+    AppRoutes.convert,
+    AppRoutes.settings,
   ];
 
   @override
@@ -56,19 +65,19 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 1) {
-      _showFoldersScreen(context);
-    } else {
-      setState(() {
-        _selectedIndex = index;
-      });
+    // Handle the Scan button separately (middle item)
+    if (index == 2) {
+      // Scan button (middle position)
+      _handleScanAction();
+      return;
     }
-  }
 
-  void _showFoldersScreen(BuildContext context) {
     setState(() {
-      _selectedIndex = 1;
+      _selectedIndex = index;
     });
+
+    // Navigate using routes for other items
+    context.go(_routes[index]);
   }
 
   void _handleScanAction() {
@@ -92,6 +101,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     setState(() => _isLoading = isLoading),
                 onSuccess: () {
                   AppRoutes.navigateToEdit(context);
+                  Navigator.pop(context);
                 },
               );
             },
@@ -103,6 +113,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     setState(() => _isLoading = isLoading),
                 onSuccess: () {
                   AppRoutes.navigateToEdit(context);
+                  Navigator.pop(context);
                 },
               );
             },
@@ -118,48 +129,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),
-      extendBody: true,
-      floatingActionButton: GestureDetector(
-        onTap: _handleScanAction,
-        child: Container(
-          width: 60.sp,
-          height: 60.sp,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: colorScheme.primary,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.document_scanner_rounded,
-                size: 24.sp,
-                color: Colors.white,
-              ),
-              Text(
-                'Scan',
-                style: GoogleFonts.notoSerif(
-                  fontSize: 10.sp,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // Body remains the same
+      body: widget.child,
+
       bottomNavigationBar: AnimatedBottomNavigationBar.builder(
         itemCount: _iconList.length,
         tabBuilder: (int index, bool isActive) {
@@ -167,38 +139,75 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                _iconList[index],
-                size: 24.sp,
-                color: isActive ? colorScheme.primary : Colors.grey,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                _labelList[index],
-                style: GoogleFonts.notoSerif(
-                  fontSize: 12.sp,
-                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                  color: isActive ? colorScheme.primary : Colors.grey,
+              // Special container for center scan icon
+              index == 2
+                  ? Container(
+                      width: 48.sp,
+                      height: 48.sp,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: colorScheme.primary,
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorScheme.primary.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            _iconList[index],
+                            color: Colors.white,
+                            size: 20.sp,
+                          ),
+                          Text(
+                            'Scan',
+                            style: GoogleFonts.notoSerif(
+                              fontSize: 10.sp,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Icon(
+                      _iconList[index],
+                      size: 24.sp,
+                      color: isActive ? colorScheme.primary : Colors.grey,
+                    ),
+
+              // Only show label for non-center items
+              if (index != 2)
+                Column(
+                  children: [
+                    const SizedBox(height: 4),
+                    Text(
+                      _labelList[index],
+                      style: GoogleFonts.notoSerif(
+                        fontSize: 12.sp,
+                        fontWeight:
+                            isActive ? FontWeight.bold : FontWeight.normal,
+                        color: isActive ? colorScheme.primary : Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
             ],
           );
         },
         backgroundColor: isDarkMode ? const Color(0xFF1F1F1F) : Colors.white,
         activeIndex: _selectedIndex,
         splashColor: colorScheme.primary.withOpacity(0.2),
-        notchSmoothness: NotchSmoothness.softEdge,
-        gapLocation: GapLocation.center,
+        gapLocation: GapLocation.none, // Remove gap in the center
         leftCornerRadius: 16,
-        rightCornerRadius: 16,
-        shadow: BoxShadow(
-          offset: const Offset(0, -2),
-          blurRadius: 12,
-          spreadRadius: 0.5,
-          color: Colors.black.withOpacity(0.1),
-        ),
+        rightCornerRadius: 10,
+
         onTap: _onItemTapped,
-        height: 65.h,
+        height: 55.h,
       ),
     );
   }

@@ -7,12 +7,14 @@ import 'package:easy_scan/providers/scan_provider.dart';
 import 'package:easy_scan/services/image_service.dart';
 import 'package:easy_scan/services/pdf_service.dart';
 import 'package:easy_scan/services/scan_service.dart';
+import 'package:easy_scan/ui/common/component/scan_initial_view.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/ui/screen/camera/component/scan_initial_view.dart';
 import 'package:easy_scan/utils/constants.dart';
 import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -45,7 +47,8 @@ class EditScreenController {
   bool isLoading = false;
   bool isPasswordProtected = false;
   VoidCallback? _onStateChanged;
-
+  bool _isImageOnlyDocument = false;
+  bool get isImageOnlyDocument => _isImageOnlyDocument;
   // Document type tracking
   bool isPdfInputFile = false;
   EditMode _currentEditMode = EditMode.imageEdit;
@@ -208,6 +211,17 @@ class EditScreenController {
   }
 
   void toggleViewMode() {
+    // If this is a PDF-only file and we're in PDF edit mode, show a snackbar and don't toggle the view
+    if (isPdfInputFile && currentEditMode == EditMode.pdfEdit) {
+      AppDialogs.showSnackBar(
+        context,
+        message: 'Grid view not available for PDF documents',
+        type: SnackBarType.warning,
+      );
+      return;
+    }
+
+    // Otherwise proceed with the toggle
     isEditView = !isEditView;
     _notifyStateChanged();
   }
@@ -221,21 +235,32 @@ class EditScreenController {
       pages = [];
       bool hasOriginalImages = false;
       bool hasPdfFile = false;
+      bool isImageOnlyDocument = false;
 
       // First check if PDF exists
       if (doc.pdfPath.isNotEmpty) {
         final pdfFile = File(doc.pdfPath);
         if (await pdfFile.exists()) {
-          pages.add(pdfFile);
-          hasPdfFile = true;
-          debugPrint('Loaded PDF file: ${pdfFile.path}');
+          String ext = path.extension(doc.pdfPath).toLowerCase();
+          if (ext == '.pdf') {
+            pages.add(pdfFile);
+            hasPdfFile = true;
+            debugPrint('Loaded PDF file: ${pdfFile.path}');
+          } else {
+            // If primary file is an image, not a PDF
+            pages.add(pdfFile);
+            hasOriginalImages = true;
+            isImageOnlyDocument = true;
+            debugPrint('Primary file is an image: ${pdfFile.path}');
+          }
         }
       }
 
-      // Then check for original images (excluding the first path which might be the PDF)
+      // Then check for original images (excluding the first path if it's already processed)
       if (doc.pagesPaths.length > 1) {
-        List<String> imagePaths =
-            doc.pagesPaths.sublist(1); // Skip first path if it's the PDF
+        // Start from index 0 or 1 depending on whether we already processed the first path
+        int startIndex = hasPdfFile || isImageOnlyDocument ? 1 : 0;
+        List<String> imagePaths = doc.pagesPaths.sublist(startIndex);
         List<File> imageFiles = [];
 
         for (String path in imagePaths) {
@@ -243,7 +268,7 @@ class EditScreenController {
           if (await file.exists()) {
             String ext = extension(file.path).toLowerCase();
             if (ext != '.pdf') {
-              // Make sure it's not another PDF
+              // Make sure it's not a PDF
               imageFiles.add(file);
               hasOriginalImages = true;
               debugPrint('Found original image: ${file.path}');
@@ -253,12 +278,28 @@ class EditScreenController {
 
         // If in image mode, use the image files
         if (_currentEditMode == EditMode.imageEdit && imageFiles.isNotEmpty) {
-          pages = imageFiles;
+          if (isImageOnlyDocument) {
+            // If primary file is already an image, add additional images
+            pages.addAll(imageFiles);
+          } else {
+            // Replace PDF with images
+            pages = imageFiles;
+          }
         }
       }
 
-      // Determine edit mode capabilities
-      if (hasPdfFile && hasOriginalImages) {
+      // Handle image-only documents (when primary file is an image)
+      if (isImageOnlyDocument || (hasOriginalImages && !hasPdfFile)) {
+        isPdfInputFile = false;
+        _currentEditMode = EditMode.imageEdit;
+
+        // For image-only documents, set up a special edit mode flag
+        _isImageOnlyDocument = true;
+        _canSwitchEditMode = false;
+        debugPrint('Document contains only images - enabling image edit mode');
+      }
+      // Determine edit mode capabilities for other cases
+      else if (hasPdfFile && hasOriginalImages) {
         // We have both PDF and original images, so we can switch modes
         _canSwitchEditMode = true;
         _currentEditMode =
@@ -272,12 +313,6 @@ class EditScreenController {
         _currentEditMode = EditMode.pdfEdit;
         _canSwitchEditMode = false;
         debugPrint('Document has only PDF - restricting to PDF edit mode');
-      } else if (hasOriginalImages) {
-        // Only original images available
-        isPdfInputFile = false;
-        _currentEditMode = EditMode.imageEdit;
-        _canSwitchEditMode = false;
-        debugPrint('Document has only images - restricting to image edit mode');
       }
 
       if (pages.isEmpty) {
@@ -769,7 +804,7 @@ class EditScreenController {
         }
       }
 
-      AppRoutes.navigateToHome(context);
+      context.go(AppRoutes.home);
     } catch (e) {
       AppDialogs.showSnackBar(
         context,
@@ -801,7 +836,7 @@ class EditScreenController {
       final TextPainter iconPainter = TextPainter(
         text: TextSpan(
           text: '📄',
-          style: TextStyle(fontSize: size * 0.4),
+          style: GoogleFonts.notoSerif(fontSize: size * 0.4),
         ),
         textDirection: TextDirection.ltr,
       );
@@ -817,7 +852,7 @@ class EditScreenController {
           text: documentName.length > 15
               ? '${documentName.substring(0, 15)}...'
               : documentName,
-          style: TextStyle(
+          style: GoogleFonts.notoSerif(
             fontSize: size * 0.08,
             fontWeight: FontWeight.bold,
             color: Colors.black87,

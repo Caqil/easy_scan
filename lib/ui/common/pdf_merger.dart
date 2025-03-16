@@ -1,9 +1,11 @@
+import 'package:easy_scan/config/routes.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/services/pdf_merger_service.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -185,7 +187,7 @@ class _MergeOptionsSheet extends ConsumerWidget {
             ),
             onTap: () {
               Navigator.pop(context);
-              Navigator.of(context).pushNamed('/pdf_merger');
+              AppRoutes.navigateToPdfMerger(context);
             },
           ),
 
@@ -422,7 +424,7 @@ class _MergeOptionsSheet extends ConsumerWidget {
                         subtitle: Text('${doc.pageCount} pages'),
                         secondary: Text(
                           '${index + 1}',
-                          style: TextStyle(
+                          style: GoogleFonts.notoSerif(
                             color: isSelected
                                 ? Theme.of(context).colorScheme.primary
                                 : Colors.grey,

@@ -124,7 +124,6 @@ class CompressionOptions {
         );
       }
     } catch (e) {
-      // Close loading dialog
       if (context.mounted) {
         Navigator.pop(context);
         AppDialogs.showSnackBar(
@@ -136,7 +135,15 @@ class CompressionOptions {
     }
   }
 
-  /// Import and compress a PDF from device
+  static void _navigateToCompression(BuildContext context, Document document) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CompressionScreen(document: document),
+      ),
+    );
+  }
+
   static Future<void> importAndCompressPdf(
     BuildContext context,
     WidgetRef ref,
@@ -208,15 +215,7 @@ class CompressionOptions {
 
       // Close loading indicator
       if (context.mounted) {
-        Navigator.pop(context);
-
-        // Now navigate to compression screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CompressionScreen(document: tempDocument),
-          ),
-        );
+        _navigateToCompression(context, tempDocument);
       }
     } catch (e) {
       if (context.mounted) {
@@ -469,7 +468,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 ),
                 subtitle: Text(
                   '${doc.pageCount} pages',
-                  style: TextStyle(fontSize: 12),
+                  style: GoogleFonts.notoSerif(fontSize: 12),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -521,9 +520,9 @@ class _CompressionOptionsSheet extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                 Text(
                   'Select compression level:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
 
@@ -559,9 +558,9 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 ),
 
                 const SizedBox(height: 16),
-                const Text(
+                 Text(
                   'Select PDFs to compress:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../models/conversion_state.dart';
 import '../../../../providers/conversion_provider.dart';
 import '../components/section_container.dart';
@@ -65,7 +66,7 @@ class AdvancedOptionsSection extends StatelessWidget {
               ),
               trailing: Text(
                 "${state.quality}%",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
               ),
             ),
           ],

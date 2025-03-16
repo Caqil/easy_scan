@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   emoji_picker_flutter
   file_selector_windows
   firebase_core
+  flutter_doc_scanner
   local_auth_windows
   permission_handler_windows
   printing

@@ -1,6 +1,5 @@
-
 import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/ui/screen/camera/component/scanned_documents_view.dart';
+import 'package:easy_scan/ui/common/component/scanned_documents_view.dart';
 import 'package:easy_scan/ui/screen/edit/component/document_action_button.dart';
 import 'package:easy_scan/ui/screen/edit/component/document_action_handler.dart';
 import 'package:easy_scan/ui/screen/edit/component/document_name_input.dart';
@@ -8,6 +7,7 @@ import 'package:easy_scan/ui/screen/edit/component/document_preview.dart';
 import 'package:easy_scan/ui/screen/edit/component/edit_screen_controller.dart';
 import 'package:easy_scan/ui/screen/edit/component/save_button.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
 
 class EditScreenView extends StatefulWidget {
@@ -120,13 +120,26 @@ class _EditScreenViewState extends State<EditScreenView> {
               : 'New Document',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        if (!widget.controller.canSwitchEditMode &&
+        if (widget.controller.isImageOnlyDocument) ...[
+          const SizedBox(width: 8),
+          Chip(
+            label: Text('Image Editor',
+                style: GoogleFonts.notoSerif(fontSize: 10)),
+            backgroundColor: colorScheme.primaryContainer,
+            labelStyle:
+                GoogleFonts.notoSerif(color: colorScheme.onPrimaryContainer),
+            padding: EdgeInsets.zero,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            visualDensity: VisualDensity.compact,
+          ),
+        ] else if (!widget.controller.canSwitchEditMode &&
             widget.controller.isPdfInputFile) ...[
           const SizedBox(width: 8),
           Chip(
-            label: Text('PDF Only', style: TextStyle(fontSize: 10)),
+            label: Text('PDF Only', style: GoogleFonts.notoSerif(fontSize: 10)),
             backgroundColor: colorScheme.primaryContainer,
-            labelStyle: TextStyle(color: colorScheme.onPrimaryContainer),
+            labelStyle:
+                GoogleFonts.notoSerif(color: colorScheme.onPrimaryContainer),
             padding: EdgeInsets.zero,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             visualDensity: VisualDensity.compact,

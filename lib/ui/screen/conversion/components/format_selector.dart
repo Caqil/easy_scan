@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../models/format_category.dart';
 
 class ChipFormatSelector extends StatelessWidget {
@@ -9,12 +10,12 @@ class ChipFormatSelector extends StatelessWidget {
   final String label;
 
   const ChipFormatSelector({
-    Key? key,
+    super.key,
     required this.formats,
     required this.selectedFormat,
     required this.onFormatSelected,
     required this.label,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class ChipFormatSelector extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: GoogleFonts.notoSerif(
             fontSize: 14.sp,
             fontWeight: FontWeight.w500,
             color: Colors.grey.shade700,
@@ -49,7 +50,7 @@ class ChipFormatSelector extends StatelessWidget {
                   SizedBox(width: 12.w),
                   Text(
                     selectedFormat!.name,
-                    style: TextStyle(
+                    style: GoogleFonts.notoSerif(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
                     ),
@@ -57,7 +58,7 @@ class ChipFormatSelector extends StatelessWidget {
                 ] else
                   Text(
                     '$label Format',
-                    style: TextStyle(
+                    style: GoogleFonts.notoSerif(
                       fontSize: 12.sp,
                       color: Colors.grey.shade600,
                     ),
@@ -166,7 +167,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
             padding: EdgeInsets.all(16.h),
             child: Text(
               'Select ${widget.label} Format',
-              style: TextStyle(
+              style: GoogleFonts.notoSerif(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -222,7 +223,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
               SizedBox(height: 16.h),
               Text(
                 'No formats found',
-                style: TextStyle(fontSize: 16.sp),
+                style: GoogleFonts.notoSerif(fontSize: 16.sp),
               ),
             ],
           ),
@@ -256,7 +257,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
               padding: EdgeInsets.symmetric(vertical: 8.h),
               child: Text(
                 category,
-                style: TextStyle(
+                style: GoogleFonts.notoSerif(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey.shade700,
@@ -264,12 +265,12 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
               ),
             ),
             Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
+              spacing: 4.w,
+              runSpacing: 4.h,
               children:
                   formats.map((format) => _buildFormatChip(format)).toList(),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 8.h),
           ],
         );
       },
@@ -283,18 +284,18 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
       avatar: Icon(
         format.icon,
         color: isSelected ? Colors.white : format.color,
-        size: 18.sp,
+        size: 15.sp,
       ),
       label: Text(format.name),
       selected: isSelected,
       showCheckmark: false,
       backgroundColor: Colors.grey.shade100,
       selectedColor: format.color,
-      labelStyle: TextStyle(
+      labelStyle: GoogleFonts.notoSerif(
         color: isSelected ? Colors.white : Colors.black,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
-      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
       onSelected: (_) => widget.onFormatSelected(format),
     );
   }

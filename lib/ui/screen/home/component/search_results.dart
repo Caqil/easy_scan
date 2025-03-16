@@ -14,7 +14,7 @@ class SearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (documents.isEmpty) {
-      return  Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
