@@ -3,12 +3,13 @@ import 'package:easy_scan/config/helper.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/services/pdf_service.dart';
+import 'package:easy_scan/services/pdf_compression_api_service.dart';
 import 'package:easy_scan/services/image_service.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/ui/screen/compression/compression_screen.dart';
+import 'package:easy_scan/ui/screen/compression/components/compression_bottomsheet.dart';
 import 'package:easy_scan/utils/constants.dart';
 import 'package:easy_scan/utils/file_utils.dart';
-import 'package:easy_scan/utils/pdf_compresion.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +18,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
 
 class CompressionOptions {
-  /// Show compression options bottom sheet
   static void showCompressionOptions(
     BuildContext context,
     WidgetRef ref, {
@@ -29,12 +29,23 @@ class CompressionOptions {
       backgroundColor: Colors.transparent,
       builder: (context) => _CompressionOptionsSheet(
         initialDocument: initialDocument,
-        ref: ref,
       ),
     );
   }
 
-  /// Quick compress a single PDF document
+  static void showCompressionBottomSheet(
+    BuildContext context,
+    Document document,
+    WidgetRef ref,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => CompressionBottomSheet(document: document),
+    );
+  }
+
   static Future<void> quickCompressPdf(
     BuildContext context,
     WidgetRef ref,
@@ -42,36 +53,36 @@ class CompressionOptions {
     CompressionLevel compressionLevel,
   ) async {
     try {
-      // Show loading dialog
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Compressing PDF...'),
-            ],
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(height: 16),
+                Text('Compressing PDF...'),
+                Text('Using cloud compression API'),
+              ],
+            ),
           ),
         ),
       );
 
-      // Get password if document is protected
-      final String? password =
-          document.isPasswordProtected ? document.password : null;
+      final originalFile = File(document.pdfPath);
+      final originalSize = await originalFile.length();
 
-      // Perform compression
-      final pdfService = PdfService();
-      final String compressedPdfPath = await pdfService.smartCompressPdf(
-        document.pdfPath,
-        level: compressionLevel,
-        password: password,
+      final apiService = PdfCompressionApiService();
+      String compressedPdfPath = await apiService.compressPdf(
+        file: originalFile,
+        compressionLevel: compressionLevel,
+        onProgress: null,
       );
 
-      // Create new document name with compression level indicator
-      String levelSuffix = "";
+      String levelSuffix;
       switch (compressionLevel) {
         case CompressionLevel.low:
           levelSuffix = " (Lightly Compressed)";
@@ -88,18 +99,37 @@ class CompressionOptions {
       }
 
       final String newName = "${document.name}$levelSuffix";
+      final compressedFile = File(compressedPdfPath);
+      final compressedSize = await compressedFile.length();
 
-      // Generate thumbnail
+      if (compressedSize >= originalSize) {
+        try {
+          await compressedFile.delete();
+        } catch (e) {}
+        if (context.mounted) {
+          Navigator.pop(context);
+          AppDialogs.showSnackBar(
+            context,
+            message: 'The PDF could not be compressed further.',
+            type: SnackBarType.warning,
+          );
+        }
+        return;
+      }
+
+      final compressionPercentage =
+          ((originalSize - compressedSize) / originalSize * 100)
+              .toStringAsFixed(1);
+
       final imageService = ImageService();
       final File thumbnailFile = await imageService.createThumbnail(
-        File(compressedPdfPath),
+        compressedFile,
         size: AppConstants.thumbnailSize,
       );
 
-      // Get page count
+      final pdfService = PdfService();
       final int pageCount = await pdfService.getPdfPageCount(compressedPdfPath);
 
-      // Create the document model
       final compressedDocument = Document(
         name: newName,
         pdfPath: compressedPdfPath,
@@ -110,17 +140,16 @@ class CompressionOptions {
         password: document.password,
       );
 
-      // Save to document repository
       await ref
           .read(documentsProvider.notifier)
           .addDocument(compressedDocument);
 
-      // Close loading dialog
       if (context.mounted) {
         Navigator.pop(context);
         AppDialogs.showSnackBar(
           context,
-          message: 'PDF compressed successfully',
+          message:
+              'PDF compressed successfully ($compressionPercentage% reduction)',
           type: SnackBarType.success,
         );
       }
@@ -136,21 +165,11 @@ class CompressionOptions {
     }
   }
 
-  static void _navigateToCompression(BuildContext context, Document document) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CompressionScreen(document: document),
-      ),
-    );
-  }
-
   static Future<void> importAndCompressPdf(
     BuildContext context,
     WidgetRef ref,
   ) async {
     try {
-      // Pick a PDF file
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
@@ -167,26 +186,8 @@ class CompressionOptions {
         throw Exception('Selected file does not exist');
       }
 
-      // Extract document name
       final String originalName = path.basenameWithoutExtension(pdfFile.path);
 
-      // Show loading indicator
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Preparing file...'),
-            ],
-          ),
-        ),
-      );
-
-      // Create a copy of the PDF in our app's documents directory
       final String targetPath = await FileUtils.getUniqueFilePath(
         documentName: originalName,
         extension: 'pdf',
@@ -194,18 +195,15 @@ class CompressionOptions {
 
       await pdfFile.copy(targetPath);
 
-      // Generate a thumbnail
       final imageService = ImageService();
       final File thumbnailFile = await imageService.createThumbnail(
         File(targetPath),
         size: AppConstants.thumbnailSize,
       );
 
-      // Get page count
       final pdfService = PdfService();
       final int pageCount = await pdfService.getPdfPageCount(targetPath);
 
-      // Create temporary document
       final tempDocument = Document(
         name: originalName,
         pdfPath: targetPath,
@@ -214,17 +212,16 @@ class CompressionOptions {
         thumbnailPath: thumbnailFile.path,
       );
 
-      // Close loading indicator
+      // MOVE THE Navigator.pop(context) HERE!
       if (context.mounted) {
-        _navigateToCompression(context, tempDocument);
+        Navigator.pop(context); // Close the dialog AFTER all processing
+        showCompressionBottomSheet(context, tempDocument, ref);
       }
     } catch (e) {
       if (context.mounted) {
-        // Close loading dialog if it's open
         if (Navigator.of(context).canPop()) {
           Navigator.pop(context);
         }
-
         AppDialogs.showSnackBar(
           context,
           message: 'Error importing PDF: $e',
@@ -234,17 +231,151 @@ class CompressionOptions {
       }
     }
   }
+
+  static Future<void> processBatchCompression(
+    BuildContext context,
+    WidgetRef ref,
+    List<Document> documents,
+    CompressionLevel compressionLevel,
+  ) async {
+    if (documents.isEmpty) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: Text('Batch Compression'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Processing ${documents.length} documents...'),
+              Text('Using cloud compression API'),
+              Text('This may take a while.'),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    int successCount = 0;
+    int failCount = 0;
+    double totalSavings = 0;
+    int totalOriginalSize = 0;
+    int totalCompressedSize = 0;
+
+    final apiService = PdfCompressionApiService();
+
+    for (final document in documents) {
+      try {
+        final originalFile = File(document.pdfPath);
+        final originalSize = await originalFile.length();
+        totalOriginalSize += originalSize;
+
+        String compressedPdfPath = await apiService.compressPdf(
+          file: originalFile,
+          compressionLevel: compressionLevel,
+          onProgress: null,
+        );
+
+        final compressedFile = File(compressedPdfPath);
+        final compressedSize = await compressedFile.length();
+
+        if (compressedSize >= originalSize) {
+          try {
+            await compressedFile.delete();
+          } catch (e) {}
+          failCount++;
+          continue;
+        }
+
+        totalCompressedSize += compressedSize;
+
+        String levelSuffix;
+        switch (compressionLevel) {
+          case CompressionLevel.low:
+            levelSuffix = " (Lightly Compressed)";
+            break;
+          case CompressionLevel.medium:
+            levelSuffix = " (Compressed)";
+            break;
+          case CompressionLevel.high:
+            levelSuffix = " (Highly Compressed)";
+            break;
+          case CompressionLevel.maximum:
+            levelSuffix = " (Max Compressed)";
+            break;
+        }
+
+        final String newName = "${document.name}$levelSuffix";
+
+        final imageService = ImageService();
+        final File thumbnailFile = await imageService.createThumbnail(
+          compressedFile,
+          size: AppConstants.thumbnailSize,
+        );
+
+        final int pageCount =
+            await PdfService().getPdfPageCount(compressedPdfPath);
+
+        final compressedDocument = Document(
+          name: newName,
+          pdfPath: compressedPdfPath,
+          pagesPaths: [compressedPdfPath],
+          pageCount: pageCount,
+          thumbnailPath: thumbnailFile.path,
+          isPasswordProtected: document.isPasswordProtected,
+          password: document.password,
+        );
+
+        await ref
+            .read(documentsProvider.notifier)
+            .addDocument(compressedDocument);
+
+        double savings = (originalSize - compressedSize) / originalSize * 100;
+        totalSavings += savings;
+
+        successCount++;
+      } catch (e) {
+        debugPrint('Error compressing document ${document.name}: $e');
+        failCount++;
+      }
+    }
+
+    if (context.mounted) {
+      Navigator.pop(context);
+
+      double averageSavings =
+          successCount > 0 ? totalSavings / successCount : 0;
+      int totalBytesSaved = totalOriginalSize - totalCompressedSize;
+
+      String savingsMessage = '';
+      if (successCount > 0) {
+        savingsMessage =
+            ' Avg. reduction: ${averageSavings.toStringAsFixed(1)}%, ';
+        savingsMessage += 'Saved: ${FileUtils.formatFileSize(totalBytesSaved)}';
+      }
+
+      AppDialogs.showSnackBar(
+        context,
+        message:
+            'Compression complete: $successCount successful, $failCount failed.$savingsMessage',
+        type: successCount > 0 ? SnackBarType.success : SnackBarType.error,
+        duration: const Duration(seconds: 6),
+      );
+    }
+  }
 }
 
 class _CompressionOptionsSheet extends ConsumerWidget {
   final Document? initialDocument;
 
   const _CompressionOptionsSheet({
-    required this.ref,
-    this.initialDocument,
+    required this.initialDocument,
   });
-
-  final WidgetRef ref;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -266,7 +397,6 @@ class _CompressionOptionsSheet extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle bar
           Container(
             margin: const EdgeInsets.symmetric(vertical: 12),
             height: 2.h,
@@ -276,8 +406,6 @@ class _CompressionOptionsSheet extends ConsumerWidget {
               borderRadius: BorderRadius.circular(4),
             ),
           ),
-
-          // Header
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -296,7 +424,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 ),
                 const SizedBox(width: 16),
                 Text(
-                  'PDF Compressor',
+                  'PDF Cloud Compressor',
                   style: GoogleFonts.notoSerif(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
@@ -305,10 +433,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
               ],
             ),
           ),
-
           const Divider(),
-
-          // Options
           if (initialDocument != null)
             _buildOptionTile(
               context: context,
@@ -318,21 +443,25 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                   'Open compression tools for "${initialDocument!.name}"',
               onTap: () {
                 Navigator.pop(context);
-                _navigateToCompression(context, initialDocument!);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        CompressionScreen(document: initialDocument!),
+                  ),
+                );
               },
             ),
-
           _buildOptionTile(
             context: context,
             icon: Icons.upload_file,
             title: 'Import and Compress PDF',
             description: 'Select a PDF file from your device to compress',
             onTap: () {
-              Navigator.pop(context);
+              // Navigator.pop(context);
               CompressionOptions.importAndCompressPdf(context, ref);
             },
           ),
-
           _buildOptionTile(
             context: context,
             icon: Icons.subject,
@@ -340,10 +469,9 @@ class _CompressionOptionsSheet extends ConsumerWidget {
             description: 'Choose a PDF document from your library to compress',
             onTap: () {
               Navigator.pop(context);
-              _showLibraryPdfSelector(context);
+              _showLibraryPdfSelector(context, ref);
             },
           ),
-
           _buildOptionTile(
             context: context,
             icon: Icons.tune,
@@ -351,10 +479,40 @@ class _CompressionOptionsSheet extends ConsumerWidget {
             description: 'Compress multiple PDFs at once',
             onTap: () {
               Navigator.pop(context);
-              _showBatchCompressionDialog(context);
+              _showBatchCompressionDialog(context, ref);
             },
           ),
-
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.cloud,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Using cloud-based compression API for optimal results. Internet connection required.',
+                      style: GoogleFonts.notoSerif(
+                        fontSize: 12.sp,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           SizedBox(height: 16.h),
         ],
       ),
@@ -402,17 +560,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
     );
   }
 
-  void _navigateToCompression(BuildContext context, Document document) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CompressionScreen(document: document),
-      ),
-    );
-  }
-
-  void _showLibraryPdfSelector(BuildContext context) {
-    // Get all PDF documents
+  void _showLibraryPdfSelector(BuildContext context, WidgetRef ref) {
     final allDocuments = ref.read(documentsProvider);
     final pdfDocs = allDocuments.where((doc) {
       final extension = path.extension(doc.pdfPath).toLowerCase();
@@ -428,7 +576,6 @@ class _CompressionOptionsSheet extends ConsumerWidget {
       return;
     }
 
-    // Sort by most recent first
     pdfDocs.sort((a, b) => b.modifiedAt.compareTo(a.modifiedAt));
 
     showDialog(
@@ -473,7 +620,12 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  _navigateToCompression(context, doc);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CompressionScreen(document: doc),
+                    ),
+                  );
                 },
               );
             },
@@ -489,8 +641,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
     );
   }
 
-  void _showBatchCompressionDialog(BuildContext context) {
-    // Get all PDF documents
+  void _showBatchCompressionDialog(BuildContext context, WidgetRef ref) {
     final allDocuments = ref.read(documentsProvider);
     final pdfDocs = allDocuments.where((doc) {
       final extension = path.extension(doc.pdfPath).toLowerCase();
@@ -506,7 +657,6 @@ class _CompressionOptionsSheet extends ConsumerWidget {
       return;
     }
 
-    // Track selected documents
     final selectedDocs = <Document>[];
     CompressionLevel selectedLevel = CompressionLevel.medium;
 
@@ -521,13 +671,11 @@ class _CompressionOptionsSheet extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Text(
+                Text(
                   'Select compression level:',
                   style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-
-                // Compression level selector
                 DropdownButton<CompressionLevel>(
                   value: selectedLevel,
                   isExpanded: true,
@@ -557,14 +705,12 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 16),
-                 Text(
+                Text(
                   'Select PDFs to compress:',
                   style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
@@ -572,7 +718,6 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final doc = pdfDocs[index];
                       final isSelected = selectedDocs.contains(doc);
-
                       return CheckboxListTile(
                         title: Text(
                           doc.name,
@@ -594,6 +739,32 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                     },
                   ),
                 ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.cloud,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.primary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Using cloud compression API',
+                          style: GoogleFonts.notoSerif(
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -607,8 +778,8 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                   ? null
                   : () {
                       Navigator.pop(context);
-                      _processBatchCompression(
-                          context, selectedDocs, selectedLevel);
+                      CompressionOptions.processBatchCompression(
+                          context, ref, selectedDocs, selectedLevel);
                     },
               child: const Text('Compress'),
             ),
@@ -616,118 +787,5 @@ class _CompressionOptionsSheet extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _processBatchCompression(
-    BuildContext context,
-    List<Document> documents,
-    CompressionLevel compressionLevel,
-  ) async {
-    if (documents.isEmpty) return;
-
-    // Show progress dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Batch Compression'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const CircularProgressIndicator(),
-                const SizedBox(height: 16),
-                Text('Processing ${documents.length} documents...'),
-                Text('This may take a while.'),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-
-    int successCount = 0;
-    int failCount = 0;
-
-    // Process each document
-    for (final document in documents) {
-      try {
-        final pdfService = PdfService();
-        final String? password =
-            document.isPasswordProtected ? document.password : null;
-
-        // Compress the PDF
-        final String compressedPdfPath = await pdfService.smartCompressPdf(
-          document.pdfPath,
-          level: compressionLevel,
-          password: password,
-        );
-
-        // Create new document name with compression level indicator
-        String levelSuffix = "";
-        switch (compressionLevel) {
-          case CompressionLevel.low:
-            levelSuffix = " (Lightly Compressed)";
-            break;
-          case CompressionLevel.medium:
-            levelSuffix = " (Compressed)";
-            break;
-          case CompressionLevel.high:
-            levelSuffix = " (Highly Compressed)";
-            break;
-          case CompressionLevel.maximum:
-            levelSuffix = " (Max Compressed)";
-            break;
-        }
-
-        final String newName = "${document.name}$levelSuffix";
-
-        // Generate thumbnail
-        final imageService = ImageService();
-        final File thumbnailFile = await imageService.createThumbnail(
-          File(compressedPdfPath),
-          size: AppConstants.thumbnailSize,
-        );
-
-        // Get page count
-        final int pageCount =
-            await pdfService.getPdfPageCount(compressedPdfPath);
-
-        // Create the document model
-        final compressedDocument = Document(
-          name: newName,
-          pdfPath: compressedPdfPath,
-          pagesPaths: [compressedPdfPath],
-          pageCount: pageCount,
-          thumbnailPath: thumbnailFile.path,
-          isPasswordProtected: document.isPasswordProtected,
-          password: document.password,
-        );
-
-        // Save to document repository
-        await ref
-            .read(documentsProvider.notifier)
-            .addDocument(compressedDocument);
-
-        successCount++;
-      } catch (e) {
-        debugPrint('Error compressing document ${document.name}: $e');
-        failCount++;
-      }
-    }
-
-    // Close progress dialog
-    if (context.mounted) {
-      Navigator.pop(context);
-
-      // Show results
-      AppDialogs.showSnackBar(
-        context,
-        message:
-            'Compression complete: $successCount successful, $failCount failed',
-        type: successCount > 0 ? SnackBarType.success : SnackBarType.error,
-      );
-    }
   }
 }

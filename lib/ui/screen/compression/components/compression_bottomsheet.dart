@@ -1,19 +1,15 @@
 import 'dart:io';
 
+import 'package:easy_scan/config/helper.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
-import 'package:easy_scan/services/pdf_service.dart';
 import 'package:easy_scan/services/pdf_compression_api_service.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/ui/screen/compression/compression_screen.dart';
 import 'package:easy_scan/utils/file_utils.dart';
-import 'package:easy_scan/utils/pdf_compresion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
 
 class CompressionBottomSheet extends ConsumerStatefulWidget {
   final Document document;
@@ -33,7 +29,6 @@ class _CompressionBottomSheetState
   CompressionLevel _compressionLevel = CompressionLevel.medium;
   bool _isCompressing = false;
   double _compressionProgress = 0.0;
-  bool _useApiCompression = true; // Toggle for API vs local compression
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +52,6 @@ class _CompressionBottomSheetState
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Handle bar
           Center(
             child: Container(
               margin: const EdgeInsets.only(bottom: 16),
@@ -69,8 +63,6 @@ class _CompressionBottomSheetState
               ),
             ),
           ),
-
-          // Header
           Row(
             children: [
               Icon(
@@ -88,10 +80,7 @@ class _CompressionBottomSheetState
               ),
             ],
           ),
-
           const SizedBox(height: 16),
-
-          // Document info
           Text(
             'Document: ${widget.document.name}',
             style: GoogleFonts.notoSerif(
@@ -99,46 +88,7 @@ class _CompressionBottomSheetState
               fontSize: 14.sp,
             ),
           ),
-
           const SizedBox(height: 24),
-
-          // API vs Local compression toggle
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Compression Method',
-                style: GoogleFonts.notoSerif(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14.sp,
-                ),
-              ),
-              Switch(
-                value: _useApiCompression,
-                onChanged: _isCompressing
-                    ? null
-                    : (value) {
-                        setState(() {
-                          _useApiCompression = value;
-                        });
-                      },
-              ),
-            ],
-          ),
-
-          Text(
-            _useApiCompression
-                ? 'Using cloud API compression (better results, requires internet)'
-                : 'Using local compression (works offline, faster)',
-            style: GoogleFonts.notoSerif(
-              fontSize: 12.sp,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Compression level selector
           Text(
             'Compression Level',
             style: GoogleFonts.notoSerif(
@@ -146,14 +96,9 @@ class _CompressionBottomSheetState
               fontSize: 14.sp,
             ),
           ),
-
           const SizedBox(height: 16),
-
           _buildCompressionLevelSelector(),
-
           const SizedBox(height: 16),
-
-          // Compression level description
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -186,10 +131,7 @@ class _CompressionBottomSheetState
               ],
             ),
           ),
-
           const SizedBox(height: 24),
-
-          // Progress indicator (shown during compression)
           if (_isCompressing) ...[
             LinearProgressIndicator(
               value: _compressionProgress,
@@ -208,8 +150,6 @@ class _CompressionBottomSheetState
             ),
             const SizedBox(height: 16),
           ],
-
-          // Action buttons
           Row(
             children: [
               Expanded(
@@ -249,8 +189,6 @@ class _CompressionBottomSheetState
               ),
             ],
           ),
-
-          // Bottom padding for safe area
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
       ),
@@ -389,66 +327,34 @@ class _CompressionBottomSheetState
 
     setState(() {
       _isCompressing = true;
-      _compressionProgress = 0.1; // Start progress
+      _compressionProgress = 0.1;
     });
 
     try {
-      // Get original file size for later comparison
       final File originalFile = File(widget.document.pdfPath);
       final int originalSize = await originalFile.length();
 
-      // Show a debug message with file info
       debugPrint('Starting compression for ${widget.document.name}');
       debugPrint(
           'Original file size: ${FileUtils.formatFileSize(originalSize)}');
       debugPrint('Compression level: $_compressionLevel');
-      debugPrint('Using API compression: $_useApiCompression');
 
-      // Path to the compressed file
-      String compressedPdfPath;
-
-      if (_useApiCompression) {
-        // Use API compression
-        try {
-          // Create an instance of the API service
-          final apiService = PdfCompressionApiService();
-
-          // Compress the PDF using the API
-          compressedPdfPath = await apiService.compressPdf(
-            file: originalFile,
-            compressionLevel: _compressionLevel,
-            onProgress: (progress) {
-              setState(() {
-                _compressionProgress = progress;
-              });
-            },
-          );
-
-          debugPrint('API compression completed: $compressedPdfPath');
-        } catch (e) {
-          // If API compression fails, we'll fallback to local compression
-          debugPrint('API compression failed: $e');
-          debugPrint('Falling back to local compression...');
-
-          // Update progress and inform user about fallback
+      final apiService = PdfCompressionApiService();
+      final compressedPdfPath = await apiService.compressPdf(
+        file: originalFile,
+        compressionLevel: _compressionLevel,
+        onProgress: (progress) {
           setState(() {
-            _compressionProgress = 0.3;
+            _compressionProgress = progress;
           });
+        },
+      );
 
-          // Fallback to local compression
-          compressedPdfPath = await _performLocalCompression(originalFile);
-        }
-      } else {
-        // Use local compression directly
-        compressedPdfPath = await _performLocalCompression(originalFile);
-      }
+      debugPrint('API compression completed: $compressedPdfPath');
 
-      // Check if the compression was successful (path is different)
       if (compressedPdfPath == widget.document.pdfPath) {
-        // No compression occurred - original file was returned
         if (mounted) {
           Navigator.pop(context);
-
           AppDialogs.showSnackBar(
             context,
             message: 'The PDF could not be compressed further.',
@@ -458,11 +364,9 @@ class _CompressionBottomSheetState
         return;
       }
 
-      // Get the compressed file size
       final File compressedResult = File(compressedPdfPath);
       final int compressedSize = await compressedResult.length();
 
-      // Calculate compression percentage
       final double percentReduction =
           ((originalSize - compressedSize) / originalSize * 100);
 
@@ -470,7 +374,6 @@ class _CompressionBottomSheetState
           'Compression complete. New size: ${FileUtils.formatFileSize(compressedSize)}');
       debugPrint('Size reduction: ${percentReduction.toStringAsFixed(1)}%');
 
-      // Create a new document model for the compressed PDF
       final compressedDocument = widget.document.copyWith(
         name: '${widget.document.name} (Compressed)',
         pdfPath: compressedPdfPath,
@@ -478,16 +381,12 @@ class _CompressionBottomSheetState
         modifiedAt: DateTime.now(),
       );
 
-      // Add the compressed document to the document provider
       await ref
           .read(documentsProvider.notifier)
           .addDocument(compressedDocument);
 
-      // Close the sheet
       if (mounted) {
         Navigator.pop(context);
-
-        // Show success message
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.success,
@@ -496,7 +395,6 @@ class _CompressionBottomSheetState
         );
       }
     } catch (e) {
-      // Show error message
       if (mounted) {
         AppDialogs.showSnackBar(
           context,
@@ -505,144 +403,11 @@ class _CompressionBottomSheetState
         );
       }
     } finally {
-      // Reset state
       if (mounted) {
         setState(() {
           _isCompressing = false;
         });
       }
     }
-  }
-
-  // Helper method for local compression fallback
-  Future<String> _performLocalCompression(File originalFile) async {
-    // Get the password if document is protected
-    final String? password =
-        widget.document.isPasswordProtected ? widget.document.password : null;
-
-    // Perform local compression using existing methods
-    try {
-      // First attempt: Try direct compression with FileCompressor
-      File? compressedFile;
-      try {
-        // Create a temporary copy to work with
-        final tempDir = await getTemporaryDirectory();
-        final tempFilePath = path.join(tempDir.path,
-            'temp_pre_compress_${DateTime.now().millisecondsSinceEpoch}.pdf');
-        await originalFile.copy(tempFilePath);
-
-        // Update progress
-        setState(() {
-          _compressionProgress = 0.4;
-        });
-
-        // Compress using the FileCompressor
-        compressedFile = await FileCompressor.compressPdf(
-          file: File(tempFilePath),
-          compressionLevel: PdfCompressionLevel.best,
-        );
-
-        // Update progress
-        setState(() {
-          _compressionProgress = 0.7;
-        });
-      } catch (e) {
-        debugPrint('FileCompressor error: $e');
-        // We'll fall back to other methods
-      }
-
-      // If FileCompressor was successful and reduced file size
-      if (compressedFile != null && await compressedFile.exists()) {
-        final int compressedSize = await compressedFile.length();
-        final int originalSize = await originalFile.length();
-
-        if (compressedSize < originalSize) {
-          // Create the document name for the final destination
-          final String outputPath = await FileUtils.getUniqueFilePath(
-            documentName: '${widget.document.name}_compressed',
-            extension: 'pdf',
-          );
-
-          // Copy to final path
-          await compressedFile.copy(outputPath);
-
-          // Clean up
-          try {
-            await compressedFile.delete();
-          } catch (e) {
-            // Ignore cleanup errors
-          }
-
-          setState(() {
-            _compressionProgress = 1.0;
-          });
-
-          return outputPath;
-        } else {
-          // Clean up the ineffective result
-          await compressedFile.delete();
-          debugPrint(
-              'FileCompressor did not reduce size, trying alternative method...');
-        }
-      }
-
-      // Fallback to PdfService
-      setState(() {
-        _compressionProgress = 0.5;
-      });
-
-      // Create a PDF service instance and use its smartCompressPdf method
-      final pdfService = PdfService();
-      final String compressedPdfPath = await pdfService.smartCompressPdf(
-        widget.document.pdfPath,
-        level: _compressionLevel,
-        password: password,
-      );
-
-      // Update the progress to indicate completion
-      setState(() {
-        _compressionProgress = 1.0;
-      });
-
-      return compressedPdfPath;
-    } catch (e) {
-      debugPrint('Local compression error: $e');
-      rethrow;
-    }
-  }
-
-  void _startProgressSimulation() {
-    // Simulate progress updates to provide visual feedback
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted && _isCompressing) {
-        setState(() {
-          _compressionProgress = 0.3;
-        });
-
-        Future.delayed(const Duration(milliseconds: 700), () {
-          if (mounted && _isCompressing) {
-            setState(() {
-              _compressionProgress = 0.5;
-            });
-
-            Future.delayed(const Duration(milliseconds: 900), () {
-              if (mounted && _isCompressing) {
-                setState(() {
-                  _compressionProgress = 0.7;
-                });
-
-                Future.delayed(const Duration(milliseconds: 800), () {
-                  if (mounted && _isCompressing) {
-                    setState(() {
-                      _compressionProgress = 0.9;
-                    });
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-    });
   }
 }

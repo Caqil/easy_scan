@@ -191,7 +191,7 @@ class PdfService {
 
       // Create output path
       final String outputPath = await FileUtils.getUniqueFilePath(
-        documentName: path.basenameWithoutExtension(pdfPath) + '_compressed',
+        documentName: '${path.basenameWithoutExtension(pdfPath)}_compressed',
         extension: 'pdf',
       );
 

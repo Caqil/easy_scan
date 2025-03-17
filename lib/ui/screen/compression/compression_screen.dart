@@ -1,18 +1,17 @@
-// lib/ui/screen/conversion/compression_screen.dart
-
 import 'dart:io';
+import 'package:easy_scan/config/helper.dart';
+import 'package:easy_scan/models/document.dart';
+import 'package:easy_scan/providers/document_provider.dart';
+import 'package:easy_scan/services/pdf_compression_api_service.dart';
+import 'package:easy_scan/services/image_service.dart';
+import 'package:easy_scan/ui/common/app_bar.dart';
+import 'package:easy_scan/ui/common/dialogs.dart';
+import 'package:easy_scan/utils/constants.dart';
 import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path_provider/path_provider.dart';
-import '../../../models/document.dart';
-import '../../../providers/document_provider.dart';
-import '../../../services/pdf_service.dart';
-import '../../../ui/common/app_bar.dart';
-import '../../../ui/common/dialogs.dart';
-import '../../../utils/pdf_compresion.dart';
 
 class CompressionScreen extends ConsumerStatefulWidget {
   final Document document;
@@ -48,31 +47,27 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
       final size = await file.length();
       setState(() {
         _originalFileSize = size;
-        // Estimate compressed size based on selected level
         _updateEstimatedSize();
       });
     }
   }
 
   void _updateEstimatedSize() {
-    // Estimate the compressed size based on typical compression ratios
     double compressionRatio;
-
     switch (_compressionLevel) {
       case CompressionLevel.low:
-        compressionRatio = 0.8; // 20% reduction
+        compressionRatio = 0.8;
         break;
       case CompressionLevel.medium:
-        compressionRatio = 0.5; // 50% reduction
+        compressionRatio = 0.5;
         break;
       case CompressionLevel.high:
-        compressionRatio = 0.3; // 70% reduction
+        compressionRatio = 0.3;
         break;
       case CompressionLevel.maximum:
-        compressionRatio = 0.2; // 80% reduction
+        compressionRatio = 0.2;
         break;
     }
-
     setState(() {
       _estimatedFileSize = (_originalFileSize * compressionRatio).round();
     });
@@ -87,11 +82,13 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           IconButton(
             icon: Icon(_isAdvancedMode ? Icons.tune : Icons.tune),
             tooltip: _isAdvancedMode ? 'Simple Mode' : 'Advanced Mode',
-            onPressed: () {
-              setState(() {
-                _isAdvancedMode = !_isAdvancedMode;
-              });
-            },
+            onPressed: _isCompressing
+                ? null
+                : () {
+                    setState(() {
+                      _isAdvancedMode = !_isAdvancedMode;
+                    });
+                  },
           ),
         ],
       ),
@@ -110,12 +107,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Document info card
           _buildDocumentInfoCard(),
-
           const SizedBox(height: 24),
-
-          // Compression level selector
           Text(
             'Compression Level',
             style: GoogleFonts.notoSerif(
@@ -123,14 +116,9 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 16),
-
           _buildCompressionLevelSelector(),
-
           const SizedBox(height: 16),
-
-          // Compression level description
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -165,10 +153,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               ],
             ),
           ),
-
           const SizedBox(height: 24),
-
-          // Expected results
           Text(
             'Expected Results',
             style: GoogleFonts.notoSerif(
@@ -176,9 +161,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 16),
-
           _buildCompressionStatsCard(),
         ],
       ),
@@ -191,12 +174,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Document info card
           _buildDocumentInfoCard(),
-
           const SizedBox(height: 24),
-
-          // Advanced settings title
           Text(
             'Advanced Settings',
             style: GoogleFonts.notoSerif(
@@ -204,10 +183,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // Overall quality slider
           _buildSliderWithLabel(
             label: 'Overall Quality',
             value: _qualitySliderValue,
@@ -217,17 +193,13 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
             onChanged: (value) {
               setState(() {
                 _qualitySliderValue = value;
-                // Custom logic to update estimated size
                 final ratio = 1 - (value / 100);
                 _estimatedFileSize =
                     (_originalFileSize * (1 - (ratio * 0.8))).round();
               });
             },
           ),
-
           const SizedBox(height: 16),
-
-          // Image quality slider
           _buildSliderWithLabel(
             label: 'Image Quality',
             value: _imageQualitySliderValue,
@@ -237,17 +209,13 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
             onChanged: (value) {
               setState(() {
                 _imageQualitySliderValue = value;
-                // Adjust estimated size based on image quality too
                 final ratio = 1 - (value / 100);
                 _estimatedFileSize =
                     (_originalFileSize * (1 - (ratio * 0.6))).round();
               });
             },
           ),
-
           const SizedBox(height: 16),
-
-          // Note about advanced settings
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -268,10 +236,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               ],
             ),
           ),
-
           const SizedBox(height: 24),
-
-          // Expected results
           Text(
             'Expected Results',
             style: GoogleFonts.notoSerif(
@@ -279,9 +244,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 16),
-
           _buildCompressionStatsCard(),
         ],
       ),
@@ -293,7 +256,6 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Compression progress visual
           Container(
             width: 120.w,
             height: 120.w,
@@ -326,9 +288,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               ),
             ),
           ),
-
           const SizedBox(height: 24),
-
           Text(
             'Compressing PDF',
             style: GoogleFonts.notoSerif(
@@ -336,21 +296,16 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 8),
-
           Text(
-            'Please wait while your document is being compressed...',
+            'Using cloud compression API...',
             textAlign: TextAlign.center,
             style: GoogleFonts.notoSerif(
               fontSize: 14.sp,
               color: Colors.grey.shade600,
             ),
           ),
-
           const SizedBox(height: 32),
-
-          // Compression status message
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
@@ -398,7 +353,6 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
       ),
       child: Row(
         children: [
-          // Document thumbnail or icon
           Container(
             width: 60,
             height: 80,
@@ -421,10 +375,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                     size: 30,
                   ),
           ),
-
           const SizedBox(width: 16),
-
-          // Document details
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -674,7 +625,6 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
   }
 
   Widget _buildCompressionStatsCard() {
-    // Calculate size difference and percentage
     final sizeDifference = _originalFileSize - _estimatedFileSize;
     final percentageReduction = (_originalFileSize > 0)
         ? (sizeDifference / _originalFileSize * 100).round()
@@ -840,13 +790,13 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
 
   String _getCompressionStatusMessage(double progress) {
     if (progress < 0.3) {
-      return 'Analyzing document structure...';
+      return 'Uploading document...';
     } else if (progress < 0.6) {
-      return 'Optimizing content...';
+      return 'Compressing on server...';
     } else if (progress < 0.9) {
-      return 'Finalizing compressed PDF...';
+      return 'Downloading compressed file...';
     } else {
-      return 'Almost done!';
+      return 'Finalizing...';
     }
   }
 
@@ -855,154 +805,90 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
 
     setState(() {
       _isCompressing = true;
-      _compressionProgress = 0.1; // Start progress
+      _compressionProgress = 0.1;
     });
 
     try {
-      // Simulate progress updates
-      _startProgressSimulation();
-
-      // Create a PDF service instance
-      final pdfService = PdfService();
-
-      // Get the password if document is protected
-      final String? password =
-          widget.document.isPasswordProtected ? widget.document.password : null;
-
-      // Get original file size before compression
       final File originalFile = File(widget.document.pdfPath);
       final int originalSize = await originalFile.length();
 
-      // Determine which compression method to use based on mode
-      final String compressedPdfPath;
+      debugPrint('Starting compression of PDF: ${widget.document.name}');
+      debugPrint('Original size: ${FileUtils.formatFileSize(originalSize)}');
 
-      if (_isAdvancedMode) {
-        // Extract images from PDF, optimize them, then rebuild the PDF
-        // For advanced mode, we'll take a more aggressive approach
+      final apiService = PdfCompressionApiService();
+      final compressedPdfPath = await apiService.compressPdf(
+        file: originalFile,
+        compressionLevel: _compressionLevel,
+        onProgress: (progress) {
+          setState(() {
+            _compressionProgress = progress;
+          });
+        },
+      );
 
-        // First create a temporary directory to work with
-        final tempDir = await getTemporaryDirectory();
-        final tempPath =
-            '${tempDir.path}/temp_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      debugPrint('API compression completed successfully');
 
-        // Copy the original file to a temp location so we don't modify the original yet
-        await originalFile.copy(tempPath);
-
-        // Compress the PDF with more aggressive image optimization
-        compressedPdfPath = await pdfService.compressPdf(
-          tempPath,
-          quality: _qualitySliderValue.round(),
-          imageQuality: _imageQualitySliderValue.round(),
-          password: password,
-        );
-
-        // Clean up the temp file if it's not the result
-        if (tempPath != compressedPdfPath) {
-          try {
-            await File(tempPath).delete();
-          } catch (e) {
-            // Ignore cleanup errors
-            debugPrint('Warning: Could not clean up temp file: $tempPath');
-          }
-        }
-      } else {
-        // For simple mode, we'll use preset compression levels
-        // First create a temporary copy of the file
-        final tempDir = await getTemporaryDirectory();
-        final tempPath =
-            '${tempDir.path}/temp_${DateTime.now().millisecondsSinceEpoch}.pdf';
-        await originalFile.copy(tempPath);
-
-        // Map our UI compression level to the one defined in pdf_compresion.dart
-        CompressionLevel compressionLevel;
-        switch (_compressionLevel) {
-          case CompressionLevel.low:
-            compressionLevel = CompressionLevel.low;
-            break;
-          case CompressionLevel.medium:
-            compressionLevel = CompressionLevel.medium;
-            break;
-          case CompressionLevel.high:
-            compressionLevel = CompressionLevel.high;
-            break;
-          case CompressionLevel.maximum:
-            compressionLevel = CompressionLevel.maximum;
-            break;
-        }
-
-        // Use preset compression level in simple mode
-        compressedPdfPath = await pdfService.smartCompressPdf(
-          tempPath,
-          level: compressionLevel,
-          password: password,
-        );
-
-        // Clean up the temp file if it's not the result
-        if (tempPath != compressedPdfPath) {
-          try {
-            await File(tempPath).delete();
-          } catch (e) {
-            // Ignore cleanup errors
-            debugPrint('Warning: Could not clean up temp file: $tempPath');
-          }
-        }
+      final File compressedFile = File(compressedPdfPath);
+      if (!await compressedFile.exists()) {
+        throw Exception('Compression failed: output file not found');
       }
 
-      // Update the progress to indicate completion
+      final int compressedSize = await compressedFile.length();
+
       setState(() {
         _compressionProgress = 1.0;
       });
 
-      // Get the actual file size after compression for more accurate display
-      final File compressedFile = File(compressedPdfPath);
-      final int actualCompressedSize = await compressedFile.length();
-
-      // Calculate actual compression results
-      final int sizeDifference = originalSize - actualCompressedSize;
-      final double compressionPercentage =
-          (_originalFileSize > 0) ? (sizeDifference / originalSize * 100) : 0.0;
-
-      // Check if compression was effective
-      if (actualCompressedSize >= originalSize) {
-        // Compression didn't reduce the size
+      if (compressedSize >= originalSize) {
         AppDialogs.showSnackBar(
           context,
           message:
               'The PDF is already optimized or cannot be compressed further.',
           type: SnackBarType.warning,
         );
-
-        // Delete the ineffective compressed file
         try {
           await compressedFile.delete();
-        } catch (e) {
-          // Ignore cleanup errors
-        }
-
+        } catch (e) {}
         setState(() {
           _isCompressing = false;
         });
         return;
       }
 
-      // Create a new document model for the compressed PDF
-      final compressedDocument = widget.document.copyWith(
-        name: '${widget.document.name} (Compressed)',
+      final double compressionPercentage =
+          ((originalSize - compressedSize) / originalSize) * 100;
+
+      final imageService = ImageService();
+      File? thumbnailFile;
+      try {
+        thumbnailFile = await imageService.createThumbnail(
+          compressedFile,
+          size: AppConstants.thumbnailSize,
+        );
+      } catch (e) {
+        debugPrint('Failed to generate thumbnail: $e');
+      }
+
+      final String newName =
+          '${widget.document.name} (Compressed ${compressionPercentage.toStringAsFixed(0)}%)';
+
+      final compressedDocument = Document(
+        name: newName,
         pdfPath: compressedPdfPath,
         pagesPaths: [compressedPdfPath],
+        pageCount: widget.document.pageCount,
+        thumbnailPath: thumbnailFile?.path,
+        isPasswordProtected: widget.document.isPasswordProtected,
+        password: widget.document.password,
         modifiedAt: DateTime.now(),
       );
 
-      // Add the compressed document to the document provider
       await ref
           .read(documentsProvider.notifier)
           .addDocument(compressedDocument);
 
-      // Navigate back and show success message
       if (mounted) {
         Navigator.pop(context);
-
-        // Show success message
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.success,
@@ -1011,53 +897,16 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
         );
       }
     } catch (e) {
-      // Show error message
       if (mounted) {
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.error,
           message: 'Error compressing PDF: ${e.toString()}',
         );
-
         setState(() {
           _isCompressing = false;
         });
       }
     }
-  }
-
-  void _startProgressSimulation() {
-    // Simulate progress updates to provide visual feedback
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted && _isCompressing) {
-        setState(() {
-          _compressionProgress = 0.3;
-        });
-
-        Future.delayed(const Duration(milliseconds: 800), () {
-          if (mounted && _isCompressing) {
-            setState(() {
-              _compressionProgress = 0.5;
-            });
-
-            Future.delayed(const Duration(milliseconds: 1000), () {
-              if (mounted && _isCompressing) {
-                setState(() {
-                  _compressionProgress = 0.7;
-                });
-
-                Future.delayed(const Duration(milliseconds: 1200), () {
-                  if (mounted && _isCompressing) {
-                    setState(() {
-                      _compressionProgress = 0.9;
-                    });
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-    });
   }
 }

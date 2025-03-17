@@ -1,7 +1,4 @@
-// lib/ui/screen/barcode/barcode_generator_screen.dart
-
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:easy_scan/models/barcode_scan.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
@@ -16,7 +13,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_scan/ui/common/app_bar.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 enum BarcodeType {

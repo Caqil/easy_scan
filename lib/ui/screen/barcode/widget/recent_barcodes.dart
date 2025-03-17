@@ -20,12 +20,12 @@ class RecentBarcodesWidget extends ConsumerWidget {
   final Function()? onViewAllPressed;
 
   const RecentBarcodesWidget({
-    Key? key,
+    super.key,
     this.showAllOption = true,
     this.maxItems = 5,
     this.title = 'Recent QR Codes',
     this.onViewAllPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -577,20 +577,6 @@ class RecentBarcodesWidget extends ConsumerWidget {
       if (scan.isCustomized && scan.customImagePath != null) {
         imagePath = scan.customImagePath;
       } else {
-        // Generate a QR code on the fly
-        // Create QR code image
-        final qrImage = QrImageView(
-          data: scan.barcodeValue,
-          version: QrVersions.auto,
-          size: 300,
-          backgroundColor: Colors.white,
-          padding: const EdgeInsets.all(10),
-        );
-
-        // For simplicity, we'll use a basic sharing approach for now
-        // In a complete implementation, you'd render the QrImageView to a file
-        // This is a simplified version
-
         final tempDir = await getTemporaryDirectory();
         final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
         imagePath = '${tempDir.path}/qr_share_$timestamp.png';

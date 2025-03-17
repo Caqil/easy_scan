@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:easy_scan/models/content_type.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
 import 'package:easy_scan/ui/screen/barcode/barcode_scanner_screen.dart';
-import 'package:easy_scan/utils/code_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';

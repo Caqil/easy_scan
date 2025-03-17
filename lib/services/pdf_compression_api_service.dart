@@ -8,17 +8,12 @@ import 'package:path/path.dart' as path;
 import 'dart:convert';
 
 class PdfCompressionApiService {
-  // API endpoint for compression
-  static const String _baseUrl = ApiConfig.baseUrl;
-  static const String _compressEndpoint = '/compress';
+  static const String _baseUrl = 'https://be6e-125-167-49-182.ngrok-free.app';
+  //   ApiConfig.baseUrl; // e.g., 'https://scanpro.cc'
+  static const String _compressEndpoint = '/api/compress';
+  static const String _downloadEndpoint = '/api/compress/download';
 
   /// Compress a PDF file using the remote API
-  ///
-  /// [file] - The PDF file to compress
-  /// [compressionLevel] - The level of compression to apply
-  /// [onProgress] - Optional callback for progress updates
-  ///
-  /// Returns the path to the compressed file
   Future<String> compressPdf({
     required File file,
     required CompressionLevel compressionLevel,
@@ -29,11 +24,11 @@ class PdfCompressionApiService {
       final String qualityParam =
           _mapCompressionLevelToApiParam(compressionLevel);
 
-      // Create multipart request
+      // Create multipart request for compression
       final Uri uri = Uri.parse('$_baseUrl$_compressEndpoint');
       final request = http.MultipartRequest('POST', uri);
 
-      // Add API key if required by the service
+      // Add API key if required
       request.headers['X-API-Key'] = ApiConfig.apiKey;
 
       // Add the PDF file
@@ -49,68 +44,82 @@ class PdfCompressionApiService {
       );
 
       request.files.add(multipartFile);
-
-      // Add compression quality parameter
       request.fields['quality'] = qualityParam;
 
       // Report initial progress
       onProgress?.call(0.1);
+      print('Uploading to: $uri with quality: $qualityParam');
 
-      // Send the request
+      // Send the compression request
       final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
       // Report progress after upload
       onProgress?.call(0.5);
 
       // Handle the response
-      if (streamedResponse.statusCode == 200) {
-        final response = await http.Response.fromStream(streamedResponse);
-        final responseData = json.decode(response.body);
-
-        // Check if compression was successful
-        if (responseData['success'] == true) {
-          // Get the URL of the compressed file
-          final String fileUrl = responseData['fileUrl'];
-
-          // Download the compressed file
-          final compressedFile =
-              await _downloadCompressedFile(fileUrl, file, (progress) {
-            // Scale progress from 50% to 90%
-            onProgress?.call(0.5 + (progress * 0.4));
-          });
-
-          // Report progress for completion
-          onProgress?.call(1.0);
-
-          return compressedFile.path;
-        } else {
-          throw Exception(
-              'API compression failed: ${responseData['error'] ?? 'Unknown error'}');
-        }
-      } else {
-        final response = await http.Response.fromStream(streamedResponse);
-        try {
-          final responseData = json.decode(response.body);
-          throw Exception(
-              'API compression failed: ${responseData['error'] ?? 'Status code ${streamedResponse.statusCode}'}');
-        } catch (e) {
-          throw Exception(
-              'API compression failed: Status code ${streamedResponse.statusCode}');
-        }
+      if (streamedResponse.statusCode != 200) {
+        print('Compression failed: ${response.statusCode} - ${response.body}');
+        throw Exception(
+            'API compression failed: HTTP ${streamedResponse.statusCode} - ${response.body}');
       }
+
+      final responseData = json.decode(response.body);
+      print('Compression API Response: $responseData');
+
+      if (responseData['success'] != true) {
+        throw Exception(
+            'API compression failed: ${responseData['error'] ?? 'Unknown error'}');
+      }
+
+      // Get the filename from the response
+      final String? filename = responseData['filename'] as String?;
+      if (filename == null || filename.isEmpty) {
+        throw Exception('No filename returned in response');
+      }
+
+      // Download the compressed file
+      final downloadUrl = Uri.parse('$_baseUrl$_downloadEndpoint')
+          .replace(queryParameters: {'file': filename}).toString();
+      final compressedFile =
+          await _downloadCompressedFile(downloadUrl, file, (progress) {
+        onProgress?.call(0.5 + (progress * 0.4));
+      });
+
+      onProgress?.call(1.0);
+      print('Compressed file downloaded to: ${compressedFile.path}');
+      return compressedFile.path;
     } catch (e) {
-      // If the API fails, we can fall back to local compression
+      print('Compression error: $e');
       rethrow;
     }
   }
 
-  /// Download the compressed file from the API
+  Future<File> downloadCompressedFile(
+    String baseUrl,
+    Map<String, dynamic> compressionResponse,
+    File originalFile,
+  ) async {
+    // Construct the full download URL using the fileUrl from the response
+    final fileUrl = compressionResponse[
+        'fileUrl']; // e.g., "/compressions/269761f6-c160-4a2b-8a99-2ec37a441f58-compressed.pdf"
+    final downloadUrl =
+        '$baseUrl$fileUrl'; // e.g., "https://be6e-125-167-49-182.ngrok-free.app/compressions/269761f6-c160-4a2b-8a99-2ec37a441f58-compressed.pdf"
+
+    return _downloadCompressedFile(
+      downloadUrl,
+      originalFile,
+      (progress) {
+        print('Download progress: ${progress * 100}%');
+      },
+    );
+  }
+
   Future<File> _downloadCompressedFile(
-    String fileUrl,
+    String downloadUrl,
     File originalFile,
     Function(double)? onProgress,
   ) async {
-    // Create the target file path
     final directory = await getTemporaryDirectory();
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final originalFilename = path.basenameWithoutExtension(originalFile.path);
@@ -119,31 +128,35 @@ class PdfCompressionApiService {
       '${originalFilename}_compressed_$timestamp.pdf',
     );
 
-    // Download the file
-    final client = http.Client();
-    final request = http.Request('GET', Uri.parse('$_baseUrl$fileUrl'));
+    print('Downloading from: $downloadUrl');
 
-    // Add API key if required
-    request.headers['X-API-Key'] = ApiConfig.apiKey;
+    try {
+      final client = http.Client();
+      final request = http.Request('GET', Uri.parse(downloadUrl));
+      request.headers['X-API-Key'] =
+          ApiConfig.apiKey; // If your API requires an API key
+      // Force the response to be treated as a binary download
+      request.headers['Accept'] = 'application/pdf';
 
-    final streamedResponse = await client.send(request);
+      final streamedResponse = await client.send(request);
 
-    // Check if download is successful
-    if (streamedResponse.statusCode == 200) {
-      final fileStream = streamedResponse.stream;
+      if (streamedResponse.statusCode != 200) {
+        final errorResponse = await http.Response.fromStream(streamedResponse);
+        print(
+            'Download failed: ${streamedResponse.statusCode} - ${errorResponse.body}');
+        throw Exception(
+            'Failed to download file: HTTP ${streamedResponse.statusCode}');
+      }
+
       final totalBytes = streamedResponse.contentLength ?? 0;
-
-      // Create file and write downloaded data
       final file = File(targetPath);
       final sink = file.openWrite();
-
       int downloadedBytes = 0;
 
-      await for (final chunk in fileStream) {
+      await for (final chunk in streamedResponse.stream) {
         sink.add(chunk);
         downloadedBytes += chunk.length;
 
-        // Report download progress
         if (totalBytes > 0 && onProgress != null) {
           onProgress(downloadedBytes / totalBytes);
         }
@@ -153,11 +166,15 @@ class PdfCompressionApiService {
       await sink.close();
       client.close();
 
+      if (await file.length() == 0) {
+        throw Exception('Downloaded file is empty');
+      }
+
+      print('File downloaded to: $targetPath');
       return file;
-    } else {
-      client.close();
-      throw Exception(
-          'Download failed: Status code ${streamedResponse.statusCode}');
+    } catch (e) {
+      print('Download error: $e');
+      throw Exception('Failed to download compressed file: $e');
     }
   }
 
@@ -165,13 +182,12 @@ class PdfCompressionApiService {
   String _mapCompressionLevelToApiParam(CompressionLevel level) {
     switch (level) {
       case CompressionLevel.low:
-        return 'high'; // API's "high" value preserves more quality
+        return 'high';
       case CompressionLevel.medium:
         return 'medium';
       case CompressionLevel.high:
-        return 'low'; // API's "low" value compresses more aggressively
       case CompressionLevel.maximum:
-        return 'low'; // Default to medium
+        return 'low';
     }
   }
 }

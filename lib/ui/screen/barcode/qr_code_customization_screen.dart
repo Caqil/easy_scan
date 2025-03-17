@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:easy_scan/models/barcode_scan.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
-import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/services/image_service.dart';
 import 'package:easy_scan/ui/screen/barcode/widget/customizable_qrcode.dart';
 import 'package:easy_scan/utils/constants.dart';

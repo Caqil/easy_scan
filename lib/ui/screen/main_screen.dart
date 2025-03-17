@@ -101,7 +101,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     setState(() => _isLoading = isLoading),
                 onSuccess: () {
                   AppRoutes.navigateToEdit(context);
-                  Navigator.pop(context);
                 },
               );
             },
@@ -113,7 +112,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     setState(() => _isLoading = isLoading),
                 onSuccess: () {
                   AppRoutes.navigateToEdit(context);
-                  Navigator.pop(context);
                 },
               );
             },
