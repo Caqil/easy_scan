@@ -4,6 +4,7 @@ import 'package:easy_scan/providers/barcode_provider.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/ui/screen/barcode/barcode_result_screen.dart';
 import 'package:easy_scan/ui/screen/barcode/qr_code_customization_screen.dart';
+import 'package:easy_scan/ui/screen/barcode/widget/barcode_action.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,40 +44,36 @@ class RecentBarcodesWidget extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Row
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.notoSerif(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.notoSerif(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
                 ),
-                if (showAllOption)
-                  TextButton(
-                    onPressed: onViewAllPressed ??
-                        () {
-                          Navigator.pushNamed(context, '/barcode/history');
-                        },
-                    child: Text(
-                      'View All',
-                      style: GoogleFonts.notoSerif(
-                        fontSize: 14.sp,
-                      ),
+              ),
+              if (showAllOption)
+                TextButton(
+                  onPressed: onViewAllPressed ??
+                      () {
+                        Navigator.pushNamed(context, '/barcode/history');
+                      },
+                  child: Text(
+                    'View All',
+                    style: GoogleFonts.notoSerif(
+                      fontSize: 14.sp,
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
           SizedBox(height: 8.h),
 
           // Grid Layout for Barcodes - 2 columns
           GridView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -302,7 +299,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
     );
   }
 
-  // New method to display customized QR image thumbnail
+  // Build customized QR image thumbnail
   Widget _buildCustomizedQRThumbnail(String imagePath) {
     final file = File(imagePath);
 
@@ -326,238 +323,50 @@ class RecentBarcodesWidget extends ConsumerWidget {
     );
   }
 
-  // Show options bottom sheet when tapping More or long pressing
+  // Show iOS-style options bottom sheet when tapping More or long pressing
   void _showOptionsBottomSheet(
       BuildContext context, BarcodeScan scan, WidgetRef ref) {
-    final contentType = _getContentTypeInfo(scan.barcodeValue);
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.r),
-            topRight: Radius.circular(20.r),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Handle bar
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 12.h),
-              height: 4.h,
-              width: 40.w,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(4.r),
+      builder: (context) => BarcodeActionSheet(
+        scan: scan,
+        onView: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BarcodeResultScreen(
+                barcodeValue: scan.barcodeValue,
+                barcodeType: scan.barcodeType,
+                barcodeFormat: scan.barcodeFormat,
               ),
             ),
-
-            // QR Code info
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Row(
-                children: [
-                  // QR thumbnail
-                  Container(
-                    width: 60.w,
-                    height: 60.w,
-                    decoration: BoxDecoration(
-                      color: contentType.color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: scan.isCustomized && scan.customImagePath != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8.r),
-                            child: Image.file(
-                              File(scan.customImagePath!),
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Icon(
-                                Icons.qr_code,
-                                color: contentType.color,
-                                size: 30.sp,
-                              ),
-                            ),
-                          )
-                        : Center(
-                            child: Icon(
-                              contentType.icon,
-                              size: 30.sp,
-                              color: contentType.color,
-                            ),
-                          ),
-                  ),
-
-                  SizedBox(width: 16.w),
-
-                  // Content info
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          contentType.label,
-                          style: GoogleFonts.notoSerif(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          _truncateText(scan.barcodeValue, 40),
-                          style: GoogleFonts.notoSerif(
-                            fontSize: 12.sp,
-                            color: Colors.grey.shade700,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+          );
+        },
+        onCustomize: () {
+          final contentType = _getContentTypeInfo(scan.barcodeValue);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => QRCodeCustomizationScreen(
+                data: scan.barcodeValue,
+                contentType: contentType.label,
+                barcodeFormat: scan.barcodeFormat,
               ),
             ),
-
-            SizedBox(height: 16.h),
-            Divider(height: 1.h),
-
-            // Options list
-            ListView(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                // View details
-                ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.visibility, color: Colors.blue),
-                  ),
-                  title: Text('View Details'),
-                  subtitle: Text('See full information'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BarcodeResultScreen(
-                          barcodeValue: scan.barcodeValue,
-                          barcodeType: scan.barcodeType,
-                          barcodeFormat: scan.barcodeFormat,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-
-                // Customize QR Code
-                ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.purple.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.brush, color: Colors.purple),
-                  ),
-                  title: Text('Customize QR Code'),
-                  subtitle: Text('Change colors and design'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => QRCodeCustomizationScreen(
-                          data: scan.barcodeValue,
-                          contentType: contentType.label,
-                          barcodeFormat: scan.barcodeFormat,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-
-                // Copy to clipboard
-                ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.teal.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.copy, color: Colors.teal),
-                  ),
-                  title: Text('Copy to Clipboard'),
-                  subtitle: Text('Copy QR code content'),
-                  onTap: () {
-                    Clipboard.setData(ClipboardData(text: scan.barcodeValue));
-                    Navigator.pop(context);
-                    AppDialogs.showSnackBar(
-                      context,
-                      message: 'Content copied to clipboard',
-                      type: SnackBarType.success,
-                    );
-                  },
-                ),
-
-                // Share QR Code
-                ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.share, color: Colors.green),
-                  ),
-                  title: Text('Share QR Code'),
-                  subtitle: Text('Share via apps or messages'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _shareQrCode(context, scan);
-                  },
-                ),
-
-                Divider(height: 1.h),
-
-                // Delete QR Code
-                ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.delete, color: Colors.red),
-                  ),
-                  title: Text('Delete', style: TextStyle(color: Colors.red)),
-                  subtitle: Text('Remove from history'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _confirmDelete(context, scan, ref);
-                  },
-                ),
-              ],
-            ),
-
-            SizedBox(height: 8.h),
-          ],
-        ),
+          );
+        },
+        onCopy: () {
+          Clipboard.setData(ClipboardData(text: scan.barcodeValue));
+          AppDialogs.showSnackBar(
+            context,
+            message: 'Content copied to clipboard',
+            type: SnackBarType.success,
+          );
+        },
+        onShare: () => _shareQrCode(context, scan),
+        onDelete: () => _confirmDelete(context, scan, ref),
       ),
     );
   }

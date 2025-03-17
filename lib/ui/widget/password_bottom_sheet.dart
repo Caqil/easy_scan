@@ -8,21 +8,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../services/pdf_service.dart';
 
-class PasswordBottomSheet extends StatefulWidget {
+class PasswordBottomSheet extends ConsumerStatefulWidget {
   final Document document;
-  final WidgetRef ref;
 
   const PasswordBottomSheet({
-    Key? key,
+    super.key,
     required this.document,
-    required this.ref,
-  }) : super(key: key);
+  });
 
   @override
-  State<PasswordBottomSheet> createState() => _PasswordBottomSheetState();
+  ConsumerState<PasswordBottomSheet> createState() =>
+      _PasswordBottomSheetState();
 }
 
-class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
+class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
   bool _isLoading = false;
@@ -146,12 +145,22 @@ class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
     try {
       // Get the PDF service
       final pdfService = PdfService();
+      final String password = _passwordController.text.trim();
+
+      print(
+          'Applying password: "${password}" to document: ${widget.document.name}');
 
       // Apply the password to the actual PDF file
       final protectedPdfPath = await pdfService.protectPdf(
         widget.document.pdfPath,
-        _passwordController.text.trim(),
+        password,
       );
+
+      if (protectedPdfPath.isEmpty) {
+        throw Exception('Failed to protect PDF - returned path is empty');
+      }
+
+      print('Protected PDF path: $protectedPdfPath');
 
       // Update document with password
       final updatedDoc = Document(
@@ -167,11 +176,12 @@ class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
         folderId: widget.document.folderId,
         isFavorite: widget.document.isFavorite,
         isPasswordProtected: true,
-        password: _passwordController.text.trim(),
+        password: password, // Store the actual password
       );
 
-      // Update document in the database
-      widget.ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
+      print('Updating document with password, document ID: ${updatedDoc.id}');
+
+      await ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
 
       // Close the sheet and show success message
       if (mounted) {
@@ -183,6 +193,7 @@ class _PasswordBottomSheetState extends State<PasswordBottomSheet> {
                 : 'Password added successfully');
       }
     } catch (e) {
+      print('Error in _applyPassword: $e');
       if (mounted) {
         AppDialogs.showSnackBar(context,
             type: SnackBarType.error,

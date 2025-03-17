@@ -257,7 +257,7 @@ class _QRCodeCustomizationScreenState
         size: AppConstants.thumbnailSize,
       );
 
-      final Document qrDocument = Document(
+      Document(
         name: documentName,
         pdfPath: permanentFile.path, // Using image path since it's not a PDF
         pagesPaths: [permanentFile.path],

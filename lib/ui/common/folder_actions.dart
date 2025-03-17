@@ -318,7 +318,7 @@ class _FolderOptionsSheet extends StatelessWidget {
 
           // Folder info header
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             child: Row(
               children: [
                 // Folder icon
@@ -345,7 +345,7 @@ class _FolderOptionsSheet extends StatelessWidget {
                 Expanded(
                   child: Text(
                     folder.name,
-                    style:  GoogleFonts.notoSerif(
+                    style: GoogleFonts.notoSerif(
                       fontWeight: FontWeight.bold,
                       fontSize: 16.sp,
                     ),
@@ -362,7 +362,8 @@ class _FolderOptionsSheet extends StatelessWidget {
           // Options list
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildOptionTile(
                   context,
@@ -451,50 +452,33 @@ class _FolderOptionsSheet extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
+      child: SizedBox(
+        width: 60,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 30.w,
-              height: 30.h,
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (iconColor ?? Theme.of(context).primaryColor)
-                    .withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Colors.grey.shade300,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Icon(
                 icon,
-                color: iconColor ?? Theme.of(context).primaryColor,
-                size: 20,
+                size: 24,
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.notoSerif(
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
-                  ),
-                  Text(
-                    description,
-                    style: GoogleFonts.notoSerif(
-                      fontSize: 10.sp,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
+            const SizedBox(height: 8),
+            Text(
+              title,
+              maxLines: 1,
+              style: GoogleFonts.notoSerif(
+                fontSize: 10.sp,
               ),
-            ),
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey.shade400,
-              size: 20,
+              textAlign: TextAlign.center,
             ),
           ],
         ),

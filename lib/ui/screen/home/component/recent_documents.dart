@@ -26,10 +26,10 @@ class RecentDocuments extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        Text(
           'Recent Documents',
           style: GoogleFonts.notoSerif(
-              fontSize: 16.sp, fontWeight: FontWeight.bold),
+              fontSize: 14.sp, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         SizedBox(

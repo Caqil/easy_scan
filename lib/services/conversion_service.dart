@@ -95,13 +95,10 @@ class ConversionService {
       // This assumes your API base URL is like "https://domain.com/api" and
       // your static files are served from the root like "https://domain.com/conversions/..."
 
-      // Extract base domain from API URL by removing the '/api' part
-      String baseDomain = ApiConfig.baseUrl.replaceAll(RegExp(r'/api$'), '');
-      String downloadUrl = "$baseDomain$fileUrl";
+      String downloadUrl =
+          "${ApiConfig.baseUrl}//file?folder=conversions&filename=${filename}";
 
       print("Using direct fileUrl download: $downloadUrl");
-
-      // Download the converted file
       print("Downloading from: $downloadUrl");
 
       var downloadResponse = await http.get(Uri.parse(downloadUrl));

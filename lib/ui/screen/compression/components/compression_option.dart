@@ -169,41 +169,73 @@ class CompressionOptions {
     BuildContext context,
     WidgetRef ref,
   ) async {
+    debugPrint('1. Starting importAndCompressPdf');
+
+    // Store navigator state globally before popping
+    final navigatorState = Navigator.of(context);
+
+    // First close the options sheet
+    debugPrint('2. Attempting to close options sheet');
+    navigatorState.pop();
+
     try {
+      debugPrint('3. Showing file picker');
+      // Show file picker after the sheet is closed
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
       );
 
+      debugPrint(
+          '4. File picker result: ${result != null ? "File selected" : "No file selected"}');
       if (result == null ||
           result.files.isEmpty ||
           result.files.first.path == null) {
+        debugPrint('5. No valid file selected, returning early');
         return;
       }
 
+      // We'll use a global key for the navigator instead of checking context.mounted
+      debugPrint('7. Processing PDF without showing loading dialog');
+
+      debugPrint('9. Processing PDF file');
       final File pdfFile = File(result.files.first.path!);
+      debugPrint('10. PDF path: ${pdfFile.path}');
+
       if (!await pdfFile.exists()) {
+        debugPrint('11. PDF file does not exist');
         throw Exception('Selected file does not exist');
       }
 
+      debugPrint('12. Getting file name');
       final String originalName = path.basenameWithoutExtension(pdfFile.path);
+      debugPrint('13. Original name: $originalName');
 
+      debugPrint('14. Creating target path');
       final String targetPath = await FileUtils.getUniqueFilePath(
         documentName: originalName,
         extension: 'pdf',
       );
+      debugPrint('15. Target path: $targetPath');
 
+      debugPrint('16. Copying file');
       await pdfFile.copy(targetPath);
+      debugPrint('17. File copied successfully');
 
+      debugPrint('18. Creating thumbnail');
       final imageService = ImageService();
       final File thumbnailFile = await imageService.createThumbnail(
         File(targetPath),
         size: AppConstants.thumbnailSize,
       );
+      debugPrint('19. Thumbnail created: ${thumbnailFile.path}');
 
+      debugPrint('20. Getting page count');
       final pdfService = PdfService();
       final int pageCount = await pdfService.getPdfPageCount(targetPath);
+      debugPrint('21. Page count: $pageCount');
 
+      debugPrint('22. Creating document object');
       final tempDocument = Document(
         name: originalName,
         pdfPath: targetPath,
@@ -211,24 +243,21 @@ class CompressionOptions {
         pageCount: pageCount,
         thumbnailPath: thumbnailFile.path,
       );
+      debugPrint('23. Document created: ${tempDocument.name}');
 
-      // MOVE THE Navigator.pop(context) HERE!
-      if (context.mounted) {
-        Navigator.pop(context); // Close the dialog AFTER all processing
-        showCompressionBottomSheet(context, tempDocument, ref);
-      }
+      // Use the stored navigator state to push the new route
+      debugPrint('27. Attempting to navigate to CompressionScreen');
+      navigatorState.push(
+        MaterialPageRoute(
+          builder: (context) => CompressionScreen(document: tempDocument),
+        ),
+      );
+      debugPrint('28. Navigation to CompressionScreen completed');
     } catch (e) {
-      if (context.mounted) {
-        if (Navigator.of(context).canPop()) {
-          Navigator.pop(context);
-        }
-        AppDialogs.showSnackBar(
-          context,
-          message: 'Error importing PDF: $e',
-          type: SnackBarType.error,
-        );
-        debugPrint('Error importing PDF: $e');
-      }
+      debugPrint('ERROR: Exception in importAndCompressPdf: $e');
+      // We can't use the original context for the snackbar since it's no longer mounted
+      // Instead, we could use a global key for scaffold, but for simplicity:
+      debugPrint('Cannot show error snackbar: $e');
     }
   }
 

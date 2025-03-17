@@ -73,7 +73,6 @@ class PdfService {
       // Check if we only have one path (no merge needed)
       if (pdfPaths.length == 1) {
         final File source = File(pdfPaths[0]);
-        final File target = File(outputPath);
         await source.copy(outputPath);
         return outputPath;
       }
@@ -168,7 +167,6 @@ class PdfService {
         try {
           final File source = File(pdfPaths[0]);
           if (await source.exists()) {
-            final File target = File(outputPath);
             await source.copy(outputPath);
             return outputPath;
           }
@@ -236,6 +234,25 @@ class PdfService {
     document.dispose();
 
     return pdfPath;
+  }
+
+// Add this to your PdfService class
+  Future<bool> verifyPdfPassword(String pdfPath, String password) async {
+    try {
+      // Try to open the PDF with the provided password
+      final File file = File(pdfPath);
+      final PdfDocument document = PdfDocument(
+        inputBytes: await file.readAsBytes(),
+        password: password,
+      );
+
+      // If it opens successfully, dispose and return true
+      document.dispose();
+      return true;
+    } catch (e) {
+      debugPrint('Error verifying PDF password: $e');
+      throw Exception('Failed to verify PDF password: $e');
+    }
   }
 
   Future<String> extractPages(

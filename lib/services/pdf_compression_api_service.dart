@@ -8,10 +8,7 @@ import 'package:path/path.dart' as path;
 import 'dart:convert';
 
 class PdfCompressionApiService {
-  static const String _baseUrl = 'https://be6e-125-167-49-182.ngrok-free.app';
-  //   ApiConfig.baseUrl; // e.g., 'https://scanpro.cc'
-  static const String _compressEndpoint = '/api/compress';
-  static const String _downloadEndpoint = '/api/compress/download';
+  static const String _compressEndpoint = '/compress';
 
   /// Compress a PDF file using the remote API
   Future<String> compressPdf({
@@ -25,7 +22,7 @@ class PdfCompressionApiService {
           _mapCompressionLevelToApiParam(compressionLevel);
 
       // Create multipart request for compression
-      final Uri uri = Uri.parse('$_baseUrl$_compressEndpoint');
+      final Uri uri = Uri.parse('${ApiConfig.baseUrl}$_compressEndpoint');
       final request = http.MultipartRequest('POST', uri);
 
       // Add API key if required
@@ -77,10 +74,8 @@ class PdfCompressionApiService {
       if (filename == null || filename.isEmpty) {
         throw Exception('No filename returned in response');
       }
-
-      // Download the compressed file
-      final downloadUrl = Uri.parse('$_baseUrl$_downloadEndpoint')
-          .replace(queryParameters: {'file': filename}).toString();
+      String downloadUrl =
+          "${ApiConfig.baseUrl}/file?folder=compressions&filename=$filename";
       final compressedFile =
           await _downloadCompressedFile(downloadUrl, file, (progress) {
         onProgress?.call(0.5 + (progress * 0.4));
@@ -101,10 +96,10 @@ class PdfCompressionApiService {
     File originalFile,
   ) async {
     // Construct the full download URL using the fileUrl from the response
-    final fileUrl = compressionResponse[
-        'fileUrl']; // e.g., "/compressions/269761f6-c160-4a2b-8a99-2ec37a441f58-compressed.pdf"
-    final downloadUrl =
-        '$baseUrl$fileUrl'; // e.g., "https://be6e-125-167-49-182.ngrok-free.app/compressions/269761f6-c160-4a2b-8a99-2ec37a441f58-compressed.pdf"
+    final fileName = compressionResponse[
+        'filename']; // e.g., "/compressions/269761f6-c160-4a2b-8a99-2ec37a441f58-compressed.pdf"
+    String downloadUrl =
+        "${ApiConfig.baseUrl}/file?folder=compressions&filename=$fileName";
 
     return _downloadCompressedFile(
       downloadUrl,
