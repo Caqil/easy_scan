@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_scan/config/helper.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/services/pdf_service.dart';
