@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/models/barcode_scan.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
@@ -136,7 +137,7 @@ class BarcodeActionSheet extends ConsumerWidget {
                     _buildActionItem(
                       context: context,
                       icon: Icons.visibility,
-                      label: 'View',
+                      label: 'barcode_action.view'.tr(),
                       onTap: () {
                         Navigator.pop(context);
                         if (onView != null) {
@@ -149,7 +150,7 @@ class BarcodeActionSheet extends ConsumerWidget {
                     _buildActionItem(
                       context: context,
                       icon: Icons.brush,
-                      label: 'Customize',
+                      label: 'barcode_action.customize'.tr(),
                       onTap: () {
                         Navigator.pop(context);
                         if (onCustomize != null) {
@@ -162,7 +163,7 @@ class BarcodeActionSheet extends ConsumerWidget {
                     _buildActionItem(
                       context: context,
                       icon: Icons.copy,
-                      label: 'Copy',
+                      label: 'barcode_action.copy'.tr(),
                       onTap: () {
                         Navigator.pop(context);
                         if (onCopy != null) {
@@ -175,7 +176,7 @@ class BarcodeActionSheet extends ConsumerWidget {
                     _buildActionItem(
                       context: context,
                       icon: Icons.delete_outline,
-                      label: 'Delete',
+                      label: 'common.delete'.tr(),
                       onTap: () {
                         Navigator.pop(context);
                         if (onDelete != null) {
@@ -239,7 +240,6 @@ class BarcodeActionSheet extends ConsumerWidget {
     );
   }
 
-
   // View barcode details
   void _viewDetails(BuildContext context) {
     Navigator.push(
@@ -273,7 +273,7 @@ class BarcodeActionSheet extends ConsumerWidget {
     Clipboard.setData(ClipboardData(text: scan.barcodeValue));
     AppDialogs.showSnackBar(
       context,
-      message: 'Content copied to clipboard',
+      message: 'barcode_action.content_copied'.tr(),
       type: SnackBarType.success,
     );
   }
@@ -282,11 +282,10 @@ class BarcodeActionSheet extends ConsumerWidget {
   void _confirmDelete(BuildContext context, WidgetRef ref) {
     AppDialogs.showConfirmDialog(
       context,
-      title: 'Delete QR Code',
-      message:
-          'Are you sure you want to delete this QR code from your history?',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: 'barcode_action.delete_qr_code'.tr(),
+      message: 'barcode_action.delete_confirm'.tr(),
+      confirmText: 'barcode_action.delete'.tr(),
+      cancelText: 'barcode_action.cancel'.tr(),
       isDangerous: true,
     ).then((confirmed) {
       if (confirmed) {
@@ -296,7 +295,7 @@ class BarcodeActionSheet extends ConsumerWidget {
         // Show confirmation
         AppDialogs.showSnackBar(
           context,
-          message: 'QR code deleted from history',
+          message: 'barcode_action.qr_code_deleted'.tr(),
           type: SnackBarType.success,
         );
       }
@@ -312,28 +311,38 @@ class BarcodeActionSheet extends ConsumerWidget {
   // Helper to get content type info
   _ContentTypeInfo _getContentTypeInfo(String value) {
     if (value.startsWith('http://') || value.startsWith('https://')) {
-      return _ContentTypeInfo(Icons.language, Colors.blue, 'URL');
+      return _ContentTypeInfo(
+          Icons.language, Colors.blue, 'barcode_action.url'.tr());
     } else if (value.startsWith('tel:') ||
         RegExp(r'^\+?[0-9\s\-\(\)]+$').hasMatch(value)) {
-      return _ContentTypeInfo(Icons.phone, Colors.green, 'Phone');
+      return _ContentTypeInfo(
+          Icons.phone, Colors.green, 'barcode_action.phone'.tr());
     } else if (value.contains('@') && value.contains('.')) {
-      return _ContentTypeInfo(Icons.email, Colors.orange, 'Email');
+      return _ContentTypeInfo(
+          Icons.email, Colors.orange, 'barcode_action.email'.tr());
     } else if (value.startsWith('WIFI:')) {
-      return _ContentTypeInfo(Icons.wifi, Colors.purple, 'WiFi');
+      return _ContentTypeInfo(
+          Icons.wifi, Colors.purple, 'barcode_action.wifi'.tr());
     } else if (value.startsWith('MATMSG:') || value.startsWith('mailto:')) {
-      return _ContentTypeInfo(Icons.email, Colors.orange, 'Email');
+      return _ContentTypeInfo(
+          Icons.email, Colors.orange, 'barcode_action.email'.tr());
     } else if (value.startsWith('geo:') ||
         RegExp(r'^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$')
             .hasMatch(value)) {
-      return _ContentTypeInfo(Icons.location_on, Colors.red, 'Location');
+      return _ContentTypeInfo(
+          Icons.location_on, Colors.red, 'barcode_action.location'.tr());
     } else if (value.startsWith('BEGIN:VCARD')) {
-      return _ContentTypeInfo(Icons.contact_page, Colors.indigo, 'Contact');
+      return _ContentTypeInfo(
+          Icons.contact_page, Colors.indigo, 'barcode_action.contact'.tr());
     } else if (value.startsWith('BEGIN:VEVENT')) {
-      return _ContentTypeInfo(Icons.event, Colors.teal, 'Event');
+      return _ContentTypeInfo(
+          Icons.event, Colors.teal, 'barcode_action.event'.tr());
     } else if (RegExp(r'^[0-9]+$').hasMatch(value)) {
-      return _ContentTypeInfo(Icons.qr_code, Colors.black, 'Product');
+      return _ContentTypeInfo(
+          Icons.qr_code, Colors.black, 'barcode_action.product'.tr());
     } else {
-      return _ContentTypeInfo(Icons.text_fields, Colors.grey, 'Text');
+      return _ContentTypeInfo(
+          Icons.text_fields, Colors.grey, 'barcode_action.text'.tr());
     }
   }
 }

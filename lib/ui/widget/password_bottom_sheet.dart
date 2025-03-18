@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -101,7 +102,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Cancel'),
+                  child:  Text('common.cancel'.tr()),
                 ),
               ),
               const SizedBox(width: 16),
@@ -120,7 +121,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Save'),
+                      :  Text('common.save'.tr()),
                 ),
               ),
             ],

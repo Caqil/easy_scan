@@ -1,4 +1,5 @@
 // In app.dart
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/config/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +25,9 @@ class DocApp extends ConsumerWidget {
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           themeMode: settings.darkMode ? ThemeMode.dark : ThemeMode.light,
-          // Use GoRouter instead of onGenerateRoute
+          locale: context.locale,
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
           routerConfig: AppRoutes.router,
           builder: (context, child) {
             return AuthWrapper(

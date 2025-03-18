@@ -117,8 +117,8 @@
 //           _buildImportOption(
 //             context,
 //             icon: Icons.photo_library_outlined,
-//             title: 'Import from Gallery',
-//             subtitle: 'Select images to scan',
+//             title: 'scan.import_from_gallery'.tr(),
+//             subtitle: 'scan.import_from_gallery_desc'.tr(),
 //             onTap: () {
               
 //               onImportFromGallery();
@@ -128,8 +128,8 @@
 //           _buildImportOption(
 //             context,
 //             icon: Icons.picture_as_pdf_outlined,
-//             title: 'Import PDF',
-//             subtitle: 'Select PDF files from your device',
+//             title: 'scan.import_pdf'.tr(),
+//             subtitle: 'scan.import_pdf_desc'.tr(),
 //             onTap: () {
 //               onImportPdf();
 //             },
@@ -138,8 +138,8 @@
 //           _buildImportOption(
 //             context,
 //             icon: Icons.cloud_download_outlined,
-//             title: 'Import from Cloud',
-//             subtitle: 'Import files from cloud storage',
+//             title: 'scan.import_from_cloud'.tr(),
+//             subtitle: 'scan.import_from_cloud_desc'.tr(),
 //             onTap: () {
 //               Navigator.pop(context);
 //               onImportFromCloud();

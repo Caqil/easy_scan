@@ -15,6 +15,7 @@ import 'dart:ui' as ui;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/rendering.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class BarcodeResultScreen extends ConsumerWidget {
   final String barcodeValue;
@@ -30,6 +31,7 @@ class BarcodeResultScreen extends ConsumerWidget {
     required this.barcodeType,
     required this.barcodeFormat,
   }) : super(key: key);
+
   BarcodeScan? _findCustomizedScan(WidgetRef ref) {
     final barcodeHistory = ref.watch(barcodeScanHistoryProvider);
 
@@ -54,7 +56,7 @@ class BarcodeResultScreen extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Customized QR Code',
+            'barcode_result.customized_qr'.tr(),
             style: GoogleFonts.notoSerif(
               color: Colors.white,
               fontSize: 16.sp,
@@ -90,7 +92,7 @@ class BarcodeResultScreen extends ConsumerWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: Text(
-          'Scan Result',
+          'barcode_result.scan_result'.tr(),
           style: GoogleFonts.notoSerif(
             fontWeight: FontWeight.bold,
           ),
@@ -148,7 +150,9 @@ class BarcodeResultScreen extends ConsumerWidget {
                             ),
                           ),
                           child: Text(
-                            isQrCode ? 'QR Code' : 'Barcode',
+                            isQrCode
+                                ? 'barcode_result.qr_code'.tr()
+                                : 'barcode_result.barcode'.tr(),
                             style: GoogleFonts.notoSerif(
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w500,
@@ -176,7 +180,7 @@ class BarcodeResultScreen extends ConsumerWidget {
 
                     // Barcode Value
                     Text(
-                      'Content:',
+                      'barcode_result.content'.tr(),
                       style: GoogleFonts.notoSerif(
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
@@ -196,7 +200,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                     // Technical Info
                     ExpansionTile(
                       title: Text(
-                        'Technical Details',
+                        'barcode_result.technical_details'.tr(),
                         style: GoogleFonts.notoSerif(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
@@ -207,7 +211,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                       children: [
                         ListTile(
                           title: Text(
-                            'Barcode Format',
+                            'barcode_result.barcode_format'.tr(),
                             style: GoogleFonts.notoSerif(
                               fontSize: 12.sp,
                               color: Colors.grey.shade600,
@@ -224,7 +228,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                         ),
                         ListTile(
                           title: Text(
-                            'Barcode Type',
+                            'barcode_result.barcode_type'.tr(),
                             style: GoogleFonts.notoSerif(
                               fontSize: 12.sp,
                               color: Colors.grey.shade600,
@@ -268,29 +272,29 @@ class BarcodeResultScreen extends ConsumerWidget {
   String _determineContentType() {
     if (barcodeValue.startsWith('http://') ||
         barcodeValue.startsWith('https://')) {
-      return 'URL/Website';
+      return 'barcode_result.url_website'.tr();
     } else if (barcodeValue.startsWith('tel:') ||
         RegExp(r'^\+?[0-9\s\-\(\)]+$').hasMatch(barcodeValue)) {
-      return 'Phone Number';
+      return 'barcode_result.phone_number'.tr();
     } else if (barcodeValue.contains('@') && barcodeValue.contains('.')) {
-      return 'Email Address';
+      return 'barcode_result.email_address'.tr();
     } else if (barcodeValue.startsWith('WIFI:')) {
-      return 'WiFi Network';
+      return 'barcode_result.wifi_network'.tr();
     } else if (barcodeValue.startsWith('MATMSG:') ||
         barcodeValue.startsWith('mailto:')) {
-      return 'Email Message';
+      return 'barcode_result.email_message'.tr();
     } else if (barcodeValue.startsWith('geo:') ||
         RegExp(r'^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$')
             .hasMatch(barcodeValue)) {
-      return 'Location';
+      return 'barcode_result.location'.tr();
     } else if (barcodeValue.startsWith('BEGIN:VCARD')) {
-      return 'Contact';
+      return 'barcode_result.contact'.tr();
     } else if (barcodeValue.startsWith('BEGIN:VEVENT')) {
-      return 'Calendar Event';
+      return 'barcode_result.calendar_event'.tr();
     } else if (RegExp(r'^[0-9]+$').hasMatch(barcodeValue)) {
-      return 'Product Code';
+      return 'barcode_result.product_code'.tr();
     } else {
-      return 'Text';
+      return 'barcode_result.text'.tr();
     }
   }
 
@@ -306,12 +310,12 @@ class BarcodeResultScreen extends ConsumerWidget {
           Clipboard.setData(ClipboardData(text: barcodeValue));
           AppDialogs.showSnackBar(
             context,
-            message: 'Copied to clipboard',
+            message: 'barcode_result.copied_to_clipboard'.tr(),
             type: SnackBarType.success,
           );
         },
         icon: const Icon(Icons.copy),
-        label: const Text('Copy to Clipboard'),
+        label: Text('barcode_result.copy_to_clipboard'.tr()),
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 12.h),
           shape: RoundedRectangleBorder(
@@ -329,7 +333,7 @@ class BarcodeResultScreen extends ConsumerWidget {
         ElevatedButton.icon(
           onPressed: () => _navigateToCustomizationScreen(context, ref),
           icon: const Icon(Icons.edit),
-          label: const Text('Customize QR Code'),
+          label: Text('barcode_result.customize_qr_code'.tr()),
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Colors.white,
@@ -346,12 +350,12 @@ class BarcodeResultScreen extends ConsumerWidget {
 
     // Add content-specific buttons
     switch (contentType) {
-      case 'URL/Website':
+      case 'Url Website':
         buttons.add(
           ElevatedButton.icon(
             onPressed: () => _launchUrl(barcodeValue, context),
             icon: const Icon(Icons.open_in_browser),
-            label: const Text('Open in Browser'),
+            label: Text('barcode_result.open_in_browser'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               shape: RoundedRectangleBorder(
@@ -371,7 +375,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => _launchUrl('tel:$phoneNumber', context),
             icon: const Icon(Icons.phone),
-            label: const Text('Call Number'),
+            label: Text('barcode_result.call_number'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               backgroundColor: Colors.green,
@@ -388,7 +392,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           OutlinedButton.icon(
             onPressed: () => _launchUrl('sms:$phoneNumber', context),
             icon: const Icon(Icons.message),
-            label: const Text('Send Message'),
+            label: Text('barcode_result.send_message'.tr()),
             style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               shape: RoundedRectangleBorder(
@@ -408,7 +412,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => _launchUrl('mailto:$email', context),
             icon: const Icon(Icons.email),
-            label: const Text('Send Email'),
+            label: Text('barcode_result.send_email'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               backgroundColor: Colors.blue,
@@ -420,7 +424,7 @@ class BarcodeResultScreen extends ConsumerWidget {
         );
         break;
 
-      case 'WiFi Network':
+      case 'Wifi Network':
         // Parse WIFI:T:WPA;S:MyNetwork;P:password;;
         final ssid = RegExp(r'S:(.*?)(;|$)').firstMatch(barcodeValue)?.group(1);
         final password =
@@ -432,12 +436,12 @@ class BarcodeResultScreen extends ConsumerWidget {
               onPressed: () {
                 AppDialogs.showSnackBar(
                   context,
-                  message: 'WiFi details copied to clipboard',
+                  message: 'barcode_result.wifi_details_copied'.tr(),
                   type: SnackBarType.success,
                 );
               },
               icon: const Icon(Icons.wifi),
-              label: const Text('Connect to Network'),
+              label: Text('barcode_result.connect_to_network'.tr()),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 backgroundColor: Colors.blue,
@@ -457,12 +461,12 @@ class BarcodeResultScreen extends ConsumerWidget {
                   Clipboard.setData(ClipboardData(text: password));
                   AppDialogs.showSnackBar(
                     context,
-                    message: 'WiFi password copied to clipboard',
+                    message: 'barcode_result.wifi_password_copied'.tr(),
                     type: SnackBarType.success,
                   );
                 },
                 icon: const Icon(Icons.password),
-                label: const Text('Copy Password'),
+                label: Text('barcode_result.copy_password'.tr()),
                 style: OutlinedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                   shape: RoundedRectangleBorder(
@@ -475,7 +479,7 @@ class BarcodeResultScreen extends ConsumerWidget {
         }
         break;
 
-      case 'Location':
+      case 'location':
         String mapUrl;
         if (barcodeValue.startsWith('geo:')) {
           // Parse geo:37.786971,-122.399677
@@ -489,7 +493,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => _launchUrl(mapUrl, context),
             icon: const Icon(Icons.map),
-            label: const Text('Open in Maps'),
+            label: Text('barcode_result.open_in_maps'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               backgroundColor: Colors.green,
@@ -512,7 +516,7 @@ class BarcodeResultScreen extends ConsumerWidget {
       OutlinedButton.icon(
         onPressed: () => _shareResult(context),
         icon: const Icon(Icons.share),
-        label: const Text('Share QR Code'),
+        label: Text('barcode_result.share_qr_code'.tr()),
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 12.h),
           shape: RoundedRectangleBorder(
@@ -562,7 +566,8 @@ class BarcodeResultScreen extends ConsumerWidget {
         if (context.mounted) {
           AppDialogs.showSnackBar(
             context,
-            message: 'Could not launch $url',
+            message:
+                'barcode_result.could_not_launch'.tr(namedArgs: {'url': url}),
             type: SnackBarType.error,
           );
         }
@@ -571,7 +576,8 @@ class BarcodeResultScreen extends ConsumerWidget {
       if (context.mounted) {
         AppDialogs.showSnackBar(
           context,
-          message: 'Error launching URL: $e',
+          message: 'barcode_result.error_launching_url'
+              .tr(namedArgs: {'error': e.toString()}),
           type: SnackBarType.error,
         );
       }
@@ -585,7 +591,7 @@ class BarcodeResultScreen extends ConsumerWidget {
       if (_qrKey.currentContext == null) {
         AppDialogs.showSnackBar(
           context,
-          message: 'QR code not ready for sharing',
+          message: 'barcode_result.qr_not_ready'.tr(),
           type: SnackBarType.error,
         );
         return;
@@ -594,7 +600,7 @@ class BarcodeResultScreen extends ConsumerWidget {
       // Show a loading indicator
       AppDialogs.showSnackBar(
         context,
-        message: 'Preparing QR code for sharing...',
+        message: 'barcode_result.preparing_qr'.tr(),
         type: SnackBarType.normal,
       );
 
@@ -607,7 +613,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           await image.toByteData(format: ui.ImageByteFormat.png);
 
       if (byteData == null) {
-        throw Exception('Failed to capture QR code image');
+        throw Exception('barcode_result.capture_failed'.tr());
       }
 
       final Uint8List pngBytes = byteData.buffer.asUint8List();
@@ -622,18 +628,21 @@ class BarcodeResultScreen extends ConsumerWidget {
 
       // 3. Share the file and the barcode data
       final String contentTypeStr = _determineContentType();
-      final String shareText = '$contentTypeStr QR Code\n$barcodeValue';
+      final String shareText = 'barcode_result.share_text'
+          .tr(namedArgs: {'type': contentTypeStr, 'value': barcodeValue});
 
       await Share.shareXFiles(
         [XFile(file.path)],
         text: shareText,
-        subject: 'QR Code: $contentTypeStr',
+        subject:
+            'barcode_result.qr_subject'.tr(namedArgs: {'type': contentTypeStr}),
       );
     } catch (e) {
       if (context.mounted) {
         AppDialogs.showSnackBar(
           context,
-          message: 'Error sharing QR code: $e',
+          message: 'barcode_result.share_error'
+              .tr(namedArgs: {'error': e.toString()}),
           type: SnackBarType.error,
         );
       }

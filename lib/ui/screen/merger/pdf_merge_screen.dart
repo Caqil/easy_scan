@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/services/pdf_merger_service.dart';
@@ -828,7 +829,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
+                child:  Text('common.cancel'.tr()),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, true),

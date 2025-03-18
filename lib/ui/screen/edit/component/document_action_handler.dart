@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/ui/screen/edit/component/document_password_widget.dart';
 import 'package:easy_scan/ui/screen/edit/component/edit_screen_controller.dart';
@@ -88,7 +89,7 @@ class DocumentActionHandler {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text('Cancel'),
+                      child: Text('common.cancel'.tr()),
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton(
@@ -450,7 +451,7 @@ class DocumentActionHandler {
                         children: [
                           Row(
                             children: [
-                              Text('Color:',
+                              Text('color_mode.color'.tr(),
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(width: 16),
@@ -567,7 +568,7 @@ class DocumentActionHandler {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                      child:  Text('common.cancel'.tr()),
                     ),
                     const SizedBox(width: 16),
                     OutlinedButton(

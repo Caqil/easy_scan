@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/ui/widget/password_verification_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -196,13 +197,13 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                             ],
                           ),
                         ),
-                        const PopupMenuItem(
+                         PopupMenuItem(
                           value: 'print',
                           child: Row(
                             children: [
                               Icon(Icons.print),
                               SizedBox(width: 8),
-                              Text('Print'),
+                              Text('share.print'.tr()),
                             ],
                           ),
                         ),

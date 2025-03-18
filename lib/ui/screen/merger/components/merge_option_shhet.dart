@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/config/routes.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
@@ -241,7 +242,7 @@ class MergeOptionsSheet extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child:  Text('common.cancel'.tr()),
             ),
             TextButton(
               onPressed: selectedDocs.isEmpty
@@ -366,7 +367,7 @@ class MergeOptionsSheet extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child:  Text('common.cancel'.tr()),
             ),
             TextButton(
               onPressed: selectedDocs.length < 2

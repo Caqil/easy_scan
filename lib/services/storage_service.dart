@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_scan/models/language.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
 import '../models/document.dart';
@@ -26,7 +27,6 @@ class StorageService {
       Hive.registerAdapter(DocumentAdapter());
       Hive.registerAdapter(FolderAdapter());
       Hive.registerAdapter(AppSettingsAdapter());
-
       // Open boxes
       await Hive.openBox<Document>(AppConstants.documentsBoxName);
       await Hive.openBox<Folder>(AppConstants.foldersBoxName);

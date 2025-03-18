@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -87,7 +88,7 @@ class ScanInitialView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onScanPressed,
       icon: const Icon(Icons.camera_alt),
-      label: const Text('Start Scanning'),
+      label:  Text('scan.start_scanning'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(
@@ -102,7 +103,7 @@ class ScanInitialView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onImportPressed,
       icon: const Icon(Icons.photo_library),
-      label: const Text('Import from Gallery'),
+      label:  Text('scan.import_from_gallery'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,7 +57,7 @@ class ConversionButton extends StatelessWidget {
               ),
             ),
             SizedBox(width: 12.w),
-            const Text("Converting..."),
+            Text("conversion_button.converting".tr()), // Localized string
           ],
         ),
         SizedBox(height: 6.h),
@@ -75,7 +76,7 @@ class ConversionButton extends StatelessWidget {
         Icon(state.inputFormat?.icon ?? Icons.file_present, size: 20.sp),
         SizedBox(width: 8.w),
         Text(
-          "Convert",
+          "conversion_button.convert".tr(), // Localized string
           style: GoogleFonts.notoSerif(fontSize: 16.sp),
         ),
         SizedBox(width: 8.w),
@@ -89,14 +90,15 @@ class ConversionButton extends StatelessWidget {
       onSuccess: () {
         AppDialogs.showSnackBar(
           context,
-          message: "Conversion completed successfully!",
+          message: "conversion_button.success_message".tr(), // Localized string
           type: SnackBarType.success,
         );
       },
       onFailure: (error) {
         AppDialogs.showSnackBar(
           context,
-          message: "Conversion failed: $error",
+          message: "conversion_button.failure_message"
+              .tr(args: [error]), // Localized string with argument
           type: SnackBarType.error,
         );
       },

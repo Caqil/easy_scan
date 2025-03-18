@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/config/helper.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
@@ -72,7 +73,7 @@ class _CompressionBottomSheetState
               ),
               const SizedBox(width: 12),
               Text(
-                'Compress PDF',
+                'compress_pdf'.tr(),
                 style: GoogleFonts.notoSerif(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -82,15 +83,15 @@ class _CompressionBottomSheetState
           ),
           const SizedBox(height: 16),
           Text(
-            'Document: ${widget.document.name}',
+            'documents'.tr(namedArgs: {'name': widget.document.name}),
             style: GoogleFonts.notoSerif(
               fontWeight: FontWeight.w500,
               fontSize: 14.sp,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 15.h),
           Text(
-            'Compression Level',
+            'compression_level'.tr(),
             style: GoogleFonts.notoSerif(
               fontWeight: FontWeight.w600,
               fontSize: 14.sp,
@@ -141,7 +142,7 @@ class _CompressionBottomSheetState
             const SizedBox(height: 16),
             Center(
               child: Text(
-                'Compressing PDF...',
+                'compressing'.tr(),
                 style: GoogleFonts.notoSerif(
                   color: Theme.of(context).colorScheme.secondary,
                   fontSize: 14.sp,
@@ -162,7 +163,7 @@ class _CompressionBottomSheetState
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text('Cancel'),
+                  child: Text('common.cancel'.tr()),
                 ),
               ),
               const SizedBox(width: 16),
@@ -202,7 +203,7 @@ class _CompressionBottomSheetState
           children: [
             Expanded(
               child: _buildCompressionOption(
-                label: 'Low',
+                label: 'compression_levels.low'.tr(),
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.low,
                 onTap: () =>
@@ -211,7 +212,7 @@ class _CompressionBottomSheetState
             ),
             Expanded(
               child: _buildCompressionOption(
-                label: 'Medium',
+                label: 'compression_descriptions.medium'.tr(),
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.medium,
                 onTap: () =>
@@ -225,7 +226,7 @@ class _CompressionBottomSheetState
           children: [
             Expanded(
               child: _buildCompressionOption(
-                label: 'High',
+                label: 'compression_details.high'.tr(),
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.high,
                 onTap: () =>
@@ -389,9 +390,10 @@ class _CompressionBottomSheetState
         Navigator.pop(context);
         AppDialogs.showSnackBar(
           context,
+          message: 'compression_success'.tr(namedArgs: {
+            'percent': percentReduction.toStringAsFixed(1),
+          }),
           type: SnackBarType.success,
-          message:
-              'PDF compressed successfully (${percentReduction.toStringAsFixed(1)}% reduction)',
         );
       }
     } catch (e) {

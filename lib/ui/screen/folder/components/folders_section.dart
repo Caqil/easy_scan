@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../models/folder.dart';
 
 class FoldersSection extends ConsumerWidget {
@@ -25,7 +26,7 @@ class FoldersSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Limit to 10 items
+    // Limit to 5 items (changed from 10 to match your code)
     final limitedFolders = folders.take(5).toList();
 
     return Column(
@@ -35,7 +36,7 @@ class FoldersSection extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Folders',
+              'folders_section.folders'.tr(),
               style: GoogleFonts.notoSerif(
                   fontSize: 14.sp, fontWeight: FontWeight.bold),
             ),
@@ -43,12 +44,13 @@ class FoldersSection extends ConsumerWidget {
               children: [
                 TextButton(
                   onPressed: onCreateFolder,
-                  child: Text('Create New', style: GoogleFonts.notoSerif()),
+                  child: Text('folders_section.create_new'.tr(),
+                      style: GoogleFonts.notoSerif()),
                 ),
                 if (folders.length > 5)
                   TextButton(
                     onPressed: onSeeAll,
-                    child: const Text('See All'),
+                    child: Text('folders_section.see_all'.tr()),
                   ),
               ],
             ),

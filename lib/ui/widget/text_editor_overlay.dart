@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/models/scan_result.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,11 +10,11 @@ class TextEditorOverlay extends StatefulWidget {
   final Function(List<TextElementData>) onTextUpdated;
 
   const TextEditorOverlay({
-    Key? key,
+    super.key,
     required this.imageFile,
     required this.textElements,
     required this.onTextUpdated,
-  }) : super(key: key);
+  });
 
   @override
   State<TextEditorOverlay> createState() => _TextEditorOverlayState();
@@ -149,7 +150,7 @@ class _TextEditorOverlayState extends State<TextEditorOverlay> {
                               _selectedElement = null;
                             });
                           },
-                          child: Text('Done'),
+                          child: Text('common.done'.tr()),
                         ),
                         TextButton(
                           onPressed: () {
@@ -160,7 +161,7 @@ class _TextEditorOverlayState extends State<TextEditorOverlay> {
                             });
                             widget.onTextUpdated(_editableElements);
                           },
-                          child: Text('Delete',
+                          child: Text('common.delete'.tr(),
                               style: GoogleFonts.notoSerif(color: Colors.red)),
                         ),
                       ],

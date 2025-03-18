@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +24,7 @@ class FileSelectionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SectionContainer(
-      title: "Select File",
+      title: "file_selection.title".tr(), // Localized string
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -38,7 +39,8 @@ class FileSelectionSection extends StatelessWidget {
                 ? null
                 : () => ref.read(conversionStateProvider.notifier).pickFile(),
             icon: const Icon(Icons.upload_file),
-            label: const Text("Select File"),
+            label: Text(
+                "file_selection.select_file_button".tr()), // Localized string
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
             ),
@@ -80,7 +82,9 @@ class FileSelectionSection extends StatelessWidget {
                 FutureBuilder<String>(
                   future: _getFileInfo(state.selectedFile!),
                   builder: (context, snapshot) {
-                    final info = snapshot.data ?? 'Loading file info...';
+                    final info = snapshot.data ??
+                        "file_selection.file_info.loading"
+                            .tr(); // Localized string
                     return Text(
                       info,
                       style: GoogleFonts.notoSerif(
@@ -118,12 +122,12 @@ class FileSelectionSection extends StatelessWidget {
           ),
           SizedBox(height: 12.h),
           Text(
-            "No file selected",
+            "file_selection.no_file_selected.title".tr(), // Localized string
             style: GoogleFonts.notoSerif(fontSize: 16.sp),
           ),
           SizedBox(height: 8.h),
           Text(
-            "Select a file to convert",
+            "file_selection.no_file_selected.subtitle".tr(), // Localized string
             style: GoogleFonts.notoSerif(fontSize: 14.sp, color: Colors.grey),
           ),
         ],
@@ -136,9 +140,14 @@ class FileSelectionSection extends StatelessWidget {
       final size = await file.length();
       final sizeStr = FileUtils.formatFileSize(size);
       final dateModified = await file.lastModified();
-      return "$sizeStr • Modified ${DateTimeUtils.getRelativeTime(dateModified)}";
+      return "file_selection.file_info.size_modified".tr(
+        args: [
+          sizeStr,
+          DateTimeUtils.getRelativeTime(dateModified)
+        ], // Dynamic arguments
+      );
     } catch (e) {
-      return "Error getting file info";
+      return "file_selection.file_info.error".tr(); // Localized string
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,7 +19,7 @@ class ScanService {
   void showPermissionDialog(BuildContext context) {
     AppDialogs.showConfirmDialog(
       context,
-      title: 'Permission Required',
+      title: 'permissions.permission_required'.tr(),
       message:
           'Camera permission is needed to scan documents. Would you like to open app settings?',
       confirmText: 'Open Settings',
@@ -93,7 +94,7 @@ class ScanService {
         if (context.mounted) {
           AppDialogs.showSnackBar(
             context,
-            message: 'No valid images found',
+            message: 'errors.no_valid_images'.tr(),
           );
         }
         setLoading(false);
@@ -105,13 +106,13 @@ class ScanService {
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => const AlertDialog(
+          builder: (context) => AlertDialog(
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircularProgressIndicator(),
                 SizedBox(height: 16),
-                Text('Processing scanned images...')
+                Text('scan.processing_scanned_images'.tr())
               ],
             ),
           ),

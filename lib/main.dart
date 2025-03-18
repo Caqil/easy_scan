@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,17 @@ void main() async {
   final storageService = StorageService();
   await storageService.initialize();
   runApp(
-    const ProviderScope(
-      child: DocApp(),
+    ProviderScope(
+      child: EasyLocalization(
+          path: 'assets/languages',
+          fallbackLocale: Locale('en', 'US'),
+          startLocale: Locale('en', 'US'),
+          supportedLocales: const [
+            Locale("en", "US"),
+            Locale("id", "ID"),
+          ],
+          useOnlyLangCode: true,
+          child: DocApp()),
     ),
   );
 }

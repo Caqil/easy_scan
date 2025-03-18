@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/config/helper.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
@@ -77,7 +78,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text('Compress PDF'),
+        title: Text('compression.compress_pdf'.tr()),
         actions: [
           IconButton(
             icon: Icon(_isAdvancedMode ? Icons.tune : Icons.tune),
@@ -185,7 +186,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           ),
           const SizedBox(height: 16),
           _buildSliderWithLabel(
-            label: 'Overall Quality',
+            label: 'compression.overall_quality'.tr(),
             value: _qualitySliderValue,
             min: 10,
             max: 100,
@@ -201,7 +202,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           ),
           const SizedBox(height: 16),
           _buildSliderWithLabel(
-            label: 'Image Quality',
+            label: 'compression.image_quality'.tr(),
             value: _imageQualitySliderValue,
             min: 10,
             max: 100,
@@ -649,7 +650,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildStatColumn(
-                label: 'Original Size',
+                label: 'document.original_size'.tr(),
                 value: FileUtils.formatFileSize(_originalFileSize),
               ),
               Icon(
@@ -657,7 +658,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                 color: Colors.grey.shade400,
               ),
               _buildStatColumn(
-                label: 'Estimated Size',
+                label: 'document.estimated_size'.tr(),
                 value: FileUtils.formatFileSize(_estimatedFileSize),
                 valueColor: Theme.of(context).colorScheme.secondary,
               ),
@@ -670,12 +671,12 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildStatColumn(
-                label: 'Size Reduction',
+                label: 'document.size_reduction'.tr(),
                 value: FileUtils.formatFileSize(sizeDifference),
                 valueColor: Colors.green.shade700,
               ),
               _buildStatColumn(
-                label: 'Percentage',
+                label: 'document.percentage'.tr(),
                 value: '$percentageReduction%',
                 valueColor: Colors.green.shade700,
               ),
@@ -738,7 +739,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text('Cancel'),
+                child:  Text('common.cancel'.tr()),
               ),
             ),
             const SizedBox(width: 16),

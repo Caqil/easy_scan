@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
@@ -53,7 +54,7 @@ class FolderActions {
     if (documentsNotInFolder.isEmpty) {
       AppDialogs.showSnackBar(
         context,
-        message: 'No documents available to add to this folder',
+        message: 'folder_actions.no_documents_available'.tr(),
         type: SnackBarType.warning,
       );
       return;
@@ -67,7 +68,8 @@ class FolderActions {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: Text('Add Documents to "${targetFolder.name}"'),
+          title: Text('folder_actions.add_documents_to'
+              .tr(namedArgs: {'folderName': targetFolder.name})),
           content: SizedBox(
             width: double.maxFinite,
             height: 400,
@@ -75,7 +77,7 @@ class FolderActions {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Select documents to add:',
+                  'folder_actions.select_documents'.tr(),
                   style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -94,8 +96,11 @@ class FolderActions {
                         ),
                         subtitle: Text(
                           doc.folderId == null
-                              ? 'Root folder'
-                              : 'From: ${_getFolderName(ref, doc.folderId)}',
+                              ? 'folder_actions.root_folder'.tr()
+                              : 'folder_actions.from_folder'.tr(namedArgs: {
+                                  'folderName':
+                                      _getFolderName(ref, doc.folderId)
+                                }),
                           style: TextStyle(fontSize: 12),
                         ),
                         secondary: doc.thumbnailPath != null
@@ -144,7 +149,8 @@ class FolderActions {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Selected documents will be moved to "${targetFolder.name}"',
+                          'folder_actions.move_to_folder'
+                              .tr(namedArgs: {'folderName': targetFolder.name}),
                           style: TextStyle(
                             fontSize: 12,
                             color: Color(targetFolder.color),
@@ -160,13 +166,14 @@ class FolderActions {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text('common.cancel'.tr()),
             ),
             TextButton(
               onPressed: selectedDocuments.isEmpty
                   ? null
                   : () => Navigator.pop(context, true),
-              child: Text('Add to Folder (${selectedDocuments.length})'),
+              child: Text('folder_actions.add_to_folder'.tr(
+                  namedArgs: {'count': selectedDocuments.length.toString()})),
             ),
           ],
         ),
@@ -188,8 +195,11 @@ class FolderActions {
           AppDialogs.showSnackBar(
             context,
             type: SnackBarType.success,
-            message:
-                'Added ${selectedDocuments.length} document${selectedDocuments.length == 1 ? '' : 's'} to "${targetFolder.name}"',
+            message: 'folder_actions.added_documents'.tr(namedArgs: {
+              'count': selectedDocuments.length.toString(),
+              'plural': selectedDocuments.length == 1 ? '' : 's',
+              'folderName': targetFolder.name
+            }),
           );
         }
       }
@@ -225,7 +235,7 @@ class FolderActions {
         return StatefulBuilder(
           builder: (context, setState) {
             return CupertinoAlertDialog(
-              title: const Text('Rename Folder'),
+              title: Text('folder_actions.rename_folder'.tr()),
               content: CupertinoTextField(
                 controller: controller,
                 autofocus: true,
@@ -233,7 +243,7 @@ class FolderActions {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(dialogContext),
-                  child: const Text('Cancel'),
+                  child: Text('common.cancel'.tr()),
                 ),
                 TextButton(
                   onPressed: () {
@@ -241,7 +251,7 @@ class FolderActions {
                       Navigator.pop(dialogContext, controller.text.trim());
                     }
                   },
-                  child: const Text('Rename'),
+                  child: Text('common.rename'.tr()),
                 ),
               ],
             );
@@ -266,7 +276,7 @@ class FolderActions {
         if (context.mounted) {
           AppDialogs.showSnackBar(context,
               type: SnackBarType.success,
-              message: 'Folder renamed successfully');
+              message: 'folder_actions.folder_renamed'.tr());
         }
       }
     });
@@ -285,7 +295,7 @@ class FolderActions {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return CupertinoAlertDialog(
-            title: const Text('Change Folder Color'),
+            title: Text('folder_actions.change_folder_color'.tr()),
             content: Wrap(
               spacing: 16,
               runSpacing: 16,
@@ -328,11 +338,11 @@ class FolderActions {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
+                child: Text('common.cancel'.tr()),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Apply'),
+                child: Text('folder_actions.apply'.tr()),
               ),
             ],
           );
@@ -355,7 +365,7 @@ class FolderActions {
       // Show success message
       if (context.mounted) {
         AppDialogs.showSnackBar(context,
-            message: 'Folder color updated successfully');
+            message: 'folder_actions.folder_color_updated'.tr());
       }
     }
   }
@@ -374,18 +384,20 @@ class FolderActions {
           context: context,
           builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                    title: const Text('Delete Folder'),
+                    title: Text('folder_actions.delete_folder'.tr()),
                     content: documentsInFolder.isNotEmpty ||
                             subfolders.isNotEmpty
-                        ? Text(
-                            'This folder contains ${documentsInFolder.length} documents and ${subfolders.length} subfolders. '
-                            'All contents will be moved to the parent folder. Continue?')
-                        : Text(
-                            'Are you sure you want to delete "${folder.name}"?'),
+                        ? Text('folder_actions.delete_folder_content_warning'
+                            .tr(namedArgs: {
+                            'docCount': documentsInFolder.length.toString(),
+                            'subfolderCount': subfolders.length.toString()
+                          }))
+                        : Text('folder_actions.delete_folder_confirm'
+                            .tr(namedArgs: {'folderName': folder.name})),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Cancel'),
+                        child: Text('common.cancel'.tr()),
                       ),
                       TextButton(
                         onPressed: () {
@@ -394,7 +406,7 @@ class FolderActions {
                         },
                         style:
                             TextButton.styleFrom(foregroundColor: Colors.red),
-                        child: const Text('Delete'),
+                        child: Text('common.delete'.tr()),
                       ),
                     ],
                   )),
@@ -431,7 +443,8 @@ class FolderActions {
       // Show success message
       if (context.mounted) {
         AppDialogs.showSnackBar(context,
-            type: SnackBarType.success, message: 'Folder deleted successfully');
+            type: SnackBarType.success,
+            message: 'folder_actions.folder_deleted'.tr());
 
         if (popNavigatorOnSuccess) {
           Navigator.pop(context);
@@ -540,8 +553,8 @@ class _FolderOptionsSheet extends StatelessWidget {
                 _buildOptionTile(
                   context,
                   icon: Icons.edit_outlined,
-                  title: 'Rename Folder',
-                  description: 'Change folder name',
+                  title: 'folder_actions.rename_folder_option'.tr(),
+                  description: 'folder_actions.change_folder_name'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     if (onRename != null) {
@@ -555,8 +568,8 @@ class _FolderOptionsSheet extends StatelessWidget {
                 _buildOptionTile(
                   context,
                   icon: Icons.palette_outlined,
-                  title: 'Change Color',
-                  description: 'Customize folder appearance',
+                  title: 'folder_actions.change_color_option'.tr(),
+                  description: 'folder_actions.customize_appearance'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     if (onChangeColor != null) {
@@ -571,8 +584,8 @@ class _FolderOptionsSheet extends StatelessWidget {
                   _buildOptionTile(
                     context,
                     icon: Icons.drive_file_move_outlined,
-                    title: 'Move Folder',
-                    description: 'Change folder location',
+                    title: 'folder_actions.move_folder'.tr(),
+                    description: 'folder_actions.change_location'.tr(),
                     onTap: () {
                       Navigator.pop(context);
                       // Implement move folder functionality
@@ -585,8 +598,8 @@ class _FolderOptionsSheet extends StatelessWidget {
                   context,
                   icon: Icons.delete_outlined,
                   iconColor: Colors.red,
-                  title: 'Delete Folder',
-                  description: 'Remove folder and move contents',
+                  title: 'folder_actions.delete_folder_option'.tr(),
+                  description: 'folder_actions.remove_folder'.tr(),
                   textColor: Colors.red,
                   onTap: () {
                     Navigator.pop(context);
@@ -606,8 +619,9 @@ class _FolderOptionsSheet extends StatelessWidget {
                   context,
                   icon: Icons.file_download,
                   iconColor: Colors.red,
-                  title: 'Add Documents',
-                  description: 'Move documents to "${folder.name}"',
+                  title: 'folder_actions.add_documents_option'.tr(),
+                  description: 'folder_actions.move_documents_to'
+                      .tr(namedArgs: {'folderName': folder.name}),
                   textColor: Colors.red,
                   onTap: () {
                     Navigator.pop(context);

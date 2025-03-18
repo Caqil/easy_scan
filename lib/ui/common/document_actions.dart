@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -193,7 +194,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
                 _buildActionItem(
                   context: context,
                   icon: Icons.drive_file_move_outlined,
-                  label: 'Move',
+                  label: 'common.move'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     if (widget.onMoveToFolder != null) {
@@ -204,7 +205,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
                 _buildActionItem(
                   context: context,
                   icon: Icons.edit_outlined,
-                  label: 'Rename',
+                  label: 'common.rename'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     if (widget.onRename != null) {
@@ -217,7 +218,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
                 _buildActionItem(
                   context: context,
                   icon: Icons.delete_outline,
-                  label: 'Delete',
+                  label: 'common.delete'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     if (widget.onDelete != null) {
@@ -240,8 +241,8 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
                 ),
                 _buildActionItem(
                   context: context,
-                  icon: Icons.info_outline,
-                  label: 'Info',
+                  icon: Icons.edit,
+                  label: 'common.edit'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     // Show document info implementation
@@ -279,7 +280,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
                 _buildShareItem(
                   context: context,
                   icon: Icons.email_outlined,
-                  label: 'Email',
+                  label: 'share.email'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     if (widget.onShare != null) {
@@ -290,7 +291,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
                 _buildShareItem(
                   context: context,
                   icon: Icons.print,
-                  label: 'Print',
+                  label: 'share.print'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     // Print document implementation
@@ -301,7 +302,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
                 _buildShareItem(
                   context: context,
                   icon: Icons.fax_outlined,
-                  label: 'Fax',
+                  label: 'share.fax'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     // Fax document implementation
@@ -312,7 +313,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
                 _buildShareItem(
                   context: context,
                   icon: Icons.share,
-                  label: 'Share',
+                  label: 'common.share'.tr(),
                   onTap: () {
                     Navigator.pop(context);
                     if (widget.onShare != null) {
@@ -380,7 +381,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
     final String? newName = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Rename Document'),
+        title: Text('document.rename_document'.tr()),
         content: CupertinoTextField(
           style: GoogleFonts.notoSerif(color: Theme.of(context).primaryColor),
           controller: textController,
@@ -390,7 +391,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('common.cancel'.tr()),
           ),
           TextButton(
             onPressed: () {
@@ -398,7 +399,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
                 Navigator.pop(context, textController.text.trim());
               }
             },
-            child: const Text('Rename'),
+            child: Text('common.rename'.tr()),
           ),
         ],
       ),
@@ -418,7 +419,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.success,
-          message: 'Document renamed successfully',
+          message: 'document.document_renamed'.tr(),
         );
       }
     }
@@ -428,18 +429,18 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
     final bool confirm = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Delete Document'),
+            title: Text('document.delete_document'.tr()),
             content: Text(
                 'Are you sure you want to delete "${widget.document.name}"?'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
+                child: Text('common.cancel'.tr()),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: const Text('Delete'),
+                child: Text('common.delete'.tr()),
               ),
             ],
           ),
@@ -455,7 +456,7 @@ class _DocumentOptionsSheetState extends ConsumerState<_DocumentOptionsSheet> {
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.success,
-          message: 'Document deleted successfully',
+          message: 'document.document_deleted'.tr(),
         );
       }
     }

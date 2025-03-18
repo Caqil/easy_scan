@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/config/helper.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
@@ -64,8 +65,8 @@ class CompressionOptions {
               children: [
                 const CircularProgressIndicator(),
                 const SizedBox(height: 16),
-                Text('Compressing PDF...'),
-                Text('Using cloud compression API'),
+                Text('compression.compressing_pdf'.tr()),
+                Text('compression.using_cloud_compression'.tr()),
               ],
             ),
           ),
@@ -85,16 +86,16 @@ class CompressionOptions {
       String levelSuffix;
       switch (compressionLevel) {
         case CompressionLevel.low:
-          levelSuffix = " (Lightly Compressed)";
+          levelSuffix = 'compression.lightly_compressed_suffix'.tr();
           break;
         case CompressionLevel.medium:
-          levelSuffix = " (Compressed)";
+          levelSuffix = 'compression.compressed_suffix'.tr();
           break;
         case CompressionLevel.high:
-          levelSuffix = " (Highly Compressed)";
+          levelSuffix = 'compression.highly_compressed_suffix'.tr();
           break;
         case CompressionLevel.maximum:
-          levelSuffix = " (Max Compressed)";
+          levelSuffix = 'compression.max_compressed_suffix'.tr();
           break;
       }
 
@@ -110,7 +111,7 @@ class CompressionOptions {
           Navigator.pop(context);
           AppDialogs.showSnackBar(
             context,
-            message: 'The PDF could not be compressed further.',
+            message: 'compression.could_not_compress_further'.tr(),
             type: SnackBarType.warning,
           );
         }
@@ -148,8 +149,8 @@ class CompressionOptions {
         Navigator.pop(context);
         AppDialogs.showSnackBar(
           context,
-          message:
-              'PDF compressed successfully ($compressionPercentage% reduction)',
+          message: 'compression.pdf_compressed_success'
+              .tr(namedArgs: {'percentage': compressionPercentage}),
           type: SnackBarType.success,
         );
       }
@@ -158,7 +159,8 @@ class CompressionOptions {
         Navigator.pop(context);
         AppDialogs.showSnackBar(
           context,
-          message: 'Error compressing PDF: $e',
+          message: 'compression.error_compressing_pdf'
+              .tr(namedArgs: {'error': e.toString()}),
           type: SnackBarType.error,
         );
       }
@@ -195,7 +197,6 @@ class CompressionOptions {
         return;
       }
 
-      // We'll use a global key for the navigator instead of checking context.mounted
       debugPrint('7. Processing PDF without showing loading dialog');
 
       debugPrint('9. Processing PDF file');
@@ -204,7 +205,7 @@ class CompressionOptions {
 
       if (!await pdfFile.exists()) {
         debugPrint('11. PDF file does not exist');
-        throw Exception('Selected file does not exist');
+        throw Exception('compression.file_does_not_exist'.tr());
       }
 
       debugPrint('12. Getting file name');
@@ -275,15 +276,16 @@ class CompressionOptions {
       builder: (context) => WillPopScope(
         onWillPop: () async => false,
         child: AlertDialog(
-          title: Text('Batch Compression'),
+          title: Text('compression.batch_compression'.tr()),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
-              Text('Processing ${documents.length} documents...'),
-              Text('Using cloud compression API'),
-              Text('This may take a while.'),
+              Text('compression.processing_documents'
+                  .tr(namedArgs: {'count': documents.length.toString()})),
+              Text('compression.using_cloud_compression'.tr()),
+              Text('compression.may_take_a_while'.tr()),
             ],
           ),
         ),
@@ -326,16 +328,16 @@ class CompressionOptions {
         String levelSuffix;
         switch (compressionLevel) {
           case CompressionLevel.low:
-            levelSuffix = " (Lightly Compressed)";
+            levelSuffix = 'compression.lightly_compressed_suffix'.tr();
             break;
           case CompressionLevel.medium:
-            levelSuffix = " (Compressed)";
+            levelSuffix = 'compression.compressed_suffix'.tr();
             break;
           case CompressionLevel.high:
-            levelSuffix = " (Highly Compressed)";
+            levelSuffix = 'compression.highly_compressed_suffix'.tr();
             break;
           case CompressionLevel.maximum:
-            levelSuffix = " (Max Compressed)";
+            levelSuffix = 'compression.max_compressed_suffix'.tr();
             break;
         }
 
@@ -383,15 +385,19 @@ class CompressionOptions {
 
       String savingsMessage = '';
       if (successCount > 0) {
-        savingsMessage =
-            ' Avg. reduction: ${averageSavings.toStringAsFixed(1)}%, ';
-        savingsMessage += 'Saved: ${FileUtils.formatFileSize(totalBytesSaved)}';
+        savingsMessage = 'compression.avg_reduction'
+            .tr(namedArgs: {'percentage': averageSavings.toStringAsFixed(1)});
+        savingsMessage += 'compression.saved_size'
+            .tr(namedArgs: {'size': FileUtils.formatFileSize(totalBytesSaved)});
       }
 
       AppDialogs.showSnackBar(
         context,
-        message:
-            'Compression complete: $successCount successful, $failCount failed.$savingsMessage',
+        message: 'compression.batch_complete'.tr(namedArgs: {
+          'success': successCount.toString(),
+          'fail': failCount.toString(),
+          'savings': savingsMessage
+        }),
         type: successCount > 0 ? SnackBarType.success : SnackBarType.error,
         duration: const Duration(seconds: 6),
       );
@@ -453,7 +459,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 ),
                 const SizedBox(width: 16),
                 Text(
-                  'PDF Cloud Compressor',
+                  'compression.pdf_cloud_compressor'.tr(),
                   style: GoogleFonts.notoSerif(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
@@ -467,9 +473,9 @@ class _CompressionOptionsSheet extends ConsumerWidget {
             _buildOptionTile(
               context: context,
               icon: Icons.compress,
-              title: 'Compress This PDF',
-              description:
-                  'Open compression tools for "${initialDocument!.name}"',
+              title: 'compression.compress_this_pdf'.tr(),
+              description: 'compression.open_tools_for'
+                  .tr(namedArgs: {'name': initialDocument!.name}),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -484,18 +490,17 @@ class _CompressionOptionsSheet extends ConsumerWidget {
           _buildOptionTile(
             context: context,
             icon: Icons.upload_file,
-            title: 'Import and Compress PDF',
-            description: 'Select a PDF file from your device to compress',
+            title: 'compression.import_and_compress'.tr(),
+            description: 'compression.select_pdf_to_compress'.tr(),
             onTap: () {
-              // Navigator.pop(context);
               CompressionOptions.importAndCompressPdf(context, ref);
             },
           ),
           _buildOptionTile(
             context: context,
             icon: Icons.subject,
-            title: 'Select from Library',
-            description: 'Choose a PDF document from your library to compress',
+            title: 'compression.select_from_library'.tr(),
+            description: 'compression.choose_from_library'.tr(),
             onTap: () {
               Navigator.pop(context);
               _showLibraryPdfSelector(context, ref);
@@ -504,8 +509,8 @@ class _CompressionOptionsSheet extends ConsumerWidget {
           _buildOptionTile(
             context: context,
             icon: Icons.tune,
-            title: 'Batch Compression',
-            description: 'Compress multiple PDFs at once',
+            title: 'compression.batch_compression'.tr(),
+            description: 'compression.compress_multiple'.tr(),
             onTap: () {
               Navigator.pop(context);
               _showBatchCompressionDialog(context, ref);
@@ -531,7 +536,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Using cloud-based compression API for optimal results. Internet connection required.',
+                      'compression.cloud_compression_info'.tr(),
                       style: GoogleFonts.notoSerif(
                         fontSize: 12.sp,
                         color: Theme.of(context).colorScheme.primary,
@@ -599,7 +604,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
     if (pdfDocs.isEmpty) {
       AppDialogs.showSnackBar(
         context,
-        message: 'No PDF documents found in your library',
+        message: 'compression.no_pdfs_found'.tr(),
         type: SnackBarType.warning,
       );
       return;
@@ -610,8 +615,8 @@ class _CompressionOptionsSheet extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Select PDF to Compress'),
-        content: Container(
+        title: Text('compression.select_pdf_to_compress'.tr()),
+        content: SizedBox(
           width: double.maxFinite,
           height: 300,
           child: ListView.builder(
@@ -644,7 +649,8 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 subtitle: Text(
-                  '${doc.pageCount} pages',
+                  'compression.page_count'
+                      .tr(namedArgs: {'count': doc.pageCount.toString()}),
                   style: GoogleFonts.notoSerif(fontSize: 12),
                 ),
                 onTap: () {
@@ -663,7 +669,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('common.cancel'.tr()),
           ),
         ],
       ),
@@ -680,7 +686,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
     if (pdfDocs.isEmpty) {
       AppDialogs.showSnackBar(
         context,
-        message: 'No PDF documents found in your library',
+        message: 'compression.no_pdfs_found'.tr(),
         type: SnackBarType.warning,
       );
       return;
@@ -693,114 +699,120 @@ class _CompressionOptionsSheet extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Batch Compression'),
+          title: Text('compression.batch_compression'.tr()),
           content: SizedBox(
             width: double.maxFinite,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Select compression level:',
-                  style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                DropdownButton<CompressionLevel>(
-                  value: selectedLevel,
-                  isExpanded: true,
-                  onChanged: (CompressionLevel? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        selectedLevel = newValue;
-                      });
-                    }
-                  },
-                  items: [
-                    DropdownMenuItem(
-                      value: CompressionLevel.low,
-                      child: Text('Low - Best Quality'),
-                    ),
-                    DropdownMenuItem(
-                      value: CompressionLevel.medium,
-                      child: Text('Medium - Balanced'),
-                    ),
-                    DropdownMenuItem(
-                      value: CompressionLevel.high,
-                      child: Text('High - Smaller Size'),
-                    ),
-                    DropdownMenuItem(
-                      value: CompressionLevel.maximum,
-                      child: Text('Maximum - Smallest Size'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Select PDFs to compress:',
-                  style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: pdfDocs.length,
-                    itemBuilder: (context, index) {
-                      final doc = pdfDocs[index];
-                      final isSelected = selectedDocs.contains(doc);
-                      return CheckboxListTile(
-                        title: Text(
-                          doc.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: Text('${doc.pageCount} pages'),
-                        value: isSelected,
-                        onChanged: (value) {
-                          setState(() {
-                            if (value!) {
-                              selectedDocs.add(doc);
-                            } else {
-                              selectedDocs.remove(doc);
-                            }
-                          });
-                        },
-                      );
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'compression.select_compression_level'.tr(),
+                    style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButton<CompressionLevel>(
+                    value: selectedLevel,
+                    isExpanded: true,
+                    onChanged: (CompressionLevel? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          selectedLevel = newValue;
+                        });
+                      }
                     },
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.cloud,
-                          size: 16,
-                          color: Theme.of(context).colorScheme.primary),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Using cloud compression API',
-                          style: GoogleFonts.notoSerif(
-                            fontSize: 12,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
+                    items: [
+                      DropdownMenuItem(
+                        value: CompressionLevel.low,
+                        child: Text('compression.low_best_quality'.tr()),
+                      ),
+                      DropdownMenuItem(
+                        value: CompressionLevel.medium,
+                        child: Text('compression.medium_balanced'.tr()),
+                      ),
+                      DropdownMenuItem(
+                        value: CompressionLevel.high,
+                        child: Text('compression.high_smaller_size'.tr()),
+                      ),
+                      DropdownMenuItem(
+                        value: CompressionLevel.maximum,
+                        child: Text('compression.maximum_smallest_size'.tr()),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  Text(
+                    'compression.select_pdfs_to_compress'.tr(),
+                    style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 200.h,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: pdfDocs.length,
+                      itemBuilder: (context, index) {
+                        final doc = pdfDocs[index];
+                        final isSelected = selectedDocs.contains(doc);
+                        return CheckboxListTile(
+                          title: Text(
+                            doc.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text('compression.page_count'.tr(
+                              namedArgs: {'count': doc.pageCount.toString()})),
+                          value: isSelected,
+                          onChanged: (value) {
+                            setState(() {
+                              if (value!) {
+                                selectedDocs.add(doc);
+                              } else {
+                                selectedDocs.remove(doc);
+                              }
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.cloud,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.primary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'compression.using_cloud_compression'.tr(),
+                            style: GoogleFonts.notoSerif(
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text('common.cancel'.tr()),
             ),
             TextButton(
               onPressed: selectedDocs.isEmpty
@@ -810,7 +822,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                       CompressionOptions.processBatchCompression(
                           context, ref, selectedDocs, selectedLevel);
                     },
-              child: const Text('Compress'),
+              child: Text('compression.compress'.tr()),
             ),
           ],
         ),

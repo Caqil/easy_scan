@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/models/content_type.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
 import 'package:easy_scan/ui/screen/barcode/barcode_scanner_screen.dart';
@@ -87,7 +88,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
               );
             },
             icon: const Icon(Icons.qr_code_scanner),
-            label: const Text('Start Scanning'),
+            label:  Text('scan.start_scanning'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(
                 horizontal: 24.w,
@@ -281,7 +282,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child:  Text('common.cancel'.tr()),
           ),
           TextButton(
             onPressed: () {

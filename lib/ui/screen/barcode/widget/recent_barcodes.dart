@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/models/barcode_scan.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
@@ -24,7 +25,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
     super.key,
     this.showAllOption = true,
     this.maxItems = 5,
-    this.title = 'Recent QR Codes',
+    this.title = 'recent_barcodes.default_title',
     this.onViewAllPressed,
   });
 
@@ -48,7 +49,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
+                title.tr(),
                 style: GoogleFonts.notoSerif(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
@@ -61,7 +62,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                         Navigator.pushNamed(context, '/barcode/history');
                       },
                   child: Text(
-                    'View All',
+                    'recent_barcodes.view_all'.tr(),
                     style: GoogleFonts.notoSerif(
                       fontSize: 12.sp,
                     ),
@@ -196,7 +197,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                             ),
                             SizedBox(width: 2.w),
                             Text(
-                              'Custom',
+                              'recent_barcodes.custom'.tr(),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 8.sp,
@@ -361,7 +362,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
           Clipboard.setData(ClipboardData(text: scan.barcodeValue));
           AppDialogs.showSnackBar(
             context,
-            message: 'Content copied to clipboard',
+            message: 'recent_barcodes.content_copied'.tr(),
             type: SnackBarType.success,
           );
         },
@@ -377,7 +378,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
       // Show loading indicator
       AppDialogs.showSnackBar(
         context,
-        message: 'Preparing QR code for sharing...',
+        message: 'recent_barcodes.preparing_share'.tr(),
       );
 
       String? imagePath;
@@ -397,21 +398,23 @@ class RecentBarcodesWidget extends ConsumerWidget {
       if (imagePath != null) {
         await Share.shareXFiles(
           [XFile(imagePath)],
-          text: 'QR Code: ${scan.barcodeValue}',
-          subject: 'Shared QR Code',
+          text: 'recent_barcodes.qr_code_text'
+              .tr(namedArgs: {'value': scan.barcodeValue}),
+          subject: 'recent_barcodes.shared_qr_subject'.tr(),
         );
       } else {
         // Fallback to sharing just the text value
         await Share.share(
           scan.barcodeValue,
-          subject: 'QR Code Content',
+          subject: 'recent_barcodes.qr_content_subject'.tr(),
         );
       }
     } catch (e) {
       if (context.mounted) {
         AppDialogs.showSnackBar(
           context,
-          message: 'Error sharing QR code: $e',
+          message: 'recent_barcodes.share_error'
+              .tr(namedArgs: {'error': e.toString()}),
           type: SnackBarType.error,
         );
       }
@@ -422,11 +425,10 @@ class RecentBarcodesWidget extends ConsumerWidget {
   void _confirmDelete(BuildContext context, BarcodeScan scan, WidgetRef ref) {
     AppDialogs.showConfirmDialog(
       context,
-      title: 'Delete QR Code',
-      message:
-          'Are you sure you want to delete this QR code from your history?',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: 'recent_barcodes.delete_qr_title'.tr(),
+      message: 'recent_barcodes.delete_confirm'.tr(),
+      confirmText: 'recent_barcodes.delete'.tr(),
+      cancelText: 'recent_barcodes.cancel'.tr(),
       isDangerous: true,
     ).then((confirmed) {
       if (confirmed) {
@@ -436,7 +438,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
         // Show confirmation
         AppDialogs.showSnackBar(
           context,
-          message: 'QR code deleted from history',
+          message: 'recent_barcodes.qr_deleted'.tr(),
           type: SnackBarType.success,
         );
       }
@@ -446,28 +448,38 @@ class RecentBarcodesWidget extends ConsumerWidget {
   // Helper function to get content type info
   _ContentTypeInfo _getContentTypeInfo(String value) {
     if (value.startsWith('http://') || value.startsWith('https://')) {
-      return _ContentTypeInfo(Icons.language, Colors.blue, 'URL');
+      return _ContentTypeInfo(
+          Icons.language, Colors.blue, 'recent_barcodes.url'.tr());
     } else if (value.startsWith('tel:') ||
         RegExp(r'^\+?[0-9\s\-\(\)]+$').hasMatch(value)) {
-      return _ContentTypeInfo(Icons.phone, Colors.green, 'Phone');
+      return _ContentTypeInfo(
+          Icons.phone, Colors.green, 'recent_barcodes.phone'.tr());
     } else if (value.contains('@') && value.contains('.')) {
-      return _ContentTypeInfo(Icons.email, Colors.orange, 'Email');
+      return _ContentTypeInfo(
+          Icons.email, Colors.orange, 'recent_barcodes.email'.tr());
     } else if (value.startsWith('WIFI:')) {
-      return _ContentTypeInfo(Icons.wifi, Colors.purple, 'WiFi');
+      return _ContentTypeInfo(
+          Icons.wifi, Colors.purple, 'recent_barcodes.wifi'.tr());
     } else if (value.startsWith('MATMSG:') || value.startsWith('mailto:')) {
-      return _ContentTypeInfo(Icons.email, Colors.orange, 'Email');
+      return _ContentTypeInfo(
+          Icons.email, Colors.orange, 'recent_barcodes.email'.tr());
     } else if (value.startsWith('geo:') ||
         RegExp(r'^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$')
             .hasMatch(value)) {
-      return _ContentTypeInfo(Icons.location_on, Colors.red, 'Location');
+      return _ContentTypeInfo(
+          Icons.location_on, Colors.red, 'recent_barcodes.location'.tr());
     } else if (value.startsWith('BEGIN:VCARD')) {
-      return _ContentTypeInfo(Icons.contact_page, Colors.indigo, 'Contact');
+      return _ContentTypeInfo(
+          Icons.contact_page, Colors.indigo, 'recent_barcodes.contact'.tr());
     } else if (value.startsWith('BEGIN:VEVENT')) {
-      return _ContentTypeInfo(Icons.event, Colors.teal, 'Event');
+      return _ContentTypeInfo(
+          Icons.event, Colors.teal, 'recent_barcodes.event'.tr());
     } else if (RegExp(r'^[0-9]+$').hasMatch(value)) {
-      return _ContentTypeInfo(Icons.qr_code, Colors.black, 'Product');
+      return _ContentTypeInfo(
+          Icons.qr_code, Colors.black, 'recent_barcodes.product'.tr());
     } else {
-      return _ContentTypeInfo(Icons.text_fields, Colors.grey, 'Text');
+      return _ContentTypeInfo(
+          Icons.text_fields, Colors.grey, 'recent_barcodes.text'.tr());
     }
   }
 

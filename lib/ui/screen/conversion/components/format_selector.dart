@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -166,7 +167,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
           Padding(
             padding: EdgeInsets.all(16.h),
             child: Text(
-              'Select ${widget.label} Format',
+              tr('chip_format_selector.select_format', args: [widget.label]),
               style: GoogleFonts.notoSerif(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
@@ -180,7 +181,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search formats...',
+                hintText: 'chip_format_selector.search_placeholder'.tr(),
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.r),

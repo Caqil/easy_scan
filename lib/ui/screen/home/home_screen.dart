@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/services/scan_service.dart';
 import 'package:easy_scan/services/share_service.dart';
@@ -376,7 +377,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         context: context,
         builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                title: const Text('Rename Document'),
+                title:  Text('document.rename_document'.tr()),
                 content: CupertinoTextField(
                   controller: controller,
                   autofocus: true,
@@ -384,7 +385,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
+                    child:  Text('common.cancel'.tr()),
                   ),
                   TextButton(
                     onPressed: () {
@@ -392,7 +393,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Navigator.pop(context, controller.text.trim());
                       }
                     },
-                    child: const Text('Rename'),
+                    child:  Text('common.rename'.tr()),
                   ),
                 ],
               ),
@@ -412,7 +413,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (context.mounted) {
         AppDialogs.showSnackBar(context,
             type: SnackBarType.success,
-            message: 'Document renamed successfully');
+            message: 'document.document_renamed'.tr());
       }
     }
   }
@@ -469,13 +470,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           context: context,
           builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                    title: const Text('Delete Document'),
+                    title:  Text('document.delete_document'.tr()),
                     content: Text(
                         'Are you sure you want to delete "${document.name}"? This action cannot be undone.'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Cancel'),
+                        child:  Text('common.cancel'.tr()),
                       ),
                       TextButton(
                         onPressed: () {
@@ -487,7 +488,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         },
                         style:
                             TextButton.styleFrom(foregroundColor: Colors.red),
-                        child: const Text('Delete'),
+                        child:  Text('common.delete'.tr()),
                       ),
                     ],
                   )),
@@ -501,7 +502,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (context.mounted) {
         AppDialogs.showSnackBar(context,
             type: SnackBarType.success,
-            message: 'Document deleted successfully');
+            message: 'document.document_deleted'.tr());
       }
     }
   }

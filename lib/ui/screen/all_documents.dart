@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/ui/common/app_bar.dart';
@@ -221,7 +222,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
   void _renameDocument(Document document) {
     AppDialogs.showInputDialog(
       context,
-      title: 'Rename Document',
+      title: 'document.rename_document'.tr(),
       initialValue: document.name,
       hintText: 'Enter new name',
     ).then((newName) {
@@ -234,7 +235,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
 
         AppDialogs.showSnackBar(
           context,
-          message: 'Document renamed successfully',
+          message: 'document.document_renamed'.tr(),
           type: SnackBarType.success,
         );
 
@@ -267,7 +268,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
   void _deleteDocument(Document document) {
     AppDialogs.showConfirmDialog(
       context,
-      title: 'Delete Document',
+      title: 'document.delete_document'.tr(),
       message: 'Are you sure you want to delete "${document.name}"?',
       confirmText: 'Delete',
       isDangerous: true,
@@ -277,7 +278,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
 
         AppDialogs.showSnackBar(
           context,
-          message: 'Document deleted successfully',
+          message: 'document.document_deleted'.tr(),
           type: SnackBarType.success,
         );
 

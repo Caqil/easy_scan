@@ -1,5 +1,6 @@
 // Add this to your lib/ui/common/folders_grid.dart
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -151,7 +152,7 @@ class _AllFoldersSheet extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: 'Search folders...',
+                  hintText: 'folder.search_folders'.tr(),
                   prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -245,7 +246,7 @@ class _AllFoldersSheet extends ConsumerWidget {
                 onCreateNewFolder!();
               },
               icon: const Icon(Icons.add),
-              label: const Text('Create New Folder'),
+              label:  Text('folder.create_new_folder'.tr()),
             ),
           ],
         ],

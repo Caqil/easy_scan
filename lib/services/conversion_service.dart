@@ -87,13 +87,6 @@ class ConversionService {
         throw Exception("No fileUrl found in response");
       }
 
-      // Extract the fileUrl and construct the full download URL
-      // The API returns a relative URL like "/conversions/filename.ext"
-      String fileUrl = responseJson['fileUrl'];
-
-      // Create the absolute URL by combining the base URL (without /api part) and the fileUrl
-      // This assumes your API base URL is like "https://domain.com/api" and
-      // your static files are served from the root like "https://domain.com/conversions/..."
 
       String downloadUrl =
           "${ApiConfig.baseUrl}//file?folder=conversions&filename=${filename}";

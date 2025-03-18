@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,7 +14,7 @@ class FolderCreator {
   static Future<Folder?> showCreateFolderBottomSheet(
     BuildContext context,
     WidgetRef ref, {
-    String title = 'Create New Folder',
+    String title = '', // Updated default value
     String? parentId,
   }) async {
     Folder? createdFolder;
@@ -155,18 +156,18 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                       controller: _controller, // Use internal controller
                       autofocus: true,
                       decoration: InputDecoration(
-                        labelText: 'Folder Name',
+                        labelText: 'folder_creator.folder_name'.tr(),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        hintText: 'Enter folder name',
+                        hintText: 'folder_creator.enter_folder_name'.tr(),
                         prefixIcon: const Icon(Icons.folder_outlined),
                       ),
                       style: GoogleFonts.notoSerif(fontSize: 14.sp),
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'Select Color:',
+                      'folder_creator.select_color'.tr(),
                       style: GoogleFonts.notoSerif(
                         fontWeight: FontWeight.w500,
                         fontSize: 14.sp,
@@ -238,7 +239,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Text('Cancel'),
+                            child: Text('common.cancel'.tr()),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -251,7 +252,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Text('Create'),
+                            child: Text('folder_creator.create'.tr()),
                           ),
                         ),
                       ],
@@ -271,7 +272,8 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
   Future<void> _createFolder() async {
     if (_controller.text.trim().isEmpty) {
       AppDialogs.showSnackBar(context,
-          type: SnackBarType.error, message: 'Folder name cannot be empty');
+          type: SnackBarType.error,
+          message: 'folder_creator.folder_name_empty'.tr());
       return;
     }
 
@@ -293,7 +295,8 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
       Navigator.pop(context);
 
       AppDialogs.showSnackBar(context,
-          type: SnackBarType.success, message: 'Folder created successfully');
+          type: SnackBarType.success,
+          message: 'folder_creator.folder_created_success'.tr());
     } catch (e) {
       if (!mounted) return; // Ensure widget is still mounted
       setState(() {
@@ -301,7 +304,9 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
       });
 
       AppDialogs.showSnackBar(context,
-          type: SnackBarType.error, message: 'Error creating folder: $e');
+          type: SnackBarType.error,
+          message: 'folder_creator.error_creating_folder'
+              .tr(namedArgs: {'error': e.toString()}));
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// Header component for the scanned documents view
@@ -80,7 +81,7 @@ class ScannedDocumentsHeader extends StatelessWidget {
     return TextButton.icon(
       onPressed: onAddMore,
       icon: const Icon(Icons.add_a_photo, size: 16),
-      label: const Text('Add'),
+      label:  Text('common.add'.tr()),
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,

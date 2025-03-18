@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -69,7 +70,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
 
   Widget _buildTitle() {
     return Text(
-      'Barcode Scanner',
+      'barcode_options.title'.tr(),
       style: GoogleFonts.notoSerif(
         fontSize: 24.sp,
         fontWeight: FontWeight.bold,
@@ -79,7 +80,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
 
   Widget _buildSubtitle() {
     return Text(
-      'Scan, generate, or view your barcode history',
+      'barcode_options.subtitle'.tr(),
       textAlign: TextAlign.center,
       style: GoogleFonts.notoSerif(
         fontSize: 14.sp,
@@ -92,7 +93,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onScanPressed,
       icon: const Icon(Icons.qr_code_scanner),
-      label: const Text('Scan Barcode'),
+      label: Text('barcode_options.scan_barcode'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         backgroundColor: Theme.of(context).primaryColor,
@@ -109,7 +110,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onGeneratePressed,
       icon: const Icon(Icons.qr_code),
-      label: const Text('Generate Barcode'),
+      label: Text('barcode_options.generate_barcode'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(
@@ -124,7 +125,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onHistoryPressed,
       icon: const Icon(Icons.history),
-      label: const Text('View Scan History'),
+      label: Text('barcode_options.view_history'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(

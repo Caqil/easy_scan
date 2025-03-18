@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +21,7 @@ class AdvancedOptionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SectionContainer(
-      title: "Advanced Options",
+      title: "advanced_options.title".tr(),
       trailing: IconButton(
         icon: Icon(Icons.help_outline, size: 20.sp),
         onPressed: () => _showHelpDialog(context),
@@ -30,8 +31,8 @@ class AdvancedOptionsSection extends StatelessWidget {
         children: [
           // OCR option
           SwitchListTile(
-            title: const Text("Enable OCR"),
-            subtitle: const Text("Extract text from scanned documents"),
+            title: const Text("advanced_options.enable_ocr.title").tr(),
+            subtitle: const Text("advanced_options.enable_ocr.subtitle").tr(),
             secondary: Icon(
               Icons.document_scanner,
               color: state.ocrEnabled
@@ -51,7 +52,7 @@ class AdvancedOptionsSection extends StatelessWidget {
             SizedBox(height: 8.h),
             ListTile(
               leading: const Icon(Icons.high_quality),
-              title: const Text("Image Quality"),
+              title: Text("advanced_options.image_quality".tr()),
               subtitle: Slider(
                 value: state.quality.toDouble(),
                 min: 10,

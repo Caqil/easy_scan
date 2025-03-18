@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,23 +29,23 @@ class ScanOptionsWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        const Text('Color Mode'),
+         Text('scan.color_mode'.tr()),
         const SizedBox(height: 8),
         SegmentedButton<ColorMode>(
           segments: [
             ButtonSegment(
               value: ColorMode.color,
-              label: Text('Color'),
+              label: Text('color_mode.color'.tr()),
               icon: Icon(Icons.color_lens),
             ),
             ButtonSegment(
               value: ColorMode.grayscale,
-              label: Text('Gray'),
+              label: Text('color_mode.grayscale'.tr()),
               icon: Icon(Icons.browse_gallery_rounded),
             ),
             ButtonSegment(
               value: ColorMode.blackAndWhite,
-              label: Text('B&W'),
+              label: Text('color_mode.black_and_white'.tr()),
               icon: Icon(Icons.monochrome_photos),
             ),
           ],
@@ -56,23 +57,23 @@ class ScanOptionsWidget extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-        const Text('Scan Mode'),
+         Text('scan.scan_mode'.tr()),
         const SizedBox(height: 8),
         SegmentedButton<ScanMode>(
-          segments: const [
+          segments:  [
             ButtonSegment(
               value: ScanMode.auto,
-              label: Text('Auto'),
+              label: Text('scan_mode.auto'.tr()),
               icon: Icon(Icons.auto_fix_high),
             ),
             ButtonSegment(
               value: ScanMode.manual,
-              label: Text('Manual'),
+              label: Text('scan_mode.manual'.tr()),
               icon: Icon(Icons.tune),
             ),
             ButtonSegment(
               value: ScanMode.batch,
-              label: Text('Batch'),
+              label: Text('scan_mode.batch'.tr()),
               icon: Icon(Icons.burst_mode),
             ),
           ],
@@ -84,28 +85,28 @@ class ScanOptionsWidget extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-        const Text('Document Type'),
+         Text('scan.document_type'.tr()),
         const SizedBox(height: 8),
         SegmentedButton<DocumentType>(
-          segments: const [
+          segments:  [
             ButtonSegment(
               value: DocumentType.document,
-              label: Text('Document'),
+              label: Text('document_type.document'.tr()),
               icon: Icon(Icons.description),
             ),
             ButtonSegment(
               value: DocumentType.receipt,
-              label: Text('Receipt'),
+              label: Text('document_type.receipt'.tr()),
               icon: Icon(Icons.receipt),
             ),
             ButtonSegment(
               value: DocumentType.idCard,
-              label: Text('ID Card'),
+              label: Text('document_type.id_card'.tr()),
               icon: Icon(Icons.credit_card),
             ),
             ButtonSegment(
               value: DocumentType.photo,
-              label: Text('Photo'),
+              label: Text('document_type.photo'.tr()),
               icon: Icon(Icons.photo),
             ),
           ],
@@ -118,8 +119,8 @@ class ScanOptionsWidget extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         SwitchListTile(
-          title: const Text('Enhance Image'),
-          subtitle: const Text('Automatically improve quality'),
+          title:  Text('scan.enhance_image'.tr()),
+          subtitle:  Text('scan.enhance_image_desc'.tr()),
           value: settings.enhanceImage,
           onChanged: (bool value) {
             onSettingsChanged(
@@ -128,8 +129,8 @@ class ScanOptionsWidget extends StatelessWidget {
           },
         ),
         SwitchListTile(
-          title: const Text('Detect Edges'),
-          subtitle: const Text('Find document boundaries'),
+          title:  Text('scan.detect_edges'.tr()),
+          subtitle:  Text('scan.detect_edges_desc'.tr()),
           value: settings.detectEdges,
           onChanged: (bool value) {
             onSettingsChanged(
@@ -138,8 +139,8 @@ class ScanOptionsWidget extends StatelessWidget {
           },
         ),
         SwitchListTile(
-          title: const Text('OCR'),
-          subtitle: const Text('Extract text from document'),
+          title:  Text('scan.ocr'.tr()),
+          subtitle:  Text('scan.ocr_desc'.tr()),
           value: settings.enableOCR,
           onChanged: (bool value) {
             onSettingsChanged(

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/models/barcode_scan.dart';
 import 'package:easy_scan/providers/barcode_provider.dart';
 import 'package:easy_scan/ui/screen/barcode/qr_code_customization_screen.dart';
@@ -75,7 +76,7 @@ class _BarcodeGeneratorScreenState
     return Scaffold(
       appBar: CustomAppBar(
         title: Text(
-          'Generate Barcode',
+          'barcode_generator.title'.tr(),
           style: GoogleFonts.notoSerif(
             fontWeight: FontWeight.bold,
           ),
@@ -104,8 +105,9 @@ class _BarcodeGeneratorScreenState
                   child: ElevatedButton.icon(
                     onPressed: _validateAndGenerate,
                     icon: const Icon(Icons.qr_code),
-                    label: Text(
-                        _isGenerating ? 'Generating...' : 'Generate Barcode'),
+                    label: Text(_isGenerating
+                        ? 'barcode_generator.generating'.tr()
+                        : 'barcode_generator.generate_barcode'.tr()),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       shape: RoundedRectangleBorder(
@@ -136,7 +138,7 @@ class _BarcodeGeneratorScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Barcode Type',
+          'barcode_generator.barcode_type'.tr(),
           style: GoogleFonts.notoSerif(
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
@@ -163,22 +165,24 @@ class _BarcodeGeneratorScreenState
             child: Row(
               children: [
                 SizedBox(width: 8.w),
+                _buildImprovedTypeOption(BarcodeType.qrCode,
+                    'barcode_generator.qr_code'.tr(), Icons.qr_code_2),
+                _buildImprovedTypeOption(BarcodeType.url,
+                    'barcode_generator.url'.tr(), Icons.language),
+                _buildImprovedTypeOption(BarcodeType.email,
+                    'barcode_generator.email'.tr(), Icons.email),
+                _buildImprovedTypeOption(BarcodeType.phone,
+                    'barcode_generator.phone'.tr(), Icons.phone),
                 _buildImprovedTypeOption(
-                    BarcodeType.qrCode, 'QR Code', Icons.qr_code_2),
-                _buildImprovedTypeOption(
-                    BarcodeType.url, 'URL', Icons.language),
-                _buildImprovedTypeOption(
-                    BarcodeType.email, 'Email', Icons.email),
-                _buildImprovedTypeOption(
-                    BarcodeType.phone, 'Phone', Icons.phone),
-                _buildImprovedTypeOption(BarcodeType.sms, 'SMS', Icons.sms),
-                _buildImprovedTypeOption(BarcodeType.wifi, 'WiFi', Icons.wifi),
-                _buildImprovedTypeOption(
-                    BarcodeType.location, 'Location', Icons.location_on),
-                _buildImprovedTypeOption(
-                    BarcodeType.contact, 'Contact', Icons.contact_page),
-                _buildImprovedTypeOption(
-                    BarcodeType.plainText, 'Text', Icons.text_fields),
+                    BarcodeType.sms, 'barcode_generator.sms'.tr(), Icons.sms),
+                _buildImprovedTypeOption(BarcodeType.wifi,
+                    'barcode_generator.wifi'.tr(), Icons.wifi),
+                _buildImprovedTypeOption(BarcodeType.location,
+                    'barcode_generator.location'.tr(), Icons.location_on),
+                _buildImprovedTypeOption(BarcodeType.contact,
+                    'barcode_generator.contact'.tr(), Icons.contact_page),
+                _buildImprovedTypeOption(BarcodeType.plainText,
+                    'barcode_generator.text'.tr(), Icons.text_fields),
                 SizedBox(width: 8.w),
               ],
             ),
@@ -297,7 +301,7 @@ class _BarcodeGeneratorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Enter Details',
+            'barcode_generator.enter_details'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -317,8 +321,8 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.qrCode:
         return _buildImprovedTextField(
           controller: _contentController,
-          label: 'Content',
-          hintText: 'Enter any text for your QR code',
+          label: 'barcode_generator.content'.tr(),
+          hintText: 'barcode_generator.enter_content'.tr(),
           icon: Icons.text_fields,
           maxLines: 3,
         );
@@ -326,7 +330,7 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.url:
         return _buildImprovedTextField(
           controller: _contentController,
-          label: 'Website URL',
+          label: 'barcode_generator.website_url'.tr(),
           hintText: 'https://example.com',
           icon: Icons.link,
           keyboardType: TextInputType.url,
@@ -337,7 +341,7 @@ class _BarcodeGeneratorScreenState
           children: [
             _buildImprovedTextField(
               controller: _contentController,
-              label: 'Email Address',
+              label: 'barcode_generator.email_address'.tr(),
               hintText: 'email@example.com',
               icon: Icons.email,
               keyboardType: TextInputType.emailAddress,
@@ -345,15 +349,15 @@ class _BarcodeGeneratorScreenState
             SizedBox(height: 16.h),
             _buildImprovedTextField(
               controller: _emailSubjectController,
-              label: 'Subject (Optional)',
-              hintText: 'Enter email subject',
+              label: 'barcode_generator.subject_optional'.tr(),
+              hintText: 'barcode_generator.enter_subject'.tr(),
               icon: Icons.subject,
             ),
             SizedBox(height: 16.h),
             _buildImprovedTextField(
               controller: _emailBodyController,
-              label: 'Body (Optional)',
-              hintText: 'Enter email body',
+              label: 'barcode_generator.body_optional'.tr(),
+              hintText: 'barcode_generator.enter_body'.tr(),
               icon: Icons.message,
               maxLines: 3,
             ),
@@ -363,7 +367,7 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.phone:
         return _buildImprovedTextField(
           controller: _phoneController,
-          label: 'Phone Number',
+          label: 'barcode_generator.phone_number'.tr(),
           hintText: '+1 234 567 8900',
           icon: Icons.phone,
           keyboardType: TextInputType.phone,
@@ -374,7 +378,7 @@ class _BarcodeGeneratorScreenState
           children: [
             _buildImprovedTextField(
               controller: _phoneController,
-              label: 'Phone Number',
+              label: 'barcode_generator.phone_number'.tr(),
               hintText: '+1 234 567 8900',
               icon: Icons.phone,
               keyboardType: TextInputType.phone,
@@ -382,8 +386,8 @@ class _BarcodeGeneratorScreenState
             SizedBox(height: 16.h),
             _buildImprovedTextField(
               controller: _smsBodyController,
-              label: 'Message (Optional)',
-              hintText: 'Enter message',
+              label: 'barcode_generator.message_optional'.tr(),
+              hintText: 'barcode_generator.enter_message'.tr(),
               icon: Icons.message,
               maxLines: 3,
             ),
@@ -395,15 +399,15 @@ class _BarcodeGeneratorScreenState
           children: [
             _buildImprovedTextField(
               controller: _wifiNameController,
-              label: 'WiFi Network Name (SSID)',
-              hintText: 'Enter WiFi name',
+              label: 'barcode_generator.wifi_ssid'.tr(),
+              hintText: 'barcode_generator.enter_wifi_name'.tr(),
               icon: Icons.wifi,
             ),
             SizedBox(height: 16.h),
             _buildImprovedTextField(
               controller: _wifiPasswordController,
-              label: 'Password',
-              hintText: 'Enter WiFi password',
+              label: 'pdf.password'.tr(),
+              hintText: 'barcode_generator.enter_wifi_password'.tr(),
               icon: Icons.lock,
               obscureText: true,
             ),
@@ -417,13 +421,15 @@ class _BarcodeGeneratorScreenState
               ),
               child: SwitchListTile(
                 title: Text(
-                  'Security',
+                  'barcode_generator.security'.tr(),
                   style: GoogleFonts.notoSerif(
                     fontSize: 14.sp,
                   ),
                 ),
                 subtitle: Text(
-                  _wifiEncryption ? 'WPA/WPA2' : 'None (Open Network)',
+                  _wifiEncryption
+                      ? 'barcode_generator.wpa_wpa2'.tr()
+                      : 'barcode_generator.none_open'.tr(),
                   style: GoogleFonts.notoSerif(
                     fontSize: 12.sp,
                     color: Colors.grey.shade600,
@@ -454,7 +460,7 @@ class _BarcodeGeneratorScreenState
                 Expanded(
                   child: _buildImprovedTextField(
                     controller: _latitudeController,
-                    label: 'Latitude',
+                    label: 'barcode_generator.latitude'.tr(),
                     hintText: '37.7749',
                     icon: Icons.north,
                     keyboardType:
@@ -465,7 +471,7 @@ class _BarcodeGeneratorScreenState
                 Expanded(
                   child: _buildImprovedTextField(
                     controller: _longitudeController,
-                    label: 'Longitude',
+                    label: 'barcode_generator.longitude'.tr(),
                     hintText: '-122.4194',
                     icon: Icons.east,
                     keyboardType:
@@ -477,7 +483,7 @@ class _BarcodeGeneratorScreenState
             SizedBox(height: 16.h),
             _buildImprovedTextField(
               controller: _locationNameController,
-              label: 'Location Name (Optional)',
+              label: 'barcode_generator.location_name_optional'.tr(),
               hintText: 'San Francisco',
               icon: Icons.place,
             ),
@@ -489,14 +495,14 @@ class _BarcodeGeneratorScreenState
           children: [
             _buildImprovedTextField(
               controller: _contentController,
-              label: 'Full Name',
+              label: 'barcode_generator.full_name'.tr(),
               hintText: 'John Doe',
               icon: Icons.person,
             ),
             SizedBox(height: 16.h),
             _buildImprovedTextField(
               controller: _phoneController,
-              label: 'Phone Number',
+              label: 'barcode_generator.phone_number'.tr(),
               hintText: '+1 234 567 8900',
               icon: Icons.phone,
               keyboardType: TextInputType.phone,
@@ -504,7 +510,7 @@ class _BarcodeGeneratorScreenState
             SizedBox(height: 16.h),
             _buildImprovedTextField(
               controller: _emailSubjectController,
-              label: 'Email (Optional)',
+              label: 'barcode_generator.email_optional'.tr(),
               hintText: 'email@example.com',
               icon: Icons.email,
               keyboardType: TextInputType.emailAddress,
@@ -515,8 +521,8 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.plainText:
         return _buildImprovedTextField(
           controller: _contentController,
-          label: 'Text',
-          hintText: 'Enter any text',
+          label: 'barcode_generator.text'.tr(),
+          hintText: 'barcode_generator.enter_any_text'.tr(),
           icon: Icons.text_fields,
           maxLines: 5,
         );
@@ -626,7 +632,7 @@ class _BarcodeGeneratorScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Encoded Data:',
+                  'barcode_generator.encoded_data'.tr(),
                   style: GoogleFonts.notoSerif(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
@@ -654,32 +660,32 @@ class _BarcodeGeneratorScreenState
             children: [
               _buildActionButton(
                 icon: Icons.save_alt,
-                label: 'Save',
+                label: 'common.save'.tr(),
                 color: _getColorForType(_selectedType),
                 onTap: _saveQrCode,
               ),
               _buildActionButton(
                 icon: Icons.copy,
-                label: 'Copy',
+                label: 'barcode_generator.copy'.tr(),
                 color: Colors.grey.shade700,
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: _generatedData));
                   AppDialogs.showSnackBar(
                     context,
-                    message: 'Data copied to clipboard',
+                    message: 'barcode_generator.data_copied'.tr(),
                     type: SnackBarType.success,
                   );
                 },
               ),
               _buildActionButton(
                 icon: Icons.share,
-                label: 'Share',
+                label: 'common.share'.tr(),
                 color: Colors.blue,
                 onTap: _shareQrCode,
               ),
               _buildActionButton(
                 icon: Icons.edit,
-                label: 'Customize',
+                label: 'barcode_generator.customize'.tr(),
                 color: Colors.purple,
                 onTap: () => _navigateToCustomization(),
               ),
@@ -714,7 +720,7 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.wifi:
         return GradientQRCode(
           data: _generatedData,
-          title: 'WiFi Connection',
+          title: 'barcode_generator.wifi_connection'.tr(),
           gradientColors: [Colors.purple, Colors.deepPurple],
           size: 230.w,
         );
@@ -722,7 +728,7 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.url:
         return GradientQRCode(
           data: _generatedData,
-          title: 'Website URL',
+          title: 'barcode_generator.website_url_title'.tr(),
           gradientColors: [Colors.blue.shade600, Colors.blue.shade900],
           size: 230.w,
         );
@@ -730,7 +736,7 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.email:
         return GradientQRCode(
           data: _generatedData,
-          title: 'Email Link',
+          title: 'barcode_generator.email_link'.tr(),
           gradientColors: [Colors.orange, Colors.deepOrange],
           size: 230.w,
         );
@@ -738,7 +744,7 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.phone:
         return GradientQRCode(
           data: _generatedData,
-          title: 'Phone Number',
+          title: 'barcode_generator.phone_number_title'.tr(),
           gradientColors: [Colors.green.shade600, Colors.green.shade900],
           size: 230.w,
         );
@@ -746,7 +752,7 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.sms:
         return GradientQRCode(
           data: _generatedData,
-          title: 'SMS Message',
+          title: 'barcode_generator.sms_message'.tr(),
           gradientColors: [Colors.deepPurple, Colors.purple],
           size: 230.w,
         );
@@ -754,7 +760,7 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.location:
         return GradientQRCode(
           data: _generatedData,
-          title: 'Location',
+          title: 'barcode_generator.location_title'.tr(),
           gradientColors: [Colors.red.shade600, Colors.red.shade900],
           size: 230.w,
         );
@@ -762,7 +768,7 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.contact:
         return GradientQRCode(
           data: _generatedData,
-          title: 'Contact Information',
+          title: 'barcode_generator.contact_info'.tr(),
           gradientColors: [Colors.indigo, Colors.blueAccent],
           size: 230.w,
         );
@@ -771,8 +777,9 @@ class _BarcodeGeneratorScreenState
       case BarcodeType.plainText:
         return CustomQRCode(
           data: _generatedData,
-          title:
-              _selectedType == BarcodeType.qrCode ? 'QR Code' : 'Text Content',
+          title: _selectedType == BarcodeType.qrCode
+              ? 'barcode_generator.qr_code_title'.tr()
+              : 'barcode_generator.text_content'.tr(),
           primaryColor: accentColor,
           backgroundColor: Colors.white,
           size: 230.w,
@@ -839,7 +846,7 @@ class _BarcodeGeneratorScreenState
         data = _contentController.text.trim();
         if (data.isEmpty) {
           isValid = false;
-          errorMessage = 'Please enter some content';
+          errorMessage = 'barcode_generator.enter_content_error'.tr();
         }
         break;
 
@@ -847,7 +854,7 @@ class _BarcodeGeneratorScreenState
         data = _contentController.text.trim();
         if (data.isEmpty) {
           isValid = false;
-          errorMessage = 'Please enter a URL';
+          errorMessage = 'barcode_generator.enter_url_error'.tr();
         } else if (!data.startsWith('http://') &&
             !data.startsWith('https://')) {
           data = 'https://$data';
@@ -861,7 +868,7 @@ class _BarcodeGeneratorScreenState
 
         if (email.isEmpty) {
           isValid = false;
-          errorMessage = 'Please enter an email address';
+          errorMessage = 'barcode_generator.enter_email_error'.tr();
         } else {
           // Generate mailto format
           data = 'mailto:$email';
@@ -882,7 +889,7 @@ class _BarcodeGeneratorScreenState
         final phone = _phoneController.text.trim();
         if (phone.isEmpty) {
           isValid = false;
-          errorMessage = 'Please enter a phone number';
+          errorMessage = 'barcode_generator.enter_phone_error'.tr();
         } else {
           data = 'tel:$phone';
         }
@@ -894,7 +901,7 @@ class _BarcodeGeneratorScreenState
 
         if (phone.isEmpty) {
           isValid = false;
-          errorMessage = 'Please enter a phone number';
+          errorMessage = 'barcode_generator.enter_phone_error'.tr();
         } else {
           data = 'smsto:$phone';
           if (message.isNotEmpty) {
@@ -909,7 +916,7 @@ class _BarcodeGeneratorScreenState
 
         if (ssid.isEmpty) {
           isValid = false;
-          errorMessage = 'Please enter a WiFi network name';
+          errorMessage = 'barcode_generator.enter_wifi_name_error'.tr();
         } else {
           // Generate WiFi QR format
           final String security = _wifiEncryption ? 'WPA' : 'nopass';
@@ -928,7 +935,7 @@ class _BarcodeGeneratorScreenState
 
         if (lat.isEmpty || lng.isEmpty) {
           isValid = false;
-          errorMessage = 'Please enter latitude and longitude';
+          errorMessage = 'barcode_generator.enter_lat_long_error'.tr();
         } else {
           try {
             double.parse(lat);
@@ -939,7 +946,7 @@ class _BarcodeGeneratorScreenState
             }
           } catch (e) {
             isValid = false;
-            errorMessage = 'Invalid latitude or longitude format';
+            errorMessage = 'barcode_generator.invalid_lat_long_error'.tr();
           }
         }
         break;
@@ -951,7 +958,7 @@ class _BarcodeGeneratorScreenState
 
         if (name.isEmpty) {
           isValid = false;
-          errorMessage = 'Please enter a name';
+          errorMessage = 'barcode_generator.enter_name_error'.tr();
         } else {
           // Generate vCard format
           data = 'BEGIN:VCARD\nVERSION:3.0\n';
@@ -1010,7 +1017,7 @@ class _BarcodeGeneratorScreenState
     // Show confirmation
     AppDialogs.showSnackBar(
       context,
-      message: 'Barcode saved to history',
+      message: 'barcode_generator.saved_to_history'.tr(),
       type: SnackBarType.success,
     );
   }
@@ -1041,7 +1048,7 @@ class _BarcodeGeneratorScreenState
           await image.toByteData(format: ui.ImageByteFormat.png);
 
       if (byteData == null) {
-        throw Exception('Failed to capture QR code');
+        throw Exception('barcode_generator.capture_failed'.tr());
       }
 
       final Uint8List pngBytes = byteData.buffer.asUint8List();
@@ -1066,10 +1073,10 @@ class _BarcodeGeneratorScreenState
       // Show success message
       AppDialogs.showSnackBar(
         context,
-        message: 'QR code saved successfully',
+        message: 'barcode_generator.qr_code_saved'.tr(),
         type: SnackBarType.success,
         action: SnackBarAction(
-          label: 'View',
+          label: 'barcode_generator.view'.tr(),
           onPressed: () {
             _showSavedQrCode(file);
           },
@@ -1079,7 +1086,8 @@ class _BarcodeGeneratorScreenState
     } catch (e) {
       AppDialogs.showSnackBar(
         context,
-        message: 'Failed to save QR code: $e',
+        message: 'barcode_generator.save_failed'
+            .tr(namedArgs: {'error': e.toString()}),
         type: SnackBarType.error,
       );
     }
@@ -1095,7 +1103,7 @@ class _BarcodeGeneratorScreenState
             Padding(
               padding: EdgeInsets.all(16.w),
               child: Text(
-                'Saved QR Code',
+                'barcode_generator.saved_qr_code'.tr(),
                 style: GoogleFonts.notoSerif(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -1114,11 +1122,11 @@ class _BarcodeGeneratorScreenState
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Close'),
+                    child: Text('barcode_generator.close'.tr()),
                   ),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.share),
-                    label: const Text('Share'),
+                    label: Text('common.share'.tr()),
                     onPressed: () {
                       Navigator.pop(context);
                       Share.shareXFiles([XFile(file.path)]);
@@ -1143,7 +1151,7 @@ class _BarcodeGeneratorScreenState
           await image.toByteData(format: ui.ImageByteFormat.png);
 
       if (byteData == null) {
-        throw Exception('Failed to capture QR code');
+        throw Exception('barcode_generator.capture_failed'.tr());
       }
 
       final Uint8List pngBytes = byteData.buffer.asUint8List();
@@ -1160,13 +1168,15 @@ class _BarcodeGeneratorScreenState
       // Share the file
       await Share.shareXFiles(
         [XFile(file.path)],
-        text: 'Generated QR Code',
-        subject: 'QR Code - ${_selectedType.toString().split('.').last}',
+        text: 'barcode_generator.generated_qr_code'.tr(),
+        subject: 'barcode_generator.qr_code_subject'
+            .tr(namedArgs: {'type': _selectedType.toString().split('.').last}),
       );
     } catch (e) {
       AppDialogs.showSnackBar(
         context,
-        message: 'Failed to share QR code: $e',
+        message: 'barcode_generator.share_failed'
+            .tr(namedArgs: {'error': e.toString()}),
         type: SnackBarType.error,
       );
     }

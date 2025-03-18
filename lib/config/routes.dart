@@ -5,6 +5,7 @@ import 'package:easy_scan/ui/screen/barcode/barcode_history_screen.dart';
 import 'package:easy_scan/ui/screen/barcode/barcode_scanner_screen.dart';
 import 'package:easy_scan/ui/screen/compression/compression_screen.dart';
 import 'package:easy_scan/ui/screen/conversion/conversion_screen.dart';
+import 'package:easy_scan/ui/screen/languages/languages_screen.dart';
 import 'package:easy_scan/ui/screen/merger/pdf_merge_screen.dart';
 import 'package:easy_scan/ui/screen/settings_screen.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class AppRoutes {
   static const String convert = '/convert';
   static const String view = '/view';
   static const String settings = '/settings';
+  static const String languages = '/languages';
   static const String folders = '/folders';
   static const String pdfMerger = '/pdf_merger';
   static const String allDocuments = '/all_documents';
@@ -81,6 +83,12 @@ class AppRoutes {
             path: settings,
             pageBuilder: (context, state) => const NoTransitionPage(
               child: SettingsScreen(),
+            ),
+          ),
+          GoRoute(
+            path: languages,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: LanguagesScreen(),
             ),
           ),
           GoRoute(
@@ -226,6 +234,10 @@ class AppRoutes {
 
   static void navigateToEdit(BuildContext context, {Document? document}) {
     context.push(edit, extra: document);
+  }
+
+  static void navigateToLanguages(BuildContext context) {
+    context.push(languages);
   }
 
   static void navigateToView(BuildContext context, Document? document) {

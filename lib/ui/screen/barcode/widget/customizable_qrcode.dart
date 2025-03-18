@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -49,7 +50,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
   @override
   void initState() {
     super.initState();
-    title = widget.initialTitle ?? 'Custom QR Code';
+    title = widget.initialTitle ?? 'custom_qr.default_title'.tr();
   }
 
   @override
@@ -169,7 +170,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Customize QR Code',
+            'custom_qr.customize_title'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -180,7 +181,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           // Title input
           TextFormField(
             decoration: InputDecoration(
-              labelText: 'Title',
+              labelText: 'custom_qr.title_label'.tr(),
               border: OutlineInputBorder(),
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
@@ -196,7 +197,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
 
           // Gradient toggle
           SwitchListTile(
-            title: Text('Use Gradient Background'),
+            title: Text('custom_qr.use_gradient'.tr()),
             value: useGradient,
             onChanged: (value) {
               setState(() {
@@ -210,7 +211,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           // Color selection
           if (useGradient)
             _buildColorSelection(
-              'Gradient Colors',
+              'custom_qr.gradient_colors'.tr(),
               gradientColors,
               (colors) {
                 setState(() {
@@ -220,7 +221,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
             )
           else
             _buildColorPicker(
-              'QR Code Color',
+              'custom_qr.qr_color'.tr(),
               foregroundColor,
               (color) {
                 setState(() {
@@ -233,7 +234,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
 
           // Eye shape selection
           Text(
-            'Eye Shape',
+            'custom_qr.eye_shape'.tr(),
             style: GoogleFonts.notoSerif(
               fontWeight: FontWeight.w500,
             ),
@@ -245,7 +246,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
 
           // Data module shape selection
           Text(
-            'Data Module Shape',
+            'custom_qr.data_module_shape'.tr(),
             style: GoogleFonts.notoSerif(
               fontWeight: FontWeight.w500,
             ),
@@ -257,7 +258,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
 
           // Shadow toggle
           SwitchListTile(
-            title: Text('Show Shadow'),
+            title: Text('custom_qr.show_shadow'.tr()),
             value: showShadow,
             onChanged: (value) {
               setState(() {
@@ -272,10 +273,10 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
 
           // Logo options
           ExpansionTile(
-            title: Text('Logo Options'),
+            title: Text('custom_qr.logo_options'.tr()),
             children: [
               SwitchListTile(
-                title: Text('Show Logo'),
+                title: Text('custom_qr.show_logo'.tr()),
                 value: showLogo,
                 onChanged: (value) {
                   setState(() {
@@ -292,7 +293,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
                     ElevatedButton.icon(
                       onPressed: _pickLogo,
                       icon: Icon(Icons.image),
-                      label: Text('Select Logo'),
+                      label: Text('custom_qr.select_logo'.tr()),
                     ),
                     SizedBox(width: 12.w),
                     if (logoBytes != null)
@@ -314,7 +315,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
                   ],
                 ),
                 SizedBox(height: 12.h),
-                Text('Logo Size'),
+                Text('custom_qr.logo_size'.tr()),
                 Slider(
                   value: logoSize,
                   min: 30,
@@ -337,7 +338,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           ElevatedButton.icon(
             onPressed: _captureAndExportQR,
             icon: Icon(Icons.save),
-            label: Text('Save QR Code'),
+            label: Text('custom_qr.save_qr'.tr()),
             style: ElevatedButton.styleFrom(
               minimumSize: Size(double.infinity, 48.h),
             ),
@@ -496,8 +497,8 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
 
   Widget _buildEyeShapeSelector() {
     final eyeShapes = {
-      QrEyeShape.square: 'Square',
-      QrEyeShape.circle: 'Circle',
+      QrEyeShape.square: 'custom_qr.eye_shape_square'.tr(),
+      QrEyeShape.circle: 'custom_qr.eye_shape_circle'.tr(),
     };
 
     return Wrap(
@@ -522,8 +523,8 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
 
   Widget _buildDataModuleShapeSelector() {
     final moduleShapes = {
-      QrDataModuleShape.square: 'Square',
-      QrDataModuleShape.circle: 'Circle',
+      QrDataModuleShape.square: 'custom_qr.data_module_square'.tr(),
+      QrDataModuleShape.circle: 'custom_qr.data_module_circle'.tr(),
     };
 
     return Wrap(
@@ -573,7 +574,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           await image.toByteData(format: ui.ImageByteFormat.png);
 
       if (byteData == null) {
-        throw Exception('Failed to capture QR code image');
+        throw Exception('custom_qr.capture_failed'.tr());
       }
 
       // Convert to uint8list

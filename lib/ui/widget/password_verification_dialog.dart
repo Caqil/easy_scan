@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -127,7 +128,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
               size: 24,
             ),
             const SizedBox(width: 12),
-            const Text('Protected Document'),
+             Text('pdf.protected_document'.tr()),
           ],
         ),
         content: Container(
@@ -235,7 +236,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                       ),
                     ),
                   )
-                : const Text('Unlock'),
+                :  Text('pdf.unlock'.tr()),
           ),
         ],
       ),

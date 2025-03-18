@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,7 +43,7 @@ class FormatSelectionSection extends ConsumerWidget {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  "Format Selection",
+                  "format_selection.title".tr(), // Localized string
                   style: GoogleFonts.notoSerif(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -59,7 +60,7 @@ class FormatSelectionSection extends ConsumerWidget {
                 // From format
                 _buildChipSelector(
                   context: context,
-                  label: "From",
+                  label: "format_selection.from_label".tr(), // Localized string
                   selectedFormat: state.inputFormat,
                   onTap: () => _showFormatPicker(
                     context: context,
@@ -68,7 +69,8 @@ class FormatSelectionSection extends ConsumerWidget {
                     onFormatSelected: (format) => ref
                         .read(conversionStateProvider.notifier)
                         .setInputFormat(format),
-                    label: "From",
+                    label:
+                        "format_selection.from_label".tr(), // Localized string
                   ),
                   colorScheme: colorScheme,
                 ),
@@ -86,7 +88,7 @@ class FormatSelectionSection extends ConsumerWidget {
                 // To format
                 _buildChipSelector(
                   context: context,
-                  label: "To",
+                  label: "format_selection.to_label".tr(), // Localized string
                   selectedFormat: state.outputFormat,
                   onTap: () => _showFormatPicker(
                     context: context,
@@ -95,7 +97,7 @@ class FormatSelectionSection extends ConsumerWidget {
                     onFormatSelected: (format) => ref
                         .read(conversionStateProvider.notifier)
                         .setOutputFormat(format),
-                    label: "To",
+                    label: "format_selection.to_label".tr(), // Localized string
                   ),
                   colorScheme: colorScheme,
                 ),
@@ -178,7 +180,9 @@ class FormatSelectionSection extends ConsumerWidget {
 
                     // Format name or placeholder
                     Text(
-                      selectedFormat?.name ?? "Select",
+                      selectedFormat?.name ??
+                          "format_selection.select_placeholder"
+                              .tr(), // Localized string
                       style: GoogleFonts.notoSerif(
                         fontSize: 13.sp,
                         fontWeight: selectedFormat != null
@@ -234,20 +238,12 @@ class FormatSelectionSection extends ConsumerWidget {
                   color: colorScheme.onSurfaceVariant,
                 ),
                 children: [
-                  const TextSpan(text: "Converting "),
                   TextSpan(
-                    text: inputFormat.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: inputFormat.color,
-                    ),
-                  ),
-                  const TextSpan(text: " to "),
-                  TextSpan(
-                    text: outputFormat.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: outputFormat.color,
+                    text: "format_selection.format_info.converting".tr(
+                      args: [
+                        inputFormat.name,
+                        outputFormat.name
+                      ], // Dynamic arguments
                     ),
                   ),
                 ],
@@ -277,7 +273,7 @@ class FormatSelectionSection extends ConsumerWidget {
           SizedBox(width: 6.w),
           Flexible(
             child: Text(
-              "Select both formats to continue",
+              "format_selection.format_info.hint".tr(), // Localized string
               style: GoogleFonts.notoSerif(
                 fontSize: 12.sp,
                 color: Colors.amber.shade800,
@@ -381,7 +377,8 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
             child: Row(
               children: [
                 Text(
-                  "Select ${widget.label} Format",
+                  "format_selection.format_picker.title"
+                      .tr(args: [widget.label]), // Localized string
                   style: GoogleFonts.notoSerif(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -405,7 +402,9 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
                     decoration: InputDecoration(
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
-                      hintText: 'Search...',
+                      hintText:
+                          "format_selection.format_picker.search_placeholder"
+                              .tr(), // Localized string
                       hintStyle: TextStyle(fontSize: 13.sp),
                       prefixIcon: Icon(Icons.search, size: 16.sp),
                       border: InputBorder.none,
@@ -442,7 +441,8 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
     if (formats.isEmpty) {
       return Center(
         child: Text(
-          'No formats found',
+          "format_selection.format_picker.no_formats_found"
+              .tr(), // Localized string
           style: GoogleFonts.notoSerif(color: Colors.grey),
         ),
       );
@@ -473,7 +473,8 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
             Padding(
               padding: EdgeInsets.only(top: 8.h, bottom: 8.h),
               child: Text(
-                category,
+                "format_selection.format_picker.categories.$category"
+                    .tr(), // Localized string
                 style: GoogleFonts.notoSerif(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
@@ -554,17 +555,17 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
     Map<String, List<FormatOption>> grouped = {};
 
     for (var format in widget.formats) {
-      String category = 'Other';
+      String category = tr('format_categories.other'); // Default category
 
       if (['pdf', 'docx', 'txt', 'rtf'].contains(format.id.toLowerCase())) {
-        category = 'Documents';
+        category = tr('format_categories.documents');
       } else if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'tiff']
           .contains(format.id.toLowerCase())) {
-        category = 'Images';
+        category = tr('format_categories.images');
       } else if (['xlsx'].contains(format.id.toLowerCase())) {
-        category = 'Spreadsheets';
+        category = tr('format_categories.spreadsheets');
       } else if (['pptx'].contains(format.id.toLowerCase())) {
-        category = 'Presentations';
+        category = tr('format_categories.presentations');
       }
 
       grouped.putIfAbsent(category, () => []).add(format);

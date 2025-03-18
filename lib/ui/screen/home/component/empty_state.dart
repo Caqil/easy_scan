@@ -1,4 +1,5 @@
 // empty_state.dart
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,7 +31,7 @@ class EmptyState extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: onScan,
             icon: const Icon(Icons.camera_alt),
-            label: const Text('Start Scanning'),
+            label:  Text('scan.start_scanning'.tr()),
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -51,27 +52,27 @@ class DocumentActionButtons extends StatelessWidget {
             ),
             _buildActionButton(
               icon: Icons.draw_outlined,
-              label: 'Signature',
+              label: 'document_actions.signature'.tr(),
               onTap: onSignatureTap,
             ),
             _buildActionButton(
               icon: Icons.water,
-              label: 'Watermark',
+              label: 'document_actions.watermark'.tr(),
               onTap: onWatermarkTap,
             ),
             _buildActionButton(
               icon: Icons.text_snippet_outlined,
-              label: 'Extract Text',
+              label: 'document_actions.extract_text'.tr(),
               onTap: onExtractTextTap,
             ),
             _buildActionButton(
               icon: Icons.search_outlined,
-              label: 'Find Text',
+              label: 'document_actions.find_text'.tr(),
               onTap: onFindTextTap,
             ),
             _buildActionButton(
               icon: Icons.share_outlined,
-              label: 'Share',
+              label: 'common.share'.tr(),
               onTap: onShareTap,
             ),
           ],

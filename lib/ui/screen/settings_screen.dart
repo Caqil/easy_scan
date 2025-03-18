@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_scan/config/routes.dart';
 import 'package:easy_scan/models/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -76,15 +78,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar:  CustomAppBar(
-        title: Text('Settings',style: GoogleFonts.lilitaOne(fontSize: 25.sp),),
+      appBar: CustomAppBar(
+        title: Text(
+          'settings.settings'.tr(),
+          style: GoogleFonts.lilitaOne(fontSize: 25.sp),
+        ),
       ),
       body: ListView(
         children: [
           // Appearance section
           const _SectionHeader(title: 'Appearance'),
           SwitchListTile(
-            title: const Text('Dark Mode'),
+            title: Text('settings.dark_mode'.tr()),
             subtitle: const Text('Use dark theme throughout the app'),
             value: settings.darkMode,
             onChanged: (value) {
@@ -106,7 +111,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               : _biometricsAvailable
                   ? _buildBiometricTile(settings, colorScheme)
                   : ListTile(
-                      title: const Text('Biometric Authentication'),
+                      title: Text('settings.biometric_auth'.tr()),
                       subtitle: const Text(
                           'Requires fingerprint or face ID to access the app'),
                       trailing: Chip(
@@ -126,7 +131,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
 
           // Scan settings section
-          const _SectionHeader(title: 'Scan Settings'),
+          _SectionHeader(title: 'scan.scan_settings'.tr()),
           SwitchListTile(
             title: const Text('Auto Enhance'),
             subtitle: const Text('Automatically improve scanned documents'),
@@ -136,7 +141,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
           ListTile(
-            title: const Text('Default PDF Quality'),
+            title: Text('settings.default_pdf_quality'.tr()),
             subtitle: Text('${settings.defaultPdfQuality}%'),
             trailing: SizedBox(
               width: 150,
@@ -175,7 +180,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             final openSettings =
                                 await AppDialogs.showConfirmDialog(
                               context,
-                              title: 'Permission Required',
+                              title: 'permissions.permission_required'.tr(),
                               message:
                                   'Camera permission is needed. Open app settings?',
                               confirmText: 'Open Settings',
@@ -210,7 +215,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             final openSettings =
                                 await AppDialogs.showConfirmDialog(
                               context,
-                              title: 'Permission Required',
+                              title: 'permissions.permission_required'.tr(),
                               message:
                                   'Storage permission is needed. Open app settings?',
                               confirmText: 'Open Settings',
@@ -233,6 +238,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             title: const Text('Version'),
             subtitle: const Text('1.0.0'),
             leading: const Icon(Icons.info),
+          ),
+          ListTile(
+            title: const Text('Language'),
+            subtitle: const Text('1.0.0'),
+            leading: const Icon(Icons.info),
+            onTap: () => AppRoutes.navigateToLanguages(context),
           ),
           ListTile(
             title: const Text('Terms of Service'),
@@ -302,7 +313,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               AppDialogs.showSnackBar(
                 context,
                 type: SnackBarType.error,
-                message: 'Authentication failed. Please try again.',
+                message: 'auth.auth_failed'.tr(),
               );
             }
           }

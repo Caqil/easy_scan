@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/ui/common/app_bar.dart';
 import 'package:easy_scan/ui/common/component/scanned_documents_view.dart';
 import 'package:easy_scan/ui/screen/edit/component/document_action_button.dart';
@@ -50,7 +51,7 @@ class _EditScreenViewState extends State<EditScreenView> {
           // Edit mode toggle - only show if switching is allowed
           if (widget.controller.canSwitchEditMode)
             PopupMenuButton<EditMode>(
-              tooltip: 'Change Edit Mode',
+              tooltip: 'editor.change_edit_mode'.tr(),
               icon: Icon(
                 widget.controller.currentEditMode == EditMode.imageEdit
                     ? Icons.image
@@ -68,7 +69,7 @@ class _EditScreenViewState extends State<EditScreenView> {
                                 EditMode.imageEdit
                             ? colorScheme.primary
                             : null),
-                    title: Text('Edit as Images'),
+                    title: Text('editor.edit_as_images'.tr()),
                     selected:
                         widget.controller.currentEditMode == EditMode.imageEdit,
                   ),
@@ -81,7 +82,7 @@ class _EditScreenViewState extends State<EditScreenView> {
                                 EditMode.pdfEdit
                             ? colorScheme.primary
                             : null),
-                    title: Text('Edit as PDF'),
+                    title: Text('editor.edit_as_pdf'.tr()),
                     selected:
                         widget.controller.currentEditMode == EditMode.pdfEdit,
                   ),
@@ -123,7 +124,7 @@ class _EditScreenViewState extends State<EditScreenView> {
         if (widget.controller.isImageOnlyDocument) ...[
           const SizedBox(width: 8),
           Chip(
-            label: Text('Image Editor',
+            label: Text('editor.image_editor'.tr(),
                 style: GoogleFonts.notoSerif(fontSize: 10)),
             backgroundColor: colorScheme.primaryContainer,
             labelStyle:
@@ -136,7 +137,7 @@ class _EditScreenViewState extends State<EditScreenView> {
             widget.controller.isPdfInputFile) ...[
           const SizedBox(width: 8),
           Chip(
-            label: Text('PDF Only', style: GoogleFonts.notoSerif(fontSize: 10)),
+            label: Text('editor.pdf_only'.tr(), style: GoogleFonts.notoSerif(fontSize: 10)),
             backgroundColor: colorScheme.primaryContainer,
             labelStyle:
                 GoogleFonts.notoSerif(color: colorScheme.onPrimaryContainer),

@@ -1,5 +1,6 @@
 // Add this to your lib/ui/common/add_options.dart
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -115,7 +116,7 @@ class _AddOptionsSheet extends StatelessWidget {
           _buildOptionTile(
             context,
             icon: Icons.create_new_folder_outlined,
-            title: 'Create Subfolder',
+            title: 'add_options.create_subfolder'.tr(),
             description: 'Create a new folder here',
             onTap: () {
               Navigator.pop(context);
@@ -126,7 +127,7 @@ class _AddOptionsSheet extends StatelessWidget {
           _buildOptionTile(
             context,
             icon: Icons.document_scanner_outlined,
-            title: 'Scan Document',
+            title: 'add_options.scan_document'.tr(),
             description: 'Capture new documents with camera',
             onTap: () {
               Navigator.pop(context);
@@ -137,7 +138,7 @@ class _AddOptionsSheet extends StatelessWidget {
           _buildOptionTile(
             context,
             icon: Icons.file_upload_outlined,
-            title: 'Import Documents',
+            title: 'add_options.import_documents'.tr(),
             description: 'Import files from your device',
             onTap: () {
               Navigator.pop(context);
@@ -149,7 +150,7 @@ class _AddOptionsSheet extends StatelessWidget {
             _buildOptionTile(
               context,
               icon: Icons.drive_file_move_outlined,
-              title: 'Move Documents Here',
+              title: 'add_options.move_documents_here'.tr(),
               description: 'Move existing documents to this location',
               onTap: () {
                 Navigator.pop(context);

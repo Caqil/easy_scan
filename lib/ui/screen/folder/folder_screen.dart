@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/config/routes.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/models/folder.dart';
@@ -37,6 +38,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
   bool _isGridView = true;
   bool _isLoading = false;
   final ShareService _shareService = ShareService();
+
   @override
   void initState() {
     super.initState();
@@ -94,12 +96,12 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
       appBar: CustomAppBar(
         title: _searchQuery.isEmpty
             ? Text(
-                'Folder Browser',
+                'folder_screen.title'.tr(),
                 style: GoogleFonts.lilitaOne(fontSize: 25.sp),
               )
             : CupertinoSearchTextField(
                 controller: _searchController,
-                placeholder: 'Search folders',
+                placeholder: 'folder_screen.search_placeholder'.tr(),
                 style: const TextStyle(color: Colors.black),
                 onChanged: (value) {
                   setState(() {
@@ -174,7 +176,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             ),
             SizedBox(height: 16),
             Text(
-              'No results found',
+              'folder_screen.no_results_found'.tr(),
               style: GoogleFonts.notoSerif(fontSize: 16.sp),
             ),
           ],
@@ -190,7 +192,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
-              'Folders',
+              'folder_screen.folders_section'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
@@ -206,7 +208,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
-              'Documents',
+              'folder_screen.documents_section'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
@@ -232,7 +234,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             child: Padding(
               padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
               child: Text(
-                'Folders',
+                'folder_screen.folders_section'.tr(),
                 style: GoogleFonts.notoSerif(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
@@ -269,7 +271,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             child: Padding(
               padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h),
               child: Text(
-                'Documents',
+                'folder_screen.documents_section'.tr(),
                 style: GoogleFonts.notoSerif(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
@@ -313,7 +315,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           Padding(
             padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
             child: Text(
-              'Folders',
+              'folder_screen.folders_section'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
@@ -329,7 +331,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           Padding(
             padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
             child: Text(
-              'Documents',
+              'folder_screen.documents_section'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
@@ -396,7 +398,11 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
-                '$documentsCount docs | ${subFolders.length} folders',
+                'folder_screen.documents_count'
+                        .tr(namedArgs: {'count': documentsCount.toString()}) +
+                    ' | ' +
+                    'folder_screen.subfolders_count'
+                        .tr(namedArgs: {'count': subFolders.length.toString()}),
                 style: GoogleFonts.notoSerif(
                   fontSize: 10.sp,
                   color: Colors.grey.shade600,
@@ -468,7 +474,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '$documentsCount documents',
+                          'folder_screen.documents_count'.tr(
+                              namedArgs: {'count': documentsCount.toString()}),
                           style: GoogleFonts.notoSerif(
                             fontSize: 12,
                             color: Colors.grey.shade600,
@@ -482,7 +489,9 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${subFolders.length} subfolders',
+                          'folder_screen.subfolders_count'.tr(namedArgs: {
+                            'count': subFolders.length.toString()
+                          }),
                           style: GoogleFonts.notoSerif(
                             fontSize: 12,
                             color: Colors.grey.shade600,
@@ -514,23 +523,23 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                   }
                 },
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'rename',
                     child: Row(
                       children: [
                         Icon(Icons.edit),
                         SizedBox(width: 8),
-                        Text('Rename'),
+                        Text('folder_screen.menu_options.rename'.tr()),
                       ],
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'color',
                     child: Row(
                       children: [
                         Icon(Icons.palette),
                         SizedBox(width: 8),
-                        Text('Change Color'),
+                        Text('folder_screen.menu_options.change_color'.tr()),
                       ],
                     ),
                   ),
@@ -540,8 +549,10 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                       children: [
                         Icon(Icons.delete, color: Colors.red),
                         SizedBox(width: 8),
-                        Text('Delete',
-                            style: GoogleFonts.notoSerif(color: Colors.red)),
+                        Text(
+                          'folder_screen.menu_options.delete'.tr(),
+                          style: GoogleFonts.notoSerif(color: Colors.red),
+                        ),
                       ],
                     ),
                   ),
@@ -551,7 +562,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                       children: [
                         Icon(Icons.add_to_photos),
                         SizedBox(width: 8),
-                        Text('Add Documents'),
+                        Text('folder_screen.menu_options.add_documents'.tr()),
                       ],
                     ),
                   ),
@@ -767,7 +778,9 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${document.pageCount} pages',
+                          'folder_screen.pages_count'.tr(namedArgs: {
+                            'count': document.pageCount.toString()
+                          }),
                           style: GoogleFonts.notoSerif(
                             fontSize: 12,
                             color: Colors.grey.shade600,
@@ -876,10 +889,10 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
       BuildContext context, Document document) {
     AppDialogs.showConfirmDialog(
       context,
-      title: 'Delete Document',
-      message:
-          'Are you sure you want to delete "${document.name}"? This action cannot be undone.',
-      confirmText: 'Delete',
+      title: 'folder_screen.dialogs.delete_document_title'.tr(),
+      message: 'folder_screen.dialogs.delete_document_message'
+          .tr(namedArgs: {'name': document.name}),
+      confirmText: 'folder_screen.dialogs.delete_button'.tr(),
       isDangerous: true,
     ).then((confirmed) {
       if (confirmed) {
@@ -889,7 +902,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.success,
-          message: 'Document deleted successfully',
+          message:
+              'folder_screen.dialogs.success_messages.document_deleted'.tr(),
         );
       }
     });
@@ -933,7 +947,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
       if (context.mounted) {
         AppDialogs.showSnackBar(context,
             type: SnackBarType.success,
-            message: 'Moved to ${selectedFolder.name}');
+            message: 'folder_screen.dialogs.success_messages.moved_to_folder'
+                .tr(namedArgs: {'folderName': selectedFolder.name}));
       }
     }
   }
@@ -946,7 +961,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => CupertinoAlertDialog(
-          title: const Text('Rename Document'),
+          title: Text('folder_screen.dialogs.rename_document_title'.tr()),
           content: CupertinoTextField(
             controller: controller,
             autofocus: true,
@@ -954,7 +969,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text('folder_screen.dialogs.cancel_button'.tr()),
             ),
             TextButton(
               onPressed: () {
@@ -962,7 +977,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                   Navigator.pop(context, controller.text.trim());
                 }
               },
-              child: const Text('Rename'),
+              child: Text('folder_screen.dialogs.rename_button'.tr()),
             ),
           ],
         ),
@@ -980,7 +995,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.success,
-          message: 'Document renamed successfully',
+          message:
+              'folder_screen.dialogs.success_messages.document_renamed'.tr(),
         );
       }
 
@@ -1001,8 +1017,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           const SizedBox(height: 16),
           Text(
             _currentParentId == null
-                ? 'No folders yet'
-                : 'This folder is empty',
+                ? 'folder_screen.no_folders_yet'.tr()
+                : 'folder_screen.folder_empty'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -1010,7 +1026,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Create a new folder or add documents',
+            'folder_screen.create_folder_prompt'.tr(),
             style: GoogleFonts.notoSerif(
               color: Colors.grey,
               fontSize: 14.sp,
@@ -1020,7 +1036,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           OutlinedButton.icon(
             onPressed: () => _createNewFolder(context),
             icon: const Icon(Icons.create_new_folder),
-            label: const Text('Create Folder'),
+            label: Text('folder_screen.create_folder_button'.tr()),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
