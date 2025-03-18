@@ -37,7 +37,7 @@ class FoldersSection extends ConsumerWidget {
             Text(
               'Folders',
               style: GoogleFonts.notoSerif(
-                  fontSize: 16.sp, fontWeight: FontWeight.bold),
+                  fontSize: 14.sp, fontWeight: FontWeight.bold),
             ),
             Row(
               children: [

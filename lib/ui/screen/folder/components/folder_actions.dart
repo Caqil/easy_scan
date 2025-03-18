@@ -1,5 +1,8 @@
 // Add this file to your project as lib/ui/common/folder_actions.dart
 
+import 'dart:io';
+
+import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,9 +11,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../models/folder.dart';
-import '../../providers/folder_provider.dart';
-import '../../utils/constants.dart';
+import '../../../../models/folder.dart';
+import '../../../../providers/folder_provider.dart';
+import '../../../../utils/constants.dart';
 
 /// A globally accessible class to handle folder-related actions
 class FolderActions {
@@ -35,6 +38,175 @@ class FolderActions {
         onDelete: onDelete,
       ),
     );
+  }
+
+  static Future<void> addDocumentsToFolder(
+    BuildContext context,
+    Folder targetFolder,
+    WidgetRef ref,
+  ) async {
+    // Get all documents that are not already in the target folder
+    final allDocuments = ref.read(documentsProvider);
+    final documentsNotInFolder =
+        allDocuments.where((doc) => doc.folderId != targetFolder.id).toList();
+
+    if (documentsNotInFolder.isEmpty) {
+      AppDialogs.showSnackBar(
+        context,
+        message: 'No documents available to add to this folder',
+        type: SnackBarType.warning,
+      );
+      return;
+    }
+
+    // Track selected documents for moving
+    final selectedDocuments = <Document>[];
+
+    // Show document selection dialog
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text('Add Documents to "${targetFolder.name}"'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Select documents to add:',
+                  style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: documentsNotInFolder.length,
+                    itemBuilder: (context, index) {
+                      final doc = documentsNotInFolder[index];
+                      final isSelected = selectedDocuments.contains(doc);
+
+                      return CheckboxListTile(
+                        title: Text(
+                          doc.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(
+                          doc.folderId == null
+                              ? 'Root folder'
+                              : 'From: ${_getFolderName(ref, doc.folderId)}',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        secondary: doc.thumbnailPath != null
+                            ? SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: Image.file(
+                                    File(doc.thumbnailPath!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            : const Icon(Icons.description),
+                        value: isSelected,
+                        onChanged: (value) {
+                          setState(() {
+                            if (value!) {
+                              selectedDocuments.add(doc);
+                            } else {
+                              selectedDocuments.remove(doc);
+                            }
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Color(targetFolder.color).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Color(targetFolder.color).withOpacity(0.3),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.folder,
+                        color: Color(targetFolder.color),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Selected documents will be moved to "${targetFolder.name}"',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(targetFolder.color),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: selectedDocuments.isEmpty
+                  ? null
+                  : () => Navigator.pop(context, true),
+              child: Text('Add to Folder (${selectedDocuments.length})'),
+            ),
+          ],
+        ),
+      ),
+    ).then((result) async {
+      if (result == true && selectedDocuments.isNotEmpty) {
+        // Update documents to be in the target folder
+        for (var doc in selectedDocuments) {
+          final updatedDoc = doc.copyWith(
+            folderId: targetFolder.id,
+            modifiedAt: DateTime.now(),
+          );
+
+          await ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
+        }
+
+        // Show success message
+        if (context.mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            type: SnackBarType.success,
+            message:
+                'Added ${selectedDocuments.length} document${selectedDocuments.length == 1 ? '' : 's'} to "${targetFolder.name}"',
+          );
+        }
+      }
+    });
+  }
+
+// Helper function to get folder name from ID
+  static String _getFolderName(WidgetRef ref, String? folderId) {
+    if (folderId == null) return 'Root';
+
+    final folders = ref.read(foldersProvider);
+    final folder = folders.firstWhere(
+      (f) => f.id == folderId,
+      orElse: () => Folder(name: "Unknown"),
+    );
+
+    return folder.name;
   }
 
   static Future<void> showRenameFolderDialog(
@@ -426,6 +598,26 @@ class _FolderOptionsSheet extends StatelessWidget {
                         folder,
                         ref,
                         popNavigatorOnSuccess: true,
+                      );
+                    }
+                  },
+                ),
+                _buildOptionTile(
+                  context,
+                  icon: Icons.file_download,
+                  iconColor: Colors.red,
+                  title: 'Add Documents',
+                  description: 'Move documents to "${folder.name}"',
+                  textColor: Colors.red,
+                  onTap: () {
+                    Navigator.pop(context);
+                    if (onDelete != null) {
+                      onDelete!(folder);
+                    } else {
+                      FolderActions.addDocumentsToFolder(
+                        context,
+                        folder,
+                        ref,
                       );
                     }
                   },

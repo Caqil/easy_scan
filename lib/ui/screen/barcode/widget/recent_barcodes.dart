@@ -50,7 +50,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
               Text(
                 title,
                 style: GoogleFonts.notoSerif(
-                  fontSize: 16.sp,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -63,7 +63,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                   child: Text(
                     'View All',
                     style: GoogleFonts.notoSerif(
-                      fontSize: 14.sp,
+                      fontSize: 12.sp,
                     ),
                   ),
                 ),

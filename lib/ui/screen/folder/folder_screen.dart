@@ -8,7 +8,7 @@ import 'package:easy_scan/services/share_service.dart';
 import 'package:easy_scan/ui/common/app_bar.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/ui/common/document_actions.dart';
-import 'package:easy_scan/ui/common/folder_actions.dart';
+import 'package:easy_scan/ui/screen/folder/components/folder_actions.dart';
 import 'package:easy_scan/ui/screen/folder/components/folder_creator.dart';
 import 'package:easy_scan/ui/common/folder_selection.dart';
 import 'package:easy_scan/ui/screen/folder/components/enhanced_breadcrumbs.dart';
@@ -509,6 +509,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                       FolderActions.showDeleteFolderConfirmation(
                           context, folder, ref);
                       break;
+                    case 'addDocs':
+                      FolderActions.addDocumentsToFolder(context, folder, ref);
                   }
                 },
                 itemBuilder: (context) => [
@@ -540,6 +542,16 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                         SizedBox(width: 8),
                         Text('Delete',
                             style: GoogleFonts.notoSerif(color: Colors.red)),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'addDocs',
+                    child: Row(
+                      children: [
+                        Icon(Icons.add_to_photos),
+                        SizedBox(width: 8),
+                        Text('Add Documents'),
                       ],
                     ),
                   ),
