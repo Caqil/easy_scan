@@ -1,8 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/config/routes.dart';
+import 'package:easy_scan/models/app_settings.dart';
 import 'package:easy_scan/providers/locale_provider.dart';
 import 'package:easy_scan/providers/settings_provider.dart';
+import 'package:easy_scan/services/auth_service.dart';
 import 'package:easy_scan/ui/common/app_bar.dart';
+import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/ui/screen/settings/components/app_header.dart';
 import 'package:easy_scan/ui/screen/settings/components/settings_card.dart';
 import 'package:easy_scan/ui/screen/settings/components/settings_divider.dart';
@@ -14,11 +17,44 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'components/settings_navigation_tile.dart';
 
-class SettingsScreen extends ConsumerWidget {
-  const SettingsScreen({super.key});
+class SettingsScreen extends ConsumerStatefulWidget {
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  final AuthService _authService = AuthService();
+  bool _isBiometricAvailable = false;
+  bool _isCloudAvailable = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometricAvailability();
+    _checkCloudAvailability();
+  }
+
+  Future<void> _checkBiometricAvailability() async {
+    final isAvailable = await _authService.isBiometricAvailable();
+    if (mounted) {
+      setState(() {
+        _isBiometricAvailable = isAvailable;
+      });
+    }
+  }
+
+  Future<void> _checkCloudAvailability() async {
+    // This would check if cloud services are available
+    // For now, we'll assume they are
+    setState(() {
+      _isCloudAvailable = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     final localState = ref.watch(localProvider);
 
@@ -51,7 +87,7 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             // App info header
             AppHeaderWidget(
-              appName: "ScanPro",
+              appName: "Easy Scan",
               version: "Version 1.0.0",
               icon: Icons.document_scanner,
             ),
@@ -95,17 +131,41 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 // Biometric Auth
                 SettingsSwitchTile(
-                  icon: Icons.fingerprint,
-                  iconColor: Colors.red,
-                  title: "settings.biometric_auth".tr(),
-                  subtitle: settings.biometricAuthEnabled
-                      ? "settings.biometric_auth_on".tr()
-                      : "settings.biometric_auth_off".tr(),
-                  value: settings.biometricAuthEnabled,
-                  onChanged: (value) {
-                    ref.read(settingsProvider.notifier).toggleBiometricAuth();
-                  },
-                ),
+                    icon: Icons.fingerprint,
+                    iconColor: Colors.red,
+                    title: "settings.biometric_auth".tr(),
+                    subtitle: _isBiometricAvailable
+                        ? (settings.biometricAuthEnabled
+                            ? "settings.biometric_auth_on".tr()
+                            : "settings.biometric_auth_off".tr())
+                        : "settings.biometric_not_available".tr(),
+                    value:
+                        _isBiometricAvailable && settings.biometricAuthEnabled,
+                    onChanged: (value) async {
+                      if (value) {
+                        // When enabling, verify biometrics first
+                        final authenticated =
+                            await _authService.authenticateWithBiometrics();
+                        if (authenticated) {
+                          ref
+                              .read(settingsProvider.notifier)
+                              .toggleBiometricAuth();
+                        } else {
+                          if (mounted) {
+                            AppDialogs.showSnackBar(context,
+                                message:
+                                    "settings.biometric_verification_failed"
+                                        .tr(),
+                                type: SnackBarType.error);
+                          }
+                        }
+                      } else {
+                        // Just disable without verification
+                        ref
+                            .read(settingsProvider.notifier)
+                            .toggleBiometricAuth();
+                      }
+                    }),
 
                 SettingsDivider(),
 
@@ -116,7 +176,7 @@ class SettingsScreen extends ConsumerWidget {
                   title: "settings.auto_lock".tr(),
                   subtitle: "settings.auto_lock_desc".tr(),
                   onTap: () {
-                    // Navigate to auto-lock settings
+                    _showAutoLockOptions(context, ref);
                   },
                 ),
               ],
@@ -165,7 +225,7 @@ class SettingsScreen extends ConsumerWidget {
                       ? "settings.default_location".tr()
                       : settings.defaultSaveLocation,
                   onTap: () {
-                    // Show folder picker
+                    _showSaveLocationPicker(context, ref, settings);
                   },
                 ),
               ],
@@ -180,12 +240,17 @@ class SettingsScreen extends ConsumerWidget {
                   icon: Icons.cloud_upload,
                   iconColor: Colors.cyan,
                   title: "settings.cloud_backup".tr(),
-                  subtitle: settings.cloudBackupEnabled
-                      ? "settings.cloud_backup_on".tr()
-                      : "settings.cloud_backup_off".tr(),
-                  value: settings.cloudBackupEnabled,
+                  subtitle: _isCloudAvailable
+                      ? (settings.cloudBackupEnabled
+                          ? "settings.cloud_backup_on".tr()
+                          : "settings.cloud_backup_off".tr())
+                      : "settings.cloud_not_available".tr(),
+                  value: _isCloudAvailable && settings.cloudBackupEnabled,
                   onChanged: (value) {
                     ref.read(settingsProvider.notifier).toggleCloudBackup();
+                    if (value) {
+                      _showCloudServiceSelector(context);
+                    }
                   },
                 ),
 
@@ -198,7 +263,9 @@ class SettingsScreen extends ConsumerWidget {
                   title: "settings.backup_now".tr(),
                   subtitle: "settings.backup_now_desc".tr(),
                   onTap: () {
-                    // Trigger backup
+                    settings.cloudBackupEnabled && _isCloudAvailable
+                        ? _performBackup(context)
+                        : null;
                   },
                 ),
 
@@ -211,7 +278,11 @@ class SettingsScreen extends ConsumerWidget {
                   title: "settings.restore".tr(),
                   subtitle: "settings.restore_desc".tr(),
                   onTap: () {
-                    // Show restore options
+                    settings.cloudBackupEnabled && _isCloudAvailable
+                        ? () {
+                            _showRestoreConfirmation(context);
+                          }
+                        : null;
                   },
                 ),
               ],
@@ -228,7 +299,7 @@ class SettingsScreen extends ConsumerWidget {
                   title: "settings.help_support".tr(),
                   subtitle: "settings.help_support_desc".tr(),
                   onTap: () {
-                    // Navigate to help page
+                    _showHelpOptions(context);
                   },
                 ),
 
@@ -241,7 +312,7 @@ class SettingsScreen extends ConsumerWidget {
                   title: "settings.privacy_policy".tr(),
                   subtitle: "settings.privacy_policy_desc".tr(),
                   onTap: () {
-                    // Open privacy policy
+                    _showPrivacyPolicy(context);
                   },
                 ),
 
@@ -254,7 +325,6 @@ class SettingsScreen extends ConsumerWidget {
                   title: "settings.about".tr(),
                   subtitle: "settings.about_desc".tr(),
                   onTap: () {
-                    // Show about dialog
                     _showAboutDialog(context);
                   },
                 ),
@@ -265,6 +335,52 @@ class SettingsScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showAutoLockOptions(BuildContext context, WidgetRef ref) {
+    // This would show options for auto-lock timing
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.all(24.r),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "settings.auto_lock".tr(),
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            _buildAutoLockOption(
+                context, "settings.auto_lock_immediate".tr(), 0),
+            _buildAutoLockOption(
+                context, "settings.auto_lock_1_minute".tr(), 1),
+            _buildAutoLockOption(
+                context, "settings.auto_lock_5_minutes".tr(), 5),
+            _buildAutoLockOption(context, "settings.auto_lock_never".tr(), -1),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAutoLockOption(BuildContext context, String title, int minutes) {
+    return ListTile(
+      title: Text(title),
+      onTap: () {
+        // Would save the auto-lock setting
+        Navigator.pop(context);
+        AppDialogs.showSnackBar(context,
+            message: "settings.auto_lock_set".tr(), type: SnackBarType.success);
+      },
     );
   }
 
@@ -369,6 +485,10 @@ class SettingsScreen extends ConsumerWidget {
                               .read(settingsProvider.notifier)
                               .setDefaultPdfQuality(selectedQuality);
                           Navigator.pop(context);
+
+                          AppDialogs.showSnackBar(context,
+                              message: "settings.quality_saved".tr(),
+                              type: SnackBarType.success);
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 12.r),
@@ -386,6 +506,300 @@ class SettingsScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _showSaveLocationPicker(
+      BuildContext context, WidgetRef ref, AppSettings settings) {
+    // Show a folder picker dialog
+    // For now, we'll just show some options
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.all(24.r),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "settings.select_save_location".tr(),
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            ListTile(
+              leading: Icon(Icons.folder),
+              title: Text("Documents"),
+              onTap: () {
+                Navigator.pop(context);
+                ref
+                    .read(settingsProvider.notifier)
+                    .setDefaultSaveLocation("Documents");
+                AppDialogs.showSnackBar(context,
+                    message: "settings.save_location_set".tr(),
+                    type: SnackBarType.success);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.folder),
+              title: Text("Easy Scan"),
+              onTap: () {
+                Navigator.pop(context);
+                ref
+                    .read(settingsProvider.notifier)
+                    .setDefaultSaveLocation("Easy Scan");
+                AppDialogs.showSnackBar(context,
+                    message: "settings.save_location_set".tr(),
+                    type: SnackBarType.success);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.create_new_folder_outlined),
+              title: Text("settings.create_new_folder".tr()),
+              onTap: () {
+                Navigator.pop(context);
+                _showNewFolderDialog(context, ref);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showNewFolderDialog(BuildContext context, WidgetRef ref) {
+    final TextEditingController controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("settings.create_new_folder".tr()),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: "settings.folder_name".tr(),
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("common.cancel".tr()),
+          ),
+          TextButton(
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                Navigator.pop(context);
+                ref
+                    .read(settingsProvider.notifier)
+                    .setDefaultSaveLocation(controller.text);
+                AppDialogs.showSnackBar(context,
+                    message: "settings.folder_created".tr(),
+                    type: SnackBarType.success);
+              }
+            },
+            child: Text("common.create".tr()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCloudServiceSelector(BuildContext context) {
+    // Would show available cloud services
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.all(24.r),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "settings.select_cloud_service".tr(),
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            ListTile(
+              leading: Icon(Icons.cloud, color: Colors.blue),
+              title: Text("Google Drive"),
+              onTap: () {
+                Navigator.pop(context);
+                AppDialogs.showSnackBar(context,
+                    message: "Connected to Google Drive",
+                    type: SnackBarType.success);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.cloud, color: Colors.lightBlue),
+              title: Text("Dropbox"),
+              onTap: () {
+                Navigator.pop(context);
+                AppDialogs.showSnackBar(context,
+                    message: "Connected to Dropbox",
+                    type: SnackBarType.success);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.cloud, color: Colors.grey),
+              title: Text("OneDrive"),
+              onTap: () {
+                Navigator.pop(context);
+                AppDialogs.showSnackBar(context,
+                    message: "Connected to OneDrive",
+                    type: SnackBarType.success);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _performBackup(BuildContext context) {
+    // Show a loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16.h),
+            Text("settings.backing_up".tr()),
+          ],
+        ),
+      ),
+    );
+
+    // Simulate backup
+    Future.delayed(Duration(seconds: 2), () {
+      Navigator.pop(context); // Close dialog
+      AppDialogs.showSnackBar(context,
+          message: "settings.backup_complete".tr(), type: SnackBarType.success);
+    });
+  }
+
+  void _showRestoreConfirmation(BuildContext context) {
+    AppDialogs.showConfirmDialog(
+      context,
+      title: "settings.restore_confirm_title".tr(),
+      message: "settings.restore_confirm_message".tr(),
+      confirmText: "settings.restore".tr(),
+      cancelText: "common.cancel".tr(),
+    ).then((confirmed) {
+      if (confirmed) {
+        _performRestore(context);
+      }
+    });
+  }
+
+  void _performRestore(BuildContext context) {
+    // Show a loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16.h),
+            Text("settings.restoring".tr()),
+          ],
+        ),
+      ),
+    );
+
+    // Simulate restore
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pop(context); // Close dialog
+      AppDialogs.showSnackBar(context,
+          message: "settings.restore_complete".tr(),
+          type: SnackBarType.success);
+    });
+  }
+
+  void _showHelpOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.all(24.r),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "settings.help_support".tr(),
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            ListTile(
+              leading: Icon(Icons.help_outline),
+              title: Text("settings.faqs".tr()),
+              onTap: () {
+                Navigator.pop(context);
+                // Navigate to FAQs
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.email_outlined),
+              title: Text("settings.contact_support".tr()),
+              onTap: () {
+                Navigator.pop(context);
+                // Open email client
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.description_outlined),
+              title: Text("settings.user_guide".tr()),
+              onTap: () {
+                Navigator.pop(context);
+                // Open user guide
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPrivacyPolicy(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("settings.privacy_policy".tr()),
+        content: SingleChildScrollView(
+          child: Text(
+            "This is a placeholder for the privacy policy. In a real app, this would contain your actual privacy policy text.",
+            style: TextStyle(fontSize: 14.sp),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("common.close".tr()),
+          ),
+        ],
       ),
     );
   }

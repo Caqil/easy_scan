@@ -14,9 +14,9 @@ class MainScreen extends ConsumerStatefulWidget {
   final Widget child;
 
   const MainScreen({
-    Key? key,
+    super.key,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<MainScreen> createState() => _MainScreenState();

@@ -609,43 +609,6 @@ class DocumentActionHandler {
     );
   }
 
-// Helper function to build color option
-  Widget _buildColorOption({
-    required Color color,
-    required Color selectedColor,
-    required Function(Color) onSelect,
-  }) {
-    final bool isSelected = selectedColor.value == color.value;
-
-    return GestureDetector(
-      onTap: () => onSelect(color),
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isSelected ? Colors.white : Colors.transparent,
-            width: 2,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: color.withOpacity(0.6),
-                    blurRadius: 8,
-                    spreadRadius: 1,
-                  )
-                ]
-              : null,
-        ),
-        child: isSelected
-            ? const Icon(Icons.check, color: Colors.white, size: 20)
-            : null,
-      ),
-    );
-  }
-
   Future<void> _addWatermarkToPdf(
       String pdfPath,
       String text,
