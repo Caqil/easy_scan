@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/services/image_service.dart';
 import 'package:easy_scan/services/pdf_service.dart';
 import 'package:easy_scan/utils/constants.dart';
-import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
@@ -39,7 +39,7 @@ class PdfMergerService {
 
       return validPaths;
     } catch (e) {
-      debugPrint('Error selecting PDFs: $e');
+      logger.error('Error selecting PDFs: $e');
       throw Exception('Failed to select PDF files: $e');
     }
   }
@@ -75,7 +75,7 @@ class PdfMergerService {
         thumbnailPath: thumbnailFile.path,
       );
     } catch (e) {
-      debugPrint('Error merging PDFs: $e');
+      logger.error('Error merging PDFs: $e');
       throw Exception('Failed to merge PDF files: $e');
     }
   }
@@ -103,7 +103,7 @@ class PdfMergerService {
       // Use the existing merge function
       return await mergePdfs(pdfPaths, outputName);
     } catch (e) {
-      debugPrint('Error merging documents: $e');
+      logger.error('Error merging documents: $e');
       throw Exception('Failed to merge documents: $e');
     }
   }

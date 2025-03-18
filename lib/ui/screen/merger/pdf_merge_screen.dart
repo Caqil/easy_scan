@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/services/pdf_merger_service.dart';
@@ -649,7 +650,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
 
             newDocuments.add(doc);
           } catch (e) {
-            debugPrint('Error processing PDF $pdfPath: $e');
+            logger.error('Error processing PDF $pdfPath: $e');
             // Continue with the rest of the files
           }
         }

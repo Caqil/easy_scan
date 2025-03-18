@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/config/helper.dart';
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/services/pdf_compression_api_service.dart';
@@ -739,7 +740,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child:  Text('common.cancel'.tr()),
+                child: Text('common.cancel'.tr()),
               ),
             ),
             const SizedBox(width: 16),
@@ -813,8 +814,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
       final File originalFile = File(widget.document.pdfPath);
       final int originalSize = await originalFile.length();
 
-      debugPrint('Starting compression of PDF: ${widget.document.name}');
-      debugPrint('Original size: ${FileUtils.formatFileSize(originalSize)}');
+      logger.info('Starting compression of PDF: ${widget.document.name}');
+      logger.info('Original size: ${FileUtils.formatFileSize(originalSize)}');
 
       final apiService = PdfCompressionApiService();
       final compressedPdfPath = await apiService.compressPdf(
@@ -827,7 +828,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
         },
       );
 
-      debugPrint('API compression completed successfully');
+      logger.info('API compression completed successfully');
 
       final File compressedFile = File(compressedPdfPath);
       if (!await compressedFile.exists()) {
@@ -867,7 +868,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           size: AppConstants.thumbnailSize,
         );
       } catch (e) {
-        debugPrint('Failed to generate thumbnail: $e');
+        logger.error('Failed to generate thumbnail: $e');
       }
 
       final String newName =

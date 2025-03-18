@@ -1,12 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/app.dart';
+import 'package:easy_scan/services/logger_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'services/storage_service.dart';
 import 'firebase_options.dart';
-
+final logger = LoggerService();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -18,7 +19,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // Initialize storage
   final storageService = StorageService();
   await storageService.initialize();
   runApp(

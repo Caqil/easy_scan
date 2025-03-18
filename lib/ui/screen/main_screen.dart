@@ -186,7 +186,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     Text(
                       _labelList[index],
                       style: GoogleFonts.notoSerif(
-                        fontSize: 12.sp,
+                        fontSize: 10.sp,
                         fontWeight:
                             isActive ? FontWeight.bold : FontWeight.normal,
                         color: isActive ? colorScheme.primary : Colors.grey,

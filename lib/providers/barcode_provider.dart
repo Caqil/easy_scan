@@ -1,6 +1,7 @@
 // lib/providers/barcode_provider.dart
 
 import 'dart:convert';
+import 'package:easy_scan/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import '../models/barcode_scan.dart';
@@ -77,7 +78,7 @@ class BarcodeScanHistoryNotifier extends StateNotifier<List<BarcodeScan>> {
           .map((json) => BarcodeScan.fromJson(jsonDecode(json)))
           .toList();
     } catch (e) {
-      print('Error loading barcode history: $e');
+      logger.error('Error loading barcode history: $e');
       // If loading fails, maintain an empty state
       state = [];
     }
@@ -98,7 +99,7 @@ class BarcodeScanHistoryNotifier extends StateNotifier<List<BarcodeScan>> {
         await box.put(i.toString(), jsonList[i]);
       }
     } catch (e) {
-      print('Error saving barcode history: $e');
+      logger.error('Error saving barcode history: $e');
     }
   }
 }

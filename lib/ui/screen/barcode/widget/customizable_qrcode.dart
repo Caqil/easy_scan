@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_scan/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -559,7 +560,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
         });
       }
     } catch (e) {
-      print('Error picking logo: $e');
+      logger.error('Error picking logo: $e');
       // Show error to user
     }
   }
@@ -591,7 +592,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
       // Return the file to the callback
       widget.onSaveQR(file);
     } catch (e) {
-      print('Error capturing QR code: $e');
+      logger.error('Error capturing QR code: $e');
       // Show error to user
     }
   }

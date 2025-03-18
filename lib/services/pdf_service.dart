@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
@@ -83,7 +84,7 @@ class PdfService {
         if (await file.exists()) {
           validPaths.add(path);
         } else {
-          debugPrint('Warning: PDF file does not exist: $path');
+          logger.warning('Warning: PDF file does not exist: $path');
         }
       }
 
@@ -100,12 +101,12 @@ class PdfService {
       // Import all pages from each PDF
       for (var pdfPath in pdfPaths) {
         try {
-          debugPrint('Importing pages from: $pdfPath');
+          logger.info('Importing pages from: $pdfPath');
           final File pdfFile = File(pdfPath);
 
           // Skip if file doesn't exist
           if (!await pdfFile.exists()) {
-            debugPrint('Skipping non-existent file: $pdfPath');
+            logger.info('Skipping non-existent file: $pdfPath');
             continue;
           }
 
@@ -114,7 +115,7 @@ class PdfService {
 
           // Skip empty files
           if (fileBytes.isEmpty) {
-            debugPrint('Skipping empty file: $pdfPath');
+            logger.info('Skipping empty file: $pdfPath');
             continue;
           }
 
@@ -142,7 +143,7 @@ class PdfService {
           importDoc.dispose();
         } catch (e) {
           // Log error but continue with other PDFs
-          debugPrint('Error importing pages from $pdfPath: $e');
+          logger.error('Error importing pages from $pdfPath: $e');
         }
       }
 
@@ -160,7 +161,7 @@ class PdfService {
 
       return outputPath;
     } catch (e) {
-      debugPrint('Error in mergePdfs: $e');
+      logger.error('Error in mergePdfs: $e');
 
       // Fallback: if merge fails, just copy the first PDF
       if (pdfPaths.isNotEmpty) {
@@ -171,7 +172,7 @@ class PdfService {
             return outputPath;
           }
         } catch (copyError) {
-          debugPrint('Error in fallback copy: $copyError');
+          logger.error('Error in fallback copy: $copyError');
         }
       }
 
@@ -212,7 +213,7 @@ class PdfService {
 
       return outputPath;
     } catch (e) {
-      debugPrint('Error compressing images: $e');
+      logger.error('Error compressing images: $e');
       return pdfPath; // Return original on error
     }
   }
@@ -250,7 +251,7 @@ class PdfService {
       document.dispose();
       return true;
     } catch (e) {
-      debugPrint('Error verifying PDF password: $e');
+      logger.error('Error verifying PDF password: $e');
       throw Exception('Failed to verify PDF password: $e');
     }
   }
@@ -345,7 +346,7 @@ class PdfService {
       // Encode with specified quality
       return Uint8List.fromList(img.encodeJpg(image, quality: quality));
     } catch (e) {
-      debugPrint('Error optimizing image: $e');
+      logger.error('Error optimizing image: $e');
       // Return original bytes if optimization fails
       return await imageFile.readAsBytes();
     }

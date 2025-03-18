@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_scan/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -64,11 +65,11 @@ class ImageService {
   /// Main thumbnail generation function
   /// This is the main entry point for creating thumbnails from any file type
   Future<File> createThumbnail(File sourceFile, {int size = 300}) async {
-    debugPrint('Creating thumbnail for: ${sourceFile.path}');
+    logger.info('Creating thumbnail for: ${sourceFile.path}');
 
     // Check if file exists
     if (!await sourceFile.exists()) {
-      debugPrint('Source file does not exist: ${sourceFile.path}');
+      logger.warning('Source file does not exist: ${sourceFile.path}');
       return await _createFallbackThumbnail(sourceFile.path, size);
     }
 
@@ -98,19 +99,19 @@ class ImageService {
             extension.replaceAll('.', ''), size);
       }
     } catch (e) {
-      debugPrint('Error creating thumbnail: $e');
+      logger.error('Error creating thumbnail: $e');
       return await _createFallbackThumbnail(sourceFile.path, size);
     }
   }
 
   /// Create a thumbnail from a PDF file (first page)
   Future<File> _generatePdfThumbnail(String pdfPath, int size) async {
-    debugPrint('Creating PDF thumbnail for: $pdfPath');
+    logger.info('Creating PDF thumbnail for: $pdfPath');
 
     try {
       final File pdfFile = File(pdfPath);
       if (!await pdfFile.exists()) {
-        debugPrint('PDF file not found at path: $pdfPath');
+        logger.warning('PDF file not found at path: $pdfPath');
         return _createPlaceholderThumbnail(
           icon: Icons.picture_as_pdf,
           label: 'PDF',
@@ -161,7 +162,7 @@ class ImageService {
 
         return file;
       } catch (e) {
-        debugPrint('Error rendering PDF page: $e');
+        logger.error('Error rendering PDF page: $e');
         // Fall back to placeholder instead of failing
         return _createPlaceholderThumbnail(
           icon: Icons.picture_as_pdf,
@@ -171,7 +172,7 @@ class ImageService {
         );
       }
     } catch (e) {
-      debugPrint('Error generating PDF thumbnail: $e');
+      logger.error('Error generating PDF thumbnail: $e');
       return _createFallbackThumbnail(pdfPath, size);
     }
   }
@@ -213,7 +214,7 @@ class ImageService {
 
       return outputFile;
     } catch (e) {
-      debugPrint('Error generating image thumbnail: $e');
+      logger.error('Error generating image thumbnail: $e');
       return _createPlaceholderThumbnail(
         icon: Icons.image,
         label: 'IMAGE',
@@ -377,14 +378,14 @@ class ImageService {
 
       return file;
     } catch (e) {
-      debugPrint('Error creating placeholder thumbnail: $e');
+      logger.error('Error creating placeholder thumbnail: $e');
       return _createFallbackThumbnail('', size);
     }
   }
 
   /// Create a generic thumbnail when normal thumbnail generation fails
   Future<File> _createFallbackThumbnail(String sourceFilePath, int size) async {
-    debugPrint('Creating fallback thumbnail for: $sourceFilePath');
+    logger.error('Creating fallback thumbnail for: $sourceFilePath');
     try {
       final String extension = path.extension(sourceFilePath).toLowerCase();
       final String fileName = path.basenameWithoutExtension(sourceFilePath);
@@ -435,7 +436,8 @@ class ImageService {
           text: fileName.length > 10
               ? '${fileName.substring(0, 10)}...'
               : fileName,
-          style: GoogleFonts.notoSerif(fontSize: size * 0.1, color: Colors.black),
+          style:
+              GoogleFonts.notoSerif(fontSize: size * 0.1, color: Colors.black),
         ),
         textDirection: TextDirection.ltr,
       );
@@ -456,10 +458,10 @@ class ImageService {
       final File file = File(outputPath);
       await file.writeAsBytes(byteData.buffer.asUint8List());
 
-      debugPrint('Fallback thumbnail created at: $outputPath');
+      logger.info('Fallback thumbnail created at: $outputPath');
       return file;
     } catch (e) {
-      debugPrint('Failed to create fallback thumbnail: $e');
+      logger.error('Failed to create fallback thumbnail: $e');
 
       // Create an absolute last-resort thumbnail
       try {

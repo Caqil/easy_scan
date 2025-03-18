@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/services/image_service.dart';
 import 'package:easy_scan/models/conversion_state.dart';
 import 'package:easy_scan/models/document.dart';
@@ -194,7 +195,7 @@ class ConversionNotifier extends StateNotifier<ConversionState> {
           thumbnailFile = await imageService.createThumbnail(File(filePath),
               size: AppConstants.thumbnailSize);
         } catch (e) {
-          print('Failed to generate thumbnail: $e');
+          logger.error('Failed to generate thumbnail: $e');
           // Continue without thumbnail - it's not critical
         }
       }
@@ -211,10 +212,10 @@ class ConversionNotifier extends StateNotifier<ConversionState> {
       // Save document to Hive via provider
       await ref.read(documentsProvider.notifier).addDocument(document);
 
-      print(
+      logger.info(
           'Document saved successfully: ${document.name} (${outputFormat.id})');
     } catch (e) {
-      print('Error saving document to library: $e');
+      logger.error('Error saving document to library: $e');
       // Rethrow to allow the caller to handle the error if needed
       rethrow;
     }

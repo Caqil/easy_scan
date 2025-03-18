@@ -1,15 +1,12 @@
-import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_scan/models/language.dart';
 import 'package:easy_scan/providers/locale_provider.dart';
 import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/ui/screen/languages/language_loading.dart';
-import 'package:easy_scan/ui/screen/languages/language_tile.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:easy_scan/ui/screen/languages/components/language_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LanguagesScreen extends ConsumerStatefulWidget {
   const LanguagesScreen({super.key});
@@ -19,23 +16,14 @@ class LanguagesScreen extends ConsumerStatefulWidget {
 }
 
 class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(localProvider.notifier).initializeLanguages(context);
     });
-  }
-
-  void showLoading(BuildContext context,
-      {bool? isDismissible, bool? useLogo = false}) {
-    showDialog(
-      context: context,
-      barrierDismissible: isDismissible ?? false,
-      builder: (BuildContext context) {
-        return LanguageLoadingDialog();
-      },
-    );
   }
 
   @override
@@ -45,58 +33,179 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: Text("setting_language".tr()),
+        title: Text("settings.language".tr()),
+        centerTitle: false,
       ),
       body: localState.languages.isEmpty
-          ? Center(
-              child: CircularProgressIndicator.adaptive(),
-            )
-          : SingleChildScrollView(
-              child: CupertinoFormSection.insetGrouped(
-                margin: EdgeInsetsDirectional.zero,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
+          ? _buildLoadingState()
+          : _buildLanguageList(context, localState),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text(
+            "settings.loading_languages".tr(),
+            style: GoogleFonts.notoSerif(
+              fontSize: 16.sp,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageList(BuildContext context, LocalState localState) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Info card for current language
+        Padding(
+          padding: EdgeInsets.all(16.r),
+          child: Card(
+            elevation: 0,
+            color:
+                Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                width: 1,
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(16.r),
+              child: Row(
                 children: [
-                  ...List.generate(
-                    localState.languages.length,
-                    (index) => LanguageTile(
-                      language: localState.languages[index],
-                      isSelected: context.locale ==
-                          Locale(
-                            localState.languages[index].languageCode!,
-                            localState.languages[index].countryCode,
+                  Icon(
+                    Icons.info_outline,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 24.r,
+                  ),
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "settings.current_language".tr(),
+                          style: GoogleFonts.notoSerif(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
-                      onTap: () {
-                        HapticFeedback.selectionClick();
-                        showLoading(context);
-                        Future.delayed(
-                          const Duration(seconds: 2),
-                          () async {
-                            ref.read(localProvider.notifier).setLanguage(
-                                  context,
-                                  Locale(
-                                    localState.languages[index].languageCode,
-                                    localState.languages[index].countryCode,
-                                  ),
-                                );
-                            if (Platform.isAndroid || Platform.isIOS) {
-                              context.pop();
-                            }
-                            context.pop();
-                          },
-                        );
-                      },
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          _getCurrentLanguageName(
+                              context.locale, localState.languages),
+                          style: GoogleFonts.notoSerif(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Platform.isAndroid || Platform.isIOS
-                      ? SizedBox()
-                      : SizedBox(height: 170.h)
                 ],
               ),
             ),
+          ),
+        ),
+
+        // Heading for available languages
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.r, vertical: 8.r),
+          child: Text(
+            "settings.available_languages".tr(),
+            style: GoogleFonts.notoSerif(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
+          ),
+        ),
+
+        Divider(height: 1),
+
+        // Language list with visual improvements
+        Expanded(
+          child: ListView.builder(
+            itemCount: localState.languages.length,
+            itemBuilder: (context, index) {
+              final language = localState.languages[index];
+              final isSelected =
+                  context.locale.languageCode == language.languageCode &&
+                      (context.locale.countryCode == language.countryCode ||
+                          language.countryCode == null);
+
+              return LanguageTile(
+                language: language,
+                isSelected: isSelected,
+                onTap: () => _changeLanguage(language),
+              );
+            },
+          ),
+        ),
+      ],
     );
+  }
+
+  String _getCurrentLanguageName(Locale locale, List<Language> languages) {
+    try {
+      final currentLanguage = languages.firstWhere(
+        (lang) =>
+            lang.languageCode == locale.languageCode &&
+            (lang.countryCode == locale.countryCode),
+        orElse: () => Language(
+          label: "Unknown (${locale.languageCode}_${locale.countryCode})",
+          languageCode: locale.languageCode,
+          countryCode: locale.countryCode ?? "",
+        ),
+      );
+      return currentLanguage.label;
+    } catch (e) {
+      return "Unknown";
+    }
+  }
+
+  void _changeLanguage(Language language) {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Directly set the language without showing a dialog or delay
+    try {
+      ref.read(localProvider.notifier).setLanguage(
+            context,
+            Locale(language.languageCode, language.countryCode),
+          );
+
+      // Simple success message instead of dialogs and navigation
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Language changed to ${language.label}"),
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ));
+    } catch (e) {
+      // Show error if something went wrong
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Error changing language"),
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ));
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }

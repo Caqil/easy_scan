@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'language.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 3)
 class Language {
   @HiveField(0)
   final String label;

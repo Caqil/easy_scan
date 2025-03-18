@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_scan/config/helper.dart';
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/services/pdf_compression_api_service.dart';
@@ -335,10 +336,10 @@ class _CompressionBottomSheetState
       final File originalFile = File(widget.document.pdfPath);
       final int originalSize = await originalFile.length();
 
-      debugPrint('Starting compression for ${widget.document.name}');
-      debugPrint(
+      logger.info('Starting compression for ${widget.document.name}');
+      logger.info(
           'Original file size: ${FileUtils.formatFileSize(originalSize)}');
-      debugPrint('Compression level: $_compressionLevel');
+      logger.info('Compression level: $_compressionLevel');
 
       final apiService = PdfCompressionApiService();
       final compressedPdfPath = await apiService.compressPdf(
@@ -351,7 +352,7 @@ class _CompressionBottomSheetState
         },
       );
 
-      debugPrint('API compression completed: $compressedPdfPath');
+      logger.info('API compression completed: $compressedPdfPath');
 
       if (compressedPdfPath == widget.document.pdfPath) {
         if (mounted) {
@@ -371,9 +372,9 @@ class _CompressionBottomSheetState
       final double percentReduction =
           ((originalSize - compressedSize) / originalSize * 100);
 
-      debugPrint(
+      logger.info(
           'Compression complete. New size: ${FileUtils.formatFileSize(compressedSize)}');
-      debugPrint('Size reduction: ${percentReduction.toStringAsFixed(1)}%');
+      logger.info('Size reduction: ${percentReduction.toStringAsFixed(1)}%');
 
       final compressedDocument = widget.document.copyWith(
         name: '${widget.document.name} (Compressed)',

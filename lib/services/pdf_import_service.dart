@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/utils/constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,7 +39,7 @@ class PdfImportService {
 
       return await _processPdfFile(sourceFile, file.name);
     } catch (e) {
-      debugPrint('Failed to import PDF: $e');
+      logger.error('Failed to import PDF: $e');
       throw Exception('Failed to import PDF: $e');
     }
   }
@@ -69,7 +70,7 @@ class PdfImportService {
 
       return await _processPdfFile(sourceFile, file.name);
     } catch (e) {
-      debugPrint('Failed to import PDF from iCloud: $e');
+      logger.error('Failed to import PDF from iCloud: $e');
       throw Exception('Failed to import PDF from iCloud: $e');
     }
   }
@@ -85,7 +86,7 @@ class PdfImportService {
         extension: 'pdf',
       );
 
-      debugPrint('Copying PDF to: $targetPath');
+      logger.info('Copying PDF to: $targetPath');
 
       // Ensure target directory exists
       final targetDir = Directory(path.dirname(targetPath));
@@ -101,7 +102,7 @@ class PdfImportService {
         throw Exception('Failed to copy PDF file to $targetPath');
       }
 
-      debugPrint('PDF copied successfully to: $targetPath');
+      logger.info('PDF copied successfully to: $targetPath');
 
       // Read file size to verify it's not empty
       final fileSize = await targetFile.length();
@@ -113,9 +114,9 @@ class PdfImportService {
       int pageCount = 1;
       try {
         pageCount = await _pdfService.getPdfPageCount(targetPath);
-        debugPrint('PDF page count: $pageCount');
+        logger.info('PDF page count: $pageCount');
       } catch (e) {
-        debugPrint('Error getting PDF page count: $e');
+        logger.error('Error getting PDF page count: $e');
         // Continue with default page count 1
       }
 
@@ -129,15 +130,16 @@ class PdfImportService {
             size: AppConstants.thumbnailSize);
 
         thumbnailPath = thumbnailFile.path;
-        debugPrint('Thumbnail created at: $thumbnailPath');
+        logger.error('Thumbnail created at: $thumbnailPath');
 
         // Verify thumbnail exists
         if (!await File(thumbnailPath).exists()) {
-          debugPrint('Warning: Thumbnail file does not exist after creation');
+          logger
+              .warning('Warning: Thumbnail file does not exist after creation');
           thumbnailPath = null;
         }
       } catch (e) {
-        debugPrint('Failed to generate thumbnail: $e');
+        logger.error('Failed to generate thumbnail: $e');
         // Continue without thumbnail - it's not critical
       }
 
@@ -150,7 +152,7 @@ class PdfImportService {
         thumbnailPath: thumbnailPath,
       );
     } catch (e) {
-      debugPrint('Error in _processPdfFile: $e');
+      logger.error('Error in _processPdfFile: $e');
       throw Exception('Error processing PDF file: $e');
     }
   }

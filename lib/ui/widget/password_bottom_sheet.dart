@@ -7,6 +7,7 @@ import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../main.dart';
 import '../../services/pdf_service.dart';
 
 class PasswordBottomSheet extends ConsumerStatefulWidget {
@@ -102,7 +103,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child:  Text('common.cancel'.tr()),
+                  child: Text('common.cancel'.tr()),
                 ),
               ),
               const SizedBox(width: 16),
@@ -121,7 +122,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      :  Text('common.save'.tr()),
+                      : Text('common.save'.tr()),
                 ),
               ),
             ],
@@ -148,7 +149,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
       final pdfService = PdfService();
       final String password = _passwordController.text.trim();
 
-      print(
+      logger.info(
           'Applying password: "${password}" to document: ${widget.document.name}');
 
       // Apply the password to the actual PDF file
@@ -161,7 +162,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
         throw Exception('Failed to protect PDF - returned path is empty');
       }
 
-      print('Protected PDF path: $protectedPdfPath');
+      logger.info('Protected PDF path: $protectedPdfPath');
 
       // Update document with password
       final updatedDoc = Document(
@@ -180,7 +181,8 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
         password: password, // Store the actual password
       );
 
-      print('Updating document with password, document ID: ${updatedDoc.id}');
+      logger.info(
+          'Updating document with password, document ID: ${updatedDoc.id}');
 
       await ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
 
@@ -194,7 +196,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
                 : 'Password added successfully');
       }
     } catch (e) {
-      print('Error in _applyPassword: $e');
+      logger.error('Error in _applyPassword: $e');
       if (mounted) {
         AppDialogs.showSnackBar(context,
             type: SnackBarType.error,

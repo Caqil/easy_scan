@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_scan/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
@@ -46,7 +47,7 @@ class DocumentPagePreview extends StatelessWidget {
       page,
       fit: BoxFit.contain,
       errorBuilder: (context, error, stackTrace) {
-        print('Error loading image: $error');
+        logger.error('Error loading image: $error');
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -76,7 +77,7 @@ class DocumentPagePreview extends StatelessWidget {
         // You can add logic here if needed when PDF page changes
       },
       onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
-        print('Error loading PDF: ${details.error}');
+        logger.error('Error loading PDF: ${details.error}');
       },
     );
   }

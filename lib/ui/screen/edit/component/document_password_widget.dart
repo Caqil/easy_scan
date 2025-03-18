@@ -1,3 +1,4 @@
+import 'package:easy_scan/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,9 +29,9 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
     _isProtectionEnabled = widget.isPasswordProtected;
 
     // Debug message to verify the password status
-    print("Password protection initialized: $_isProtectionEnabled");
+    logger.info("Password protection initialized: $_isProtectionEnabled");
     if (_isProtectionEnabled) {
-      print(
+      logger.info(
           "Password value: ${widget.passwordController.text.isNotEmpty ? '[Password exists]' : '[No password]'}");
     }
   }

@@ -1062,8 +1062,9 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
   }
 
   void _onBreadcrumbTap(int index) {
-    if (index == _breadcrumbs.length - 1)
+    if (index == _breadcrumbs.length - 1) {
       return; // Don't process if tapping current folder
+    }
 
     if (index == 0) {
       // Root tap
@@ -1074,7 +1075,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
     } else {
       // Navigate to specific folder in breadcrumb path
       String? targetId;
-      String? parentId = null;
+      String? parentId;
 
       final allFolders = ref.read(foldersProvider);
       for (int j = 1; j <= index; j++) {

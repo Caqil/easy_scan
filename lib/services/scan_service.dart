@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_scan/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -62,7 +63,7 @@ class ScanService {
         if (result != null && result is List) {
           // Convert dynamic list to List<String>
           imagePaths = result.map((path) => path.toString()).toList();
-          debugPrint('Scanned images: $imagePaths');
+          logger.info('Scanned images: $imagePaths');
         }
       } catch (e) {
         if (context.mounted) {
@@ -127,7 +128,7 @@ class ScanService {
           ref.read(scanProvider.notifier).addPage(imageFile);
         } catch (e) {
           // Just skip failed images to improve reliability
-          debugPrint('Failed to process image: $e');
+          logger.info('Failed to process image: $e');
         }
       }
 

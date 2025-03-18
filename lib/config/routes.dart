@@ -7,7 +7,7 @@ import 'package:easy_scan/ui/screen/compression/compression_screen.dart';
 import 'package:easy_scan/ui/screen/conversion/conversion_screen.dart';
 import 'package:easy_scan/ui/screen/languages/languages_screen.dart';
 import 'package:easy_scan/ui/screen/merger/pdf_merge_screen.dart';
-import 'package:easy_scan/ui/screen/settings_screen.dart';
+import 'package:easy_scan/ui/screen/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';

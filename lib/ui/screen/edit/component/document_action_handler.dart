@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/ui/common/dialogs.dart';
 import 'package:easy_scan/ui/screen/edit/component/document_password_widget.dart';
 import 'package:easy_scan/ui/screen/edit/component/edit_screen_controller.dart';
@@ -396,7 +397,7 @@ class DocumentActionHandler {
                                   final bytes = await image.readAsBytes();
                                   // Update with new image
                                   onImageChanged(bytes);
-                                  debugPrint('Opacity slider value: $opacity');
+                                  logger.info('Opacity slider value: $opacity');
                                   controller.updateUI();
                                 }
                               } catch (e) {
@@ -669,7 +670,7 @@ class DocumentActionHandler {
               )
             : PdfDocument(inputBytes: await File(pdfPath).readAsBytes());
       } catch (e) {
-        debugPrint('Error opening PDF: $e');
+        logger.error('Error opening PDF: $e');
         throw Exception('Could not open PDF file: $e');
       }
 
@@ -775,7 +776,7 @@ class DocumentActionHandler {
             graphics.restore();
           }
         } catch (e) {
-          debugPrint('Error applying image watermark: $e');
+          logger.error('Error applying image watermark: $e');
           throw Exception('Failed to apply image watermark: $e');
         }
       }
@@ -799,7 +800,7 @@ class DocumentActionHandler {
         // Dispose the document properly
         document.dispose();
       } catch (e) {
-        debugPrint('Error saving watermarked PDF: $e');
+        logger.error('Error saving watermarked PDF: $e');
         throw Exception('Failed to save watermarked document: $e');
       }
 

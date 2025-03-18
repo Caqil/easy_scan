@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,13 +24,13 @@ class FileUtils {
         dirPath = path.join(baseDir.path, 'documents');
       }
 
-      debugPrint('Creating file in directory: $dirPath');
+      logger.info('Creating file in directory: $dirPath');
 
       // Create directory if it doesn't exist
       final Directory directory = Directory(dirPath);
       if (!await directory.exists()) {
         await directory.create(recursive: true);
-        debugPrint('Created directory: $dirPath');
+        logger.info('Created directory: $dirPath');
       }
 
       // Clean the document name (remove invalid characters)
@@ -44,10 +45,10 @@ class FileUtils {
       final String filePath =
           path.join(dirPath, '${cleanName}_$timestamp.$extension');
 
-      debugPrint('Generated file path: $filePath');
+      logger.info('Generated file path: $filePath');
       return filePath;
     } catch (e) {
-      debugPrint('Error in getUniqueFilePath: $e');
+      logger.error('Error in getUniqueFilePath: $e');
       rethrow;
     }
   }
@@ -84,7 +85,7 @@ class FileUtils {
         }
       }
     } catch (e) {
-      print('Error calculating folder size: $e');
+      logger.error('Error calculating folder size: $e');
       return 'N/A';
     }
 
@@ -242,7 +243,7 @@ class FileUtils {
       case 'xml':
         return 'XML Document';
       default:
-        return extension.toUpperCase() + ' Document';
+        return '${extension.toUpperCase()} Document';
     }
   }
 
@@ -263,7 +264,7 @@ class FileUtils {
 
       return await sourceFile.copy(destinationPath);
     } catch (e) {
-      debugPrint('Error copying file: $e');
+      logger.error('Error copying file: $e');
       rethrow;
     }
   }
@@ -276,7 +277,7 @@ class FileUtils {
       }
       return directory;
     } catch (e) {
-      debugPrint('Error creating directory: $e');
+      logger.error('Error creating directory: $e');
       rethrow;
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:easy_scan/config/routes.dart';
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/providers/document_provider.dart';
 import 'package:easy_scan/providers/scan_provider.dart';
@@ -20,7 +21,6 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
 import 'package:path/path.dart' as path;
-import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'dart:ui' as ui;
 
 enum EditMode {
@@ -121,7 +121,7 @@ class EditScreenController {
 
       // Schedule temp file for deletion
       File(_tempPreviewPdfPath!).delete().catchError((e) {
-        debugPrint('Error deleting temp PDF: $e');
+        logger.error('Error deleting temp PDF: $e');
       });
 
       _tempPreviewPdfPath = null;
@@ -151,7 +151,7 @@ class EditScreenController {
       try {
         File(_tempPreviewPdfPath!).deleteSync();
       } catch (e) {
-        debugPrint('Error cleaning up temp files: $e');
+        logger.error('Error cleaning up temp files: $e');
       }
       _tempPreviewPdfPath = null;
     }
@@ -191,7 +191,7 @@ class EditScreenController {
           _originalPages = originalPages;
         }
       } catch (e) {
-        debugPrint('Error creating PDF preview: $e');
+        logger.error('Error creating PDF preview: $e');
         AppDialogs.showSnackBar(
           context,
           message: 'Could not create PDF preview: $e',
@@ -245,13 +245,13 @@ class EditScreenController {
           if (ext == '.pdf') {
             pages.add(pdfFile);
             hasPdfFile = true;
-            debugPrint('Loaded PDF file: ${pdfFile.path}');
+            logger.info('Loaded PDF file: ${pdfFile.path}');
           } else {
             // If primary file is an image, not a PDF
             pages.add(pdfFile);
             hasOriginalImages = true;
             isImageOnlyDocument = true;
-            debugPrint('Primary file is an image: ${pdfFile.path}');
+            logger.info('Primary file is an image: ${pdfFile.path}');
           }
         }
       }
@@ -271,7 +271,7 @@ class EditScreenController {
               // Make sure it's not a PDF
               imageFiles.add(file);
               hasOriginalImages = true;
-              debugPrint('Found original image: ${file.path}');
+              logger.info('Found original image: ${file.path}');
             }
           }
         }
@@ -296,7 +296,7 @@ class EditScreenController {
         // For image-only documents, set up a special edit mode flag
         _isImageOnlyDocument = true;
         _canSwitchEditMode = false;
-        debugPrint('Document contains only images - enabling image edit mode');
+        logger.info('Document contains only images - enabling image edit mode');
       }
       // Determine edit mode capabilities for other cases
       else if (hasPdfFile && hasOriginalImages) {
@@ -305,14 +305,14 @@ class EditScreenController {
         _currentEditMode =
             EditMode.imageEdit; // Start in image edit mode by default
         isPdfInputFile = true; // We do have a PDF file
-        debugPrint(
+        logger.info(
             'Document has both PDF and original images - edit mode switching enabled');
       } else if (hasPdfFile) {
         // Only PDF available
         isPdfInputFile = true;
         _currentEditMode = EditMode.pdfEdit;
         _canSwitchEditMode = false;
-        debugPrint('Document has only PDF - restricting to PDF edit mode');
+        logger.info('Document has only PDF - restricting to PDF edit mode');
       }
 
       if (pages.isEmpty) {
@@ -554,13 +554,13 @@ class EditScreenController {
             .contains(ext)) {
           imageFiles.add(page);
         } else {
-          debugPrint('Warning: Unrecognized file type: $ext');
+          logger.warning('Warning: Unrecognized file type: $ext');
           // For other file types, try to treat as image
           imageFiles.add(page);
         }
       }
 
-      debugPrint(
+      logger.info(
           'Processing ${imageFiles.length} images and ${pdfFiles.length} PDFs');
 
       // Step 2: Handle based on edit mode and content
@@ -575,12 +575,12 @@ class EditScreenController {
 
         if (pdfFiles.length == 1 && imageFiles.isEmpty && isPdfInputFile) {
           // Case 1: Single PDF file only - use it directly
-          debugPrint('PDF Edit Mode - using single PDF directly');
+          logger.info('PDF Edit Mode - using single PDF directly');
           filePath = pdfFiles[0].path;
           pageCount = await pdfService.getPdfPageCount(filePath);
         } else {
           // Case 2 & 3: Create or merge PDFs
-          debugPrint('PDF Edit Mode - creating/merging PDFs');
+          logger.info('PDF Edit Mode - creating/merging PDFs');
           List<String> allPdfPaths = [];
 
           // Add existing PDFs
@@ -597,7 +597,7 @@ class EditScreenController {
               allPdfPaths.add(imagesPdfPath);
               tempPaths.add(imagesPdfPath);
             } catch (e) {
-              debugPrint('Error batch converting images: $e');
+              logger.error('Error batch converting images: $e');
               // Fallback: convert images individually
               for (int i = 0; i < imageFiles.length; i++) {
                 try {
@@ -609,7 +609,7 @@ class EditScreenController {
                   allPdfPaths.add(singleImagePdfPath);
                   tempPaths.add(singleImagePdfPath);
                 } catch (e) {
-                  debugPrint('Error converting image ${i}: $e');
+                  logger.error('Error converting image ${i}: $e');
                   // Skip problematic image
                 }
               }
@@ -632,7 +632,7 @@ class EditScreenController {
         }
       } else {
         // Image Edit Mode - Convert all to PDFs and merge if needed
-        debugPrint('Image Edit Mode - converting to PDF');
+        logger.info('Image Edit Mode - converting to PDF');
         List<String> allPdfPaths = [];
 
         // Convert images to PDFs
@@ -644,7 +644,7 @@ class EditScreenController {
             allPdfPaths.add(imagesPdfPath);
             tempPaths.add(imagesPdfPath);
           } catch (e) {
-            debugPrint('Error batch converting images: $e');
+            logger.error('Error batch converting images: $e');
             // Fallback: convert images individually
             for (int i = 0; i < imageFiles.length; i++) {
               try {
@@ -656,7 +656,7 @@ class EditScreenController {
                 allPdfPaths.add(singleImagePdfPath);
                 tempPaths.add(singleImagePdfPath);
               } catch (e) {
-                debugPrint('Error converting image ${i}: $e');
+                logger.error('Error converting image ${i}: $e');
                 // Skip problematic image
               }
             }
@@ -702,7 +702,7 @@ class EditScreenController {
         thumbnailFile = await imageService.createThumbnail(File(filePath),
             size: AppConstants.thumbnailSize);
       } catch (e) {
-        debugPrint('Error creating thumbnail: $e');
+        logger.error('Error creating thumbnail: $e');
         // Create fallback thumbnail
         thumbnailFile = await _createSimpleThumbnail(documentName);
       }
@@ -721,7 +721,7 @@ class EditScreenController {
           pagesPaths.add(imageFile.path);
         }
 
-        debugPrint(
+        logger.info(
             'Saving document with ${pagesPaths.length} paths: PDF + ${pagesPaths.length - 1} original images');
       } else if (isEditingExistingDocument) {
         // For existing documents, preserve the original image paths if available
@@ -739,7 +739,7 @@ class EditScreenController {
           // Only include valid image paths
           if (validOriginalPaths.isNotEmpty) {
             pagesPaths.addAll(validOriginalPaths);
-            debugPrint(
+            logger.info(
                 'Preserving ${validOriginalPaths.length} original image paths');
           }
         }
@@ -751,7 +751,7 @@ class EditScreenController {
           pdfPath: filePath,
           pagesPaths: pagesPaths, // Now storing PDF + original images
           pageCount: pageCount,
-          thumbnailPath: thumbnailFile?.path,
+          thumbnailPath: thumbnailFile.path,
           modifiedAt: DateTime.now(),
           isPasswordProtected: isPasswordProtectionEnabled,
           password:
@@ -799,7 +799,7 @@ class EditScreenController {
             }
           } catch (e) {
             // Ignore cleanup errors
-            debugPrint('Warning: Could not clean up temp file: $tempPath');
+            logger.warning('Warning: Could not clean up temp file: $tempPath');
           }
         }
       }
@@ -811,7 +811,7 @@ class EditScreenController {
         message: 'Error saving document: $e',
         type: SnackBarType.error,
       );
-      debugPrint('Error saving document: $e');
+      logger.error('Error saving document: $e');
     } finally {
       isProcessing = false;
       _notifyStateChanged();

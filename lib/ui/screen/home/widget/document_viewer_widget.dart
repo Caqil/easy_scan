@@ -1,4 +1,4 @@
-
+import 'package:easy_scan/main.dart';
 import 'package:easy_scan/models/document.dart';
 import 'package:easy_scan/ui/screen/home/widget/image_viewer_widget.dart';
 import 'package:easy_scan/ui/screen/home/widget/text_viewer_widget.dart';
@@ -80,7 +80,7 @@ class DocumentViewerWidget extends StatelessWidget {
     try {
       await OpenFile.open(filePath);
     } catch (e) {
-      print('Failed to open file with external app: $e');
+      logger.error('Failed to open file with external app: $e');
     }
   }
 }

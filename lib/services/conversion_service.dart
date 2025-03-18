@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:easy_scan/config/api_config.dart';
+import 'package:easy_scan/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -37,9 +38,10 @@ class ConversionService {
         request.fields['password'] = password;
       }
 
-      print("Sending conversion request to: ${ApiConfig.baseUrl}/convert");
-      print("File: ${file.path}");
-      print(
+      logger
+          .info("Sending conversion request to: ${ApiConfig.baseUrl}/convert");
+      logger.info("File: ${file.path}");
+      logger.info(
           "Parameters: inputFormat=$inputFormat, outputFormat=$outputFormat, ocr=$ocrEnabled, quality=$quality");
 
       // Send request
@@ -49,7 +51,7 @@ class ConversionService {
       // Check response
       if (streamedResponse.statusCode != 200) {
         var errorBody = await streamedResponse.stream.bytesToString();
-        print(
+        logger.error(
             "API Error: Status ${streamedResponse.statusCode}, Body: $errorBody");
         throw Exception(
             "API error: ${streamedResponse.statusCode} - $errorBody");
@@ -58,13 +60,13 @@ class ConversionService {
       // Parse response
       var response = await http.Response.fromStream(streamedResponse);
       var responseBody = response.body;
-      print("API Response: $responseBody");
+      logger.info("API Response: $responseBody");
 
       Map<String, dynamic>? responseJson;
       try {
         responseJson = jsonDecode(responseBody);
       } catch (e) {
-        print("Failed to parse JSON response: $e");
+        logger.error("Failed to parse JSON response: $e");
         throw Exception("Invalid response format from server");
       }
 
@@ -74,7 +76,7 @@ class ConversionService {
       if (responseJson == null ||
           !responseJson.containsKey('success') ||
           responseJson['success'] != true) {
-        print("API returned failure or invalid format: $responseJson");
+        logger.error("API returned failure or invalid format: $responseJson");
         throw Exception("Conversion failed on server side");
       }
 
@@ -87,17 +89,17 @@ class ConversionService {
         throw Exception("No fileUrl found in response");
       }
 
-
       String downloadUrl =
           "${ApiConfig.baseUrl}//file?folder=conversions&filename=${filename}";
 
-      print("Using direct fileUrl download: $downloadUrl");
-      print("Downloading from: $downloadUrl");
+      logger.info("Using direct fileUrl download: $downloadUrl");
+      logger.info("Downloading from: $downloadUrl");
 
       var downloadResponse = await http.get(Uri.parse(downloadUrl));
 
       if (downloadResponse.statusCode != 200) {
-        print("Download failed with status: ${downloadResponse.statusCode}");
+        logger.error(
+            "Download failed with status: ${downloadResponse.statusCode}");
         throw Exception(
             "Failed to download converted file (Status: ${downloadResponse.statusCode})");
       }
@@ -110,12 +112,12 @@ class ConversionService {
 
       await File(filePath).writeAsBytes(downloadResponse.bodyBytes);
 
-      print("File saved successfully to: $filePath");
+      logger.info("File saved successfully to: $filePath");
       onProgress?.call(1.0);
 
       return filePath;
     } catch (e) {
-      print("Conversion failed: $e");
+      logger.error("Conversion failed: $e");
       throw Exception('Conversion failed: $e');
     }
   }

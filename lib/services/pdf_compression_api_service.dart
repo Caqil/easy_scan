@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:easy_scan/config/api_config.dart';
 import 'package:easy_scan/config/helper.dart';
+import 'package:easy_scan/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:path_provider/path_provider.dart';
@@ -45,7 +46,7 @@ class PdfCompressionApiService {
 
       // Report initial progress
       onProgress?.call(0.1);
-      print('Uploading to: $uri with quality: $qualityParam');
+      logger.info('Uploading to: $uri with quality: $qualityParam');
 
       // Send the compression request
       final streamedResponse = await request.send();
@@ -56,13 +57,14 @@ class PdfCompressionApiService {
 
       // Handle the response
       if (streamedResponse.statusCode != 200) {
-        print('Compression failed: ${response.statusCode} - ${response.body}');
+        logger.error(
+            'Compression failed: ${response.statusCode} - ${response.body}');
         throw Exception(
             'API compression failed: HTTP ${streamedResponse.statusCode} - ${response.body}');
       }
 
       final responseData = json.decode(response.body);
-      print('Compression API Response: $responseData');
+      logger.info('Compression API Response: $responseData');
 
       if (responseData['success'] != true) {
         throw Exception(
@@ -82,10 +84,10 @@ class PdfCompressionApiService {
       });
 
       onProgress?.call(1.0);
-      print('Compressed file downloaded to: ${compressedFile.path}');
+      logger.info('Compressed file downloaded to: ${compressedFile.path}');
       return compressedFile.path;
     } catch (e) {
-      print('Compression error: $e');
+      logger.error('Compression error: $e');
       rethrow;
     }
   }
@@ -105,7 +107,7 @@ class PdfCompressionApiService {
       downloadUrl,
       originalFile,
       (progress) {
-        print('Download progress: ${progress * 100}%');
+        logger.info('Download progress: ${progress * 100}%');
       },
     );
   }
@@ -123,7 +125,7 @@ class PdfCompressionApiService {
       '${originalFilename}_compressed_$timestamp.pdf',
     );
 
-    print('Downloading from: $downloadUrl');
+    logger.info('Downloading from: $downloadUrl');
 
     try {
       final client = http.Client();
@@ -137,7 +139,7 @@ class PdfCompressionApiService {
 
       if (streamedResponse.statusCode != 200) {
         final errorResponse = await http.Response.fromStream(streamedResponse);
-        print(
+        logger.error(
             'Download failed: ${streamedResponse.statusCode} - ${errorResponse.body}');
         throw Exception(
             'Failed to download file: HTTP ${streamedResponse.statusCode}');
@@ -165,10 +167,10 @@ class PdfCompressionApiService {
         throw Exception('Downloaded file is empty');
       }
 
-      print('File downloaded to: $targetPath');
+      logger.info('File downloaded to: $targetPath');
       return file;
     } catch (e) {
-      print('Download error: $e');
+      logger.error('Download error: $e');
       throw Exception('Failed to download compressed file: $e');
     }
   }

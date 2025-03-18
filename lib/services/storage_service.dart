@@ -1,14 +1,14 @@
 import 'dart:io';
+import 'package:easy_scan/main.dart';
+import 'package:easy_scan/models/app_settings.dart';
 import 'package:easy_scan/models/language.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
 import '../models/document.dart';
 import '../models/folder.dart';
-import '../models/app_settings.dart';
 import '../utils/constants.dart';
 
 class StorageService {
-  /// Initialize the storage and required boxes
   Future<void> initialize() async {
     try {
       // Initialize Hive
@@ -27,10 +27,13 @@ class StorageService {
       Hive.registerAdapter(DocumentAdapter());
       Hive.registerAdapter(FolderAdapter());
       Hive.registerAdapter(AppSettingsAdapter());
+      Hive.registerAdapter(LanguageAdapter()); // Add this line
+
       // Open boxes
       await Hive.openBox<Document>(AppConstants.documentsBoxName);
       await Hive.openBox<Folder>(AppConstants.foldersBoxName);
       await Hive.openBox(AppConstants.settingsBoxName);
+      await Hive.openBox<Language>('languages');
 
       // Create documents directory if it doesn't exist
       final Directory documentsDir = Directory('${appDocDir.path}/documents');
@@ -38,10 +41,10 @@ class StorageService {
         await documentsDir.create(recursive: true);
       }
 
-      print(
+      logger.info(
           'Storage initialized successfully. Documents directory: ${documentsDir.path}');
     } catch (e) {
-      print('Error initializing storage: $e');
+      logger.error('Error initializing storage: $e');
       rethrow;
     }
   }

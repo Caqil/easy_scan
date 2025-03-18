@@ -23,6 +23,62 @@
       "pages": "pages",
       "page": "page"
     },
+    "settings": {
+      "title": "Settings",
+      "general": "General",
+      "appearance": "Appearance",
+      "security": "Security",
+      "document_settings": "Document Settings",
+      "backup_cloud": "Backup & Cloud",
+      "about_help": "About & Help",
+      
+      "language": "Language",
+      "current_language": "Current Language",
+      "available_languages": "Available Languages",
+      "changing_language": "Changing language...",
+      "language_error": "Error changing language",
+      "loading_languages": "Loading languages...",
+      
+      "dark_mode": "Dark Mode",
+      "dark_mode_on": "On - Dark interface",
+      "dark_mode_off": "Off - Light interface",
+      
+      "biometric_auth": "Biometric Authentication",
+      "biometric_auth_on": "On - App is protected",
+      "biometric_auth_off": "Off - No biometric check",
+      
+      "auto_lock": "Auto-Lock",
+      "auto_lock_desc": "After 5 minutes of inactivity",
+      
+      "default_pdf_quality": "Default PDF Quality",
+      "pdf_quality": "PDF Quality",
+      "pdf_quality_desc": "Higher quality means larger file size, while lower quality means smaller files.",
+      
+      "auto_enhance": "Auto Enhance Images",
+      "auto_enhance_desc": "Automatically improve scanned images",
+      
+      "default_save_location": "Default Save Location",
+      "default_location": "Documents folder",
+      
+      "cloud_backup": "Cloud Backup",
+      "cloud_backup_on": "On - Documents are backed up",
+      "cloud_backup_off": "Off - Local storage only",
+      
+      "backup_now": "Backup Now",
+      "backup_now_desc": "Upload all documents to cloud",
+      
+      "restore": "Restore from Backup",
+      "restore_desc": "Recover documents from cloud",
+      
+      "help_support": "Help & Support",
+      "help_support_desc": "Get assistance and answers",
+      
+      "privacy_policy": "Privacy Policy",
+      "privacy_policy_desc": "How we handle your data",
+      
+      "about": "About Easy Scan",
+      "about_desc": "Version and information"
+    },
     "auth": {
       "authentication_required": "Authentication Required",
       "biometric_protection": "This app is protected with biometric authentication.",
@@ -151,15 +207,6 @@
       "no_files_to_share": "No valid files to share",
       "failed_to_generate_thumbnail": "Failed to generate thumbnail",
       "loading_pdf_failed": "Failed to load PDF: {error}"
-    },
-    "settings": {
-      "settings": "Settings",
-      "dark_mode": "Dark Mode",
-      "biometric_auth": "Biometric Authentication",
-      "default_save_location": "Default Save Location",
-      "auto_enhance_images": "Auto-Enhance Images",
-      "cloud_backup": "Cloud Backup",
-      "default_pdf_quality": "Default PDF Quality"
     },
     "share": {
       "email": "Email",
