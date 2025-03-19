@@ -555,17 +555,17 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
     Map<String, List<FormatOption>> grouped = {};
 
     for (var format in widget.formats) {
-      String category = tr('format_categories.other'); // Default category
+      String category = 'other'; // Default category
 
       if (['pdf', 'docx', 'txt', 'rtf'].contains(format.id.toLowerCase())) {
-        category = tr('format_categories.documents');
+        category = 'documents';
       } else if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'tiff']
           .contains(format.id.toLowerCase())) {
-        category = tr('format_categories.images');
+        category = 'images';
       } else if (['xlsx'].contains(format.id.toLowerCase())) {
-        category = tr('format_categories.spreadsheets');
+        category = 'spreadsheets';
       } else if (['pptx'].contains(format.id.toLowerCase())) {
-        category = tr('format_categories.presentations');
+        category = 'presentations';
       }
 
       grouped.putIfAbsent(category, () => []).add(format);

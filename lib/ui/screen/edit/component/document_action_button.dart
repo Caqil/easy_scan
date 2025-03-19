@@ -46,7 +46,9 @@ class DocumentActionButtons extends StatelessWidget {
           children: [
             _buildActionButton(
               icon: isPasswordProtected ? Icons.lock : Icons.lock_outline,
-              label: isPasswordProtected ? 'Password On' : 'Password',
+              label: isPasswordProtected
+                  ? 'document.password_protected'.tr()
+                  : 'pdf.assword'.tr(),
               isActive: isPasswordProtected,
               onTap: onPasswordTap,
             ),

@@ -1,18 +1,18 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/services/scan_service.dart';
-import 'package:easy_scan/services/share_service.dart';
-import 'package:easy_scan/ui/common/component/scan_initial_view.dart';
-import 'package:easy_scan/ui/common/document_actions.dart';
-import 'package:easy_scan/ui/screen/folder/components/folder_actions.dart';
-import 'package:easy_scan/ui/screen/barcode/widget/recent_barcodes.dart';
-import 'package:easy_scan/ui/screen/compression/components/compression_tools.dart';
-import 'package:easy_scan/ui/screen/folder/components/folder_creator.dart';
-import 'package:easy_scan/ui/common/folder_selection.dart';
-import 'package:easy_scan/ui/common/folders_grid.dart';
-import 'package:easy_scan/ui/common/pdf_merger.dart';
-import 'package:easy_scan/ui/screen/compression/components/compression_bottomsheet.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/services/scan_service.dart';
+import 'package:scanpro/services/share_service.dart';
+import 'package:scanpro/ui/common/component/scan_initial_view.dart';
+import 'package:scanpro/ui/common/document_actions.dart';
+import 'package:scanpro/ui/screen/folder/components/folder_actions.dart';
+import 'package:scanpro/ui/screen/barcode/widget/recent_barcodes.dart';
+import 'package:scanpro/ui/screen/compression/components/compression_tools.dart';
+import 'package:scanpro/ui/screen/folder/components/folder_creator.dart';
+import 'package:scanpro/ui/common/folder_selection.dart';
+import 'package:scanpro/ui/common/folders_grid.dart';
+import 'package:scanpro/ui/common/pdf_merger.dart';
+import 'package:scanpro/ui/screen/compression/components/compression_bottomsheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -377,7 +377,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         context: context,
         builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                title:  Text('document.rename_document'.tr()),
+                title: Text('document.rename_document'.tr()),
                 content: CupertinoTextField(
                   controller: controller,
                   autofocus: true,
@@ -385,7 +385,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child:  Text('common.cancel'.tr()),
+                    child: Text('common.cancel'.tr()),
                   ),
                   TextButton(
                     onPressed: () {
@@ -393,7 +393,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Navigator.pop(context, controller.text.trim());
                       }
                     },
-                    child:  Text('common.rename'.tr()),
+                    child: Text('common.rename'.tr()),
                   ),
                 ],
               ),
@@ -436,7 +436,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         await FolderCreator.showCreateFolderBottomSheet(
           context,
           ref,
-          title: 'Create Destination Folder',
+          title: 'folder.create_destination_folder'.tr(),
         );
       },
     );
@@ -456,7 +456,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (context.mounted) {
         AppDialogs.showSnackBar(context,
             type: SnackBarType.success,
-            message: 'Moved to ${selectedFolder.name}');
+            message: 'moved_to_folder'
+                .tr(namedArgs: {'folderName': ' ${selectedFolder.name}'}));
       }
     }
   }
@@ -470,13 +471,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           context: context,
           builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                    title:  Text('document.delete_document'.tr()),
-                    content: Text(
-                        'Are you sure you want to delete "${document.name}"? This action cannot be undone.'),
+                    title: Text('document.delete_document'.tr()),
+                    content: Text('delete_folder_confirm'
+                        .tr(namedArgs: {'folderName': document.name})),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child:  Text('common.cancel'.tr()),
+                        child: Text('common.cancel'.tr()),
                       ),
                       TextButton(
                         onPressed: () {
@@ -488,7 +489,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         },
                         style:
                             TextButton.styleFrom(foregroundColor: Colors.red),
-                        child:  Text('common.delete'.tr()),
+                        child: Text('common.delete'.tr()),
                       ),
                     ],
                   )),
@@ -511,13 +512,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final folder = await FolderCreator.showCreateFolderBottomSheet(
       context,
       ref,
-      title: 'Create Folder',
+      title: 'create_folder'.tr(),
     );
 
     if (folder != null) {
       AppDialogs.showSnackBar(context,
           type: SnackBarType.success,
-          message: 'Created folder ${folder.name} successfully');
+          message: 'created_folder_success'
+              .tr(namedArgs: {'folderName': '${folder.name}'}));
     }
   }
 
@@ -550,7 +552,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             SizedBox(height: 16),
             Text(
-              'No documents found',
+              'no_documents_yet'.tr(),
               style: GoogleFonts.notoSerif(fontSize: 16.sp),
             ),
           ],
@@ -614,7 +616,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Row(
                   children: [
                     Text(
-                      '${document.pageCount} pages',
+                      'pages_count'
+                          .tr(namedArgs: {'count': '${document.pageCount}'}),
                       style: GoogleFonts.notoSerif(
                         fontSize: 12.sp,
                         color: Colors.grey.shade600,
@@ -670,7 +673,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (favorites.isEmpty) {
       AppDialogs.showSnackBar(
         context,
-        message: 'No favorite documents yet',
+        message: 'no_favorite_documents_yet'.tr(),
       );
       return;
     }
@@ -726,7 +729,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Favorites',
+                        'favorites'.tr(),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -861,7 +864,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        '${document.pageCount} pages',
+                                        'pages_count'.tr(namedArgs: {
+                                          'count': ' ${document.pageCount}'
+                                        }),
                                         style: GoogleFonts.notoSerif(
                                           fontSize: 10.sp,
                                           color: Colors.grey.shade600,
@@ -908,8 +913,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 // Show feedback
                                 AppDialogs.showSnackBar(
                                   context,
-                                  message:
-                                      '${document.name} removed from favorites',
+                                  message: 'removed_from_favorites'.tr(
+                                      namedArgs: {
+                                        'documentName': document.name
+                                      }),
                                 );
                               },
                             ),
@@ -936,7 +943,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('Close'),
+                    child: const Text('common.close'),
                   ),
                 ),
               ),

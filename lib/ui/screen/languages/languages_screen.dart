@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/models/language.dart';
-import 'package:easy_scan/providers/locale_provider.dart';
-import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/ui/screen/languages/components/language_tile.dart';
+import 'package:scanpro/models/language.dart';
+import 'package:scanpro/providers/locale_provider.dart';
+import 'package:scanpro/ui/common/app_bar.dart';
+import 'package:scanpro/ui/screen/languages/components/language_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,5 +1,5 @@
 // auth_overlay.dart
-import 'package:easy_scan/models/auth_state.dart';
+import 'package:scanpro/models/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth_wrapper.dart';

@@ -1,5 +1,6 @@
 // lib/ui/screen/edit/component/pdf_edit_preview.dart
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -53,10 +54,10 @@ class _PdfEditPreviewState extends State<PdfEditPreview> {
                 _isLoading = false;
                 if (details.error.contains('Password required') ||
                     details.error.contains('invalid password')) {
-                  _errorMessage =
-                      'Incorrect password or password input was cancelled.';
+                  _errorMessage = 'pdf_edit_preview.incorrect_password'.tr();
                 } else {
-                  _errorMessage = 'Failed to load PDF: ${details.error}';
+                  _errorMessage = 'pdf_edit_preview.failed_to_load_pdf'
+                      .tr(args: [details.error]);
                 }
               });
             },

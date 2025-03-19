@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:easy_scan/config/api_config.dart';
-import 'package:easy_scan/main.dart';
+import 'package:scanpro/config/api_config.dart';
+import 'package:scanpro/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';

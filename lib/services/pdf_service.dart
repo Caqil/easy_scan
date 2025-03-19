@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:easy_scan/main.dart';
-import 'package:easy_scan/utils/file_utils.dart';
+import 'package:scanpro/main.dart';
+import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:image/image.dart' as img;

@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/main.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/providers/document_provider.dart';
-import 'package:easy_scan/services/pdf_merger_service.dart';
-import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/utils/date_utils.dart';
+import 'package:scanpro/main.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/document_provider.dart';
+import 'package:scanpro/services/pdf_merger_service.dart';
+import 'package:scanpro/ui/common/app_bar.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,6 +27,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
   bool _isProcessing = false;
   bool _isShowingLibraryDocs = true;
   final _controller = SuperTooltipController();
+
   @override
   void dispose() {
     _outputNameController.dispose();
@@ -37,21 +38,19 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    // Get all documents from provider and filter for PDFs
     final allDocuments = ref.watch(documentsProvider);
     final pdfMergerService = ref.read(pdfMergerServiceProvider);
     final pdfDocuments = pdfMergerService.filterPdfDocuments(allDocuments);
 
-    // Sort by most recent first
     pdfDocuments.sort((a, b) => b.modifiedAt.compareTo(a.modifiedAt));
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: const Text('PDF Merger'),
+        title: Text('merge_pdf.title'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
-            tooltip: 'Help',
+            tooltip: 'merge_pdf.help'.tr(),
             onPressed: _showHelpDialog,
           ),
         ],
@@ -61,13 +60,12 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Output filename input
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
                   controller: _outputNameController,
                   decoration: InputDecoration(
-                    labelText: 'Output Filename',
+                    labelText: 'merge_pdf.output_filename'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -75,35 +73,30 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                   ),
                 ),
               ),
-
-              // Toggle between library and external PDFs
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: SegmentedButton<bool>(
-                  segments: const [
+                  segments: [
                     ButtonSegment(
                       value: true,
-                      label: Text('From Library'),
-                      icon: Icon(Icons.folder),
+                      label: Text('merge_pdf.from_library'.tr()),
+                      icon: const Icon(Icons.folder),
                     ),
                     ButtonSegment(
                       value: false,
-                      label: Text('From Device'),
-                      icon: Icon(Icons.drive_folder_upload),
+                      label: Text('merge_pdf.from_device'.tr()),
+                      icon: const Icon(Icons.drive_folder_upload),
                     ),
                   ],
                   selected: {_isShowingLibraryDocs},
                   onSelectionChanged: (selection) {
                     setState(() {
                       _isShowingLibraryDocs = selection.first;
-                      // Clear selection when switching modes
                       _selectedDocuments.clear();
                     });
                   },
                 ),
               ),
-
-              // Selected documents counter and tip
               if (_selectedDocuments.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -116,12 +109,14 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                           Row(
                             children: [
                               Text(
-                                'Selected: ${_selectedDocuments.length} PDFs',
+                                'merge_pdf.selected_pdfs'.tr(namedArgs: {
+                                  'count': _selectedDocuments.length.toString()
+                                }),
                                 style: GoogleFonts.notoSerif(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               GestureDetector(
                                 onTap: () async {
                                   await _controller.showTooltip();
@@ -130,11 +125,11 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                   showBarrier: true,
                                   controller: _controller,
                                   content: Text(
-                                    "Files will be merged in the order displayed. Drag items to reorder.",
+                                    'merge_pdf.merge_order_tip'.tr(),
                                     softWrap: true,
                                     style: GoogleFonts.notoSerif(),
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.info_outline,
                                     size: 20,
                                   ),
@@ -144,7 +139,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                           ),
                           TextButton.icon(
                             icon: const Icon(Icons.clear),
-                            label: const Text('Clear'),
+                            label: Text('merge_pdf.clear'.tr()),
                             onPressed: () {
                               setState(() {
                                 _selectedDocuments.clear();
@@ -157,8 +152,6 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                     ],
                   ),
                 ),
-
-              // Library documents display (when in library mode)
               if (_isShowingLibraryDocs)
                 Expanded(
                   child: pdfDocuments.isEmpty
@@ -166,19 +159,14 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                       : _buildLibraryDocsGrid(pdfDocuments),
                 )
               else
-                // External PDFs mode content
                 Expanded(
                   child: _selectedDocuments.isEmpty
                       ? _buildAddExternalDocsView()
                       : _buildSelectedDocsList(),
                 ),
-
-              // Merge button
               if (_selectedDocuments.isNotEmpty) _buildMergeButton(colorScheme),
             ],
           ),
-
-          // Loading overlay
           if (_isProcessing)
             Container(
               color: Colors.black45,
@@ -191,7 +179,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
       floatingActionButton: !_isShowingLibraryDocs
           ? FloatingActionButton(
               onPressed: _pickExternalPdfs,
-              tooltip: 'Add PDFs',
+              tooltip: 'merge_pdf.add_pdfs'.tr(),
               child: const Icon(Icons.add),
             )
           : null,
@@ -210,7 +198,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No PDF documents in your library',
+            'merge_pdf.no_pdfs_in_library'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -218,7 +206,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Try importing PDFs or switching to "From Device" mode',
+            'merge_pdf.import_or_switch'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 14.sp,
               color: Colors.grey,
@@ -242,7 +230,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Select PDFs to merge',
+            'merge_pdf.select_pdfs_to_merge'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -250,7 +238,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Tap the + button to select files from your device',
+            'merge_pdf.tap_to_select'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 14.sp,
               color: Colors.grey,
@@ -261,7 +249,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           OutlinedButton.icon(
             onPressed: _pickExternalPdfs,
             icon: const Icon(Icons.add),
-            label: const Text('Select PDFs'),
+            label: Text('merge_pdf.select_pdfs'.tr()),
           ),
         ],
       ),
@@ -307,12 +295,10 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // PDF thumbnail
                 Expanded(
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      // Thumbnail with rounded corners
                       ClipRRect(
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(11),
@@ -332,8 +318,6 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                 ),
                               ),
                       ),
-
-                      // Selection overlay with order number
                       if (isSelected)
                         Positioned.fill(
                           child: Container(
@@ -367,7 +351,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                         ),
                                       ),
                                       Text(
-                                        'ORDER',
+                                        'merge_pdf.order'.tr(),
                                         style: GoogleFonts.notoSerif(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -386,8 +370,6 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                     ],
                   ),
                 ),
-
-                // Document info
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -404,7 +386,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${document.pageCount} pages',
+                        '${document.pageCount} pages'.tr(),
                         style: GoogleFonts.notoSerif(
                           fontSize: 10.sp,
                           color: Colors.grey.shade600,
@@ -431,9 +413,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
   Widget _buildSelectedDocsList() {
     return Column(
       children: [
-        // Info banner
         Container(
-          margin: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+          margin: const EdgeInsets.only(top: 16, left: 16, right: 16),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color:
@@ -453,7 +434,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Drag files to reorder. PDFs will be merged in this sequence.',
+                  'merge_pdf.drag_to_reorder'.tr(),
                   style: GoogleFonts.notoSerif(
                     fontSize: 12.sp,
                     color: Theme.of(context).colorScheme.primary,
@@ -463,8 +444,6 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             ],
           ),
         ),
-
-        // Reorderable list with order numbers
         Expanded(
           child: ReorderableListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -511,8 +490,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                               fontSize: 18,
                             ),
                           ),
-                           Text(
-                            'ORDER',
+                          Text(
+                            'merge_pdf.order'.tr(),
                             style: GoogleFonts.notoSerif(
                               color: Colors.white,
                               fontSize: 10,
@@ -556,7 +535,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                 ),
                               ),
                               Text(
-                                '${document.pageCount} pages',
+                                '${document.pageCount} pages'.tr(),
                                 style: GoogleFonts.notoSerif(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
@@ -598,7 +577,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
       child: ElevatedButton.icon(
         onPressed: _selectedDocuments.length < 2 ? null : _mergePdfs,
         icon: const Icon(Icons.merge_type),
-        label: const Text('Merge PDFs'),
+        label: Text('merge_pdf.merge_pdfs'.tr()),
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
@@ -632,7 +611,6 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
       final List<String> selectedPaths = await pdfMergerService.selectPdfs();
 
       if (selectedPaths.isNotEmpty) {
-        // Create temporary Document objects from the selected files
         int pageCount = 0;
         List<Document> newDocuments = [];
 
@@ -651,7 +629,6 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             newDocuments.add(doc);
           } catch (e) {
             logger.error('Error processing PDF $pdfPath: $e');
-            // Continue with the rest of the files
           }
         }
 
@@ -662,7 +639,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
     } catch (e) {
       AppDialogs.showSnackBar(
         context,
-        message: 'Error selecting PDFs: $e',
+        message:
+            'merge_pdf.select_error'.tr(namedArgs: {'error': e.toString()}),
         type: SnackBarType.error,
       );
     } finally {
@@ -672,23 +650,11 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
     }
   }
 
-  // void _showOrderingTip() {
-  //   if (_selectedDocuments.length < 2) return;
-
-  //   AppDialogs.showSnackBar(
-  //     context,
-  //     message:
-  //         'Files will be merged in the order shown. Drag items to reorder.',
-  //     type: SnackBarType.normal,
-  //     duration: const Duration(seconds: 5),
-  //   );
-  // }
-
   Future<void> _mergePdfs() async {
     if (_selectedDocuments.length < 2) {
       AppDialogs.showSnackBar(
         context,
-        message: 'Please select at least 2 PDFs to merge',
+        message: 'merge_pdf.min_pdfs_warning'.tr(),
         type: SnackBarType.warning,
       );
       return;
@@ -697,13 +663,12 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
     if (_outputNameController.text.trim().isEmpty) {
       AppDialogs.showSnackBar(
         context,
-        message: 'Please enter a name for the output file',
+        message: 'merge_pdf.enter_output_name'.tr(),
         type: SnackBarType.warning,
       );
       return;
     }
 
-    // Show confirmation with ordered file list
     final bool confirmMerge = await _confirmMergeOrder();
     if (!confirmMerge) return;
 
@@ -720,29 +685,28 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
         outputName,
       );
 
-      // Add the merged document to the library
       await ref.read(documentsProvider.notifier).addDocument(mergedDocument);
 
       if (mounted) {
         AppDialogs.showSnackBar(
           context,
-          message: 'PDFs merged successfully into "$outputName"',
+          message:
+              'merge_pdf.merge_success'.tr(namedArgs: {'name': outputName}),
           type: SnackBarType.success,
         );
 
-        // Reset selection
         setState(() {
           _selectedDocuments.clear();
         });
 
-        // Navigate back
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         AppDialogs.showSnackBar(
           context,
-          message: 'Error merging PDFs: $e',
+          message:
+              'merge_pdf.merge_error'.tr(namedArgs: {'error': e.toString()}),
           type: SnackBarType.error,
         );
       }
@@ -762,7 +726,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                 Icon(Icons.merge_type,
                     color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
-                const Text('Confirm PDF Order'),
+                Text('merge_pdf.confirm_order_title'.tr()),
               ],
             ),
             content: SizedBox(
@@ -772,7 +736,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Files will be merged in this order:',
+                    'merge_pdf.files_merge_order'.tr(),
                     style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
@@ -812,7 +776,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                 ),
                               ),
                               Text(
-                                '${doc.pageCount} pages',
+                                '${doc.pageCount} pages'.tr(),
                                 style: GoogleFonts.notoSerif(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
@@ -830,11 +794,11 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child:  Text('common.cancel'.tr()),
+                child: Text('common.cancel'.tr()),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Merge Now'),
+                child: Text('merge_pdf.merge_now'.tr()),
               ),
             ],
           ),
@@ -846,26 +810,26 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('PDF Merger Help'),
+        title: Text('merge_pdf.help_title'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             Text(
-              'This tool allows you to combine multiple PDF files into a single document.',
+            Text(
+              'merge_pdf.help_description'.tr(),
               style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            const Text('Steps:'),
+            Text('merge_pdf.help_steps'.tr()),
             const SizedBox(height: 8),
-            _buildHelpItem('1', 'Enter a name for the merged file'),
-            _buildHelpItem('2', 'Choose PDFs from your library or device'),
-            _buildHelpItem('3', 'Select at least 2 PDFs to merge'),
-            _buildHelpItem('4', 'Drag PDFs to change the merge order'),
-            _buildHelpItem('5', 'Tap "Merge PDFs" button'),
+            _buildHelpItem('1', 'merge_pdf.step_1'.tr()),
+            _buildHelpItem('2', 'merge_pdf.step_2'.tr()),
+            _buildHelpItem('3', 'merge_pdf.step_3'.tr()),
+            _buildHelpItem('4', 'merge_pdf.step_4'.tr()),
+            _buildHelpItem('5', 'merge_pdf.step_5'.tr()),
             const SizedBox(height: 16),
-             Text(
-              'The merged PDF will be saved to your document library.',
+            Text(
+              'merge_pdf.help_save_note'.tr(),
               style: GoogleFonts.notoSerif(fontStyle: FontStyle.italic),
             ),
           ],
@@ -873,7 +837,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Got it'),
+            child: Text('common.got_it'.tr()),
           ),
         ],
       ),
@@ -882,7 +846,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
 
   Widget _buildHelpItem(String number, String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(top: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

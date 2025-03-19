@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,25 +9,31 @@ class HelpDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Advanced Options Help"),
+      title: Text("help_dialog.title".tr()),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _helpItem("OCR (Optical Character Recognition)",
-              "Extracts text from images or scanned PDFs. Enables searching and text selection."),
+          _helpItem(
+            "help_dialog.ocr_title".tr(),
+            "help_dialog.ocr_description".tr(),
+          ),
           SizedBox(height: 8.h),
-          _helpItem("Image Quality",
-              "Higher quality produces larger files with better details. Lower quality reduces file size."),
+          _helpItem(
+            "help_dialog.image_quality_title".tr(),
+            "help_dialog.image_quality_description".tr(),
+          ),
           SizedBox(height: 8.h),
-          _helpItem("PDF Password",
-              "Required only if your source PDF is password-protected."),
+          _helpItem(
+            "help_dialog.pdf_password_title".tr(),
+            "help_dialog.pdf_password_description".tr(),
+          ),
         ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text("Close"),
+          child: Text("help_dialog.close_button".tr()),
         ),
       ],
     );

@@ -1,7 +1,7 @@
 // Add to lib/providers/barcode_scan_provider.dart
 
-import 'package:easy_scan/models/barcode_scan.dart';
-import 'package:easy_scan/providers/barcode_provider.dart';
+import 'package:scanpro/models/barcode_scan.dart';
+import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider for recent barcode scans (limited to 5)

@@ -18,13 +18,13 @@ class EmptyState extends StatelessWidget {
           const Icon(Icons.document_scanner, size: 80, color: Colors.grey),
           const SizedBox(height: 24),
            Text(
-            'No documents yet',
+            'no_documents_yet'.tr(),
             style: GoogleFonts.notoSerif(
                 fontSize: 20.sp, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Text(
-            'Scan or import your first document',
+            'scan_or_import_prompt'.tr(),
             style: GoogleFonts.notoSerif(fontSize: 14.sp, color: Colors.grey),
           ),
           const SizedBox(height: 24),

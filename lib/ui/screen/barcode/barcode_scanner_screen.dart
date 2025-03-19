@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/models/barcode_scan.dart';
-import 'package:easy_scan/providers/barcode_provider.dart';
+import 'package:scanpro/models/barcode_scan.dart';
+import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
+import 'package:scanpro/ui/common/app_bar.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class BarcodeScannerScreen extends ConsumerStatefulWidget {
@@ -242,7 +242,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               Expanded(
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.history),
-                  label:  Text('common.save'.tr()),
+                  label: Text('common.save'.tr()),
                   onPressed: () => _saveScanToHistory(barcode),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 12.h),

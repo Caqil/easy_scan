@@ -22,14 +22,14 @@ class ScanOptionsWidget extends StatelessWidget {
       shrinkWrap: true,
       children: [
         Text(
-          'Scan Settings',
+          'scan.scan_settings'.tr(),
           style: GoogleFonts.notoSerif(
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 16),
-         Text('scan.color_mode'.tr()),
+        Text('scan.color_mode'.tr()),
         const SizedBox(height: 8),
         SegmentedButton<ColorMode>(
           segments: [
@@ -57,10 +57,10 @@ class ScanOptionsWidget extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-         Text('scan.scan_mode'.tr()),
+        Text('scan.scan_mode'.tr()),
         const SizedBox(height: 8),
         SegmentedButton<ScanMode>(
-          segments:  [
+          segments: [
             ButtonSegment(
               value: ScanMode.auto,
               label: Text('scan_mode.auto'.tr()),
@@ -85,10 +85,10 @@ class ScanOptionsWidget extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-         Text('scan.document_type'.tr()),
+        Text('scan.document_type'.tr()),
         const SizedBox(height: 8),
         SegmentedButton<DocumentType>(
-          segments:  [
+          segments: [
             ButtonSegment(
               value: DocumentType.document,
               label: Text('document_type.document'.tr()),
@@ -119,8 +119,8 @@ class ScanOptionsWidget extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         SwitchListTile(
-          title:  Text('scan.enhance_image'.tr()),
-          subtitle:  Text('scan.enhance_image_desc'.tr()),
+          title: Text('scan.enhance_image'.tr()),
+          subtitle: Text('scan.enhance_image_desc'.tr()),
           value: settings.enhanceImage,
           onChanged: (bool value) {
             onSettingsChanged(
@@ -129,8 +129,8 @@ class ScanOptionsWidget extends StatelessWidget {
           },
         ),
         SwitchListTile(
-          title:  Text('scan.detect_edges'.tr()),
-          subtitle:  Text('scan.detect_edges_desc'.tr()),
+          title: Text('scan.detect_edges'.tr()),
+          subtitle: Text('scan.detect_edges_desc'.tr()),
           value: settings.detectEdges,
           onChanged: (bool value) {
             onSettingsChanged(
@@ -139,8 +139,8 @@ class ScanOptionsWidget extends StatelessWidget {
           },
         ),
         SwitchListTile(
-          title:  Text('scan.ocr'.tr()),
-          subtitle:  Text('scan.ocr_desc'.tr()),
+          title: Text('scan.ocr'.tr()),
+          subtitle: Text('scan.ocr_desc'.tr()),
           value: settings.enableOCR,
           onChanged: (bool value) {
             onSettingsChanged(
@@ -151,7 +151,8 @@ class ScanOptionsWidget extends StatelessWidget {
         const SizedBox(height: 16),
         Row(
           children: [
-            const Text('Quality: '),
+            const Text(
+                'Quality: '), // This could be localized as "scan.quality" if desired
             Expanded(
               child: Slider(
                 value: settings.quality.toDouble(),

@@ -1,6 +1,7 @@
 // all_documents.dart
 import 'dart:io';
-import 'package:easy_scan/models/document.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/models/document.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,7 +45,7 @@ class AllDocuments extends StatelessWidget {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  'All Documents',
+                  'all_documents'.tr(),
                   style: GoogleFonts.notoSerif(
                     fontSize: 16.sp.sp,
                     fontWeight: FontWeight.bold,
@@ -59,7 +60,7 @@ class AllDocuments extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'View All',
+                      'view_all'.tr(),
                       style: GoogleFonts.notoSerif(
                         color: colorScheme.primary,
                         fontWeight: FontWeight.w500,
@@ -80,7 +81,8 @@ class AllDocuments extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Text(
-            '${documents.length} documents',
+            'documents_count'
+                .tr(namedArgs: {'count': documents.length.toString()}),
             style: GoogleFonts.notoSerif(
               color: Colors.grey,
               fontSize: 12.sp,
@@ -193,7 +195,9 @@ class AllDocuments extends StatelessWidget {
                                   ),
                                   SizedBox(width: 4.w),
                                   Text(
-                                    '${document.pageCount} pages',
+                                    'pages_count'.tr(namedArgs: {
+                                      'count': document.pageCount.toString()
+                                    }),
                                     style: GoogleFonts.notoSerif(
                                       color: Colors.grey.shade600,
                                       fontSize: 10.sp,

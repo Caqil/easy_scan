@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -53,7 +54,7 @@ class PageControls extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              'Delete',
+              'common.delete'.tr(),
               style: GoogleFonts.notoSerif(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,

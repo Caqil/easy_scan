@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -23,7 +24,7 @@ class DocumentNameInput extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
-          labelText: 'Document Name',
+          labelText: 'documents.document_name'.tr(),
           labelStyle: GoogleFonts.notoSerif(color: colorScheme.primary),
           prefixIcon:
               Icon(Icons.description_outlined, color: colorScheme.primary),

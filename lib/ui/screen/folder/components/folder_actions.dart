@@ -3,9 +3,9 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/providers/document_provider.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/document_provider.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

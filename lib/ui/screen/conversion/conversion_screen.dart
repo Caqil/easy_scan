@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,11 +22,14 @@ class ConversionScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title:  Text("Document Converter",style: GoogleFonts.lilitaOne(fontSize: 25.sp),),
+        title: Text(
+          "conversion_screen.title".tr(),
+          style: GoogleFonts.lilitaOne(fontSize: 25.sp),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: "Reset",
+            tooltip: "conversion_screen.reset_tooltip".tr(),
             onPressed: () => ref.read(conversionStateProvider.notifier).reset(),
           ),
         ],
@@ -96,7 +100,7 @@ class ConversionScreen extends ConsumerWidget {
       children: [
         // Title and description
         Text(
-          "Convert Your Documents",
+          "conversion_screen.header_title".tr(),
           style: GoogleFonts.notoSerif(
             fontSize: 24.sp,
             fontWeight: FontWeight.bold,
@@ -105,7 +109,7 @@ class ConversionScreen extends ConsumerWidget {
         ),
         SizedBox(height: 8.h),
         Text(
-          "Transform files between different formats with ease",
+          "conversion_screen.header_description".tr(),
           style: GoogleFonts.notoSerif(
             fontSize: 14.sp,
             color: colorScheme.onSurfaceVariant,

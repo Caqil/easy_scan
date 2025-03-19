@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -177,19 +178,19 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                 Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Select Folder',
+                        'folder_selector.select_folder'.tr(),
                         style: GoogleFonts.notoSerif(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        'Choose a destination folder',
+                        'folder_selector.choose_destination'.tr(),
                         style: GoogleFonts.notoSerif(
                           fontSize: 14,
                           color: Colors.grey,
@@ -280,9 +281,9 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                   Expanded(
+                  Expanded(
                     child: Text(
-                      'Create New Folder',
+                      'folder_selector.create_new_folder'.tr(),
                       style: GoogleFonts.notoSerif(
                         fontWeight: FontWeight.w500,
                         fontSize: 14.sp,
@@ -295,7 +296,6 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
             ),
           ),
 
-          // Select current folder button (only show when inside a folder)
           if (_currentParentId != null)
             InkWell(
               onTap: () {
@@ -310,7 +310,9 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                 padding: const EdgeInsets.all(16),
                 color: Theme.of(context).primaryColor.withOpacity(0.1),
                 child: Text(
-                  'Select Current Folder (${_breadcrumbs.last})',
+                  'folder_selector.select_current_folder'.tr(
+                    namedArgs: {'name': _breadcrumbs.last},
+                  ),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.notoSerif(
                     fontWeight: FontWeight.bold,
@@ -319,8 +321,6 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                 ),
               ),
             ),
-
-          // Bottom padding for safe area
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
       ),
@@ -445,7 +445,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
             ),
             const SizedBox(height: 16),
             Text(
-              'No subfolders found',
+              'folder_selector.no_subfolders_found'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -454,7 +454,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Create a new subfolder here',
+              'folder_selector.create_subfolder_here'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 14,
                 color: Colors.grey.shade600,
@@ -467,14 +467,12 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
   }
 
   Widget _buildFolderTile(BuildContext context, Folder folder) {
-    // Get subfolder count
     final subfolders =
         widget.allFolders.where((f) => f.parentId == folder.id).toList();
     final hasSubfolders = subfolders.isNotEmpty;
 
     return InkWell(
       onTap: () {
-        // If has subfolders, navigate into it, otherwise select it
         if (hasSubfolders) {
           _navigateToFolder(folder);
         } else {
@@ -509,13 +507,15 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                 children: [
                   Text(
                     folder.name,
-                    style:  GoogleFonts.notoSerif(
+                    style: GoogleFonts.notoSerif(
                       fontSize: 16,
                     ),
                   ),
                   if (hasSubfolders)
                     Text(
-                      '${subfolders.length} subfolder${subfolders.length == 1 ? "" : "s"}',
+                      'folder_selector.subfolder_count'.tr(
+                        namedArgs: {'count': subfolders.length.toString()},
+                      ),
                       style: GoogleFonts.notoSerif(
                         fontSize: 12,
                         color: Colors.grey.shade600,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,7 +42,7 @@ class QuickActions extends ConsumerWidget {
     return Padding(
       padding: EdgeInsets.only(left: 8.w),
       child: Text(
-        'Quick Actions',
+        'quick_actions'.tr(),
         style: GoogleFonts.notoSerif(
           fontSize: 18.sp,
           fontWeight: FontWeight.w600,
@@ -53,10 +54,10 @@ class QuickActions extends ConsumerWidget {
 
   Widget _buildActionGrid(BuildContext context) {
     final actions = [
-      _ActionItem(Icons.qr_code_scanner, 'Barcode', onScan),
-      _ActionItem(Icons.merge_type, 'Merge PDF', onMerge),
-      _ActionItem(Icons.favorite_border, 'Favorite', onFavorites),
-      _ActionItem(Icons.compress, 'Compress PDF', onCompress),
+      _ActionItem(Icons.qr_code_scanner, 'barcode'.tr(), onScan),
+      _ActionItem(Icons.merge_type, 'merge_pdf.title'.tr(), onMerge),
+      _ActionItem(Icons.favorite_border, 'favorite'.tr(), onFavorites),
+      _ActionItem(Icons.compress, 'compress_pdf'.tr(), onCompress),
     ];
 
     return Column(

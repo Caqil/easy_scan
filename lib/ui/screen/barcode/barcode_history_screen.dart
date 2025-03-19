@@ -1,15 +1,15 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/models/content_type.dart';
-import 'package:easy_scan/providers/barcode_provider.dart';
-import 'package:easy_scan/ui/screen/barcode/barcode_scanner_screen.dart';
+import 'package:scanpro/models/content_type.dart';
+import 'package:scanpro/providers/barcode_provider.dart';
+import 'package:scanpro/ui/screen/barcode/barcode_scanner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/models/barcode_scan.dart';
+import 'package:scanpro/ui/common/app_bar.dart';
+import 'package:scanpro/models/barcode_scan.dart';
 import 'barcode_result_screen.dart';
 
 class BarcodeHistoryScreen extends ConsumerStatefulWidget {
@@ -88,7 +88,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
               );
             },
             icon: const Icon(Icons.qr_code_scanner),
-            label:  Text('scan.start_scanning'.tr()),
+            label: Text('scan.start_scanning'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(
                 horizontal: 24.w,
@@ -282,7 +282,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child:  Text('common.cancel'.tr()),
+            child: Text('common.cancel'.tr()),
           ),
           TextButton(
             onPressed: () {

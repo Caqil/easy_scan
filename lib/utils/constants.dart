@@ -3,14 +3,21 @@ class AppConstants {
   static const String documentsBoxName = 'documents';
   static const String foldersBoxName = 'folders';
   static const String settingsBoxName = 'settings';
+  static const String backupSettingsBoxName = 'backup_settings';
 
   // Hive keys
   static const String settingsKey = 'app_settings';
+  static const String backupSettingsKey = 'backup_settings';
 
   // App constants
   static const int defaultPdfQuality = 80;
   static const int defaultImageQuality = 85;
   static const int thumbnailSize = 300;
+
+  // Backup constants
+  static const String backupFolderName = 'EasyScan Backups';
+  static const int maxBackupHistory = 10;
+  static const String backupFilePrefix = 'easy_scan_backup_';
 
   // Folder colors
   static const List<int> folderColors = [
@@ -26,7 +33,7 @@ class AppConstants {
     0xFFE91E63, // Pink
     0xFF00BCD4, // Cyan
     0xFF8BC34A, // Light Green
-    0xFFFF5722, // Deep Orange
+    0xFF5722, // Deep Orange
     0xFF673AB7, // Deep Purple
     0xFFCDDC39, // Lime
     0xFF03A9F4, // Light Blue

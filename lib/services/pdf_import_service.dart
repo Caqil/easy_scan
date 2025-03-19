@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:easy_scan/main.dart';
-import 'package:easy_scan/utils/constants.dart';
+import 'package:scanpro/main.dart';
+import 'package:scanpro/utils/constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;

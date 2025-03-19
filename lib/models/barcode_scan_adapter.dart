@@ -1,5 +1,4 @@
-
-import 'package:easy_scan/models/barcode_scan.dart';
+import 'package:scanpro/models/barcode_scan.dart';
 import 'package:hive/hive.dart';
 
 class BarcodeScanAdapter extends TypeAdapter<BarcodeScan> {

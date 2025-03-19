@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:easy_scan/main.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
@@ -53,9 +54,10 @@ class DocumentPagePreview extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.broken_image, size: 64, color: Colors.white54),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
-                'Unable to display image',
+                'document_preview.unable_to_display_image'
+                    .tr(), // Localized string
                 style: GoogleFonts.notoSerif(color: Colors.white70),
               ),
             ],

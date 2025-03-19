@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/config/routes.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/providers/document_provider.dart';
-import 'package:easy_scan/services/pdf_merger_service.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/ui/common/pdf_merger.dart';
+import 'package:scanpro/config/routes.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/document_provider.dart';
+import 'package:scanpro/services/pdf_merger_service.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/ui/common/pdf_merger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +14,7 @@ class MergeOptionsSheet extends ConsumerWidget {
   final Document? initialDocument;
 
   const MergeOptionsSheet({
+    super.key,
     required this.ref,
     this.initialDocument,
   });
@@ -70,7 +71,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                 ),
                 const SizedBox(width: 16),
                 Text(
-                  'PDF Merger',
+                  'merge_pdf.title'.tr(),
                   style: GoogleFonts.notoSerif(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
@@ -89,13 +90,13 @@ class MergeOptionsSheet extends ConsumerWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
             title: Text(
-              'Open PDF Merger Tool',
+              'merge_pdf.open_tool'.tr(),
               style: GoogleFonts.notoSerif(
                 fontWeight: FontWeight.w500,
               ),
             ),
             subtitle: Text(
-              'Full control over PDF selection and merging',
+              'merge_pdf.open_tool_desc'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 12.sp,
                 color: Colors.grey.shade600,
@@ -114,13 +115,14 @@ class MergeOptionsSheet extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
               title: Text(
-                'Append Documents to This PDF',
+                'merge_pdf.append_to_pdf'.tr(),
                 style: GoogleFonts.notoSerif(
                   fontWeight: FontWeight.w500,
                 ),
               ),
               subtitle: Text(
-                'Add more PDFs to the end of "${initialDocument!.name}"',
+                'merge_pdf.append_to_pdf_desc'
+                    .tr(namedArgs: {'name': initialDocument!.name}),
                 style: GoogleFonts.notoSerif(
                   fontSize: 12.sp,
                   color: Colors.grey.shade600,
@@ -140,13 +142,13 @@ class MergeOptionsSheet extends ConsumerWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
             title: Text(
-              'Quick Merge Recent PDFs',
+              'merge_pdf.quick_merge'.tr(),
               style: GoogleFonts.notoSerif(
                 fontWeight: FontWeight.w500,
               ),
             ),
             subtitle: Text(
-              'Quickly combine your recent PDF documents',
+              'merge_pdf.quick_merge_desc'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 12.sp,
                 color: Colors.grey.shade600,
@@ -165,7 +167,6 @@ class MergeOptionsSheet extends ConsumerWidget {
   }
 
   void _showAppendDialog(BuildContext context, Document initialDocument) {
-    // Get PDF documents from provider
     final allDocuments = ref.read(documentsProvider);
     final pdfMergerService = ref.read(pdfMergerServiceProvider);
     final pdfDocs = pdfMergerService
@@ -176,20 +177,19 @@ class MergeOptionsSheet extends ConsumerWidget {
     if (pdfDocs.isEmpty) {
       AppDialogs.showSnackBar(
         context,
-        message: 'No other PDF documents found to append',
+        message: 'merge_pdf.no_pdfs_to_append'.tr(),
         type: SnackBarType.warning,
       );
       return;
     }
 
-    // Track selected documents
     final selectedDocs = <Document>[];
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Select PDFs to Append'),
+          title: Text('merge_pdf.select_to_append'.tr()),
           content: SizedBox(
             width: double.maxFinite,
             child: Column(
@@ -197,14 +197,15 @@ class MergeOptionsSheet extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Selected document: ${initialDocument.name}',
+                  'merge_pdf.selected_document'
+                      .tr(namedArgs: {'name': initialDocument.name}),
                   style: GoogleFonts.notoSerif(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Choose documents to append:',
+                  'merge_pdf.choose_to_append'.tr(),
                 ),
                 const SizedBox(height: 8),
                 Expanded(
@@ -221,7 +222,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        subtitle: Text('${doc.pageCount} pages'),
+                        subtitle: Text('${doc.pageCount} pages'.tr()),
                         value: isSelected,
                         onChanged: (value) {
                           setState(() {
@@ -242,19 +243,15 @@ class MergeOptionsSheet extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child:  Text('common.cancel'.tr()),
+              child: Text('common.cancel'.tr()),
             ),
             TextButton(
               onPressed: selectedDocs.isEmpty
                   ? null
                   : () {
                       Navigator.pop(context);
-
-                      // Prepare documents in correct order
                       final docsToMerge = [initialDocument, ...selectedDocs];
                       final outputName = '${initialDocument.name}_appended';
-
-                      // Perform merge
                       PdfMerger.quickMergePdfs(
                         context,
                         ref,
@@ -262,7 +259,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                         outputName,
                       );
                     },
-              child: const Text('Merge'),
+              child: Text('common.merge'.tr()),
             ),
           ],
         ),
@@ -271,27 +268,21 @@ class MergeOptionsSheet extends ConsumerWidget {
   }
 
   void _showQuickMergeDialog(BuildContext context) {
-    // Get recent PDF documents
     final allDocuments = ref.read(documentsProvider);
     final pdfMergerService = ref.read(pdfMergerServiceProvider);
     final pdfDocs = pdfMergerService.filterPdfDocuments(allDocuments);
-
-    // Sort by most recent first
     pdfDocs.sort((a, b) => b.modifiedAt.compareTo(a.modifiedAt));
-
-    // Take only the recent ones (max 10)
     final recentPdfs = pdfDocs.take(10).toList();
 
     if (recentPdfs.length < 2) {
       AppDialogs.showSnackBar(
         context,
-        message: 'Need at least 2 PDF documents to merge',
+        message: 'merge_pdf.min_pdfs_required'.tr(),
         type: SnackBarType.warning,
       );
       return;
     }
 
-    // Track selected documents
     final selectedDocs = <Document>[];
     final nameController = TextEditingController(
       text: 'Merged_${DateTime.now().toString().substring(0, 10)}',
@@ -301,7 +292,7 @@ class MergeOptionsSheet extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Quick Merge PDFs'),
+          title: Text('merge_pdf.quick_merge_title'.tr()),
           content: SizedBox(
             width: double.maxFinite,
             child: Column(
@@ -310,14 +301,14 @@ class MergeOptionsSheet extends ConsumerWidget {
               children: [
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Output Filename',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: 'merge_pdf.output_filename'.tr(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Select PDFs to merge:',
+                  'merge_pdf.select_to_merge'.tr(),
                   style: GoogleFonts.notoSerif(
                     fontWeight: FontWeight.bold,
                   ),
@@ -337,7 +328,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        subtitle: Text('${doc.pageCount} pages'),
+                        subtitle: Text('${doc.pageCount} pages'.tr()),
                         secondary: Text(
                           '${index + 1}',
                           style: GoogleFonts.notoSerif(
@@ -367,15 +358,13 @@ class MergeOptionsSheet extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child:  Text('common.cancel'.tr()),
+              child: Text('common.cancel'.tr()),
             ),
             TextButton(
               onPressed: selectedDocs.length < 2
                   ? null
                   : () {
                       Navigator.pop(context);
-
-                      // Perform merge
                       PdfMerger.quickMergePdfs(
                         context,
                         ref,
@@ -383,7 +372,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                         nameController.text.trim(),
                       );
                     },
-              child: const Text('Merge'),
+              child: Text('common.merge'.tr()),
             ),
           ],
         ),

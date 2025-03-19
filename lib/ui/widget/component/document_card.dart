@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -152,8 +153,8 @@ class DocumentCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildActionIndicator(Icons.touch_app, 'Tap to edit'),
-            _buildActionIndicator(Icons.drag_indicator, 'Drag'),
+            _buildActionIndicator(Icons.touch_app, 'tap_to_edit'.tr()),
+            _buildActionIndicator(Icons.drag_indicator, 'drag'.tr()),
           ],
         ),
       ),

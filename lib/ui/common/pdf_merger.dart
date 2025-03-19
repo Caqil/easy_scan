@@ -1,8 +1,9 @@
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/providers/document_provider.dart';
-import 'package:easy_scan/services/pdf_merger_service.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/ui/screen/merger/components/merge_option_shhet.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/document_provider.dart';
+import 'package:scanpro/services/pdf_merger_service.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/ui/screen/merger/components/merge_option_shhet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,7 +34,7 @@ class PdfMerger {
     if (documents.length < 2) {
       AppDialogs.showSnackBar(
         context,
-        message: 'At least 2 PDFs are required for merging',
+        message: 'messages.at_least_two_pdfs_required'.tr(),
         type: SnackBarType.warning,
       );
       return;
@@ -44,13 +45,13 @@ class PdfMerger {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const AlertDialog(
+        builder: (context) => AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
-              Text('Merging PDFs...'),
+              Text('merging_pdfs'.tr()),
             ],
           ),
         ),
@@ -71,7 +72,7 @@ class PdfMerger {
         Navigator.pop(context);
         AppDialogs.showSnackBar(
           context,
-          message: 'PDFs merged successfully',
+          message: 'messages.pdfs_merged_successfully'.tr(),
           type: SnackBarType.success,
         );
       }
@@ -81,7 +82,8 @@ class PdfMerger {
         Navigator.pop(context);
         AppDialogs.showSnackBar(
           context,
-          message: 'Error merging PDFs: $e',
+          message: 'messages.error_merging_pdfs'
+              .tr(namedArgs: {'error': e.toString()}),
           type: SnackBarType.error,
         );
       }

@@ -1,5 +1,5 @@
-import 'package:easy_scan/ui/screen/edit/component/edit_screen_controller.dart';
-import 'package:easy_scan/ui/screen/edit/widget/edit_screen_view.dart';
+import 'package:scanpro/ui/screen/edit/component/edit_screen_controller.dart';
+import 'package:scanpro/ui/screen/edit/widget/edit_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/document.dart';

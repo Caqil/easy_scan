@@ -116,8 +116,8 @@ class _AddOptionsSheet extends StatelessWidget {
           _buildOptionTile(
             context,
             icon: Icons.create_new_folder_outlined,
-            title: 'add_options.create_subfolder'.tr(),
-            description: 'Create a new folder here',
+            title: 'add_options.create_subfolder.title'.tr(),
+            description: 'add_options.create_subfolder.description'.tr(),
             onTap: () {
               Navigator.pop(context);
               onCreateSubfolder();
@@ -127,8 +127,8 @@ class _AddOptionsSheet extends StatelessWidget {
           _buildOptionTile(
             context,
             icon: Icons.document_scanner_outlined,
-            title: 'add_options.scan_document'.tr(),
-            description: 'Capture new documents with camera',
+            title: 'add_options.scan_document.title'.tr(),
+            description: 'add_options.scan_document.description'.tr(),
             onTap: () {
               Navigator.pop(context);
               onScanDocument();
@@ -138,8 +138,8 @@ class _AddOptionsSheet extends StatelessWidget {
           _buildOptionTile(
             context,
             icon: Icons.file_upload_outlined,
-            title: 'add_options.import_documents'.tr(),
-            description: 'Import files from your device',
+            title: 'add_options.import_documents.title'.tr(),
+            description: 'add_options.import_documents.description'.tr(),
             onTap: () {
               Navigator.pop(context);
               onImportDocuments();
@@ -150,14 +150,13 @@ class _AddOptionsSheet extends StatelessWidget {
             _buildOptionTile(
               context,
               icon: Icons.drive_file_move_outlined,
-              title: 'add_options.move_documents_here'.tr(),
-              description: 'Move existing documents to this location',
+              title: 'add_options.move_documents_here.title'.tr(),
+              description: 'add_options.move_documents_here.description'.tr(),
               onTap: () {
                 Navigator.pop(context);
                 onMoveDocuments!();
               },
             ),
-
           // Bottom padding for safe area
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],

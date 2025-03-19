@@ -1,20 +1,21 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/config/routes.dart';
-import 'package:easy_scan/models/app_settings.dart';
-import 'package:easy_scan/providers/locale_provider.dart';
-import 'package:easy_scan/providers/settings_provider.dart';
-import 'package:easy_scan/services/auth_service.dart';
-import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/ui/screen/settings/components/app_header.dart';
-import 'package:easy_scan/ui/screen/settings/components/settings_card.dart';
-import 'package:easy_scan/ui/screen/settings/components/settings_divider.dart';
-import 'package:easy_scan/ui/screen/settings/components/settings_section_header.dart';
-import 'package:easy_scan/ui/screen/settings/components/settings_switch_tile.dart';
+import 'package:scanpro/config/routes.dart';
+import 'package:scanpro/models/app_settings.dart';
+import 'package:scanpro/providers/locale_provider.dart';
+import 'package:scanpro/providers/settings_provider.dart';
+import 'package:scanpro/services/auth_service.dart';
+import 'package:scanpro/ui/common/app_bar.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/ui/screen/settings/components/app_header.dart';
+import 'package:scanpro/ui/screen/settings/components/settings_card.dart';
+import 'package:scanpro/ui/screen/settings/components/settings_divider.dart';
+import 'package:scanpro/ui/screen/settings/components/settings_section_header.dart';
+import 'package:scanpro/ui/screen/settings/components/settings_switch_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'components/settings_navigation_tile.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -65,8 +66,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         final currentLang = localState.languages.firstWhere(
           (lang) =>
               lang.languageCode == context.locale.languageCode &&
-              (lang.countryCode == context.locale.countryCode ||
-                  lang.countryCode == null),
+              (lang.countryCode == context.locale.countryCode),
           orElse: () => localState.languages.first,
         );
         currentLanguageLabel = currentLang.label;
@@ -78,7 +78,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: Text("settings.title".tr()),
+        title: Text(
+          "settings.title".tr(),
+          style: GoogleFonts.lilitaOne(fontSize: 25.sp),
+        ),
         centerTitle: false,
       ),
       body: SingleChildScrollView(

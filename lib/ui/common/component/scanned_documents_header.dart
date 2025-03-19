@@ -60,14 +60,20 @@ class ScannedDocumentsHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$pageCount page${pageCount != 1 ? 's' : ''} scanned',
+            'scanned_documents.pages_scanned'.tr(
+              namedArgs: {
+                'count': pageCount.toString(),
+                'plural': pageCount != 1 ? 's' : ''
+              },
+              args: [pageCount.toString()],
+            ),
             style: themeData.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 2),
           Text(
-            'Drag and drop to reorder pages',
+            'scanned_documents.drag_to_reorder'.tr(),
             style: themeData.textTheme.bodySmall?.copyWith(
               color: themeData.colorScheme.onSurfaceVariant,
             ),
@@ -81,7 +87,7 @@ class ScannedDocumentsHeader extends StatelessWidget {
     return TextButton.icon(
       onPressed: onAddMore,
       icon: const Icon(Icons.add_a_photo, size: 16),
-      label:  Text('common.add'.tr()),
+      label: Text('common.add'.tr()),
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,

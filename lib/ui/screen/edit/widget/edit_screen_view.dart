@@ -1,12 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/ui/common/component/scanned_documents_view.dart';
-import 'package:easy_scan/ui/screen/edit/component/document_action_button.dart';
-import 'package:easy_scan/ui/screen/edit/component/document_action_handler.dart';
-import 'package:easy_scan/ui/screen/edit/component/document_name_input.dart';
-import 'package:easy_scan/ui/screen/edit/component/document_preview.dart';
-import 'package:easy_scan/ui/screen/edit/component/edit_screen_controller.dart';
-import 'package:easy_scan/ui/screen/edit/component/save_button.dart';
+import 'package:scanpro/ui/common/app_bar.dart';
+import 'package:scanpro/ui/common/component/scanned_documents_view.dart';
+import 'package:scanpro/ui/screen/edit/component/document_action_button.dart';
+import 'package:scanpro/ui/screen/edit/component/document_action_handler.dart';
+import 'package:scanpro/ui/screen/edit/component/document_name_input.dart';
+import 'package:scanpro/ui/screen/edit/component/document_preview.dart';
+import 'package:scanpro/ui/screen/edit/component/edit_screen_controller.dart';
+import 'package:scanpro/ui/screen/edit/component/save_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
@@ -51,7 +51,7 @@ class _EditScreenViewState extends State<EditScreenView> {
           // Edit mode toggle - only show if switching is allowed
           if (widget.controller.canSwitchEditMode)
             PopupMenuButton<EditMode>(
-              tooltip: 'editor.change_edit_mode'.tr(),
+              tooltip: 'edit_screen.editor.change_edit_mode'.tr(),
               icon: Icon(
                 widget.controller.currentEditMode == EditMode.imageEdit
                     ? Icons.image
@@ -69,7 +69,7 @@ class _EditScreenViewState extends State<EditScreenView> {
                                 EditMode.imageEdit
                             ? colorScheme.primary
                             : null),
-                    title: Text('editor.edit_as_images'.tr()),
+                    title: Text('edit_screen.editor.edit_as_images'.tr()),
                     selected:
                         widget.controller.currentEditMode == EditMode.imageEdit,
                   ),
@@ -82,7 +82,7 @@ class _EditScreenViewState extends State<EditScreenView> {
                                 EditMode.pdfEdit
                             ? colorScheme.primary
                             : null),
-                    title: Text('editor.edit_as_pdf'.tr()),
+                    title: Text('edit_screen.editor.edit_as_pdf'.tr()),
                     selected:
                         widget.controller.currentEditMode == EditMode.pdfEdit,
                   ),
@@ -97,8 +97,9 @@ class _EditScreenViewState extends State<EditScreenView> {
                   icon: Icon(widget.controller.isEditView
                       ? Icons.grid_view
                       : Icons.edit),
-                  tooltip:
-                      widget.controller.isEditView ? 'Grid View' : 'Edit View',
+                  tooltip: widget.controller.isEditView
+                      ? 'edit_screen.view_mode.grid_view'.tr()
+                      : 'edit_screen.view_mode.edit_view'.tr(),
                   onPressed: () {
                     widget.controller.toggleViewMode();
                   },
@@ -117,14 +118,14 @@ class _EditScreenViewState extends State<EditScreenView> {
       children: [
         Text(
           widget.controller.isEditingExistingDocument
-              ? 'Edit Document'
-              : 'New Document',
+              ? 'edit_screen.edit_document'.tr()
+              : 'edit_screen.new_document'.tr(),
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         if (widget.controller.isImageOnlyDocument) ...[
           const SizedBox(width: 8),
           Chip(
-            label: Text('editor.image_editor'.tr(),
+            label: Text('edit_screen.image_editor'.tr(),
                 style: GoogleFonts.notoSerif(fontSize: 10)),
             backgroundColor: colorScheme.primaryContainer,
             labelStyle:
@@ -137,7 +138,8 @@ class _EditScreenViewState extends State<EditScreenView> {
             widget.controller.isPdfInputFile) ...[
           const SizedBox(width: 8),
           Chip(
-            label: Text('editor.pdf_only'.tr(), style: GoogleFonts.notoSerif(fontSize: 10)),
+            label: Text('edit_screen.pdf_only'.tr(),
+                style: GoogleFonts.notoSerif(fontSize: 10)),
             backgroundColor: colorScheme.primaryContainer,
             labelStyle:
                 GoogleFonts.notoSerif(color: colorScheme.onPrimaryContainer),
@@ -169,7 +171,6 @@ class _EditScreenViewState extends State<EditScreenView> {
               setState(() {});
             },
             onDeletePage: widget.controller.deletePageAtIndex,
-            // Add these properties for PDF preview mode
             isPdfPreviewMode:
                 widget.controller.currentEditMode == EditMode.pdfEdit &&
                     _containsPdfFiles(),
@@ -225,11 +226,9 @@ class _EditScreenViewState extends State<EditScreenView> {
     );
   }
 
-// Helper method to check if we're dealing with PDF files
   bool _containsPdfFiles() {
     if (widget.controller.pages.isEmpty) return false;
 
-    // Check if any of the pages is a PDF file
     for (final page in widget.controller.pages) {
       final extension = path.extension(page.path).toLowerCase();
       if (extension == '.pdf') return true;

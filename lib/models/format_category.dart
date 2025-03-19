@@ -21,15 +21,9 @@ final List<FormatOption> inputFormats = [
       id: 'pdf', name: 'PDF', icon: Icons.picture_as_pdf, color: Colors.red),
   FormatOption(
       id: 'docx', name: 'DOCX', icon: Icons.description, color: Colors.blue),
-  FormatOption(
-      id: 'doc',
-      name: 'DOC',
-      icon: Icons.description,
-      color: Colors.blue.shade800),
+
   FormatOption(
       id: 'rtf', name: 'RTF', icon: Icons.text_fields, color: Colors.orange),
-  FormatOption(
-      id: 'odt', name: 'ODT', icon: Icons.description, color: Colors.indigo),
   FormatOption(
       id: 'txt', name: 'TXT', icon: Icons.text_snippet, color: Colors.grey),
   FormatOption(id: 'html', name: 'HTML', icon: Icons.code, color: Colors.teal),
@@ -37,18 +31,6 @@ final List<FormatOption> inputFormats = [
   // Spreadsheet formats
   FormatOption(
       id: 'xlsx', name: 'XLSX', icon: Icons.table_chart, color: Colors.green),
-  FormatOption(
-      id: 'xls',
-      name: 'XLS',
-      icon: Icons.table_chart,
-      color: Colors.green.shade800),
-  FormatOption(
-      id: 'csv', name: 'CSV', icon: Icons.table_rows, color: Colors.amber),
-  FormatOption(
-      id: 'ods',
-      name: 'ODS',
-      icon: Icons.table_chart,
-      color: Colors.lightGreen),
 
   // Presentation formats
   FormatOption(
@@ -56,13 +38,6 @@ final List<FormatOption> inputFormats = [
       name: 'PPTX',
       icon: Icons.slideshow,
       color: Colors.deepOrange),
-  FormatOption(
-      id: 'ppt',
-      name: 'PPT',
-      icon: Icons.slideshow,
-      color: Colors.orange.shade800),
-  FormatOption(
-      id: 'odp', name: 'ODP', icon: Icons.slideshow, color: Colors.amber),
 
   // Image formats
   FormatOption(id: 'jpg', name: 'JPG', icon: Icons.image, color: Colors.purple),
@@ -78,14 +53,7 @@ final List<FormatOption> outputFormats = [
   FormatOption(
       id: 'docx', name: 'DOCX', icon: Icons.description, color: Colors.blue),
   FormatOption(
-      id: 'doc',
-      name: 'DOC',
-      icon: Icons.description,
-      color: Colors.blue.shade800),
-  FormatOption(
       id: 'rtf', name: 'RTF', icon: Icons.text_fields, color: Colors.orange),
-  FormatOption(
-      id: 'odt', name: 'ODT', icon: Icons.description, color: Colors.indigo),
   FormatOption(
       id: 'txt', name: 'TXT', icon: Icons.text_snippet, color: Colors.grey),
   FormatOption(id: 'html', name: 'HTML', icon: Icons.code, color: Colors.teal),
@@ -93,18 +61,6 @@ final List<FormatOption> outputFormats = [
   // Spreadsheet formats
   FormatOption(
       id: 'xlsx', name: 'XLSX', icon: Icons.table_chart, color: Colors.green),
-  FormatOption(
-      id: 'xls',
-      name: 'XLS',
-      icon: Icons.table_chart,
-      color: Colors.green.shade800),
-  FormatOption(
-      id: 'csv', name: 'CSV', icon: Icons.table_rows, color: Colors.amber),
-  FormatOption(
-      id: 'ods',
-      name: 'ODS',
-      icon: Icons.table_chart,
-      color: Colors.lightGreen),
 
   // Presentation formats
   FormatOption(
@@ -112,13 +68,6 @@ final List<FormatOption> outputFormats = [
       name: 'PPTX',
       icon: Icons.slideshow,
       color: Colors.deepOrange),
-  FormatOption(
-      id: 'ppt',
-      name: 'PPT',
-      icon: Icons.slideshow,
-      color: Colors.orange.shade800),
-  FormatOption(
-      id: 'odp', name: 'ODP', icon: Icons.slideshow, color: Colors.amber),
 
   // Image formats
   FormatOption(id: 'jpg', name: 'JPG', icon: Icons.image, color: Colors.purple),

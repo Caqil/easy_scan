@@ -131,7 +131,7 @@ class _AllFoldersSheet extends ConsumerWidget {
                       onCreateNewFolder!();
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text('New'),
+                    label: Text('new'.tr()),
                     style: TextButton.styleFrom(
                       backgroundColor:
                           Theme.of(context).primaryColor.withOpacity(0.1),
@@ -224,7 +224,7 @@ class _AllFoldersSheet extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'No folders yet',
+            'folder_screen.no_folders_yet'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -233,7 +233,7 @@ class _AllFoldersSheet extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Create folders to organize your documents',
+            'folder_screen.create_folder_prompt'.tr(),
             style: GoogleFonts.notoSerif(
               color: Colors.grey.shade600,
             ),
@@ -246,7 +246,7 @@ class _AllFoldersSheet extends ConsumerWidget {
                 onCreateNewFolder!();
               },
               icon: const Icon(Icons.add),
-              label:  Text('folder.create_new_folder'.tr()),
+              label: Text('folder.create_new_folder'.tr()),
             ),
           ],
         ],

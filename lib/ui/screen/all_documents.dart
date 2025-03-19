@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/providers/document_provider.dart';
-import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/ui/common/document_actions.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/document_provider.dart';
+import 'package:scanpro/ui/common/app_bar.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/ui/common/document_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -90,7 +90,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16.h),
               child: Text(
-                'Sort Documents',
+                'sort_documents'.tr(),
                 style: GoogleFonts.notoSerif(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -98,7 +98,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               ),
             ),
             ListTile(
-              title: const Text('Newest First'),
+              title: Text('newest_first'.tr()),
               leading: Icon(
                 Icons.arrow_downward,
                 color: _currentSortOption == SortOption.newest
@@ -115,7 +115,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               },
             ),
             ListTile(
-              title: const Text('Oldest First'),
+              title: Text('oldest_first'.tr()),
               leading: Icon(
                 Icons.arrow_upward,
                 color: _currentSortOption == SortOption.oldest
@@ -132,7 +132,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               },
             ),
             ListTile(
-              title: const Text('Name (A-Z)'),
+              title: Text('name_az'.tr()),
               leading: Icon(
                 Icons.sort_by_alpha,
                 color: _currentSortOption == SortOption.nameAZ
@@ -149,7 +149,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               },
             ),
             ListTile(
-              title: const Text('Name (Z-A)'),
+              title: Text('name_za'.tr()),
               leading: Icon(
                 Icons.sort_by_alpha,
                 color: _currentSortOption == SortOption.nameZA
@@ -224,7 +224,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
       context,
       title: 'document.rename_document'.tr(),
       initialValue: document.name,
-      hintText: 'Enter new name',
+      hintText: 'document.enter_new_name'.tr(),
     ).then((newName) {
       if (newName != null && newName.isNotEmpty) {
         final updatedDoc = document.copyWith(
@@ -264,25 +264,20 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
   void _shareDocument(Document document) {
     // Implement share functionality
   }
-
   void _deleteDocument(Document document) {
-    AppDialogs.showConfirmDialog(
-      context,
-      title: 'document.delete_document'.tr(),
-      message: 'Are you sure you want to delete "${document.name}"?',
-      confirmText: 'Delete',
-      isDangerous: true,
-    ).then((confirmed) {
+    AppDialogs.showConfirmDialog(context,
+            title: 'document.delete_document'.tr(),
+            message: 'document.delete_confirm_message'
+                .tr(namedArgs: {'name': document.name}),
+            confirmText: 'document.delete'.tr(),
+            isDangerous: true)
+        .then((confirmed) {
       if (confirmed) {
         ref.read(documentsProvider.notifier).deleteDocument(document.id);
-
-        AppDialogs.showSnackBar(
-          context,
-          message: 'document.document_deleted'.tr(),
-          type: SnackBarType.success,
-        );
-
-        setState(() {}); // Refresh the UI
+        AppDialogs.showSnackBar(context,
+            message: 'document.document_deleted'.tr(),
+            type: SnackBarType.success);
+        setState(() {});
       }
     });
   }
@@ -329,7 +324,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                 controller: _searchController,
                 autofocus: true,
                 decoration: InputDecoration(
-                  hintText: 'Search documents...',
+                  hintText: 'search_documents'.tr(),
                   border: InputBorder.none,
                   hintStyle: GoogleFonts.notoSerif(color: Colors.grey.shade400),
                   prefixIcon: Icon(Icons.search, color: primaryColor),
@@ -342,7 +337,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'All ',
+                      text: 'all'.tr(),
                       style: GoogleFonts.notoSerif(
                         fontWeight: FontWeight.w400,
                         fontSize: 18.sp,
@@ -350,7 +345,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                       ),
                     ),
                     TextSpan(
-                      text: 'Documents',
+                      text: 'categories.documents'.tr(),
                       style: GoogleFonts.notoSerif(
                         fontWeight: FontWeight.bold,
                         fontSize: 18.sp,
@@ -679,8 +674,8 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
             SizedBox(height: 16.h),
             Text(
               _isSearching
-                  ? 'No documents match your search'
-                  : 'No documents found',
+                  ? 'empty_state.searching.no_documents_match'.tr()
+                  : 'not_searching.no_documents_found'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
@@ -690,8 +685,8 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
             SizedBox(height: 8.h),
             Text(
               _isSearching
-                  ? 'Try a different search term'
-                  : 'Scan or import documents to get started',
+                  ? 'empty_state.searching.try_different_term'.tr()
+                  : 'not_searching.scan_or_import'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 14.sp,
                 color: Colors.grey.shade600,
@@ -706,7 +701,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                   Navigator.pushNamed(context, '/scan');
                 },
                 icon: const Icon(Icons.add),
-                label: const Text('Create New Document'),
+                label: Text('not_searching.create_new_document'.tr()),
               ),
             ],
           ],

@@ -1,10 +1,10 @@
 // Updated auth_wrapper.dart
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/models/auth_state.dart';
-import 'package:easy_scan/providers/settings_provider.dart';
-import 'package:easy_scan/services/auth_service.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
+import 'package:scanpro/models/auth_state.dart';
+import 'package:scanpro/providers/settings_provider.dart';
+import 'package:scanpro/services/auth_service.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -65,7 +65,7 @@ class _AuthWrapperState extends ConsumerState<AuthWrapper> {
           // If authentication failed, show a message
           if (!authenticated && mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-               SnackBar(
+              SnackBar(
                 content: Text('auth.auth_failed'.tr()),
                 behavior: SnackBarBehavior.floating,
               ),
@@ -80,9 +80,10 @@ class _AuthWrapperState extends ConsumerState<AuthWrapper> {
           _updateAuthState();
 
           if (mounted) {
-            AppDialogs.showSnackBar(context,
-                message:
-                    'Biometric authentication is not available on this device.');
+            AppDialogs.showSnackBar(
+              context,
+              message: 'auth.biometrics_not_available'.tr(),
+            );
           }
         }
       } catch (e) {
@@ -94,8 +95,11 @@ class _AuthWrapperState extends ConsumerState<AuthWrapper> {
         _updateAuthState();
 
         if (mounted) {
-          AppDialogs.showSnackBar(context,
-              message: 'Error during authentication: $e');
+          AppDialogs.showSnackBar(
+            context,
+            message:
+                'auth.error_during_auth'.tr(namedArgs: {'error': e.toString()}),
+          );
         }
       }
     } else {

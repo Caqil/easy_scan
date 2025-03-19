@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/config/helper.dart';
-import 'package:easy_scan/main.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/providers/document_provider.dart';
-import 'package:easy_scan/services/pdf_compression_api_service.dart';
-import 'package:easy_scan/services/image_service.dart';
-import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/utils/constants.dart';
-import 'package:easy_scan/utils/file_utils.dart';
+import 'package:scanpro/config/helper.dart';
+import 'package:scanpro/main.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/document_provider.dart';
+import 'package:scanpro/services/pdf_compression_api_service.dart';
+import 'package:scanpro/services/image_service.dart';
+import 'package:scanpro/ui/common/app_bar.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/utils/constants.dart';
+import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -112,7 +112,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           _buildDocumentInfoCard(),
           const SizedBox(height: 24),
           Text(
-            'Compression Level',
+            'simple_view.compression_level'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -138,7 +138,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _getCompressionLevelTitle(),
+                  FileUtils.getCompressionLevelTitle()!,
                   style: GoogleFonts.notoSerif(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.sp,
@@ -147,7 +147,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _getCompressionLevelDescription(),
+                  FileUtils.getCompressionLevelDescription()!,
                   style: GoogleFonts.notoSerif(
                     fontSize: 12.sp,
                   ),
@@ -157,7 +157,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           ),
           const SizedBox(height: 24),
           Text(
-            'Expected Results',
+            'simple_view.expected_results'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -179,7 +179,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           _buildDocumentInfoCard(),
           const SizedBox(height: 24),
           Text(
-            'Advanced Settings',
+            'advanced_view.advanced_settings'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -231,7 +231,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Lower quality values result in better compression but may affect readability and image quality.',
+                    'advanced_view.warning'.tr(),
                     style: GoogleFonts.notoSerif(fontSize: 12.sp),
                   ),
                 ),
@@ -240,7 +240,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           ),
           const SizedBox(height: 24),
           Text(
-            'Expected Results',
+            'simple_view.expected_results'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -292,7 +292,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           ),
           const SizedBox(height: 24),
           Text(
-            'Compressing PDF',
+            'compressing_view.compressing_pdf'.tr(),
             style: GoogleFonts.notoSerif(
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
@@ -300,7 +300,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Using cloud compression API...',
+            'compressing_view.using_cloud_api'.tr(),
             textAlign: TextAlign.center,
             style: GoogleFonts.notoSerif(
               fontSize: 14.sp,
@@ -393,7 +393,9 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'File size: ${FileUtils.formatFileSize(_originalFileSize)}',
+                  'stats.file_size'.tr(namedArgs: {
+                    'size': '${FileUtils.formatFileSize(_originalFileSize)}'
+                  }),
                   style: GoogleFonts.notoSerif(
                     fontSize: 12.sp,
                     color: Colors.grey.shade700,
@@ -401,7 +403,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Pages: ${widget.document.pageCount}',
+                  'stats.pages'
+                      .tr(namedArgs: {'count': '${widget.document.pageCount}'}),
                   style: GoogleFonts.notoSerif(
                     fontSize: 12.sp,
                     color: Colors.grey.shade700,
@@ -418,7 +421,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Password Protected',
+                        'stats.password_protected',
                         style: GoogleFonts.notoSerif(
                           fontSize: 12.sp,
                           color: Colors.grey.shade700,
@@ -442,7 +445,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           children: [
             Expanded(
               child: _buildCompressionOption(
-                label: 'Low',
+                label: 'options.low'.tr(),
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.low,
                 onTap: () {
@@ -455,7 +458,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
             ),
             Expanded(
               child: _buildCompressionOption(
-                label: 'Medium',
+                label: 'options.medium'.tr(),
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.medium,
                 onTap: () {
@@ -473,7 +476,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           children: [
             Expanded(
               child: _buildCompressionOption(
-                label: 'High',
+                label: 'options.high'.tr(),
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.high,
                 onTap: () {
@@ -486,7 +489,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
             ),
             Expanded(
               child: _buildCompressionOption(
-                label: 'Maximum',
+                label: 'options.maximum'.tr(),
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.maximum,
                 onTap: () {
@@ -607,14 +610,14 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'More Compression',
+              'slider.more_compression'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 10.sp,
                 color: Colors.grey.shade600,
               ),
             ),
             Text(
-              'Better Quality',
+              'slider.better_quality'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 10.sp,
                 color: Colors.grey.shade600,
@@ -755,7 +758,9 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(_isCompressing ? 'Compressing...' : 'Compress'),
+                child: Text(_isCompressing
+                    ? 'buttons.compressing'.tr()
+                    : 'buttons.compress'.tr()),
               ),
             ),
           ],
@@ -764,41 +769,15 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
     );
   }
 
-  String _getCompressionLevelTitle() {
-    switch (_compressionLevel) {
-      case CompressionLevel.low:
-        return 'Low Compression (Best Quality)';
-      case CompressionLevel.medium:
-        return 'Medium Compression (Good Quality)';
-      case CompressionLevel.high:
-        return 'High Compression (Reduced Quality)';
-      case CompressionLevel.maximum:
-        return 'Maximum Compression (Lowest Quality)';
-    }
-  }
-
-  String _getCompressionLevelDescription() {
-    switch (_compressionLevel) {
-      case CompressionLevel.low:
-        return 'Minimal file size reduction with best visual quality. Ideal for documents with high-quality images or graphics.';
-      case CompressionLevel.medium:
-        return 'Balanced compression that reduces file size while maintaining good quality. Recommended for most documents.';
-      case CompressionLevel.high:
-        return 'Significant file size reduction with some quality loss. Good for documents that need to be shared online.';
-      case CompressionLevel.maximum:
-        return 'Maximum file size reduction with noticeable quality loss. Best for documents where small file size is critical.';
-    }
-  }
-
   String _getCompressionStatusMessage(double progress) {
     if (progress < 0.3) {
-      return 'Uploading document...';
+      return 'compressing_view.status.uploading'.tr();
     } else if (progress < 0.6) {
-      return 'Compressing on server...';
+      return 'compressing_view.status.compressing'.tr();
     } else if (progress < 0.9) {
-      return 'Downloading compressed file...';
+      return 'compressing_view.status.downloading'.tr();
     } else {
-      return 'Finalizing...';
+      return 'compressing_view.status.finalizing'.tr();
     }
   }
 
@@ -844,8 +823,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
       if (compressedSize >= originalSize) {
         AppDialogs.showSnackBar(
           context,
-          message:
-              'The PDF is already optimized or cannot be compressed further.',
+          message: 'snackbar.already_optimized'.tr(),
           type: SnackBarType.warning,
         );
         try {
@@ -891,19 +869,20 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
 
       if (mounted) {
         Navigator.pop(context);
-        AppDialogs.showSnackBar(
-          context,
-          type: SnackBarType.success,
-          message:
-              'PDF compressed successfully (${compressionPercentage.toStringAsFixed(1)}% reduction)',
-        );
+        AppDialogs.showSnackBar(context,
+            type: SnackBarType.success,
+            message: 'snackbar.success'.tr(
+              namedArgs: {
+                'percentage': '${compressionPercentage.toStringAsFixed(1)}'
+              },
+            ));
       }
     } catch (e) {
       if (mounted) {
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.error,
-          message: 'Error compressing PDF: ${e.toString()}',
+          message: 'snackbar.error'.tr(namedArgs: {'error': e.toString()}),
         );
         setState(() {
           _isCompressing = false;

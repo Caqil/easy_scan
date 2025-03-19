@@ -1,8 +1,9 @@
-import 'package:easy_scan/main.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/ui/screen/home/widget/image_viewer_widget.dart';
-import 'package:easy_scan/ui/screen/home/widget/text_viewer_widget.dart';
-import 'package:easy_scan/ui/widget/pdf_viewer.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/main.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/ui/screen/home/widget/image_viewer_widget.dart';
+import 'package:scanpro/ui/screen/home/widget/text_viewer_widget.dart';
+import 'package:scanpro/ui/widget/pdf_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
@@ -59,7 +60,8 @@ class DocumentViewerWidget extends StatelessWidget {
               const Icon(Icons.file_present, size: 64, color: Colors.grey),
               const SizedBox(height: 16),
               Text(
-                'Cannot preview this file format (.$extension)',
+                'cannot_preview_file_format'
+                    .tr(namedArgs: {'extension': extension}),
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 8),
@@ -68,7 +70,7 @@ class DocumentViewerWidget extends StatelessWidget {
                   // Open with external viewer if available
                   _openWithExternalApp(document.pdfPath);
                 },
-                child: const Text('Open with another app'),
+                child: Text('open_with_another_app'.tr()),
               ),
             ],
           ),

@@ -1,7 +1,7 @@
 // lib/providers/barcode_provider.dart
 
 import 'dart:convert';
-import 'package:easy_scan/main.dart';
+import 'package:scanpro/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import '../models/barcode_scan.dart';

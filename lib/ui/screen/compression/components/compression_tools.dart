@@ -1,6 +1,7 @@
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/ui/screen/compression/components/compression_option.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/ui/screen/compression/components/compression_option.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -34,7 +35,7 @@ class PdfCompressionUtils {
       // Not a PDF file
       AppDialogs.showSnackBar(
         context,
-        message: 'Only PDF files can be compressed',
+        message: 'compression.only_pdf_files'.tr(),
         type: SnackBarType.warning,
       );
     }

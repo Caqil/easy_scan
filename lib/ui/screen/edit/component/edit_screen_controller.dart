@@ -1,17 +1,18 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:easy_scan/config/routes.dart';
-import 'package:easy_scan/main.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/providers/document_provider.dart';
-import 'package:easy_scan/providers/scan_provider.dart';
-import 'package:easy_scan/services/image_service.dart';
-import 'package:easy_scan/services/pdf_service.dart';
-import 'package:easy_scan/services/scan_service.dart';
-import 'package:easy_scan/ui/common/component/scan_initial_view.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/utils/constants.dart';
-import 'package:easy_scan/utils/file_utils.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/config/routes.dart';
+import 'package:scanpro/main.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/document_provider.dart';
+import 'package:scanpro/providers/scan_provider.dart';
+import 'package:scanpro/services/image_service.dart';
+import 'package:scanpro/services/pdf_service.dart';
+import 'package:scanpro/services/scan_service.dart';
+import 'package:scanpro/ui/common/component/scan_initial_view.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/utils/constants.dart';
+import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -139,8 +140,9 @@ class EditScreenController {
 
     AppDialogs.showSnackBar(
       context,
-      message:
-          'Now editing as ${newMode == EditMode.imageEdit ? 'images' : 'PDF'}',
+      message: 'edit_mode_switched'.tr(namedArgs: {
+        'mode': newMode == EditMode.imageEdit ? 'categories.images'.tr() : 'PDF'
+      }),
       type: SnackBarType.success,
     );
   }
@@ -215,7 +217,7 @@ class EditScreenController {
     if (isPdfInputFile && currentEditMode == EditMode.pdfEdit) {
       AppDialogs.showSnackBar(
         context,
-        message: 'Grid view not available for PDF documents',
+        message: 'grid_view_unavailable'.tr(),
         type: SnackBarType.warning,
       );
       return;
@@ -364,7 +366,7 @@ class EditScreenController {
     if (pages.length <= 1) {
       AppDialogs.showSnackBar(
         context,
-        message: 'Cannot delete the only page. Add more pages or cancel.',
+        message: 'cannot_delete_only_page'.tr(),
       );
       return;
     }
@@ -763,7 +765,7 @@ class EditScreenController {
             .updateDocument(updatedDocument);
         AppDialogs.showSnackBar(
           context,
-          message: 'Document updated successfully',
+          message: 'document_updated_success'.tr(),
           type: SnackBarType.success,
         );
       } else {
@@ -781,8 +783,10 @@ class EditScreenController {
         await ref.read(documentsProvider.notifier).addDocument(newDocument);
         AppDialogs.showSnackBar(
           context,
-          message:
-              'Document saved successfully as PDF${isPasswordProtectionEnabled ? ' with password protection' : ''}',
+          message: 'document_saved_success'.tr(namedArgs: {
+            'protected':
+                isPasswordProtectionEnabled ? ' with password protection' : ''
+          }),
           type: SnackBarType.success,
         );
         ref.read(scanProvider.notifier).clearPages();
@@ -808,7 +812,7 @@ class EditScreenController {
     } catch (e) {
       AppDialogs.showSnackBar(
         context,
-        message: 'Error saving document: $e',
+        message: 'error_saving_document'.tr(namedArgs: {'error': e.toString()}),
         type: SnackBarType.error,
       );
       logger.error('Error saving document: $e');
@@ -838,7 +842,6 @@ class EditScreenController {
           text: '📄',
           style: GoogleFonts.notoSerif(fontSize: size * 0.4),
         ),
-        textDirection: TextDirection.ltr,
       );
       iconPainter.layout();
       iconPainter.paint(
@@ -858,7 +861,6 @@ class EditScreenController {
             color: Colors.black87,
           ),
         ),
-        textDirection: TextDirection.ltr,
       );
       namePainter.layout(maxWidth: size - 30);
       namePainter.paint(

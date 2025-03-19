@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/ui/widget/password_verification_dialog.dart';
+import 'package:scanpro/ui/widget/password_verification_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,19 +42,17 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
           context: context,
           barrierDismissible: false,
           builder: (context) => PasswordVerificationDialog(
-            correctPassword:
-                widget.document.password ?? "", // Pastikan tidak null
+            correctPassword: widget.document.password ?? "",
             onVerified: () {
               setState(() {
                 _isLoading = false;
-                _errorMessage = null; // Reset error jika ada
+                _errorMessage = null;
               });
             },
             onCancelled: () {
               setState(() {
                 _isLoading = false;
-                _errorMessage =
-                    "Password input was cancelled."; // Tampilkan error
+                _errorMessage = 'pdf.password_cancelled'.tr();
               });
             },
           ),
@@ -84,22 +82,20 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
             Text(
               _errorMessage!,
               textAlign: TextAlign.center,
-              style:  GoogleFonts.notoSerif(fontSize: 14.sp),
+              style: GoogleFonts.notoSerif(fontSize: 14.sp),
             ),
             TextButton(
-              onPressed: () =>
-                  Navigator.pop(context), // Kembali ke halaman sebelumnya
-              child: const Text("Go Back"),
+              onPressed: () => Navigator.pop(context),
+              child: Text('common.go_back'.tr()),
             ),
           ],
         ),
       );
     }
 
-    // Check if the file exists
     final file = File(widget.document.pdfPath);
     if (!file.existsSync()) {
-      return  Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -110,7 +106,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
             ),
             SizedBox(height: 16),
             Text(
-              'PDF file not found',
+              'pdf.file_not_found'.tr(),
               textAlign: TextAlign.center,
               style: GoogleFonts.notoSerif(fontSize: 14.sp),
             ),
@@ -129,13 +125,13 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
           controller: _pdfViewerController,
           onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
             setState(() {
-              _isLoading = false; // Stop loading
+              _isLoading = false;
               if (details.error.contains('Password required') ||
                   details.error.contains('invalid password')) {
-                _errorMessage =
-                    'Incorrect password or password input was cancelled.';
+                _errorMessage = 'pdf.incorrect_password'.tr();
               } else {
-                _errorMessage = 'Failed to load PDF: ${details.error}';
+                _errorMessage = 'pdf.failed_to_load'
+                    .tr(namedArgs: {'error': details.error});
               }
             });
           },
@@ -158,7 +154,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                     Expanded(
                       child: Text(
                         widget.document.name,
-                        style:  GoogleFonts.notoSerif(
+                        style: GoogleFonts.notoSerif(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -174,7 +170,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                     IconButton(
                       icon: const Icon(Icons.search),
                       onPressed: () {
-                        //  _pdfViewerController.openSearchTextField();
+                        // _pdfViewerController.openSearchTextField();
                       },
                     ),
                     PopupMenuButton<String>(
@@ -187,17 +183,17 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                         }
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'bookmark',
                           child: Row(
                             children: [
                               Icon(Icons.bookmark),
                               SizedBox(width: 8),
-                              Text('Add Bookmark'),
+                              Text('common.add_bookmark'.tr()),
                             ],
                           ),
                         ),
-                         PopupMenuItem(
+                        PopupMenuItem(
                           value: 'print',
                           child: Row(
                             children: [

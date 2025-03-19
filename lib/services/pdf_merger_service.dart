@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:easy_scan/main.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/services/image_service.dart';
-import 'package:easy_scan/services/pdf_service.dart';
-import 'package:easy_scan/utils/constants.dart';
+import 'package:scanpro/main.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/services/image_service.dart';
+import 'package:scanpro/services/pdf_service.dart';
+import 'package:scanpro/utils/constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;

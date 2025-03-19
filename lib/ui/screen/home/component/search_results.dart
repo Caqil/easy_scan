@@ -1,5 +1,6 @@
 // search_results.dart
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +21,7 @@ class SearchResults extends StatelessWidget {
           children: [
             Icon(Icons.search_off, size: 64, color: Colors.grey),
             SizedBox(height: 16),
-            Text('No documents found',
+            Text('no_documents_yet'.tr(),
                 style: GoogleFonts.notoSerif(fontSize: 16.sp)),
           ],
         ),

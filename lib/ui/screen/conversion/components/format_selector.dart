@@ -310,16 +310,14 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
       String category = 'Other';
 
       // Determine category based on format
-      if (['pdf', 'doc', 'docx', 'txt', 'rtf', 'odt']
-          .contains(format.id.toLowerCase())) {
+      if (['pdf', 'docx', 'txt', 'rtf'].contains(format.id.toLowerCase())) {
         category = 'Documents';
-      } else if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'tiff']
+      } else if (['jpg', 'jpeg', 'png', 'gif', 'webp']
           .contains(format.id.toLowerCase())) {
         category = 'Images';
-      } else if (['xlsx', 'xls', 'csv', 'ods']
-          .contains(format.id.toLowerCase())) {
+      } else if (['xlsx'].contains(format.id.toLowerCase())) {
         category = 'Spreadsheets';
-      } else if (['pptx', 'ppt', 'odp'].contains(format.id.toLowerCase())) {
+      } else if (['pptx'].contains(format.id.toLowerCase())) {
         category = 'Presentations';
       }
 

@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/models/barcode_scan.dart';
-import 'package:easy_scan/providers/barcode_provider.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/ui/screen/barcode/barcode_result_screen.dart';
-import 'package:easy_scan/ui/screen/barcode/qr_code_customization_screen.dart';
-import 'package:easy_scan/ui/screen/barcode/widget/barcode_action.dart';
+import 'package:scanpro/models/barcode_scan.dart';
+import 'package:scanpro/providers/barcode_provider.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/ui/screen/barcode/barcode_result_screen.dart';
+import 'package:scanpro/ui/screen/barcode/qr_code_customization_screen.dart';
+import 'package:scanpro/ui/screen/barcode/widget/barcode_action.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:easy_scan/main.dart';
+import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';

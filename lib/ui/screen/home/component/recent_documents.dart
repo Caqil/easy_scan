@@ -1,5 +1,6 @@
 // recent_documents.dart
-import 'package:easy_scan/ui/widget/document_card.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/ui/widget/document_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,7 +28,7 @@ class RecentDocuments extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Recent Documents',
+          'recent_documents'.tr(),
           style: GoogleFonts.notoSerif(
               fontSize: 14.sp, fontWeight: FontWeight.bold),
         ),

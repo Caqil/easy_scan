@@ -39,7 +39,6 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
     super.initState();
     _focusNode.requestFocus();
 
-    // Setup shake animation for incorrect password
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -81,7 +80,6 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
       _isVerifying = true;
     });
 
-    // Simulate verification delay
     await Future.delayed(const Duration(milliseconds: 500));
 
     if (_controller.text.trim() == widget.correctPassword) {
@@ -128,7 +126,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
               size: 24,
             ),
             const SizedBox(width: 12),
-             Text('pdf.protected_document'.tr()),
+            Text('pdf.protected_document'.tr()),
           ],
         ),
         content: Container(
@@ -138,7 +136,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'This document is protected. Please enter the password to continue.',
+                'pdf.enter_password_prompt'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),
@@ -176,8 +174,9 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                               _obscureText = !_obscureText;
                             });
                           },
-                          tooltip:
-                              _obscureText ? 'Show password' : 'Hide password',
+                          tooltip: _obscureText
+                              ? 'common.show_password'.tr()
+                              : 'common.hide_password'.tr(),
                           splashRadius: 20,
                         ),
                       ],
@@ -197,7 +196,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                       ),
                       SizedBox(width: 4.w),
                       Text(
-                        'Please check your password and try again',
+                        'pdf.check_password_error'.tr(),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.error,
                         ),
@@ -217,7 +216,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                     widget.onCancelled?.call();
                   },
             child: Text(
-              'Cancel',
+              'common.cancel'.tr(),
               style: GoogleFonts.notoSerif(
                 color: colorScheme.primary,
               ),
@@ -236,7 +235,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                       ),
                     ),
                   )
-                :  Text('pdf.unlock'.tr()),
+                : Text('pdf.unlock'.tr()),
           ),
         ],
       ),

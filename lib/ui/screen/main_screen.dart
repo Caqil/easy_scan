@@ -1,7 +1,8 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:easy_scan/config/routes.dart';
-import 'package:easy_scan/services/scan_service.dart';
-import 'package:easy_scan/ui/widget/component/scan_initial_view.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/config/routes.dart';
+import 'package:scanpro/services/scan_service.dart';
+import 'package:scanpro/ui/widget/component/scan_initial_view.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,11 +39,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   // Updated to include 5 labels with Scan in the middle
   final _labelList = <String>[
-    'Home',
-    'Folders',
-    'Scan',
-    'Convert',
-    'Settings',
+    'labels.hme'.tr(),
+    'labels.folders'.tr(),
+    'labels.scan'.tr(),
+    'labels.convert'.tr(),
+    'labels.settings'.tr(),
   ];
 
   // Define list of routes that correspond to bottom nav items
@@ -162,7 +163,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                             size: 20.sp,
                           ),
                           Text(
-                            'Scan',
+                            'labels.scan'.tr(),
                             style: GoogleFonts.notoSerif(
                               fontSize: 10.sp,
                               color: Colors.white,

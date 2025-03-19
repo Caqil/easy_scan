@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:easy_localization/easy_localization.dart'; // Add this import
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -54,7 +54,7 @@ class CustomQRCode extends StatelessWidget {
         children: [
           if (title != null) ...[
             Text(
-              title!,
+              title!.tr(), // Apply translation if title is a key
               style: GoogleFonts.notoSerif(
                 color: primaryColor,
                 fontSize: 16.sp,
@@ -63,7 +63,6 @@ class CustomQRCode extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
           ],
-          // The actual QR code with custom styling
           Container(
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
@@ -88,8 +87,7 @@ class CustomQRCode extends StatelessWidget {
               size: size,
               backgroundColor: Colors.white,
               foregroundColor: primaryColor,
-              embeddedImage:
-                  logo != null ? null : null, // Add custom logo if provided
+              embeddedImage: logo != null ? null : null,
               embeddedImageStyle: logo != null
                   ? QrEmbeddedImageStyle(
                       size: Size(size * 0.15, size * 0.15),
@@ -98,7 +96,7 @@ class CustomQRCode extends StatelessWidget {
               errorStateBuilder: (ctx, err) {
                 return Center(
                   child: Text(
-                    'Something went wrong!',
+                    'qr_code.error'.tr(), // Use translation key
                     style: GoogleFonts.notoSerif(
                       color: Colors.red,
                       fontSize: 14.sp,
@@ -122,7 +120,6 @@ class CustomQRCode extends StatelessWidget {
   }
 }
 
-// Enhanced version with gradient background and custom QR patterns
 class GradientQRCode extends StatelessWidget {
   final String data;
   final String? title;
@@ -166,7 +163,7 @@ class GradientQRCode extends StatelessWidget {
         children: [
           if (title != null) ...[
             Text(
-              title!,
+              title!.tr(), // Apply translation if title is a key
               style: GoogleFonts.notoSerif(
                 color: Colors.white,
                 fontSize: 16.sp,
@@ -182,7 +179,6 @@ class GradientQRCode extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
           ],
-          // QR Code with white background for better scanning
           Container(
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
@@ -201,8 +197,7 @@ class GradientQRCode extends StatelessWidget {
               version: QrVersions.auto,
               size: size,
               backgroundColor: Colors.white,
-              embeddedImage:
-                  logo != null ? null : null, // Handle logo embedding
+              embeddedImage: logo != null ? null : null,
               embeddedImageStyle: logo != null
                   ? QrEmbeddedImageStyle(
                       size: Size(size * 0.2, size * 0.2),
@@ -224,7 +219,6 @@ class GradientQRCode extends StatelessWidget {
   }
 }
 
-// Sleek modern transparent QR code
 class TransparentQRCode extends StatelessWidget {
   final String data;
   final String? title;
@@ -262,7 +256,7 @@ class TransparentQRCode extends StatelessWidget {
             children: [
               if (title != null) ...[
                 Text(
-                  title!,
+                  title!.tr(), // Apply translation if title is a key
                   style: GoogleFonts.notoSerif(
                     color: Colors.white,
                     fontSize: 16.sp,
@@ -314,10 +308,9 @@ class TransparentQRCode extends StatelessWidget {
   }
 }
 
-// Themed QR code based on content type
 class ThemedQRCode extends StatelessWidget {
   final String data;
-  final String contentType; // 'url', 'wifi', 'email', 'phone', etc.
+  final String contentType;
   final double size;
 
   const ThemedQRCode({
@@ -329,7 +322,6 @@ class ThemedQRCode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Define theme settings based on content type
     final typeSettings = _getTypeSettings(contentType);
 
     return Container(
@@ -352,7 +344,6 @@ class ThemedQRCode extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Title with icon
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -363,7 +354,7 @@ class ThemedQRCode extends StatelessWidget {
               ),
               SizedBox(width: 8.w),
               Text(
-                typeSettings.title,
+                typeSettings.title.tr(), // Apply translation to title
                 style: GoogleFonts.notoSerif(
                   color: Colors.white,
                   fontSize: 16.sp,
@@ -373,7 +364,6 @@ class ThemedQRCode extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16.h),
-          // QR Code
           Container(
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
@@ -411,70 +401,68 @@ class ThemedQRCode extends StatelessWidget {
     );
   }
 
-  // Helper class to define settings for different content types
   _TypeSettings _getTypeSettings(String type) {
     switch (type.toLowerCase()) {
       case 'url':
         return _TypeSettings(
           gradientColors: [Colors.blue, Colors.lightBlueAccent],
           icon: Icons.language,
-          title: 'Website URL',
+          title: 'qr_code.website_url', // Use translation key
           logoPath: 'assets/icons/web_logo.png',
         );
       case 'wifi':
         return _TypeSettings(
           gradientColors: [Colors.purple, Colors.purpleAccent],
           icon: Icons.wifi,
-          title: 'WiFi Network',
+          title: 'qr_code.wifi_network', // Use translation key
           logoPath: 'assets/icons/wifi_logo.png',
         );
       case 'email':
         return _TypeSettings(
           gradientColors: [Colors.orange, Colors.amber],
           icon: Icons.email,
-          title: 'Email Address',
+          title: 'qr_code.email_address', // Use translation key
           logoPath: 'assets/icons/email_logo.png',
         );
       case 'phone':
         return _TypeSettings(
           gradientColors: [Colors.green, Colors.lightGreen],
           icon: Icons.phone,
-          title: 'Phone Number',
+          title: 'qr_code.phone_number', // Use translation key
           logoPath: 'assets/icons/phone_logo.png',
         );
       case 'contact':
         return _TypeSettings(
           gradientColors: [Colors.indigo, Colors.indigoAccent],
           icon: Icons.contact_page,
-          title: 'Contact Information',
+          title: 'qr_code.contact_information', // Use translation key
           logoPath: 'assets/icons/contact_logo.png',
         );
       case 'sms':
         return _TypeSettings(
           gradientColors: [Colors.deepPurple, Colors.purpleAccent],
           icon: Icons.sms,
-          title: 'SMS Message',
+          title: 'qr_code.sms_message', // Use translation key
           logoPath: 'assets/icons/sms_logo.png',
         );
       case 'location':
         return _TypeSettings(
           gradientColors: [Colors.red, Colors.redAccent],
           icon: Icons.location_on,
-          title: 'Location',
+          title: 'qr_code.location', // Use translation key
           logoPath: 'assets/icons/location_logo.png',
         );
       default:
         return _TypeSettings(
           gradientColors: [Colors.teal, Colors.tealAccent],
           icon: Icons.qr_code,
-          title: 'QR Code',
+          title: 'qr_code.qr_code', // Use translation key
           logoPath: 'assets/icons/qr_logo.png',
         );
     }
   }
 }
 
-// Helper class for themed QR codes
 class _TypeSettings {
   final List<Color> gradientColors;
   final IconData icon;

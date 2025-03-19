@@ -1,4 +1,5 @@
-import 'package:easy_scan/main.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -65,7 +66,7 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
           // Password protection toggle
           SwitchListTile(
             title: Text(
-              'Password Protection',
+              'password_protection'.tr(),
               style: GoogleFonts.notoSerif(
                 fontWeight: FontWeight.w500,
                 fontSize: 14.sp,
@@ -73,8 +74,8 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
             ),
             subtitle: Text(
               _isProtectionEnabled
-                  ? 'Document will be password protected'
-                  : 'Add a password to protect this document',
+                  ? 'document_will_be_protected'.tr()
+                  : 'add_password_to_protect'.tr(),
               style: GoogleFonts.notoSerif(
                 fontSize: 12.sp,
                 color: widget.colorScheme.onSurfaceVariant,
@@ -106,8 +107,8 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
                 controller: widget.passwordController,
                 obscureText: _obscureText,
                 decoration: InputDecoration(
-                  labelText: 'Password',
-                  hintText: 'Enter document password',
+                  labelText: 'password'.tr(),
+                  hintText: 'enter_document_password'.tr(),
                   prefixIcon: Icon(Icons.password_outlined,
                       color: widget.colorScheme.primary),
                   suffixIcon: IconButton(

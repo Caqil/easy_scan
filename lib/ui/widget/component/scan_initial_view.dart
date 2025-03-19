@@ -65,7 +65,7 @@ class ScanInitialView extends StatelessWidget {
 
   Widget _buildTitle() {
     return Text(
-      'Ready to Scan',
+      'scan.ready_to_scan'.tr(),
       style: GoogleFonts.notoSerif(
         fontSize: 24.sp,
         fontWeight: FontWeight.bold,
@@ -75,7 +75,7 @@ class ScanInitialView extends StatelessWidget {
 
   Widget _buildSubtitle() {
     return Text(
-      'Scan documents or import from your gallery',
+      'scan.scan_documents_or_import'.tr(),
       textAlign: TextAlign.center,
       style: GoogleFonts.notoSerif(
         fontSize: 14.sp,
@@ -88,7 +88,7 @@ class ScanInitialView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onScanPressed,
       icon: const Icon(Icons.camera_alt),
-      label:  Text('scan.start_scanning'.tr()),
+      label: Text('scan.start_scanning'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(
@@ -103,7 +103,7 @@ class ScanInitialView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onImportPressed,
       icon: const Icon(Icons.photo_library),
-      label:  Text('scan.import_from_gallery'.tr()),
+      label: Text('scan.import_from_gallery'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(

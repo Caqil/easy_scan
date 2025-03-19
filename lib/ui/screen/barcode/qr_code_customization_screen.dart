@@ -1,18 +1,18 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/models/barcode_scan.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/providers/barcode_provider.dart';
-import 'package:easy_scan/services/image_service.dart';
-import 'package:easy_scan/ui/screen/barcode/widget/customizable_qrcode.dart';
-import 'package:easy_scan/utils/constants.dart';
-import 'package:easy_scan/utils/file_utils.dart';
+import 'package:scanpro/models/barcode_scan.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/barcode_provider.dart';
+import 'package:scanpro/services/image_service.dart';
+import 'package:scanpro/ui/screen/barcode/widget/customizable_qrcode.dart';
+import 'package:scanpro/utils/constants.dart';
+import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:easy_scan/ui/common/app_bar.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
+import 'package:scanpro/ui/common/app_bar.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
 

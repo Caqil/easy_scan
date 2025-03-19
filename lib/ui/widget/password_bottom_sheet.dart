@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/providers/document_provider.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/document_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../main.dart';
@@ -51,18 +51,20 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
         children: [
           Text(
             widget.document.isPasswordProtected
-                ? 'Change Password'
-                : 'Add Password',
+                ? 'password_sheet.change_password'.tr()
+                : 'password_sheet.add_password'.tr(),
             style: GoogleFonts.notoSerif(
-              fontSize: 16.sp.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             widget.document.isPasswordProtected
-                ? 'Enter a new password for "${widget.document.name}"'
-                : 'Add a password to protect "${widget.document.name}"',
+                ? 'password_sheet.enter_new_password'
+                    .tr(namedArgs: {'name': widget.document.name})
+                : 'password_sheet.add_password_to_protect'
+                    .tr(namedArgs: {'name': widget.document.name}),
             style: GoogleFonts.notoSerif(
               color: Colors.grey.shade600,
             ),
@@ -72,7 +74,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
             controller: _passwordController,
             obscureText: _obscureText,
             decoration: InputDecoration(
-              labelText: 'Password',
+              labelText: 'password_sheet.password_label'.tr(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -135,8 +137,11 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
 
   Future<void> _applyPassword() async {
     if (_passwordController.text.trim().isEmpty) {
-      AppDialogs.showSnackBar(context,
-          type: SnackBarType.error, message: 'Please enter a password');
+      AppDialogs.showSnackBar(
+        context,
+        type: SnackBarType.error,
+        message: 'password_sheet.please_enter_password'.tr(),
+      );
       return;
     }
 
@@ -145,14 +150,12 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
     });
 
     try {
-      // Get the PDF service
       final pdfService = PdfService();
       final String password = _passwordController.text.trim();
 
       logger.info(
-          'Applying password: "${password}" to document: ${widget.document.name}');
+          'Applying password: "$password" to document: ${widget.document.name}');
 
-      // Apply the password to the actual PDF file
       final protectedPdfPath = await pdfService.protectPdf(
         widget.document.pdfPath,
         password,
@@ -164,11 +167,10 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
 
       logger.info('Protected PDF path: $protectedPdfPath');
 
-      // Update document with password
       final updatedDoc = Document(
         id: widget.document.id,
         name: widget.document.name,
-        pdfPath: protectedPdfPath, // Use the protected PDF path
+        pdfPath: protectedPdfPath,
         pagesPaths: widget.document.pagesPaths,
         pageCount: widget.document.pageCount,
         thumbnailPath: widget.document.thumbnailPath,
@@ -178,7 +180,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
         folderId: widget.document.folderId,
         isFavorite: widget.document.isFavorite,
         isPasswordProtected: true,
-        password: password, // Store the actual password
+        password: password,
       );
 
       logger.info(
@@ -186,21 +188,25 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
 
       await ref.read(documentsProvider.notifier).updateDocument(updatedDoc);
 
-      // Close the sheet and show success message
       if (mounted) {
         Navigator.pop(context);
-        AppDialogs.showSnackBar(context,
-            type: SnackBarType.success,
-            message: widget.document.isPasswordProtected
-                ? 'Password updated successfully'
-                : 'Password added successfully');
+        AppDialogs.showSnackBar(
+          context,
+          type: SnackBarType.success,
+          message: widget.document.isPasswordProtected
+              ? 'password_sheet.password_updated_success'.tr()
+              : 'password_sheet.password_added_success'.tr(),
+        );
       }
     } catch (e) {
       logger.error('Error in _applyPassword: $e');
       if (mounted) {
-        AppDialogs.showSnackBar(context,
-            type: SnackBarType.error,
-            message: 'Failed to apply password: ${e.toString()}');
+        AppDialogs.showSnackBar(
+          context,
+          type: SnackBarType.error,
+          message: 'password_sheet.failed_to_apply_password'
+              .tr(namedArgs: {'error': e.toString()}),
+        );
       }
     } finally {
       if (mounted) {

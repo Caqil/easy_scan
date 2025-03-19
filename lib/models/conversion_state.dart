@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:hive/hive.dart';
-import 'package:easy_scan/models/format_category.dart';
+import 'package:scanpro/models/format_category.dart';
 
 part 'conversion_state.g.dart';
 

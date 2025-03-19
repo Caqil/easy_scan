@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:easy_scan/main.dart';
+import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';

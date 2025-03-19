@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_scan/config/helper.dart';
-import 'package:easy_scan/main.dart';
-import 'package:easy_scan/models/document.dart';
-import 'package:easy_scan/providers/document_provider.dart';
-import 'package:easy_scan/services/pdf_compression_api_service.dart';
-import 'package:easy_scan/ui/common/dialogs.dart';
-import 'package:easy_scan/utils/file_utils.dart';
+import 'package:scanpro/config/helper.dart';
+import 'package:scanpro/main.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/document_provider.dart';
+import 'package:scanpro/services/pdf_compression_api_service.dart';
+import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,7 +56,7 @@ class _CompressionBottomSheetState
         children: [
           Center(
             child: Container(
-              margin: const EdgeInsets.only(bottom: 16),
+              margin: const EdgeInsets.only(top: 16),
               height: 4,
               width: 40,
               decoration: BoxDecoration(
@@ -115,7 +115,7 @@ class _CompressionBottomSheetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _getCompressionLevelTitle(),
+                  FileUtils.getCompressionLevelTitle()!,
                   style: GoogleFonts.notoSerif(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.sp,
@@ -124,7 +124,7 @@ class _CompressionBottomSheetState
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _getCompressionLevelDescription(),
+                  FileUtils.getCompressionLevelDescription()!,
                   style: GoogleFonts.notoSerif(
                     fontSize: 12.sp,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -186,7 +186,7 @@ class _CompressionBottomSheetState
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white),
                         )
-                      : const Text('Compress'),
+                      : Text('compress'.tr()),
                 ),
               ),
             ],
@@ -213,7 +213,7 @@ class _CompressionBottomSheetState
             ),
             Expanded(
               child: _buildCompressionOption(
-                label: 'compression_descriptions.medium'.tr(),
+                label: 'compression_levels.medium'.tr(),
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.medium,
                 onTap: () =>
@@ -227,7 +227,7 @@ class _CompressionBottomSheetState
           children: [
             Expanded(
               child: _buildCompressionOption(
-                label: 'compression_details.high'.tr(),
+                label: 'compression_levels.high'.tr(),
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.high,
                 onTap: () =>
@@ -236,7 +236,7 @@ class _CompressionBottomSheetState
             ),
             Expanded(
               child: _buildCompressionOption(
-                label: 'Maximum',
+                label: 'compression_levels.maximum'.tr(),
                 icon: Icons.compress,
                 isSelected: _compressionLevel == CompressionLevel.maximum,
                 onTap: () => setState(
@@ -298,32 +298,6 @@ class _CompressionBottomSheetState
     );
   }
 
-  String _getCompressionLevelTitle() {
-    switch (_compressionLevel) {
-      case CompressionLevel.low:
-        return 'Low Compression (Best Quality)';
-      case CompressionLevel.medium:
-        return 'Medium Compression (Good Quality)';
-      case CompressionLevel.high:
-        return 'High Compression (Reduced Quality)';
-      case CompressionLevel.maximum:
-        return 'Maximum Compression (Lowest Quality)';
-    }
-  }
-
-  String _getCompressionLevelDescription() {
-    switch (_compressionLevel) {
-      case CompressionLevel.low:
-        return 'Minimal file size reduction with best visual quality. Ideal for documents with high-quality images or graphics.';
-      case CompressionLevel.medium:
-        return 'Balanced compression that reduces file size while maintaining good quality. Recommended for most documents.';
-      case CompressionLevel.high:
-        return 'Significant file size reduction with some quality loss. Good for documents that need to be shared online.';
-      case CompressionLevel.maximum:
-        return 'Maximum file size reduction with noticeable quality loss. Best for documents where small file size is critical.';
-    }
-  }
-
   Future<void> _compressPdf() async {
     if (_isCompressing) return;
 
@@ -359,7 +333,7 @@ class _CompressionBottomSheetState
           Navigator.pop(context);
           AppDialogs.showSnackBar(
             context,
-            message: 'The PDF could not be compressed further.',
+            message: 'the_pdf_could_not_be_compressed_further'.tr(),
             type: SnackBarType.warning,
           );
         }
@@ -402,7 +376,8 @@ class _CompressionBottomSheetState
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.error,
-          message: 'Error compressing PDF: ${e.toString()}',
+          message:
+              'error_compressing_pdf'.tr(namedArgs: {'error': e.toString()}),
         );
       }
     } finally {

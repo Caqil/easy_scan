@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:easy_scan/main.dart';
-import 'package:easy_scan/models/document.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/config/helper.dart';
+import 'package:scanpro/main.dart';
+import 'package:scanpro/models/document.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 class FileUtils {
+  static final CompressionLevel _compressionLevel = CompressionLevel.medium;
   static Future<String> getUniqueFilePath({
     required String documentName,
     required String extension,
@@ -244,6 +247,32 @@ class FileUtils {
         return 'XML Document';
       default:
         return '${extension.toUpperCase()} Document';
+    }
+  }
+
+  static String? getCompressionLevelTitle() {
+    switch (_compressionLevel) {
+      case CompressionLevel.low:
+        return 'compression_descriptions.low'.tr();
+      case CompressionLevel.medium:
+        return 'compression_descriptions.medium'.tr();
+      case CompressionLevel.high:
+        return 'compression_descriptions.high'.tr();
+      case CompressionLevel.maximum:
+        return 'compression_descriptions.maximum'.tr();
+    }
+  }
+
+  static String? getCompressionLevelDescription() {
+    switch (_compressionLevel) {
+      case CompressionLevel.low:
+        return 'compression_details.low'.tr();
+      case CompressionLevel.medium:
+        return 'compression_details.medium'.tr();
+      case CompressionLevel.high:
+        return 'compression_details.high'.tr();
+      case CompressionLevel.maximum:
+        return 'compression_details.maximum'.tr();
     }
   }
 
