@@ -67,7 +67,7 @@ class AdvancedOptionsSection extends StatelessWidget {
               ),
               trailing: Text(
                 "${state.quality}%",
-                style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
+                style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
               ),
             ),
           ],

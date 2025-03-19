@@ -92,7 +92,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
                 // Title
                 Text(
                   title,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     color: useGradient ? Colors.white : foregroundColor,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -172,7 +172,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
         children: [
           Text(
             'custom_qr.customize_title'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -236,8 +236,8 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           // Eye shape selection
           Text(
             'custom_qr.eye_shape'.tr(),
-            style: GoogleFonts.notoSerif(
-              fontWeight: FontWeight.w500,
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
             ),
           ),
           SizedBox(height: 8.h),
@@ -248,8 +248,8 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           // Data module shape selection
           Text(
             'custom_qr.data_module_shape'.tr(),
-            style: GoogleFonts.notoSerif(
-              fontWeight: FontWeight.w500,
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
             ),
           ),
           SizedBox(height: 8.h),
@@ -356,8 +356,8 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
       children: [
         Text(
           label,
-          style: GoogleFonts.notoSerif(
-            fontWeight: FontWeight.w500,
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.w700,
           ),
         ),
         SizedBox(height: 8.h),
@@ -405,8 +405,8 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
       children: [
         Text(
           label,
-          style: GoogleFonts.notoSerif(
-            fontWeight: FontWeight.w500,
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.w700,
           ),
         ),
         SizedBox(height: 8.h),

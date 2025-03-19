@@ -84,7 +84,8 @@
 //                       Expanded(
 //                         child: Text(
 //                           'Error occurred:',
-//                           style: GoogleFonts.notoSerif(
+//                           style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                             color: Colors.red.shade800,
 //                             fontSize: 14.sp,
 //                             fontWeight: FontWeight.bold,
@@ -96,7 +97,8 @@
 //                   const SizedBox(height: 8),
 //                   Text(
 //                     backupState.errorMessage!,
-//                     style: GoogleFonts.notoSerif(
+//                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                       color: Colors.red.shade800,
 //                       fontSize: 12.sp,
 //                     ),
@@ -125,7 +127,8 @@
 //                       Expanded(
 //                         child: Text(
 //                           'Success!',
-//                           style: GoogleFonts.notoSerif(
+//                           style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                             color: Colors.green.shade800,
 //                             fontSize: 14.sp,
 //                             fontWeight: FontWeight.bold,
@@ -137,7 +140,8 @@
 //                   const SizedBox(height: 8),
 //                   Text(
 //                     backupState.successMessage!,
-//                     style: GoogleFonts.notoSerif(
+//                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                       color: Colors.green.shade800,
 //                       fontSize: 12.sp,
 //                     ),
@@ -198,14 +202,16 @@
 //           const SizedBox(height: 8),
 //           Text(
 //             isBackup ? 'backup.creating_backup'.tr() : 'backup.restoring'.tr(),
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               color: Theme.of(context).primaryColor,
 //               fontSize: 14.sp,
 //             ),
 //           ),
 //           Text(
 //             '${(progress * 100).toStringAsFixed(0)}%',
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               color: Theme.of(context).primaryColor,
 //               fontSize: 12.sp,
 //             ),
@@ -225,7 +231,8 @@
 //           const SizedBox(height: 24),
 //           Text(
 //             'backup.destination'.tr(),
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               fontSize: 16.sp,
 //               fontWeight: FontWeight.bold,
 //             ),
@@ -264,7 +271,8 @@
 //             children: [
 //               Text(
 //                 'backup.restore'.tr(),
-//                 style: GoogleFonts.notoSerif(
+//                 style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                   fontSize: 16.sp,
 //                   fontWeight: FontWeight.bold,
 //                 ),
@@ -335,7 +343,8 @@
 //               children: [
 //                 Text(
 //                   'backup.last_backup'.tr(),
-//                   style: GoogleFonts.notoSerif(
+//                   style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                     fontWeight: FontWeight.bold,
 //                     fontSize: 14.sp,
 //                   ),
@@ -345,7 +354,8 @@
 //                   lastBackupDate != null
 //                       ? DateFormat('MMM dd, yyyy HH:mm').format(lastBackupDate)
 //                       : 'backup.never'.tr(),
-//                   style: GoogleFonts.notoSerif(
+//                   style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                     color: Colors.grey.shade700,
 //                     fontSize: 12.sp,
 //                   ),
@@ -435,7 +445,8 @@
 //                   children: [
 //                     Text(
 //                       title,
-//                       style: GoogleFonts.notoSerif(
+//                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                         fontWeight: FontWeight.bold,
 //                         fontSize: 14.sp,
 //                         color:
@@ -445,7 +456,8 @@
 //                     const SizedBox(height: 4),
 //                     Text(
 //                       subtitle,
-//                       style: GoogleFonts.notoSerif(
+//                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                         color: Colors.grey.shade600,
 //                         fontSize: 12.sp,
 //                       ),
@@ -492,7 +504,8 @@
 //               const SizedBox(width: 8),
 //               Text(
 //                 'backup.what_is_included'.tr(),
-//                 style: GoogleFonts.notoSerif(
+//                 style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                   fontWeight: FontWeight.bold,
 //                   color: Colors.blue.shade700,
 //                   fontSize: 14.sp,
@@ -503,7 +516,8 @@
 //           const SizedBox(height: 8),
 //           Text(
 //             'backup.included_items'.tr(),
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               color: Colors.blue.shade800,
 //               fontSize: 12.sp,
 //             ),
@@ -511,7 +525,8 @@
 //           const SizedBox(height: 8),
 //           Text(
 //             'backup.warning'.tr(),
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               color: Colors.red.shade800,
 //               fontSize: 12.sp,
 //               fontWeight: FontWeight.bold,
@@ -535,7 +550,8 @@
 //           const SizedBox(height: 16),
 //           Text(
 //             'backup.no_backups_found'.tr(),
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               fontSize: 16.sp,
 //               fontWeight: FontWeight.bold,
 //               color: Colors.grey.shade700,
@@ -544,7 +560,8 @@
 //           const SizedBox(height: 8),
 //           Text(
 //             'backup.create_first_backup'.tr(),
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               color: Colors.grey.shade600,
 //               fontSize: 14.sp,
 //             ),
@@ -583,14 +600,16 @@
 //           ),
 //           title: Text(
 //             backup['name'] ?? 'Unknown',
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               fontWeight: FontWeight.bold,
 //               fontSize: 14.sp,
 //             ),
 //           ),
 //           subtitle: Text(
 //             '${backup['date'] ?? 'Unknown'} • ${backup['size'] ?? 'Unknown'}',
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               fontSize: 12.sp,
 //               color: Colors.grey.shade600,
 //             ),

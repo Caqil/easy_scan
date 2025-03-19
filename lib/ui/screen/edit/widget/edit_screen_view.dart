@@ -126,10 +126,12 @@ class _EditScreenViewState extends State<EditScreenView> {
           const SizedBox(width: 8),
           Chip(
             label: Text('edit_screen.image_editor'.tr(),
-                style: GoogleFonts.notoSerif(fontSize: 10)),
+                style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700, fontSize: 10)),
             backgroundColor: colorScheme.primaryContainer,
-            labelStyle:
-                GoogleFonts.notoSerif(color: colorScheme.onPrimaryContainer),
+            labelStyle: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
+                color: colorScheme.onPrimaryContainer),
             padding: EdgeInsets.zero,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             visualDensity: VisualDensity.compact,
@@ -139,10 +141,12 @@ class _EditScreenViewState extends State<EditScreenView> {
           const SizedBox(width: 8),
           Chip(
             label: Text('edit_screen.pdf_only'.tr(),
-                style: GoogleFonts.notoSerif(fontSize: 10)),
+                style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700, fontSize: 10)),
             backgroundColor: colorScheme.primaryContainer,
-            labelStyle:
-                GoogleFonts.notoSerif(color: colorScheme.onPrimaryContainer),
+            labelStyle: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
+                color: colorScheme.onPrimaryContainer),
             padding: EdgeInsets.zero,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             visualDensity: VisualDensity.compact,

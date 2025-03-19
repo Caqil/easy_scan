@@ -72,7 +72,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                 const SizedBox(width: 16),
                 Text(
                   'merge_pdf.title'.tr(),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -91,13 +91,14 @@ class MergeOptionsSheet extends ConsumerWidget {
             ),
             title: Text(
               'merge_pdf.open_tool'.tr(),
-              style: GoogleFonts.notoSerif(
-                fontWeight: FontWeight.w500,
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
               ),
             ),
             subtitle: Text(
               'merge_pdf.open_tool_desc'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 12.sp,
                 color: Colors.grey.shade600,
               ),
@@ -116,14 +117,15 @@ class MergeOptionsSheet extends ConsumerWidget {
               ),
               title: Text(
                 'merge_pdf.append_to_pdf'.tr(),
-                style: GoogleFonts.notoSerif(
-                  fontWeight: FontWeight.w500,
+                style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               subtitle: Text(
                 'merge_pdf.append_to_pdf_desc'
                     .tr(namedArgs: {'name': initialDocument!.name}),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700,
                   fontSize: 12.sp,
                   color: Colors.grey.shade600,
                 ),
@@ -143,13 +145,14 @@ class MergeOptionsSheet extends ConsumerWidget {
             ),
             title: Text(
               'merge_pdf.quick_merge'.tr(),
-              style: GoogleFonts.notoSerif(
-                fontWeight: FontWeight.w500,
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
               ),
             ),
             subtitle: Text(
               'merge_pdf.quick_merge_desc'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 12.sp,
                 color: Colors.grey.shade600,
               ),
@@ -199,7 +202,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                 Text(
                   'merge_pdf.selected_document'
                       .tr(namedArgs: {'name': initialDocument.name}),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -309,7 +312,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Text(
                   'merge_pdf.select_to_merge'.tr(),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -331,7 +334,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                         subtitle: Text('${doc.pageCount} pages'.tr()),
                         secondary: Text(
                           '${index + 1}',
-                          style: GoogleFonts.notoSerif(
+                          style: GoogleFonts.slabo27px(
                             color: isSelected
                                 ? Theme.of(context).colorScheme.primary
                                 : Colors.grey,

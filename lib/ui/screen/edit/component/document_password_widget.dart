@@ -67,8 +67,8 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
           SwitchListTile(
             title: Text(
               'password_protection'.tr(),
-              style: GoogleFonts.notoSerif(
-                fontWeight: FontWeight.w500,
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 14.sp,
               ),
             ),
@@ -76,7 +76,8 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
               _isProtectionEnabled
                   ? 'document_will_be_protected'.tr()
                   : 'add_password_to_protect'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 12.sp,
                 color: widget.colorScheme.onSurfaceVariant,
               ),

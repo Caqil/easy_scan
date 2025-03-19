@@ -132,7 +132,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                   const SizedBox(width: 16),
                   Text(
                     widget.title,
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -163,13 +163,14 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                         hintText: 'folder_creator.enter_folder_name'.tr(),
                         prefixIcon: const Icon(Icons.folder_outlined),
                       ),
-                      style: GoogleFonts.notoSerif(fontSize: 14.sp),
+                      style: GoogleFonts.slabo27px(
+                          fontWeight: FontWeight.w700, fontSize: 14.sp),
                     ),
                     const SizedBox(height: 20),
                     Text(
                       'folder_creator.select_color'.tr(),
-                      style: GoogleFonts.notoSerif(
-                        fontWeight: FontWeight.w500,
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         fontSize: 14.sp,
                       ),
                     ),

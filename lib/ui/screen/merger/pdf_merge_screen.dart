@@ -112,7 +112,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                 'merge_pdf.selected_pdfs'.tr(namedArgs: {
                                   'count': _selectedDocuments.length.toString()
                                 }),
-                                style: GoogleFonts.notoSerif(
+                                style: GoogleFonts.slabo27px(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -127,7 +127,9 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                   content: Text(
                                     'merge_pdf.merge_order_tip'.tr(),
                                     softWrap: true,
-                                    style: GoogleFonts.notoSerif(),
+                                    style: GoogleFonts.slabo27px(
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                   child: const Icon(
                                     Icons.info_outline,
@@ -199,7 +201,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           const SizedBox(height: 16),
           Text(
             'merge_pdf.no_pdfs_in_library'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -207,7 +209,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           const SizedBox(height: 8),
           Text(
             'merge_pdf.import_or_switch'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               fontSize: 14.sp,
               color: Colors.grey,
             ),
@@ -231,7 +234,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           const SizedBox(height: 16),
           Text(
             'merge_pdf.select_pdfs_to_merge'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -239,7 +242,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           const SizedBox(height: 8),
           Text(
             'merge_pdf.tap_to_select'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               fontSize: 14.sp,
               color: Colors.grey,
             ),
@@ -342,7 +346,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                     children: [
                                       Text(
                                         '${selectedIndex + 1}',
-                                        style: GoogleFonts.notoSerif(
+                                        style: GoogleFonts.slabo27px(
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onPrimary,
@@ -352,7 +356,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                       ),
                                       Text(
                                         'merge_pdf.order'.tr(),
-                                        style: GoogleFonts.notoSerif(
+                                        style: GoogleFonts.slabo27px(
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onPrimary,
@@ -379,7 +383,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                         document.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.bold,
                           fontSize: 12.sp,
                         ),
@@ -387,14 +391,16 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                       const SizedBox(height: 4),
                       Text(
                         '${document.pageCount} pages'.tr(),
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
+                          fontWeight: FontWeight.w700,
                           fontSize: 10.sp,
                           color: Colors.grey.shade600,
                         ),
                       ),
                       Text(
                         DateTimeUtils.getRelativeTime(document.modifiedAt),
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
+                          fontWeight: FontWeight.w700,
                           fontSize: 10.sp,
                           color: Colors.grey.shade600,
                         ),
@@ -435,7 +441,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
               Expanded(
                 child: Text(
                   'merge_pdf.drag_to_reorder'.tr(),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
                     color: Theme.of(context).colorScheme.primary,
                   ),
@@ -492,7 +499,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                           ),
                           Text(
                             'merge_pdf.order'.tr(),
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
                               color: Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -530,13 +537,14 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                 document.name,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.notoSerif(
-                                  fontWeight: FontWeight.w500,
+                                style: GoogleFonts.slabo27px(
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                               Text(
                                 '${document.pageCount} pages'.tr(),
-                                style: GoogleFonts.notoSerif(
+                                style: GoogleFonts.slabo27px(
+                                  fontWeight: FontWeight.w700,
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
                                 ),
@@ -737,7 +745,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                 children: [
                   Text(
                     'merge_pdf.files_merge_order'.tr(),
-                    style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
+                    style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Flexible(
@@ -777,7 +785,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                               ),
                               Text(
                                 '${doc.pageCount} pages'.tr(),
-                                style: GoogleFonts.notoSerif(
+                                style: GoogleFonts.slabo27px(
+                                  fontWeight: FontWeight.w700,
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
                                 ),
@@ -817,7 +826,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           children: [
             Text(
               'merge_pdf.help_description'.tr(),
-              style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
+              style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text('merge_pdf.help_steps'.tr()),
@@ -830,7 +839,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             const SizedBox(height: 16),
             Text(
               'merge_pdf.help_save_note'.tr(),
-              style: GoogleFonts.notoSerif(fontStyle: FontStyle.italic),
+              style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700, fontStyle: FontStyle.italic),
             ),
           ],
         ),

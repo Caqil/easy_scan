@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:scanpro/ui/widget/option_tile.dart';
 
 import '../../../../models/folder.dart';
 import '../../../../providers/folder_provider.dart';
@@ -78,7 +79,7 @@ class FolderActions {
               children: [
                 Text(
                   'folder_actions.select_documents'.tr(),
-                  style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
+                  style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Expanded(
@@ -530,7 +531,7 @@ class _FolderOptionsSheet extends StatelessWidget {
                 Expanded(
                   child: Text(
                     folder.name,
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.bold,
                       fontSize: 16.sp,
                     ),
@@ -547,11 +548,10 @@ class _FolderOptionsSheet extends StatelessWidget {
           // Options list
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildOptionTile(
-                  context,
+                OptionTile(
                   icon: Icons.edit_outlined,
                   title: 'folder_actions.rename_folder_option'.tr(),
                   description: 'folder_actions.change_folder_name'.tr(),
@@ -565,8 +565,7 @@ class _FolderOptionsSheet extends StatelessWidget {
                     }
                   },
                 ),
-                _buildOptionTile(
-                  context,
+                OptionTile(
                   icon: Icons.palette_outlined,
                   title: 'folder_actions.change_color_option'.tr(),
                   description: 'folder_actions.customize_appearance'.tr(),
@@ -581,8 +580,7 @@ class _FolderOptionsSheet extends StatelessWidget {
                   },
                 ),
                 if (folder.parentId != null)
-                  _buildOptionTile(
-                    context,
+                  OptionTile(
                     icon: Icons.drive_file_move_outlined,
                     title: 'folder_actions.move_folder'.tr(),
                     description: 'folder_actions.change_location'.tr(),
@@ -591,11 +589,26 @@ class _FolderOptionsSheet extends StatelessWidget {
                       // Implement move folder functionality
                     },
                   ),
-                const SizedBox(height: 8),
+                OptionTile(
+                  icon: Icons.note_add,
+                  title: 'folder_actions.add_documents_option'.tr(),
+                  description: 'folder_actions.move_documents_to'
+                      .tr(namedArgs: {'folderName': folder.name}),
+                  onTap: () {
+                    Navigator.pop(context);
+                    if (onDelete != null) {
+                      onDelete!(folder);
+                    } else {
+                      FolderActions.addDocumentsToFolder(
+                        context,
+                        folder,
+                        ref,
+                      );
+                    }
+                  },
+                ),
                 const Divider(),
-                const SizedBox(height: 8),
-                _buildOptionTile(
-                  context,
+                OptionTile(
                   icon: Icons.delete_outlined,
                   iconColor: Colors.red,
                   title: 'folder_actions.delete_folder_option'.tr(),
@@ -615,27 +628,6 @@ class _FolderOptionsSheet extends StatelessWidget {
                     }
                   },
                 ),
-                _buildOptionTile(
-                  context,
-                  icon: Icons.file_download,
-                  iconColor: Colors.red,
-                  title: 'folder_actions.add_documents_option'.tr(),
-                  description: 'folder_actions.move_documents_to'
-                      .tr(namedArgs: {'folderName': folder.name}),
-                  textColor: Colors.red,
-                  onTap: () {
-                    Navigator.pop(context);
-                    if (onDelete != null) {
-                      onDelete!(folder);
-                    } else {
-                      FolderActions.addDocumentsToFolder(
-                        context,
-                        folder,
-                        ref,
-                      );
-                    }
-                  },
-                ),
               ],
             ),
           ),
@@ -643,51 +635,6 @@ class _FolderOptionsSheet extends StatelessWidget {
           // Bottom padding for safe area
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
-      ),
-    );
-  }
-
-  Widget _buildOptionTile(
-    BuildContext context, {
-    required IconData icon,
-    Color? iconColor,
-    required String title,
-    required String description,
-    Color? textColor,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: SizedBox(
-        width: 60,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey.shade300,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Icon(
-                icon,
-                size: 24,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              maxLines: 1,
-              style: GoogleFonts.notoSerif(
-                fontSize: 10.sp,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
       ),
     );
   }

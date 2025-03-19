@@ -17,21 +17,24 @@ class EmptyState extends StatelessWidget {
         children: [
           const Icon(Icons.document_scanner, size: 80, color: Colors.grey),
           const SizedBox(height: 24),
-           Text(
+          Text(
             'no_documents_yet'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
                 fontSize: 20.sp, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Text(
             'scan_or_import_prompt'.tr(),
-            style: GoogleFonts.notoSerif(fontSize: 14.sp, color: Colors.grey),
+            style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
+                fontSize: 14.sp,
+                color: Colors.grey),
           ),
           const SizedBox(height: 24),
           OutlinedButton.icon(
             onPressed: onScan,
             icon: const Icon(Icons.camera_alt),
-            label:  Text('scan.start_scanning'.tr()),
+            label: Text('scan.start_scanning'.tr()),
           ),
         ],
       ),

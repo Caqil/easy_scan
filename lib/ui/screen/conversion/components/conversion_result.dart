@@ -50,7 +50,7 @@ class ConversionResultSection extends StatelessWidget {
               SizedBox(width: 8.w),
               Text(
                 "conversion_result.error.title".tr(), // Localized string
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
                   color: Colors.red.shade700,
                   fontSize: 16.sp,
@@ -61,7 +61,8 @@ class ConversionResultSection extends StatelessWidget {
           SizedBox(height: 8.h),
           Text(
             state.error!,
-            style: GoogleFonts.notoSerif(color: Colors.red.shade700),
+            style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700, color: Colors.red.shade700),
           ),
         ],
       ),
@@ -87,7 +88,7 @@ class ConversionResultSection extends StatelessWidget {
               SizedBox(width: 8.w),
               Text(
                 "conversion_result.success.title".tr(), // Localized string
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
                   color: Colors.green.shade700,
                   fontSize: 16.sp,

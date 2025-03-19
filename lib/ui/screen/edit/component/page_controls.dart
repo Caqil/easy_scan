@@ -55,7 +55,7 @@ class PageControls extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               'common.delete'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 10.sp,
@@ -88,7 +88,7 @@ class PageControls extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             '${currentPageIndex + 1} / $pageCount',
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),

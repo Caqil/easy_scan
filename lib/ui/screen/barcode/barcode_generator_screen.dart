@@ -77,7 +77,7 @@ class _BarcodeGeneratorScreenState
       appBar: CustomAppBar(
         title: Text(
           'barcode_generator.title'.tr(),
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -139,7 +139,7 @@ class _BarcodeGeneratorScreenState
       children: [
         Text(
           'barcode_generator.barcode_type'.tr(),
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
             color: Theme.of(context).primaryColor,
@@ -245,10 +245,10 @@ class _BarcodeGeneratorScreenState
             SizedBox(height: 8.h),
             Text(
               label,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 color: isSelected ? accentColor : Colors.grey.shade700,
                 fontSize: 12.sp,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w700,
               ),
               textAlign: TextAlign.center,
             ),
@@ -302,7 +302,7 @@ class _BarcodeGeneratorScreenState
         children: [
           Text(
             'barcode_generator.enter_details'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: _getColorForType(_selectedType),
@@ -422,7 +422,8 @@ class _BarcodeGeneratorScreenState
               child: SwitchListTile(
                 title: Text(
                   'barcode_generator.security'.tr(),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 14.sp,
                   ),
                 ),
@@ -430,7 +431,8 @@ class _BarcodeGeneratorScreenState
                   _wifiEncryption
                       ? 'barcode_generator.wpa_wpa2'.tr()
                       : 'barcode_generator.none_open'.tr(),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
                     color: Colors.grey.shade600,
                   ),
@@ -554,9 +556,9 @@ class _BarcodeGeneratorScreenState
             SizedBox(width: 8.w),
             Text(
               label,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
                 color: Colors.grey.shade800,
               ),
             ),
@@ -598,7 +600,8 @@ class _BarcodeGeneratorScreenState
           keyboardType: keyboardType,
           obscureText: obscureText,
           maxLines: maxLines,
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.w700,
             fontSize: 14.sp,
           ),
         ),
@@ -633,7 +636,7 @@ class _BarcodeGeneratorScreenState
               children: [
                 Text(
                   'barcode_generator.encoded_data'.tr(),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.grey.shade700,
@@ -642,7 +645,8 @@ class _BarcodeGeneratorScreenState
                 SizedBox(height: 4.h),
                 Text(
                   _generatedData,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
                   ),
                   maxLines: 3,
@@ -818,10 +822,10 @@ class _BarcodeGeneratorScreenState
             SizedBox(height: 4.h),
             Text(
               label,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 12.sp,
                 color: color,
-                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -1104,7 +1108,7 @@ class _BarcodeGeneratorScreenState
               padding: EdgeInsets.all(16.w),
               child: Text(
                 'barcode_generator.saved_qr_code'.tr(),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),

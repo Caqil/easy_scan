@@ -52,7 +52,8 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
           SizedBox(height: 16),
           Text(
             "settings.loading_languages".tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               fontSize: 16.sp,
               color: Colors.grey.shade600,
             ),
@@ -96,7 +97,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
                       children: [
                         Text(
                           "settings.current_language".tr(),
-                          style: GoogleFonts.notoSerif(
+                          style: GoogleFonts.slabo27px(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.primary,
@@ -106,9 +107,9 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
                         Text(
                           _getCurrentLanguageName(
                               context.locale, localState.languages),
-                          style: GoogleFonts.notoSerif(
+                          style: GoogleFonts.slabo27px(
+                            fontWeight: FontWeight.w700,
                             fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -125,7 +126,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
           padding: EdgeInsets.symmetric(horizontal: 16.r, vertical: 8.r),
           child: Text(
             "settings.available_languages".tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onBackground,

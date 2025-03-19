@@ -107,7 +107,8 @@
 //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
 //           child: Text(
 //             'backup.title'.tr(),
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               fontSize: 16.sp,
 //               fontWeight: FontWeight.bold,
 //               color: Theme.of(context).primaryColor,
@@ -134,7 +135,8 @@
 //                     const SizedBox(width: 12),
 //                     Text(
 //                       'backup.last_backup'.tr(),
-//                       style: GoogleFonts.notoSerif(
+//                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                         fontWeight: FontWeight.bold,
 //                       ),
 //                     ),
@@ -148,7 +150,8 @@
 //                         ? DateFormat('MMM dd, yyyy HH:mm')
 //                             .format(lastBackupDate)
 //                         : 'backup.never'.tr(),
-//                     style: GoogleFonts.notoSerif(
+//                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                       color: Colors.grey.shade700,
 //                     ),
 //                   ),
@@ -159,7 +162,8 @@
 //                     padding: const EdgeInsets.only(left: 32),
 //                     child: Text(
 //                       _getRelativeTime(lastBackupDate),
-//                       style: GoogleFonts.notoSerif(
+//                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                         color: _getTimeColor(lastBackupDate, context),
 //                         fontStyle: FontStyle.italic,
 //                         fontSize: 12.sp,
@@ -270,13 +274,15 @@
 //       ),
 //       title: Text(
 //         title,
-//         style: GoogleFonts.notoSerif(
+//         style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //           fontWeight: FontWeight.w500,
 //         ),
 //       ),
 //       subtitle: Text(
 //         subtitle,
-//         style: GoogleFonts.notoSerif(
+//         style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //           fontSize: 12.sp,
 //           color: Colors.grey.shade600,
 //         ),
@@ -332,7 +338,8 @@
 //                 SwitchListTile(
 //                   title: Text(
 //                     'backup.enable_auto_backup'.tr(),
-//                     style: GoogleFonts.notoSerif(),
+//                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+//),
 //                   ),
 //                   value: _isAutoBackupEnabled,
 //                   onChanged: (value) {
@@ -346,7 +353,8 @@
 //                 if (_isAutoBackupEnabled) ...[
 //                   Text(
 //                     'backup.backup_frequency'.tr(),
-//                     style: GoogleFonts.notoSerif(
+//                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                       fontWeight: FontWeight.bold,
 //                     ),
 //                   ),
@@ -387,7 +395,8 @@
 //                   const Divider(),
 //                   Text(
 //                     'backup.destination'.tr(),
-//                     style: GoogleFonts.notoSerif(
+//                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                       fontWeight: FontWeight.bold,
 //                     ),
 //                   ),
@@ -396,7 +405,8 @@
 //                   const Divider(),
 //                   Text(
 //                     'backup.max_backups'.tr(),
-//                     style: GoogleFonts.notoSerif(
+//                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                       fontWeight: FontWeight.bold,
 //                     ),
 //                   ),
@@ -418,7 +428,8 @@
 //                       'backup.max_backups_count'.tr(
 //                         namedArgs: {'count': _maxBackupCount.toString()},
 //                       ),
-//                       style: GoogleFonts.notoSerif(
+//                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                         fontSize: 12.sp,
 //                       ),
 //                     ),

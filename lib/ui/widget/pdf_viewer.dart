@@ -82,7 +82,8 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
             Text(
               _errorMessage!,
               textAlign: TextAlign.center,
-              style: GoogleFonts.notoSerif(fontSize: 14.sp),
+              style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700, fontSize: 14.sp),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -108,7 +109,8 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
             Text(
               'pdf.file_not_found'.tr(),
               textAlign: TextAlign.center,
-              style: GoogleFonts.notoSerif(fontSize: 14.sp),
+              style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700, fontSize: 14.sp),
             ),
           ],
         ),
@@ -154,7 +156,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                     Expanded(
                       child: Text(
                         widget.document.name,
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),

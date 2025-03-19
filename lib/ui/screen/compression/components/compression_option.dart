@@ -10,6 +10,7 @@ import 'package:scanpro/services/image_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/screen/compression/compression_screen.dart';
 import 'package:scanpro/ui/screen/compression/components/compression_bottomsheet.dart';
+import 'package:scanpro/ui/widget/option_tile.dart';
 import 'package:scanpro/utils/constants.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:file_picker/file_picker.dart';
@@ -435,7 +436,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 const SizedBox(width: 16),
                 Text(
                   'compression.pdf_cloud_compressor'.tr(),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -445,8 +446,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
           ),
           const Divider(),
           if (initialDocument != null)
-            _buildOptionTile(
-              context: context,
+            OptionTile(
               icon: Icons.compress,
               title: 'compression.compress_this_pdf'.tr(),
               description: 'compression.open_tools_for'
@@ -462,8 +462,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 );
               },
             ),
-          _buildOptionTile(
-            context: context,
+          OptionTile(
             icon: Icons.upload_file,
             title: 'compression.import_and_compress'.tr(),
             description: 'compression.select_pdf_to_compress'.tr(),
@@ -471,8 +470,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
               CompressionOptions.importAndCompressPdf(context, ref);
             },
           ),
-          _buildOptionTile(
-            context: context,
+          OptionTile(
             icon: Icons.subject,
             title: 'compression.select_from_library'.tr(),
             description: 'compression.choose_from_library'.tr(),
@@ -481,8 +479,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
               _showLibraryPdfSelector(context, ref);
             },
           ),
-          _buildOptionTile(
-            context: context,
+          OptionTile(
             icon: Icons.tune,
             title: 'compression.batch_compression'.tr(),
             description: 'compression.compress_multiple'.tr(),
@@ -512,7 +509,8 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       'compression.cloud_compression_info'.tr(),
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         fontSize: 12.sp,
                         color: Theme.of(context).colorScheme.primary,
                       ),
@@ -525,47 +523,6 @@ class _CompressionOptionsSheet extends ConsumerWidget {
           SizedBox(height: 16.h),
         ],
       ),
-    );
-  }
-
-  Widget _buildOptionTile({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String description,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          icon,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-      ),
-      title: Text(
-        title,
-        style: GoogleFonts.notoSerif(
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: Text(
-        description,
-        style: GoogleFonts.notoSerif(
-          fontSize: 12.sp,
-          color: Colors.grey.shade600,
-        ),
-      ),
-      trailing: Icon(
-        Icons.arrow_forward_ios,
-        size: 16,
-        color: Colors.grey.shade400,
-      ),
-      onTap: onTap,
     );
   }
 
@@ -626,7 +583,8 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 subtitle: Text(
                   'compression.page_count'
                       .tr(namedArgs: {'count': doc.pageCount.toString()}),
-                  style: GoogleFonts.notoSerif(fontSize: 12),
+                  style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700, fontSize: 12),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -684,7 +642,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 children: [
                   Text(
                     'compression.select_compression_level'.tr(),
-                    style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
+                    style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   DropdownButton<CompressionLevel>(
@@ -719,7 +677,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     'compression.select_pdfs_to_compress'.tr(),
-                    style: GoogleFonts.notoSerif(fontWeight: FontWeight.bold),
+                    style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
@@ -771,7 +729,8 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             'compression.using_cloud_compression'.tr(),
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
+                              fontWeight: FontWeight.w700,
                               fontSize: 12,
                               color: Theme.of(context).colorScheme.primary,
                             ),

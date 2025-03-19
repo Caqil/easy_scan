@@ -22,7 +22,8 @@ class SearchResults extends StatelessWidget {
             Icon(Icons.search_off, size: 64, color: Colors.grey),
             SizedBox(height: 16),
             Text('no_documents_yet'.tr(),
-                style: GoogleFonts.notoSerif(fontSize: 16.sp)),
+                style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700, fontSize: 16.sp)),
           ],
         ),
       );

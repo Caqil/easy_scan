@@ -43,9 +43,9 @@ class QuickActions extends ConsumerWidget {
       padding: EdgeInsets.only(left: 8.w),
       child: Text(
         'quick_actions'.tr(),
-        style: GoogleFonts.notoSerif(
+        style: GoogleFonts.slabo27px(
+          fontWeight: FontWeight.w700,
           fontSize: 18.sp,
-          fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
       ),
@@ -111,10 +111,9 @@ class QuickActions extends ConsumerWidget {
           SizedBox(height: 4.h),
           Text(
             action.label,
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               fontSize: 10.sp,
-              fontWeight: FontWeight.w500,
-              height: 1.2,
             ),
             textAlign: TextAlign.center,
           ),

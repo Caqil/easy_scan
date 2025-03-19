@@ -73,7 +73,7 @@ class FileSelectionSection extends StatelessWidget {
                 Text(
                   path.basename(state.selectedFile!.path),
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
                     fontSize: 16.sp,
                   ),
@@ -87,7 +87,8 @@ class FileSelectionSection extends StatelessWidget {
                             .tr(); // Localized string
                     return Text(
                       info,
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         color: Colors.grey,
                         fontSize: 14.sp,
                       ),
@@ -123,12 +124,16 @@ class FileSelectionSection extends StatelessWidget {
           SizedBox(height: 12.h),
           Text(
             "file_selection.no_file_selected.title".tr(), // Localized string
-            style: GoogleFonts.notoSerif(fontSize: 16.sp),
+            style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700, fontSize: 16.sp),
           ),
           SizedBox(height: 8.h),
           Text(
             "file_selection.no_file_selected.subtitle".tr(), // Localized string
-            style: GoogleFonts.notoSerif(fontSize: 14.sp, color: Colors.grey),
+            style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
+                fontSize: 14.sp,
+                color: Colors.grey),
           ),
         ],
       ),
@@ -141,10 +146,10 @@ class FileSelectionSection extends StatelessWidget {
       final sizeStr = FileUtils.formatFileSize(size);
       final dateModified = await file.lastModified();
       return "file_selection.file_info.size_modified".tr(
-        args: [
-          sizeStr,
-          DateTimeUtils.getRelativeTime(dateModified)
-        ], // Dynamic arguments
+        namedArgs: {
+          'size': sizeStr,
+          'modified': DateTimeUtils.getRelativeTime(dateModified)
+        }, // Dynamic arguments
       );
     } catch (e) {
       return "file_selection.file_info.error".tr(); // Localized string

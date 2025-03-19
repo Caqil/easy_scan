@@ -184,14 +184,15 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                     children: [
                       Text(
                         'folder_selector.select_folder'.tr(),
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         'folder_selector.choose_destination'.tr(),
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
+                          fontWeight: FontWeight.w700,
                           fontSize: 14,
                           color: Colors.grey,
                         ),
@@ -284,8 +285,8 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                   Expanded(
                     child: Text(
                       'folder_selector.create_new_folder'.tr(),
-                      style: GoogleFonts.notoSerif(
-                        fontWeight: FontWeight.w500,
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         fontSize: 14.sp,
                       ),
                     ),
@@ -314,7 +315,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                     namedArgs: {'name': _breadcrumbs.last},
                   ),
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).primaryColor,
                   ),
@@ -399,11 +400,11 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                   if (isFirst) const SizedBox(width: 4),
                   Text(
                     _breadcrumbs[i],
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
                       color: isLast
                           ? Theme.of(context).primaryColor
                           : Colors.grey.shade800,
-                      fontWeight: isLast ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: isLast ? FontWeight.w800 : FontWeight.w700,
                       fontSize: 14,
                     ),
                   ),
@@ -446,7 +447,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
             const SizedBox(height: 16),
             Text(
               'folder_selector.no_subfolders_found'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey.shade600,
@@ -455,7 +456,8 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
             const SizedBox(height: 8),
             Text(
               'folder_selector.create_subfolder_here'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 14,
                 color: Colors.grey.shade600,
               ),
@@ -507,7 +509,8 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                 children: [
                   Text(
                     folder.name,
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       fontSize: 16,
                     ),
                   ),
@@ -516,7 +519,8 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                       'folder_selector.subfolder_count'.tr(
                         namedArgs: {'count': subfolders.length.toString()},
                       ),
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         fontSize: 12,
                         color: Colors.grey.shade600,
                       ),

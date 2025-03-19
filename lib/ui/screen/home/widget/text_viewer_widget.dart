@@ -82,7 +82,7 @@ class TextViewerWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: SelectableText(
         content,
-        style: GoogleFonts.notoSerif(fontSize: 14),
+        style: GoogleFonts.slabo27px(fontWeight: FontWeight.w700, fontSize: 14),
       ),
     );
   }

@@ -167,7 +167,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                           ),
                           Text(
                             'labels.scan'.tr(),
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
                               fontSize: 10.sp,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -189,10 +189,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     const SizedBox(height: 4),
                     Text(
                       _labelList[index],
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
                         fontSize: 10.sp,
                         fontWeight:
-                            isActive ? FontWeight.bold : FontWeight.normal,
+                            isActive ? FontWeight.bold : FontWeight.w700,
                         color: isActive ? colorScheme.primary : Colors.grey,
                       ),
                     ),

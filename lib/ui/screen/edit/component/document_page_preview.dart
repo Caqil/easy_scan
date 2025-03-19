@@ -58,7 +58,8 @@ class DocumentPagePreview extends StatelessWidget {
               Text(
                 'document_preview.unable_to_display_image'
                     .tr(), // Localized string
-                style: GoogleFonts.notoSerif(color: Colors.white70),
+                style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700, color: Colors.white70),
               ),
             ],
           ),

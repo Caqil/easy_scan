@@ -191,7 +191,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                   children: [
                                     Text(
                                       widget.document.name,
-                                      style: GoogleFonts.notoSerif(
+                                      style: GoogleFonts.slabo27px(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: isDarkMode
@@ -203,7 +203,8 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                     ),
                                     Text(
                                       '${widget.document.pageCount} pages',
-                                      style: GoogleFonts.notoSerif(
+                                      style: GoogleFonts.slabo27px(
+                                        fontWeight: FontWeight.w700,
                                         fontSize: 12,
                                         color: Colors.grey[600],
                                       ),
@@ -365,7 +366,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                   children: [
                                     Text(
                                       widget.document.name,
-                                      style: GoogleFonts.notoSerif(
+                                      style: GoogleFonts.slabo27px(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -437,7 +438,8 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                         const SizedBox(height: 16),
                         Text(
                           'Processing...',
-                          style: GoogleFonts.notoSerif(
+                          style: GoogleFonts.slabo27px(
+                            fontWeight: FontWeight.w700,
                             color: isDarkMode ? Colors.white : Colors.black87,
                           ),
                         ),
@@ -507,7 +509,8 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 13,
                 color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
               ),

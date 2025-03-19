@@ -58,7 +58,7 @@ class _QRCodeCustomizationScreenState
       appBar: CustomAppBar(
         title: Text(
           'Customize QR Code',
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -92,7 +92,8 @@ class _QRCodeCustomizationScreenState
                     Expanded(
                       child: Text(
                         'Customize your QR code before saving or sharing. Add a logo, change colors, and more!',
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
+                          fontWeight: FontWeight.w700,
                           color: Theme.of(context).primaryColor,
                           fontSize: 14.sp,
                         ),
@@ -108,9 +109,9 @@ class _QRCodeCustomizationScreenState
               if (widget.saveToLibrary) ...[
                 Text(
                   'QR Code Name',
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
                     color: Theme.of(context).primaryColor,
                   ),
                 ),

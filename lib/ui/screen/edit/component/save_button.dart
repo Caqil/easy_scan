@@ -31,7 +31,7 @@ class SaveButton extends StatelessWidget {
           ),
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          textStyle: GoogleFonts.notoSerif(
+          textStyle: GoogleFonts.slabo27px(
             fontSize: 14.sp,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,

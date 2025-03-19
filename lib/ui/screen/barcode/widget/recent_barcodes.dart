@@ -50,7 +50,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
             children: [
               Text(
                 title.tr(),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -63,7 +63,8 @@ class RecentBarcodesWidget extends ConsumerWidget {
                       },
                   child: Text(
                     'recent_barcodes.view_all'.tr(),
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       fontSize: 12.sp,
                     ),
                   ),
@@ -267,10 +268,10 @@ class RecentBarcodesWidget extends ConsumerWidget {
                             SizedBox(width: 2.w),
                             Text(
                               contentType.label,
-                              style: GoogleFonts.notoSerif(
+                              style: GoogleFonts.slabo27px(
+                                fontWeight: FontWeight.w700,
                                 fontSize: 8.sp,
                                 color: contentType.color,
-                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -284,7 +285,8 @@ class RecentBarcodesWidget extends ConsumerWidget {
                   // QR Code content preview
                   Text(
                     _truncateText(scan.barcodeValue, 25),
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       fontSize: 10.sp,
                       color: Colors.grey.shade800,
                     ),

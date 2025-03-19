@@ -101,7 +101,7 @@ class ConversionScreen extends ConsumerWidget {
         // Title and description
         Text(
           "conversion_screen.header_title".tr(),
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontSize: 24.sp,
             fontWeight: FontWeight.bold,
             color: colorScheme.primary,
@@ -110,7 +110,8 @@ class ConversionScreen extends ConsumerWidget {
         SizedBox(height: 8.h),
         Text(
           "conversion_screen.header_description".tr(),
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.w700,
             fontSize: 14.sp,
             color: colorScheme.onSurfaceVariant,
           ),

@@ -151,7 +151,8 @@
 //                   const SizedBox(width: 12),
 //                   Text(
 //                     'backup.quick_backup'.tr(),
-//                     style: GoogleFonts.notoSerif(
+//                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                       fontSize: 18.sp,
 //                       fontWeight: FontWeight.bold,
 //                     ),
@@ -161,7 +162,8 @@
 //               const SizedBox(height: 16),
 //               Text(
 //                 'backup.quick_backup_description'.tr(),
-//                 style: GoogleFonts.notoSerif(
+//                 style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                   color: Colors.grey.shade700,
 //                   fontSize: 14.sp,
 //                 ),
@@ -169,7 +171,8 @@
 //               const SizedBox(height: 24),
 //               Text(
 //                 'backup.destination'.tr(),
-//                 style: GoogleFonts.notoSerif(
+//                 style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                   fontWeight: FontWeight.bold,
 //                   fontSize: 14.sp,
 //                 ),
@@ -188,14 +191,16 @@
 //                     const SizedBox(height: 8),
 //                     Text(
 //                       'backup.creating_backup'.tr(),
-//                       style: GoogleFonts.notoSerif(
+//                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                         color: Theme.of(context).primaryColor,
 //                         fontSize: 14.sp,
 //                       ),
 //                     ),
 //                     Text(
 //                       '${(_progress * 100).toStringAsFixed(0)}%',
-//                       style: GoogleFonts.notoSerif(
+//                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                         color: Theme.of(context).primaryColor,
 //                         fontSize: 12.sp,
 //                       ),
@@ -320,7 +325,8 @@
 //             Expanded(
 //               child: Text(
 //                 title,
-//                 style: GoogleFonts.notoSerif(
+//                 style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
 //                   color: isSelected ? Theme.of(context).primaryColor : null,
 //                 ),
@@ -449,7 +455,8 @@
 //             SwitchListTile(
 //               title: Text(
 //                 'backup.enable_auto_backup'.tr(),
-//                 style: GoogleFonts.notoSerif(),
+//                 style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+//),
 //               ),
 //               value: _autoBackupEnabled,
 //               onChanged: (value) {
@@ -463,7 +470,8 @@
 //             if (_autoBackupEnabled) ...[
 //               Text(
 //                 'backup.backup_frequency'.tr(),
-//                 style: GoogleFonts.notoSerif(
+//                 style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                   fontWeight: FontWeight.bold,
 //                 ),
 //               ),
@@ -504,7 +512,8 @@
 //               const Divider(),
 //               Text(
 //                 'backup.destination'.tr(),
-//                 style: GoogleFonts.notoSerif(
+//                 style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                   fontWeight: FontWeight.bold,
 //                 ),
 //               ),
@@ -599,7 +608,8 @@
 //     return AlertDialog(
 //       title: Text(
 //         isSuccess ? 'backup.success'.tr() : 'backup.error'.tr(),
-//         style: GoogleFonts.notoSerif(
+//         style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //           color: isSuccess ? Colors.green.shade700 : Colors.red.shade700,
 //         ),
 //       ),
@@ -621,14 +631,16 @@
 //           const SizedBox(height: 16),
 //           Text(
 //             message,
-//             style: GoogleFonts.notoSerif(),
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+//),
 //             textAlign: TextAlign.center,
 //           ),
 //           if (isSuccess && destination != null) ...[
 //             const SizedBox(height: 16),
 //             Text(
 //               _getDestinationMessage(),
-//               style: GoogleFonts.notoSerif(
+//               style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                 fontSize: 14,
 //                 fontStyle: FontStyle.italic,
 //               ),

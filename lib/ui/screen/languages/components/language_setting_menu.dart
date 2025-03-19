@@ -46,14 +46,15 @@ class SettingsLanguageMenu extends ConsumerWidget {
       ),
       title: Text(
         "settings.language".tr(),
-        style: GoogleFonts.notoSerif(
+        style: GoogleFonts.slabo27px(
+          fontWeight: FontWeight.w700,
           fontSize: 16.sp,
-          fontWeight: FontWeight.w500,
         ),
       ),
       subtitle: Text(
         currentLanguageLabel,
-        style: GoogleFonts.notoSerif(
+        style: GoogleFonts.slabo27px(
+          fontWeight: FontWeight.w700,
           fontSize: 14.sp,
           color: Colors.grey.shade600,
         ),

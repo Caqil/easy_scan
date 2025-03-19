@@ -177,7 +177,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             SizedBox(height: 16),
             Text(
               'folder_screen.no_results_found'.tr(),
-              style: GoogleFonts.notoSerif(fontSize: 16.sp),
+              style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700, fontSize: 16.sp),
             ),
           ],
         ),
@@ -193,7 +194,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               'folder_screen.folders_section'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -209,7 +210,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               'folder_screen.documents_section'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -235,7 +236,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
               padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
               child: Text(
                 'folder_screen.folders_section'.tr(),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -272,7 +273,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
               padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h),
               child: Text(
                 'folder_screen.documents_section'.tr(),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -316,7 +317,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
             child: Text(
               'folder_screen.folders_section'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -332,7 +333,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
             child: Text(
               'folder_screen.documents_section'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -389,7 +390,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
               const SizedBox(height: 5),
               Text(
                 folder.name,
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
                   fontSize: 14.sp,
                 ),
@@ -403,7 +404,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                     ' | ' +
                     'folder_screen.subfolders_count'
                         .tr(namedArgs: {'count': subFolders.length.toString()}),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700,
                   fontSize: 10.sp,
                   color: Colors.grey.shade600,
                 ),
@@ -459,7 +461,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                   children: [
                     Text(
                       folder.name,
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -476,7 +478,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                         Text(
                           'folder_screen.documents_count'.tr(
                               namedArgs: {'count': documentsCount.toString()}),
-                          style: GoogleFonts.notoSerif(
+                          style: GoogleFonts.slabo27px(
+                            fontWeight: FontWeight.w700,
                             fontSize: 12,
                             color: Colors.grey.shade600,
                           ),
@@ -492,7 +495,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                           'folder_screen.subfolders_count'.tr(namedArgs: {
                             'count': subFolders.length.toString()
                           }),
-                          style: GoogleFonts.notoSerif(
+                          style: GoogleFonts.slabo27px(
+                            fontWeight: FontWeight.w700,
                             fontSize: 12,
                             color: Colors.grey.shade600,
                           ),
@@ -551,7 +555,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                         SizedBox(width: 8),
                         Text(
                           'folder_screen.menu_options.delete'.tr(),
-                          style: GoogleFonts.notoSerif(color: Colors.red),
+                          style: GoogleFonts.slabo27px(
+                              fontWeight: FontWeight.w700, color: Colors.red),
                         ),
                       ],
                     ),
@@ -669,14 +674,15 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                     document.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     DateTimeUtils.getFriendlyDate(document.modifiedAt),
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       fontSize: 10.sp,
                       color: Colors.grey.shade600,
                     ),
@@ -745,7 +751,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                   children: [
                     Text(
                       document.name,
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 1,
@@ -762,7 +768,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                         const SizedBox(width: 4),
                         Text(
                           DateTimeUtils.getFriendlyDate(document.modifiedAt),
-                          style: GoogleFonts.notoSerif(
+                          style: GoogleFonts.slabo27px(
+                            fontWeight: FontWeight.w700,
                             fontSize: 12,
                             color: Colors.grey.shade600,
                           ),
@@ -781,7 +788,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                           'folder_screen.pages_count'.tr(namedArgs: {
                             'count': document.pageCount.toString()
                           }),
-                          style: GoogleFonts.notoSerif(
+                          style: GoogleFonts.slabo27px(
+                            fontWeight: FontWeight.w700,
                             fontSize: 12,
                             color: Colors.grey.shade600,
                           ),
@@ -1019,7 +1027,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             _currentParentId == null
                 ? 'folder_screen.no_folders_yet'.tr()
                 : 'folder_screen.folder_empty'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -1027,7 +1035,8 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           const SizedBox(height: 8),
           Text(
             'folder_screen.create_folder_prompt'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               color: Colors.grey,
               fontSize: 14.sp,
             ),

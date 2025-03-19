@@ -29,7 +29,7 @@ class LoadingOverlay extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'processing'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),

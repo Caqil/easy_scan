@@ -477,20 +477,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
             SizedBox(height: 16.h),
-            ListTile(
-              leading: Icon(Icons.help_outline),
-              title: Text("settings.faqs".tr()),
+            SettingsNavigationTile(
+              icon: Icons.question_answer_outlined,
+              iconColor: Colors.blue,
+              title: "settings.faqs".tr(),
+              subtitle: "faq.title".tr(),
               onTap: () {
                 Navigator.pop(context);
-                _launchUrl('https://scanpro.cc/support');
+                AppRoutes.navigateToFaq(context);
               },
             ),
-            ListTile(
-              leading: Icon(Icons.email_outlined),
-              title: Text("settings.contact_support".tr()),
+            SettingsNavigationTile(
+              icon: Icons.support_agent,
+              iconColor: Colors.blue,
+              title: "settings.contact_support".tr(),
+              subtitle: "settings.contact_support_desc".tr(),
               onTap: () {
                 Navigator.pop(context);
-                _launchEmailClient();
+                AppRoutes.navigateToContactSupport(context);
               },
             ),
             ListTile(
@@ -510,7 +514,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _launchUrl(String urlString) async {
     final Uri url = Uri.parse(urlString);
     try {
-      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (!await launchUrl(url, mode: LaunchMode.inAppWebView)) {
         if (context.mounted) {
           AppDialogs.showSnackBar(
             context,

@@ -75,7 +75,7 @@ class _CompressionBottomSheetState
               const SizedBox(width: 12),
               Text(
                 'compress_pdf'.tr(),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -85,16 +85,16 @@ class _CompressionBottomSheetState
           const SizedBox(height: 16),
           Text(
             'documents'.tr(namedArgs: {'name': widget.document.name}),
-            style: GoogleFonts.notoSerif(
-              fontWeight: FontWeight.w500,
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               fontSize: 14.sp,
             ),
           ),
           SizedBox(height: 15.h),
           Text(
             'compression_level'.tr(),
-            style: GoogleFonts.notoSerif(
-              fontWeight: FontWeight.w600,
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               fontSize: 14.sp,
             ),
           ),
@@ -116,7 +116,7 @@ class _CompressionBottomSheetState
               children: [
                 Text(
                   FileUtils.getCompressionLevelTitle()!,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.sp,
                     color: Theme.of(context).colorScheme.primary,
@@ -125,7 +125,8 @@ class _CompressionBottomSheetState
                 const SizedBox(height: 4),
                 Text(
                   FileUtils.getCompressionLevelDescription()!,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -144,7 +145,8 @@ class _CompressionBottomSheetState
             Center(
               child: Text(
                 'compressing'.tr(),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700,
                   color: Theme.of(context).colorScheme.secondary,
                   fontSize: 14.sp,
                 ),
@@ -285,11 +287,11 @@ class _CompressionBottomSheetState
             const SizedBox(height: 4),
             Text(
               label,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 color: isSelected
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w700,
               ),
             ),
           ],

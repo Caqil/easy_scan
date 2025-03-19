@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path/path.dart' as path;
+import 'package:scanpro/ui/widget/option_tile.dart';
 import '../../models/document.dart';
 import '../../providers/document_provider.dart';
 import '../../utils/date_utils.dart';
@@ -132,7 +133,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     children: [
                       Text(
                         document.name,
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.bold,
                           fontSize: 14.sp,
                         ),
@@ -142,7 +143,8 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                       SizedBox(height: 2.h),
                       Text(
                         '${document.pageCount} pages • ${DateTimeUtils.formatDateTime(document.modifiedAt)}',
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
+                          fontWeight: FontWeight.w700,
                           color: Colors.grey.shade600,
                           fontSize: 10.sp,
                         ),
@@ -161,8 +163,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
               children: [
-                _buildOptionTile(
-                  context,
+                OptionTile(
                   icon: Icons.edit_outlined,
                   title: 'common.rename'.tr(),
                   description: 'document.change_document_name'.tr(),
@@ -174,9 +175,8 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                   },
                 ),
                 if (editableExtensions.contains(extension))
-                  _buildOptionTile(
-                    context,
-                    icon: Icons.share_outlined,
+                  OptionTile(
+                    icon: Icons.edit_attributes,
                     title: 'common.edit'.tr(),
                     description: 'document.edit_document'.tr(),
                     onTap: () {
@@ -186,8 +186,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                       }
                     },
                   ),
-                _buildOptionTile(
-                  context,
+                OptionTile(
                   icon: document.isFavorite ? Icons.star : Icons.star_outline,
                   iconColor: document.isFavorite ? Colors.amber : null,
                   title: document.isFavorite
@@ -216,8 +215,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     );
                   },
                 ),
-                _buildOptionTile(
-                  context,
+                OptionTile(
                   icon: Icons.folder_outlined,
                   title: 'document.move_to_folder'.tr(),
                   description: 'document.organize_documents'.tr(),
@@ -228,8 +226,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     }
                   },
                 ),
-                _buildOptionTile(
-                  context,
+                OptionTile(
                   icon: Icons.share_outlined,
                   title: 'common.share'.tr(),
                   description: 'share.share_via_apps'.tr(),
@@ -241,8 +238,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                   },
                 ),
                 if (isPdf)
-                  _buildOptionTile(
-                    context,
+                  OptionTile(
                     icon: Icons.compress,
                     title: 'compression.compress_pdf'.tr(),
                     description: 'compression.reduce_file_size'.tr(),
@@ -257,8 +253,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                     },
                   ),
                 if (isPdf)
-                  _buildOptionTile(
-                    context,
+                  OptionTile(
                     icon: document.isPasswordProtected
                         ? Icons.lock_outline
                         : Icons.lock_open_outlined,
@@ -276,8 +271,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                 const SizedBox(height: 8),
                 const Divider(),
                 const SizedBox(height: 8),
-                _buildOptionTile(
-                  context,
+                OptionTile(
                   icon: Icons.delete_outline,
                   iconColor: Colors.red,
                   title: 'document.delete_document'.tr(),
@@ -311,68 +305,6 @@ class _DocumentOptionsSheet extends ConsumerWidget {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: PasswordBottomSheet(document: document),
-      ),
-    );
-  }
-
-  Widget _buildOptionTile(
-    BuildContext context, {
-    required IconData icon,
-    Color? iconColor,
-    required String title,
-    required String description,
-    Color? textColor,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
-          children: [
-            Container(
-              width: 30.w,
-              height: 30.h,
-              decoration: BoxDecoration(
-                color: (iconColor ?? Theme.of(context).primaryColor)
-                    .withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                icon,
-                color: iconColor ?? Theme.of(context).primaryColor,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.notoSerif(
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
-                  ),
-                  Text(
-                    description,
-                    style: GoogleFonts.notoSerif(
-                      fontSize: 10.sp,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey.shade400,
-              size: 20,
-            ),
-          ],
-        ),
       ),
     );
   }

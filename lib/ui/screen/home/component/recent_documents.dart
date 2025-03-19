@@ -29,7 +29,7 @@ class RecentDocuments extends StatelessWidget {
       children: [
         Text(
           'recent_documents'.tr(),
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
               fontSize: 14.sp, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),

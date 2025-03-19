@@ -530,7 +530,7 @@
   "select_file_button": "Pilih File",
   "file_info": {
     "loading": "Memuat info file...",
-    "size_modified": "Ukuran: {0}, Diubah: {1}",
+    "size_modified": "Ukuran: {size}, Diubah: {modified}",
     "error": "Gagal mengambil info file."
   },
   "no_file_selected": {
@@ -544,11 +544,11 @@
   "to_label": "Ke",
   "select_placeholder": "Pilih format",
   "format_info": {
-    "converting": "Mengonversi dari {0} ke {1}",
+    "converting": "Mengonversi dari {input} ke {output}",
     "hint": "Harap pilih format input dan output."
   },
   "format_picker": {
-    "title": "Pilih Format {0}",
+    "title": "Pilih Format {label}",
     "search_placeholder": "Cari format...",
     "no_formats_found": "Tidak ada format yang ditemukan",
     "categories": {
@@ -561,7 +561,7 @@
   }
 },
 "chip_format_selector": {
-  "select_format": "Pilih Format {0}",
+  "select_format": "Pilih Format {label}",
   "search_placeholder": "Cari format...",
   "no_formats_found": "Tidak ada format yang ditemukan",
   "categories": {
@@ -785,6 +785,8 @@
   "contact_support": "Hubungi Dukungan",
   "user_guide": "Panduan Pengguna",
   "privacy_policy": "Kebijakan Privasi",
+  "terms_of_service": "Ketentuan Layanan",
+  "terms_of_service_desc": "Lihat Ketentuan Layanan kami",
   "privacy_policy_desc": "Lihat kebijakan privasi kami",
   "about": "Tentang",
   "about_desc": "Pelajari lebih lanjut tentang aplikasi"
@@ -1021,5 +1023,158 @@
     "manage_backups": "Kelola cadangan Anda",
     "invalid_backup": "Cadangan yang dipilih tidak valid",
     "restore_success": "Cadangan berhasil dipulihkan"
+  },
+  "faq": {
+  "title": "Pertanyaan yang Sering Diajukan",
+  "general_questions": "Pertanyaan Umum",
+  "scanning_documents": "Pemindaian & Pengelolaan Dokumen",
+  "file_management": "Pengelolaan File",
+  "backup_sync": "Cadangan & Sinkronisasi",
+  "advanced_features": "Fitur Lanjutan",
+  "troubleshooting": "Pemecahan Masalah",
+  "privacy_security": "Privasi & Keamanan",
+  "app_settings": "Pengaturan Aplikasi",
+  "welcome_to_faq": "Selamat Datang di FAQ ScanPro",
+  "introduction": "Temukan jawaban atas pertanyaan paling umum tentang ScanPro. Ketuk kategori untuk melihat pertanyaan terkait dan ketuk pertanyaan untuk melihat jawabannya.",
+  "need_more_help": "Butuh Bantuan Lebih?",
+  "contact_support": "Jika Anda tidak menemukan jawaban atas pertanyaan Anda di sini, silakan hubungi tim dukungan kami.",
+  "email_support": "Dukungan Email",
+
+  "what_is_scanpro": {
+    "question": "Apa itu ScanPro?",
+    "answer": "ScanPro adalah aplikasi pemindaian dokumen yang kuat yang memungkinkan Anda mengubah dokumen fisik, tanda terima, kartu identitas, dan foto menjadi file digital berkualitas tinggi. Dengan fitur canggih seperti kompresi PDF, pengenalan teks OCR, dan opsi cadangan cloud, ScanPro membantu Anda mengatur dan mengelola semua dokumen penting Anda di satu tempat."
+  },
+  "platforms": {
+    "question": "Platform apa saja yang mendukung ScanPro?",
+    "answer": "ScanPro saat ini tersedia untuk perangkat iOS dan Android. Kami terus bekerja untuk memperluas ke platform lain."
+  },
+  "free_to_use": {
+    "question": "Apakah ScanPro gratis digunakan?",
+    "answer": "ScanPro menawarkan fitur gratis dan premium. Pemindaian dasar dan pengelolaan dokumen tersedia secara gratis, sedangkan fitur canggih seperti cadangan cloud, OCR, dan pemrosesan batch mungkin memerlukan langganan premium."
+  },
+
+  "how_to_scan": {
+    "question": "Bagaimana cara memindai dokumen?",
+    "answer": "Untuk memindai dokumen:\n1. Buka ScanPro dan ketuk tombol \"Pindai\" di layar utama\n2. Arahkan kamera Anda ke dokumen\n3. Aplikasi akan secara otomatis mendeteksi tepi dan menangkap gambar\n4. Anda kemudian dapat memotong, menyesuaikan, dan meningkatkan hasil pindaian sebelum menyimpan"
+  },
+  "scan_types": {
+    "question": "Jenis dokumen apa yang bisa saya pindai?",
+    "answer": "ScanPro dapat memindai berbagai dokumen termasuk:\n- Dokumen kertas biasa\n- Tanda terima\n- Kartu identitas dan paspor\n- Foto\n- Kartu nama\n- Papan tulis\n- Buku dan majalah"
+  },
+  "organize_documents": {
+    "question": "Bagaimana cara mengatur dokumen yang telah dipindai?",
+    "answer": "ScanPro menawarkan sistem folder untuk membantu Anda mengatur dokumen. Anda dapat:\n- Membuat folder khusus dengan warna dan ikon berbeda\n- Memindahkan dokumen antar folder\n- Menambahkan tag pada dokumen untuk pencarian mudah\n- Menandai dokumen penting sebagai favorit"
+  },
+  "edit_documents": {
+    "question": "Apakah saya bisa mengedit dokumen setelah dipindai?",
+    "answer": "Ya, ScanPro menawarkan berbagai alat pengeditan:\n- Memotong dan memutar halaman\n- Meningkatkan kualitas teks dan gambar\n- Menambah atau menghapus halaman\n- Menyusun ulang halaman dalam dokumen multi-halaman\n- Menambahkan catatan teks dan anotasi"
+  },
+  "multiple_pages": {
+    "question": "Bagaimana cara memindai beberapa halaman menjadi satu dokumen?",
+    "answer": "Saat dalam mode pemindaian:\n1. Tangkap halaman pertama\n2. Ketuk \"Tambah Halaman\" untuk memindai halaman tambahan\n3. Lanjutkan menambahkan halaman sesuai kebutuhan\n4. Setelah selesai, ketuk \"Simpan\" untuk membuat dokumen multi-halaman"
+  },
+
+  "file_formats": {
+    "question": "Format file apa yang didukung ScanPro?",
+    "answer": "ScanPro terutama menyimpan dokumen sebagai file PDF untuk kompatibilitas maksimum. Anda juga dapat mengekspor pindaian sebagai gambar JPEG atau PNG jika diperlukan."
+  },
+  "share_documents": {
+    "question": "Bagaimana cara berbagi dokumen dari ScanPro?",
+    "answer": "Anda dapat berbagi dokumen dengan:\n1. Membuka dokumen yang ingin Anda bagikan\n2. Mengetuk ikon bagikan di bilah alat\n3. Memilih metode berbagi yang Anda inginkan (email, aplikasi pesan, layanan cloud)"
+  },
+  "password_protection": {
+    "question": "Apakah saya bisa melindungi dokumen dengan kata sandi?",
+    "answer": "Ya, ScanPro memungkinkan Anda menambahkan perlindungan kata sandi pada dokumen PDF sensitif. Cukup buka dokumen, ketuk tombol menu, dan pilih \"Tambah Kata Sandi.\""
+  },
+  "compress_pdf": {
+    "question": "Bagaimana cara mengompresi file PDF?",
+    "answer": "Untuk mengompresi PDF:\n1. Buka dokumen yang ingin Anda kompresi\n2. Ketuk tombol menu dan pilih \"Kompresi PDF\"\n3. Pilih tingkat kompresi yang diinginkan (rendah, sedang, tinggi, atau maksimum)\n4. Aplikasi akan membuat salinan dokumen yang telah dikompresi"
+  },
+
+  "backup_documents": {
+    "question": "Bagaimana cara mencadangkan dokumen saya?",
+    "answer": "ScanPro menawarkan beberapa opsi cadangan:\n- Cadangan perangkat lokal\n- Cadangan Google Drive\n\nUntuk membuat cadangan:\n1. Buka Pengaturan > Cadangan & Pemulihan\n2. Pilih tujuan cadangan yang Anda inginkan\n3. Ketuk \"Buat Cadangan\""
+  },
+  "backup_frequency": {
+    "question": "Seberapa sering saya harus mencadangkan dokumen saya?",
+    "answer": "Kami menyarankan untuk mengatur cadangan otomatis secara berkala (harian, mingguan, atau bulanan) untuk memastikan dokumen Anda selalu terlindungi."
+  },
+  "restore_documents": {
+    "question": "Bagaimana cara memulihkan dokumen dari cadangan?",
+    "answer": "Untuk memulihkan dari cadangan:\n1. Buka Pengaturan > Cadangan & Pemulihan\n2. Pindah ke tab \"Pulihkan\"\n3. Pilih sumber cadangan Anda\n4. Pilih cadangan yang ingin Anda pulihkan\n5. Konfirmasi proses pemulihan"
+  },
+
+  "ocr": {
+    "question": "Apa itu OCR dan bagaimana cara menggunakannya?",
+    "answer": "OCR (Optical Character Recognition) adalah fitur yang mengekstrak teks dari gambar yang dipindai, membuat teks tersebut dapat dicari dan diedit. Untuk menggunakan OCR:\n1. Aktifkan OCR di pengaturan pindaian sebelum memindai dokumen\n2. Alternatifnya, buka dokumen yang sudah ada, ketuk tombol menu, dan pilih \"Ekstrak Teks\""
+  },
+  "merge_pdfs": {
+    "question": "Apakah saya bisa menggabungkan beberapa dokumen PDF?",
+    "answer": "Ya, ScanPro memungkinkan Anda menggabungkan beberapa PDF:\n1. Buka bagian Alat dan pilih \"Gabungkan PDF\"\n2. Pilih dokumen yang ingin Anda gabungkan\n3. Susun sesuai urutan yang Anda inginkan\n4. Ketuk \"Gabungkan\" untuk membuat dokumen gabungan baru"
+  },
+
+  "edge_detection": {
+    "question": "Aplikasi tidak mendeteksi tepi dokumen dengan baik. Apa yang harus saya lakukan?",
+    "answer": "Untuk deteksi tepi yang lebih baik:\n- Pastikan kondisi pencahayaan baik\n- Letakkan dokumen di latar belakang yang kontras\n- Jaga kamera tetap stabil dan sejajar dengan dokumen\n- Coba beralih ke mode manual jika deteksi otomatis gagal"
+  },
+  "blurry_text": {
+    "question": "Teks yang saya pindai buram. Bagaimana cara memperbaikinya?",
+    "answer": "Untuk meningkatkan kejernihan teks:\n- Pastikan pencahayaan cukup\n- Pegang kamera dengan stabil\n- Gunakan opsi \"Peningkatan Teks\" di alat pengeditan\n- Untuk dokumen penting, pertimbangkan menggunakan pengaturan kualitas pindaian yang lebih tinggi"
+  },
+  "ocr_issues": {
+    "question": "Saya mengalami masalah dengan fitur OCR. Ada saran?",
+    "answer": "Untuk hasil OCR yang lebih baik:\n- Pastikan dokumen cukup terang dan jelas terlihat\n- Gunakan fitur peningkatan teks sebelum OCR\n- Untuk teks non-Inggris, pastikan Anda telah memilih bahasa yang benar di pengaturan\n- Ingat bahwa OCR bekerja paling baik dengan teks yang diketik daripada tulisan tangan"
+  },
+  "lost_scans": {
+    "question": "Aplikasi mogok dan saya kehilangan pindaian saya. Bisakah saya memulihkannya?",
+    "answer": "ScanPro membuat cadangan sementara dari pindaian terbaru. Coba mulai ulang aplikasi untuk melihat apakah pindaian Anda muncul di bagian \"Terbaru\". Jika tidak, periksa apakah Anda telah mengaktifkan cadangan otomatis dan pulihkan dari cadangan terakhir Anda."
+  },
+
+  "data_security": {
+    "question": "Apakah data saya aman di ScanPro?",
+    "answer": "Ya, ScanPro mengutamakan privasi dan keamanan Anda:\n- Dokumen disimpan secara lokal di perangkat Anda secara default\n- PDF yang dilindungi kata sandi menggunakan enkripsi kuat\n- Cadangan cloud menggunakan koneksi aman\n- Kami tidak mengakses atau menganalisis konten dokumen Anda"
+  },
+  "cloud_storage": {
+    "question": "Apakah ScanPro mengirim dokumen saya ke cloud?",
+    "answer": "ScanPro hanya mengirim dokumen Anda ke layanan cloud saat Anda secara eksplisit memilih untuk mencadangkannya atau membagikannya. Secara default, semua dokumen tetap ada di perangkat Anda."
+  },
+  "sensitive_documents": {
+    "question": "Bagaimana cara memastikan keamanan maksimum untuk dokumen sensitif?",
+    "answer": "Untuk dokumen sensitif, kami menyarankan:\n- Menggunakan fitur perlindungan kata sandi\n- Mengaktifkan autentikasi biometrik di pengaturan aplikasi\n- Selektif tentang dokumen mana yang Anda masukkan ke dalam cadangan cloud\n- Secara rutin memeriksa aplikasi mana yang memiliki akses ke layanan penyimpanan cloud Anda"
+  },
+
+  "change_language": {
+    "question": "Bagaimana cara mengubah bahasa di ScanPro?",
+    "answer": "Untuk mengubah bahasa:\n1. Buka Pengaturan\n2. Ketuk \"Bahasa\"\n3. Pilih bahasa yang Anda inginkan dari daftar\n4. Aplikasi akan otomatis dimulai ulang dengan bahasa baru"
+  },
+  "dark_mode": {
+    "question": "Apakah saya bisa menggunakan mode gelap?",
+    "answer": "Ya, ScanPro mendukung mode terang dan gelap. Anda dapat:\n1. Buka Pengaturan > Tampilan\n2. Aktifkan atau nonaktifkan \"Mode Gelap\"\n3. Alternatifnya, atur agar mengikuti pengaturan sistem Anda"
+  },
+  "biometric_auth": {
+    "question": "Bagaimana cara mengaktifkan autentikasi biometrik?",
+    "answer": "Untuk mengaktifkan autentikasi biometrik:\n1. Buka Pengaturan > Keamanan\n2. Aktifkan \"Autentikasi Biometrik\"\n3. Selesaikan proses autentikasi sesuai petunjuk perangkat Anda"
   }
+},
+"support": {
+  "help_contact": "Help / Contact",
+  "name": "Name",
+  "your_name": "Your name",
+  "name_required": "Please enter your name",
+  "email": "Email",
+  "your_email": "Your email address",
+  "email_required": "Please enter your email address",
+  "valid_email_required": "Please enter a valid email address",
+  "subject": "Subject",
+  "message": "Message",
+  "write_message": "Write a message",
+  "message_required": "Please enter your message",
+  "attachments": "Attachments (Optional)",
+  "add_image": "Add Image",
+  "image_pick_error": "Error selecting image. Please try again.",
+  "include_diagnostic": "I agree to share the diagnostic information attached in this message.",
+  "send_message": "Send message",
+  "message_sent": "Your message has been sent successfully!",
+  "send_error": "Error sending message. Please try again."
+}
 }

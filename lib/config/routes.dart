@@ -6,7 +6,9 @@ import 'package:scanpro/ui/screen/barcode/barcode_generator_screen.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_history_screen.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_scanner_screen.dart';
 import 'package:scanpro/ui/screen/compression/compression_screen.dart';
+import 'package:scanpro/ui/screen/contact_screen.dart';
 import 'package:scanpro/ui/screen/conversion/conversion_screen.dart';
+import 'package:scanpro/ui/screen/faq_screen.dart';
 import 'package:scanpro/ui/screen/languages/languages_screen.dart';
 import 'package:scanpro/ui/screen/merger/pdf_merge_screen.dart';
 import 'package:scanpro/ui/screen/settings/settings_screen.dart';
@@ -39,6 +41,8 @@ class AppRoutes {
   static const String barcodeScan = '/barcode/scan';
   static const String barcodeGenerate = '/barcode/generate';
   static const String barcodeHistory = '/barcode/history';
+  static const String faq = '/faq';
+  static const String contactSupport = '/contact-support';
   // GoRouter configuration
   static final router = GoRouter(
     initialLocation: home,
@@ -107,6 +111,14 @@ class AppRoutes {
             path: barcodeHistory,
             builder: (context, state) => const BarcodeHistoryScreen(),
           ),
+          GoRoute(
+            path: faq,
+            builder: (context, state) => const FaqScreen(),
+          ),
+          GoRoute(
+            path: contactSupport,
+            builder: (context, state) => const ContactSupportScreen(),
+          ),
           // GoRoute(
           //   path: '/backup-settings',
           //   builder: (context, state) => const BackupSettingsScreen(),
@@ -154,7 +166,8 @@ class AppRoutes {
                       const SizedBox(height: 16),
                       Text(
                         'Document not found or invalid',
-                        style: GoogleFonts.notoSerif(fontSize: 16),
+                        style: GoogleFonts.slabo27px(
+                            fontWeight: FontWeight.w700, fontSize: 16),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
@@ -224,7 +237,8 @@ class AppRoutes {
             const SizedBox(height: 16),
             Text(
               'Route not found: ${state.error}',
-              style: GoogleFonts.notoSerif(fontSize: 16),
+              style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700, fontSize: 16),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -252,6 +266,10 @@ class AppRoutes {
 
   static void navigateToLanguages(BuildContext context) {
     context.push(languages);
+  }
+
+  static void navigateToFaq(BuildContext context) {
+    context.push(faq);
   }
 
   static void navigateToView(BuildContext context, Document? document) {
@@ -283,6 +301,10 @@ class AppRoutes {
 
   static void navigateToSettings(BuildContext context) {
     context.go(settings);
+  }
+
+  static void navigateToContactSupport(BuildContext context) {
+    context.push(contactSupport);
   }
 
   static void navigateToConvert(BuildContext context) {

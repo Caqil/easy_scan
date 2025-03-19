@@ -94,7 +94,8 @@
 //                   Expanded(
 //                     child: Text(
 //                       _errorMessage!,
-//                       style: GoogleFonts.notoSerif(
+//                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                           color: Colors.red.shade800, fontSize: 12.sp),
 //                     ),
 //                   ),
@@ -161,7 +162,8 @@
 //           const SizedBox(height: 16),
 //           Text(
 //             'backup.loading_backups'.tr(),
-//             style: GoogleFonts.notoSerif(),
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+//),
 //           ),
 //         ],
 //       ),
@@ -181,7 +183,8 @@
 //           const SizedBox(height: 16),
 //           Text(
 //             'backup.no_backups_found_in'.tr(namedArgs: {'cloud': cloudName}),
-//             style: GoogleFonts.notoSerif(
+//             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //               fontSize: 16.sp,
 //               fontWeight: FontWeight.bold,
 //               color: Colors.grey.shade700,
@@ -192,7 +195,8 @@
 //             padding: const EdgeInsets.symmetric(horizontal: 32),
 //             child: Text(
 //               'backup.create_first_backup_description'.tr(),
-//               style: GoogleFonts.notoSerif(
+//               style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                 color: Colors.grey.shade600,
 //                 fontSize: 14.sp,
 //               ),
@@ -234,7 +238,8 @@
 //             const SizedBox(width: 12),
 //             Text(
 //               '$cloudName ${'backup.backups'.tr()}',
-//               style: GoogleFonts.notoSerif(
+//               style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                 fontSize: 16.sp,
 //                 fontWeight: FontWeight.bold,
 //               ),
@@ -244,7 +249,8 @@
 //         const SizedBox(height: 8),
 //         Text(
 //           'backup.available_backups'.tr(),
-//           style: GoogleFonts.notoSerif(
+//           style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //             color: Colors.grey.shade600,
 //             fontSize: 14.sp,
 //           ),
@@ -278,7 +284,8 @@
 //                 Expanded(
 //                   child: Text(
 //                     name,
-//                     style: GoogleFonts.notoSerif(
+//                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                       fontWeight: FontWeight.bold,
 //                       fontSize: 14.sp,
 //                     ),
@@ -297,7 +304,8 @@
 //                 const SizedBox(width: 8),
 //                 Text(
 //                   date,
-//                   style: GoogleFonts.notoSerif(
+//                   style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                     color: Colors.grey.shade600,
 //                     fontSize: 12.sp,
 //                   ),
@@ -311,7 +319,8 @@
 //                 const SizedBox(width: 8),
 //                 Text(
 //                   size,
-//                   style: GoogleFonts.notoSerif(
+//                   style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
+
 //                     color: Colors.grey.shade600,
 //                     fontSize: 12.sp,
 //                   ),

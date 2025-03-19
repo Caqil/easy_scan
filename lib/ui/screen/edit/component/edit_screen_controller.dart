@@ -840,7 +840,8 @@ class EditScreenController {
       final TextPainter iconPainter = TextPainter(
         text: TextSpan(
           text: '📄',
-          style: GoogleFonts.notoSerif(fontSize: size * 0.4),
+          style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700, fontSize: size * 0.4),
         ),
       );
       iconPainter.layout();
@@ -855,7 +856,7 @@ class EditScreenController {
           text: documentName.length > 15
               ? '${documentName.substring(0, 15)}...'
               : documentName,
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontSize: size * 0.08,
             fontWeight: FontWeight.bold,
             color: Colors.black87,

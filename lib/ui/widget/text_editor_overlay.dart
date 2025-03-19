@@ -97,7 +97,7 @@ class _TextEditorOverlayState extends State<TextEditorOverlay> {
                 child: Center(
                   child: Text(
                     element.text,
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
                       color: _selectedElement == element
                           ? Colors.white
                           : Colors.black,
@@ -162,7 +162,9 @@ class _TextEditorOverlayState extends State<TextEditorOverlay> {
                             widget.onTextUpdated(_editableElements);
                           },
                           child: Text('common.delete'.tr(),
-                              style: GoogleFonts.notoSerif(color: Colors.red)),
+                              style: GoogleFonts.slabo27px(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.red)),
                         ),
                       ],
                     ),

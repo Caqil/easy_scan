@@ -53,7 +53,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
             widget.document.isPasswordProtected
                 ? 'password_sheet.change_password'.tr()
                 : 'password_sheet.add_password'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -65,7 +65,8 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
                     .tr(namedArgs: {'name': widget.document.name})
                 : 'password_sheet.add_password_to_protect'
                     .tr(namedArgs: {'name': widget.document.name}),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               color: Colors.grey.shade600,
             ),
           ),

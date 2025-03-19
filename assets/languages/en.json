@@ -531,7 +531,7 @@
     "select_file_button": "Select File",
     "file_info": {
       "loading": "Loading file info...",
-      "size_modified": "Size: {0}, Modified: {1}",
+      "size_modified": "size: {size}, Modified: {modified}",
       "error": "Failed to retrieve file info."
     },
     "no_file_selected": {
@@ -545,11 +545,11 @@
     "to_label": "To",
     "select_placeholder": "Select a format",
     "format_info": {
-      "converting": "Converting from {0} to {1}",
+      "converting": "Converting from {input} to {output}",
       "hint": "Please select both input and output formats."
     },
     "format_picker": {
-      "title": "Select {0} Format",
+      "title": "Select {label} Format",
       "search_placeholder": "Search formats...",
       "no_formats_found": "No formats found",
       "categories": {
@@ -562,7 +562,7 @@
     }
   },
   "chip_format_selector": {
-    "select_format": "Select {0} Format",
+    "select_format": "Select {label} Format",
     "search_placeholder": "Search formats...",
     "no_formats_found": "No formats found",
     "categories": {
@@ -786,6 +786,8 @@
     "contact_support": "Contact Support",
     "user_guide": "User Guide",
     "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Term of Service",
+    "terms_of_service_desc": "View our Term of Service",
     "privacy_policy_desc": "View our privacy policy",
     "about": "About",
     "about_desc": "Learn more about the app"
@@ -1022,6 +1024,159 @@
     "manage_backups": "Manage your backups",
     "invalid_backup": "Invalid backup selected",
     "restore_success": "Backup restored successfully"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "general_questions": "General Questions",
+    "scanning_documents": "Scanning & Document Management",
+    "file_management": "File Management",
+    "backup_sync": "Backup & Synchronization",
+    "advanced_features": "Advanced Features",
+    "troubleshooting": "Troubleshooting",
+    "privacy_security": "Privacy & Security",
+    "app_settings": "App Settings",
+    "welcome_to_faq": "Welcome to ScanPro FAQ",
+    "introduction": "Find answers to the most common questions about ScanPro. Tap on a category to see related questions and tap on a question to view the answer.",
+    "need_more_help": "Need More Help?",
+    "contact_support": "If you can't find the answer to your question here, please contact our support team.",
+    "email_support": "Email Support",
+
+    "what_is_scanpro": {
+      "question": "What is ScanPro?",
+      "answer": "ScanPro is a powerful document scanning application that allows you to convert physical documents, receipts, ID cards, and photos into high-quality digital files. With advanced features like PDF compression, OCR text recognition, and cloud backup options, ScanPro helps you organize and manage all your important documents in one place."
+    },
+    "platforms": {
+      "question": "Which platforms is ScanPro available on?",
+      "answer": "ScanPro is currently available for iOS and Android devices. We're continuously working on expanding to other platforms."
+    },
+    "free_to_use": {
+      "question": "Is ScanPro free to use?",
+      "answer": "ScanPro offers both free and premium features. Basic scanning and document management is available for free, while advanced features like cloud backup, OCR, and batch processing may require a premium subscription."
+    },
+
+    "how_to_scan": {
+      "question": "How do I scan a document?",
+      "answer": "To scan a document:\n1. Open ScanPro and tap the \"Scan\" button on the home screen\n2. Position your camera over the document\n3. The app will automatically detect edges and capture the image\n4. You can then crop, adjust, and enhance the scan before saving"
+    },
+    "scan_types": {
+      "question": "What types of documents can I scan?",
+      "answer": "ScanPro can scan various documents including:\n- Regular paper documents\n- Receipts\n- ID cards and passports\n- Photos\n- Business cards\n- Whiteboards\n- Books and magazines"
+    },
+    "organize_documents": {
+      "question": "How do I organize my scanned documents?",
+      "answer": "ScanPro offers a folder system to help you organize documents. You can:\n- Create custom folders with different colors and icons\n- Move documents between folders\n- Add tags to documents for easy searching\n- Mark important documents as favorites"
+    },
+    "edit_documents": {
+      "question": "Can I edit documents after scanning?",
+      "answer": "Yes, ScanPro offers various editing tools:\n- Crop and rotate pages\n- Enhance text and image quality\n- Add or remove pages\n- Reorder pages in multi-page documents\n- Add text notes and annotations"
+    },
+    "multiple_pages": {
+      "question": "How do I scan multiple pages into a single document?",
+      "answer": "When in scanning mode:\n1. Capture the first page\n2. Tap \"Add Page\" to scan additional pages\n3. Continue adding pages as needed\n4. Once finished, tap \"Save\" to create a multi-page document"
+    },
+
+    "file_formats": {
+      "question": "What file formats does ScanPro support?",
+      "answer": "ScanPro primarily saves documents as PDF files for maximum compatibility. You can also export scans as JPEG or PNG images if needed."
+    },
+    "share_documents": {
+      "question": "How do I share documents from ScanPro?",
+      "answer": "You can share documents by:\n1. Opening the document you want to share\n2. Tapping the share icon in the toolbar\n3. Selecting your preferred sharing method (email, messaging apps, cloud services)"
+    },
+    "password_protection": {
+      "question": "Can I password-protect my documents?",
+      "answer": "Yes, ScanPro allows you to add password protection to sensitive PDF documents. Just open the document, tap the menu button, and select \"Add Password.\""
+    },
+    "compress_pdf": {
+      "question": "How do I compress PDF files?",
+      "answer": "To compress a PDF:\n1. Open the document you want to compress\n2. Tap the menu button and select \"Compress PDF\"\n3. Choose your desired compression level (low, medium, high, or maximum)\n4. The app will create a compressed copy of your document"
+    },
+
+    "backup_documents": {
+      "question": "How do I back up my documents?",
+      "answer": "ScanPro offers several backup options:\n- Local device backup\n- Google Drive backup\n\nTo create a backup:\n1. Go to Settings > Backup & Restore\n2. Select your preferred backup destination\n3. Tap \"Create Backup\""
+    },
+    "backup_frequency": {
+      "question": "How often should I back up my documents?",
+      "answer": "We recommend setting up automatic backups on a regular schedule (daily, weekly, or monthly) to ensure your documents are always protected."
+    },
+    "restore_documents": {
+      "question": "How do I restore my documents from a backup?",
+      "answer": "To restore from a backup:\n1. Go to Settings > Backup & Restore\n2. Switch to the \"Restore\" tab\n3. Select your backup source\n4. Choose the backup you want to restore\n5. Confirm the restoration process"
+    },
+
+    "ocr": {
+      "question": "What is OCR and how do I use it?",
+      "answer": "OCR (Optical Character Recognition) is a feature that extracts text from scanned images, making the text searchable and editable. To use OCR:\n1. Enable OCR in the scan settings before scanning a document\n2. Alternatively, open an existing document, tap the menu button, and select \"Extract Text\""
+    },
+    "merge_pdfs": {
+      "question": "Can I merge multiple PDF documents?",
+      "answer": "Yes, ScanPro allows you to merge multiple PDFs:\n1. Go to the Tools section and select \"Merge PDFs\"\n2. Select the documents you want to combine\n3. Arrange them in your preferred order\n4. Tap \"Merge\" to create a new combined document"
+    },
+
+    "edge_detection": {
+      "question": "The app isn't detecting document edges properly. What should I do?",
+      "answer": "For better edge detection:\n- Ensure good lighting conditions\n- Place the document against a contrasting background\n- Keep the camera steady and parallel to the document\n- Try switching to manual mode if automatic detection fails"
+    },
+    "blurry_text": {
+      "question": "My scanned text is blurry. How can I improve it?",
+      "answer": "To improve text clarity:\n- Ensure adequate lighting\n- Hold the camera steady\n- Use the \"Text Enhancement\" option in the editing tools\n- For important documents, consider using a higher scan quality setting"
+    },
+    "ocr_issues": {
+      "question": "I'm having trouble with the OCR feature. Any suggestions?",
+      "answer": "For better OCR results:\n- Ensure the document is well-lit and clearly visible\n- Use the text enhancement feature before OCR\n- For non-English text, make sure you've selected the correct language in settings\n- Remember that OCR works best with typed text rather than handwriting"
+    },
+    "lost_scans": {
+      "question": "The app crashed and I lost my scans. Can I recover them?",
+      "answer": "ScanPro creates temporary backups of recent scans. Try restarting the app to see if your scans appear in the \"Recent\" section. If not, check if you have automatic backups enabled and restore from your last backup."
+    },
+
+    "data_security": {
+      "question": "Is my data secure in ScanPro?",
+      "answer": "Yes, ScanPro prioritizes your privacy and security:\n- Documents are stored locally on your device by default\n- Password-protected PDFs use strong encryption\n- Cloud backups use secure connections\n- We do not access or analyze the content of your documents"
+    },
+    "cloud_storage": {
+      "question": "Does ScanPro send my documents to the cloud?",
+      "answer": "ScanPro only sends your documents to cloud services when you explicitly choose to back up or share them. By default, all documents remain on your device."
+    },
+    "sensitive_documents": {
+      "question": "How do I ensure maximum security for sensitive documents?",
+      "answer": "For sensitive documents, we recommend:\n- Using the password protection feature\n- Enabling biometric authentication in app settings\n- Being selective about which documents you include in cloud backups\n- Regularly checking which apps have access to your cloud storage services"
+    },
+
+    "change_language": {
+      "question": "How do I change the language in ScanPro?",
+      "answer": "To change the language:\n1. Go to Settings\n2. Tap \"Language\"\n3. Select your preferred language from the list\n4. The app will automatically restart with the new language"
+    },
+    "dark_mode": {
+      "question": "Can I use dark mode?",
+      "answer": "Yes, ScanPro supports both light and dark modes. You can:\n1. Go to Settings > Appearance\n2. Toggle \"Dark Mode\" on or off\n3. Alternatively, set it to follow your system settings"
+    },
+    "biometric_auth": {
+      "question": "How do I enable biometric authentication?",
+      "answer": "To enable biometric authentication:\n1. Go to Settings > Security\n2. Toggle \"Biometric Authentication\" on\n3. Complete the authentication process as prompted by your device"
+    }
+  },
+  "support": {
+    "help_contact": "Help / Contact",
+    "name": "Name",
+    "your_name": "Your name",
+    "name_required": "Please enter your name",
+    "email": "Email",
+    "your_email": "Your email address",
+    "email_required": "Please enter your email address",
+    "valid_email_required": "Please enter a valid email address",
+    "subject": "Subject",
+    "message": "Message",
+    "write_message": "Write a message",
+    "message_required": "Please enter your message",
+    "attachments": "Attachments (Optional)",
+    "add_image": "Add Image",
+    "image_pick_error": "Error selecting image. Please try again.",
+    "include_diagnostic": "I agree to share the diagnostic information attached in this message.",
+    "send_message": "Send message",
+    "message_sent": "Your message has been sent successfully!",
+    "send_error": "Error sending message. Please try again."
   }
 
     }

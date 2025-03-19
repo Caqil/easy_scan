@@ -44,7 +44,7 @@ class FormatSelectionSection extends ConsumerWidget {
                 SizedBox(width: 8.w),
                 Text(
                   "format_selection.title".tr(), // Localized string
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -172,7 +172,8 @@ class FormatSelectionSection extends ConsumerWidget {
                     // Label text
                     Text(
                       label,
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         fontSize: 10.sp,
                         color: colorScheme.onSurfaceVariant.withOpacity(0.7),
                       ),
@@ -183,11 +184,11 @@ class FormatSelectionSection extends ConsumerWidget {
                       selectedFormat?.name ??
                           "format_selection.select_placeholder"
                               .tr(), // Localized string
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
                         fontSize: 13.sp,
                         fontWeight: selectedFormat != null
-                            ? FontWeight.w600
-                            : FontWeight.normal,
+                            ? FontWeight.bold
+                            : FontWeight.w700,
                         color: selectedFormat != null
                             ? colorScheme.onSurface
                             : colorScheme.onSurfaceVariant.withOpacity(0.8),
@@ -233,18 +234,18 @@ class FormatSelectionSection extends ConsumerWidget {
           Flexible(
             child: RichText(
               text: TextSpan(
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700,
                   fontSize: 12.sp,
                   color: colorScheme.onSurfaceVariant,
                 ),
                 children: [
                   TextSpan(
                     text: "format_selection.format_info.converting".tr(
-                      args: [
-                        inputFormat.name,
-                        outputFormat.name
-                      ], // Dynamic arguments
-                    ),
+                        namedArgs: {
+                          'input': inputFormat.name,
+                          'output': outputFormat.name
+                        }),
                   ),
                 ],
               ),
@@ -274,7 +275,8 @@ class FormatSelectionSection extends ConsumerWidget {
           Flexible(
             child: Text(
               "format_selection.format_info.hint".tr(), // Localized string
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 12.sp,
                 color: Colors.amber.shade800,
               ),
@@ -377,9 +379,9 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
             child: Row(
               children: [
                 Text(
-                  "format_selection.format_picker.title"
-                      .tr(args: [widget.label]), // Localized string
-                  style: GoogleFonts.notoSerif(
+                  "format_selection.format_picker.title".tr(
+                      namedArgs: {'label': widget.label}), // Localized string
+                  style: GoogleFonts.slabo27px(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -443,7 +445,8 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
         child: Text(
           "format_selection.format_picker.no_formats_found"
               .tr(), // Localized string
-          style: GoogleFonts.notoSerif(color: Colors.grey),
+          style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700, color: Colors.grey),
         ),
       );
     }
@@ -475,7 +478,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
               child: Text(
                 "format_selection.format_picker.categories.$category"
                     .tr(), // Localized string
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -532,9 +535,9 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
             SizedBox(width: 4.w),
             Text(
               format.name,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 fontSize: 13.sp,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w700,
               ),
             ),
             if (isSelected) ...[

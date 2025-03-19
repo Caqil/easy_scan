@@ -51,7 +51,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
       appBar: CustomAppBar(
         title: Text(
           'Scan Barcode',
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -82,7 +82,8 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                 Expanded(
                   child: Text(
                     'Position the barcode within the frame to scan',
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       fontSize: 14.sp,
                       color: Theme.of(context).primaryColor,
                     ),
@@ -200,7 +201,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               SizedBox(width: 8.w),
               Text(
                 'Scan Result',
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).primaryColor,
@@ -219,7 +220,8 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
             ),
             child: Text(
               barcode.rawValue ?? 'No data',
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 14.sp,
               ),
             ),
@@ -270,7 +272,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
       ),
       child: Text(
         format,
-        style: GoogleFonts.notoSerif(
+        style: GoogleFonts.slabo27px(
           fontSize: 10.sp,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).primaryColor,

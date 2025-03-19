@@ -77,7 +77,8 @@ class ConversionButton extends StatelessWidget {
         SizedBox(width: 8.w),
         Text(
           "conversion_button.convert".tr(), // Localized string
-          style: GoogleFonts.notoSerif(fontSize: 16.sp),
+          style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700, fontSize: 16.sp),
         ),
         SizedBox(width: 8.w),
         Icon(state.outputFormat?.icon ?? Icons.file_present, size: 20.sp),

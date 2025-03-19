@@ -91,7 +91,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               padding: EdgeInsets.symmetric(vertical: 16.h),
               child: Text(
                 'sort_documents'.tr(),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -326,10 +326,12 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                 decoration: InputDecoration(
                   hintText: 'search_documents'.tr(),
                   border: InputBorder.none,
-                  hintStyle: GoogleFonts.notoSerif(color: Colors.grey.shade400),
+                  hintStyle: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700, color: Colors.grey.shade400),
                   prefixIcon: Icon(Icons.search, color: primaryColor),
                 ),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700,
                   fontSize: 16.sp,
                 ),
               )
@@ -338,15 +340,15 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                   children: [
                     TextSpan(
                       text: 'all'.tr(),
-                      style: GoogleFonts.notoSerif(
-                        fontWeight: FontWeight.w400,
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         fontSize: 18.sp,
                         color: theme.textTheme.bodyLarge?.color,
                       ),
                     ),
                     TextSpan(
                       text: 'categories.documents'.tr(),
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
                         fontSize: 18.sp,
                         color: primaryColor,
@@ -401,10 +403,10 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                           SizedBox(width: 8.w),
                           Text(
                             'Showing ${currentPageDocs.length} of ${filteredDocs.length} documents',
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
+                              fontWeight: FontWeight.w700,
                               fontSize: 13.sp,
                               color: theme.textTheme.bodyMedium?.color,
-                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
@@ -421,10 +423,10 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                           ),
                           child: Text(
                             'Page ${_currentPage + 1} of $totalPages',
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
+                              fontWeight: FontWeight.w700,
                               fontSize: 12.sp,
                               color: primaryColor,
-                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
@@ -446,7 +448,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                                 padding: EdgeInsets.symmetric(horizontal: 4.w),
                                 child: Text(
                                   '...',
-                                  style: GoogleFonts.notoSerif(
+                                  style: GoogleFonts.slabo27px(
                                     color: primaryColor,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -527,7 +529,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                           ),
                           title: Text(
                             document.name,
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.bold,
                               fontSize: 14.sp,
                             ),
@@ -536,7 +538,8 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                           ),
                           subtitle: Text(
                             '${document.pageCount} pages',
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
+                              fontWeight: FontWeight.w700,
                               fontSize: 12.sp,
                               color: Colors.grey.shade600,
                             ),
@@ -597,7 +600,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                     ),
                     child: Text(
                       '${_currentPage + 1} / $totalPages',
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -676,7 +679,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               _isSearching
                   ? 'empty_state.searching.no_documents_match'.tr()
                   : 'not_searching.no_documents_found'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey.shade700,
@@ -687,7 +690,8 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               _isSearching
                   ? 'empty_state.searching.try_different_term'.tr()
                   : 'not_searching.scan_or_import'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 14.sp,
                 color: Colors.grey.shade600,
               ),

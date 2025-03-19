@@ -46,7 +46,7 @@ class AllDocuments extends StatelessWidget {
                 SizedBox(width: 8.w),
                 Text(
                   'all_documents'.tr(),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontSize: 16.sp.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -61,9 +61,9 @@ class AllDocuments extends StatelessWidget {
                   children: [
                     Text(
                       'view_all'.tr(),
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         color: colorScheme.primary,
-                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     Icon(
@@ -83,7 +83,8 @@ class AllDocuments extends StatelessWidget {
           child: Text(
             'documents_count'
                 .tr(namedArgs: {'count': documents.length.toString()}),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               color: Colors.grey,
               fontSize: 12.sp,
             ),
@@ -163,8 +164,8 @@ class AllDocuments extends StatelessWidget {
                             children: [
                               Text(
                                 document.name,
-                                style: GoogleFonts.notoSerif(
-                                  fontWeight: FontWeight.w600,
+                                style: GoogleFonts.slabo27px(
+                                  fontWeight: FontWeight.w700,
                                   fontSize: 15.sp,
                                 ),
                                 maxLines: 1,
@@ -182,7 +183,8 @@ class AllDocuments extends StatelessWidget {
                                   Text(
                                     DateTimeUtils.getFriendlyDate(
                                         document.modifiedAt),
-                                    style: GoogleFonts.notoSerif(
+                                    style: GoogleFonts.slabo27px(
+                                      fontWeight: FontWeight.w700,
                                       color: Colors.grey.shade600,
                                       fontSize: 10.sp,
                                     ),
@@ -198,7 +200,8 @@ class AllDocuments extends StatelessWidget {
                                     'pages_count'.tr(namedArgs: {
                                       'count': document.pageCount.toString()
                                     }),
-                                    style: GoogleFonts.notoSerif(
+                                    style: GoogleFonts.slabo27px(
+                                      fontWeight: FontWeight.w700,
                                       color: Colors.grey.shade600,
                                       fontSize: 10.sp,
                                     ),
@@ -235,7 +238,8 @@ class AllDocuments extends StatelessWidget {
                   SizedBox(height: 16.h),
                   Text(
                     'No documents yet',
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       fontSize: 16.sp,
                       color: Colors.grey.shade600,
                     ),
@@ -243,7 +247,8 @@ class AllDocuments extends StatelessWidget {
                   SizedBox(height: 8.h),
                   Text(
                     'Scan or import your first document',
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       fontSize: 14.sp,
                       color: Colors.grey,
                     ),

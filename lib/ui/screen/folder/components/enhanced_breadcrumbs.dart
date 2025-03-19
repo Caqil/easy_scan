@@ -118,13 +118,13 @@ class EnhancedBreadcrumbs extends StatelessWidget {
                   if (isRoot) SizedBox(width: 6.w),
                   Text(
                     breadcrumbs[i],
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
                       color: isLast
                           ? colorScheme.primary
                           : (theme.brightness == Brightness.dark
                               ? Colors.grey.shade300
                               : Colors.grey.shade800),
-                      fontWeight: isLast ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: isLast ? FontWeight.w900 : FontWeight.w800,
                       fontSize: 14.sp,
                     ),
                   ),

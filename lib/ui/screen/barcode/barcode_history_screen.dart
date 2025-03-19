@@ -30,7 +30,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
       appBar: CustomAppBar(
         title: Text(
           'Scan History',
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -62,7 +62,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
           SizedBox(height: 16.h),
           Text(
             'No Scan History',
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade800,
@@ -71,7 +71,8 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
           SizedBox(height: 8.h),
           Text(
             'Your scanned barcodes will appear here',
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               fontSize: 14.sp,
               color: Colors.grey.shade600,
             ),
@@ -167,8 +168,8 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
                   children: [
                     Text(
                       _truncateText(scan.barcodeValue, 40),
-                      style: GoogleFonts.notoSerif(
-                        fontWeight: FontWeight.w500,
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         fontSize: 14.sp,
                       ),
                     ),
@@ -177,7 +178,8 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
                       scan.isCustomized
                           ? 'Customized • ${_formatDate(scan.timestamp)}'
                           : '${contentType.label} • ${_formatDate(scan.timestamp)}',
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         color: Colors.grey.shade600,
                         fontSize: 12.sp,
                       ),

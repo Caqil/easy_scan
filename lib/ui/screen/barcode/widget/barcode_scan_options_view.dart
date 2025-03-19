@@ -71,7 +71,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
   Widget _buildTitle() {
     return Text(
       'barcode_options.title'.tr(),
-      style: GoogleFonts.notoSerif(
+      style: GoogleFonts.slabo27px(
         fontSize: 24.sp,
         fontWeight: FontWeight.bold,
       ),
@@ -82,7 +82,8 @@ class BarcodeScanOptionsView extends StatelessWidget {
     return Text(
       'barcode_options.subtitle'.tr(),
       textAlign: TextAlign.center,
-      style: GoogleFonts.notoSerif(
+      style: GoogleFonts.slabo27px(
+        fontWeight: FontWeight.w700,
         fontSize: 14.sp,
         color: Colors.grey[600],
       ),

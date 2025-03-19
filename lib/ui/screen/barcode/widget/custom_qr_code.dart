@@ -55,7 +55,7 @@ class CustomQRCode extends StatelessWidget {
           if (title != null) ...[
             Text(
               title!.tr(), // Apply translation if title is a key
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 color: primaryColor,
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
@@ -97,7 +97,8 @@ class CustomQRCode extends StatelessWidget {
                 return Center(
                   child: Text(
                     'qr_code.error'.tr(), // Use translation key
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       color: Colors.red,
                       fontSize: 14.sp,
                     ),
@@ -164,7 +165,7 @@ class GradientQRCode extends StatelessWidget {
           if (title != null) ...[
             Text(
               title!.tr(), // Apply translation if title is a key
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 color: Colors.white,
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
@@ -257,7 +258,7 @@ class TransparentQRCode extends StatelessWidget {
               if (title != null) ...[
                 Text(
                   title!.tr(), // Apply translation if title is a key
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     color: Colors.white,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -355,7 +356,7 @@ class ThemedQRCode extends StatelessWidget {
               SizedBox(width: 8.w),
               Text(
                 typeSettings.title.tr(), // Apply translation to title
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   color: Colors.white,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,

@@ -45,7 +45,7 @@ class HelpDialog extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
             fontSize: 16.sp,
           ),

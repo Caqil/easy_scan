@@ -92,7 +92,7 @@ class DocumentCard extends StatelessWidget {
         ),
         child: Text(
           '${index + 1}',
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 10.sp,
@@ -173,9 +173,9 @@ class DocumentCard extends StatelessWidget {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.w700,
             color: Colors.white.withOpacity(0.9),
-            fontWeight: FontWeight.w500,
             fontSize: 10.sp,
           ),
         ),

@@ -44,7 +44,7 @@ class AppHeaderWidget extends StatelessWidget {
           SizedBox(height: 16.h),
           Text(
             appName,
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 24.sp,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.primary,
@@ -52,7 +52,8 @@ class AppHeaderWidget extends StatelessWidget {
           ),
           Text(
             version,
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               fontSize: 14.sp,
               color:
                   Theme.of(context).colorScheme.onBackground.withOpacity(0.7),

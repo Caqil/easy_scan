@@ -39,7 +39,7 @@ class SectionContainer extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                   ),

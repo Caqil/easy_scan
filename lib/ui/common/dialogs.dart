@@ -144,7 +144,8 @@ class AppDialogs {
                 Expanded(
                   child: Text(
                     message,
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       color: snackBarTextColor,
                       fontSize: 14.0,
                     ),

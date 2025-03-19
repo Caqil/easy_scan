@@ -290,7 +290,7 @@ class DocumentActionHandler {
                     Row(
                       children: [
                         Text('document_actions.watermark_type'.tr(),
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
                                 fontWeight: FontWeight.bold)),
                         const SizedBox(width: 16),
                         SegmentedButton<String>(
@@ -397,7 +397,7 @@ class DocumentActionHandler {
                     Row(
                       children: [
                         Text('document_actions.opacity'.tr(),
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
                                 fontWeight: FontWeight.bold)),
                         Expanded(
                           child: Slider(
@@ -479,7 +479,7 @@ class DocumentActionHandler {
                               watermarkText.isEmpty
                                   ? 'WATERMARK'
                                   : watermarkText,
-                              style: GoogleFonts.notoSerif(
+                              style: GoogleFonts.slabo27px(
                                 fontSize: fontSize / 3,
                                 color: watermarkColor.withOpacity(opacity),
                                 fontWeight: FontWeight.bold,

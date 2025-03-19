@@ -80,7 +80,7 @@ class FolderCard extends StatelessWidget {
                             ),
                             child: Text(
                               '$documentCount',
-                              style: GoogleFonts.notoSerif(
+                              style: GoogleFonts.slabo27px(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Color(folder.color),
@@ -101,7 +101,7 @@ class FolderCard extends StatelessWidget {
                 folder.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
                   fontSize: 14.sp,
                 ),

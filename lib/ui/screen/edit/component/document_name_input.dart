@@ -19,13 +19,14 @@ class DocumentNameInput extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: TextField(
         controller: controller,
-        style: GoogleFonts.notoSerif(
+        style: GoogleFonts.slabo27px(
+          fontWeight: FontWeight.w700,
           color: colorScheme.onSurface,
-          fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           labelText: 'documents.document_name'.tr(),
-          labelStyle: GoogleFonts.notoSerif(color: colorScheme.primary),
+          labelStyle: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700, color: colorScheme.primary),
           prefixIcon:
               Icon(Icons.description_outlined, color: colorScheme.primary),
           border: OutlineInputBorder(

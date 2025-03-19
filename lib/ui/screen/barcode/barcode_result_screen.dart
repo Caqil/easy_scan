@@ -57,7 +57,7 @@ class BarcodeResultScreen extends ConsumerWidget {
         children: [
           Text(
             'barcode_result.customized_qr'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               color: Colors.white,
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -93,7 +93,7 @@ class BarcodeResultScreen extends ConsumerWidget {
       appBar: CustomAppBar(
         title: Text(
           'barcode_result.scan_result'.tr(),
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -127,7 +127,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                           ),
                           child: Text(
                             contentType,
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
                               color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 14.sp,
@@ -153,9 +153,9 @@ class BarcodeResultScreen extends ConsumerWidget {
                             isQrCode
                                 ? 'barcode_result.qr_code'.tr()
                                 : 'barcode_result.barcode'.tr(),
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
+                              fontWeight: FontWeight.w700,
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.w500,
                               color: isQrCode ? Colors.green : Colors.orange,
                             ),
                           ),
@@ -181,7 +181,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                     // Barcode Value
                     Text(
                       'barcode_result.content'.tr(),
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
                         color: Colors.grey.shade600,
@@ -190,7 +190,8 @@ class BarcodeResultScreen extends ConsumerWidget {
                     SizedBox(height: 4.h),
                     Text(
                       barcodeValue,
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         fontSize: 16.sp,
                       ),
                     ),
@@ -201,9 +202,9 @@ class BarcodeResultScreen extends ConsumerWidget {
                     ExpansionTile(
                       title: Text(
                         'barcode_result.technical_details'.tr(),
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
+                          fontWeight: FontWeight.w700,
                           fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       collapsedIconColor: Colors.grey,
@@ -212,15 +213,16 @@ class BarcodeResultScreen extends ConsumerWidget {
                         ListTile(
                           title: Text(
                             'barcode_result.barcode_format'.tr(),
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
+                              fontWeight: FontWeight.w700,
                               fontSize: 12.sp,
                               color: Colors.grey.shade600,
                             ),
                           ),
                           subtitle: Text(
                             barcodeFormat,
-                            style: GoogleFonts.notoSerif(
-                              fontWeight: FontWeight.w500,
+                            style: GoogleFonts.slabo27px(
+                              fontWeight: FontWeight.w700,
                               fontSize: 14.sp,
                             ),
                           ),
@@ -229,15 +231,16 @@ class BarcodeResultScreen extends ConsumerWidget {
                         ListTile(
                           title: Text(
                             'barcode_result.barcode_type'.tr(),
-                            style: GoogleFonts.notoSerif(
+                            style: GoogleFonts.slabo27px(
+                              fontWeight: FontWeight.w700,
                               fontSize: 12.sp,
                               color: Colors.grey.shade600,
                             ),
                           ),
                           subtitle: Text(
                             barcodeType,
-                            style: GoogleFonts.notoSerif(
-                              fontWeight: FontWeight.w500,
+                            style: GoogleFonts.slabo27px(
+                              fontWeight: FontWeight.w700,
                               fontSize: 14.sp,
                             ),
                           ),
@@ -700,7 +703,7 @@ class BarcodeResultQRCode extends StatelessWidget {
                 SizedBox(width: 8.w),
                 Text(
                   barcodeType,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     color: Colors.white,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,

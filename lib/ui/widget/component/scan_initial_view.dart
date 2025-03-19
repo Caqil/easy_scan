@@ -66,7 +66,7 @@ class ScanInitialView extends StatelessWidget {
   Widget _buildTitle() {
     return Text(
       'scan.ready_to_scan'.tr(),
-      style: GoogleFonts.notoSerif(
+      style: GoogleFonts.slabo27px(
         fontSize: 24.sp,
         fontWeight: FontWeight.bold,
       ),
@@ -77,7 +77,8 @@ class ScanInitialView extends StatelessWidget {
     return Text(
       'scan.scan_documents_or_import'.tr(),
       textAlign: TextAlign.center,
-      style: GoogleFonts.notoSerif(
+      style: GoogleFonts.slabo27px(
+        fontWeight: FontWeight.w700,
         fontSize: 14.sp,
         color: Colors.grey[600],
       ),

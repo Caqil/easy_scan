@@ -23,7 +23,7 @@ class ScanOptionsWidget extends StatelessWidget {
       children: [
         Text(
           'scan.scan_settings'.tr(),
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
           ),

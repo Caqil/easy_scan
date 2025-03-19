@@ -107,14 +107,15 @@ class DocumentCard extends StatelessWidget {
                           document.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.notoSerif(
+                          style: GoogleFonts.slabo27px(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           DateTimeUtils.getFriendlyDate(document.modifiedAt),
-                          style: GoogleFonts.notoSerif(
+                          style: GoogleFonts.slabo27px(
+                            fontWeight: FontWeight.w700,
                             fontSize: 10.sp,
                             color: Colors.grey.shade600,
                           ),

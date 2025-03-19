@@ -89,7 +89,8 @@ class _PdfEditPreviewState extends State<PdfEditPreview> {
                   Text(
                     _errorMessage!,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.notoSerif(fontSize: 16),
+                    style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700, fontSize: 16),
                   ),
                 ],
               ),

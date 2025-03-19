@@ -41,14 +41,15 @@ class SettingsSwitchTile extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: GoogleFonts.notoSerif(
+        style: GoogleFonts.slabo27px(
+          fontWeight: FontWeight.w700,
           fontSize: 14.sp,
-          fontWeight: FontWeight.w500,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: GoogleFonts.notoSerif(
+        style: GoogleFonts.slabo27px(
+          fontWeight: FontWeight.w700,
           fontSize: 12.sp,
           color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
         ),

@@ -110,14 +110,15 @@ class _AllFoldersSheet extends ConsumerWidget {
                     children: [
                       Text(
                         title,
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
                           fontSize: 16.sp.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         '${folders.length} folders',
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
+                          fontWeight: FontWeight.w700,
                           color: Colors.grey.shade600,
                         ),
                       ),
@@ -225,7 +226,7 @@ class _AllFoldersSheet extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             'folder_screen.no_folders_yet'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade700,
@@ -234,7 +235,8 @@ class _AllFoldersSheet extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'folder_screen.create_folder_prompt'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               color: Colors.grey.shade600,
             ),
           ),

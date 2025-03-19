@@ -25,9 +25,9 @@ class ChipFormatSelector extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.w700,
             fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
             color: Colors.grey.shade700,
           ),
         ),
@@ -51,15 +51,16 @@ class ChipFormatSelector extends StatelessWidget {
                   SizedBox(width: 12.w),
                   Text(
                     selectedFormat!.name,
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ] else
                   Text(
                     '$label Format',
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
                       fontSize: 12.sp,
                       color: Colors.grey.shade600,
                     ),
@@ -167,8 +168,9 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
           Padding(
             padding: EdgeInsets.all(16.h),
             child: Text(
-              tr('chip_format_selector.select_format', args: [widget.label]),
-              style: GoogleFonts.notoSerif(
+              tr('chip_format_selector.select_format',
+                  namedArgs: {'label': widget.label}),
+              style: GoogleFonts.slabo27px(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -224,7 +226,8 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
               SizedBox(height: 16.h),
               Text(
                 'No formats found',
-                style: GoogleFonts.notoSerif(fontSize: 16.sp),
+                style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700, fontSize: 16.sp),
               ),
             ],
           ),
@@ -258,7 +261,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
               padding: EdgeInsets.symmetric(vertical: 8.h),
               child: Text(
                 category,
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey.shade700,
@@ -292,9 +295,9 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
       showCheckmark: false,
       backgroundColor: Colors.grey.shade100,
       selectedColor: format.color,
-      labelStyle: GoogleFonts.notoSerif(
+      labelStyle: GoogleFonts.slabo27px(
         color: isSelected ? Colors.white : Colors.black,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.w700,
       ),
       padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
       onSelected: (_) => widget.onFormatSelected(format),

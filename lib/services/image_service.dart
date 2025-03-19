@@ -314,7 +314,8 @@ class ImageService {
       final TextPainter iconPainter = TextPainter(
         text: TextSpan(
           text: String.fromCharCode(icon.codePoint),
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.w700,
             color: color,
             fontSize: thumbnailSize * 0.4,
           ),
@@ -334,7 +335,7 @@ class ImageService {
       final TextPainter labelPainter = TextPainter(
         text: TextSpan(
           text: label,
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             color: color,
             fontSize: thumbnailSize * 0.15,
             fontWeight: FontWeight.bold,
@@ -420,7 +421,8 @@ class ImageService {
       TextPainter textPainter = TextPainter(
         text: TextSpan(
           text: extension == '.pdf' ? '📄' : '🖼️',
-          style: GoogleFonts.notoSerif(fontSize: size * 0.5),
+          style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700, fontSize: size * 0.5),
         ),
         textDirection: TextDirection.ltr,
       );
@@ -436,8 +438,10 @@ class ImageService {
           text: fileName.length > 10
               ? '${fileName.substring(0, 10)}...'
               : fileName,
-          style:
-              GoogleFonts.notoSerif(fontSize: size * 0.1, color: Colors.black),
+          style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
+              fontSize: size * 0.1,
+              color: Colors.black),
         ),
         textDirection: TextDirection.ltr,
       );

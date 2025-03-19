@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:scanpro/ui/widget/option_tile.dart';
 
 /// A globally accessible component to show add/create options
 class AddOptions {
@@ -100,7 +101,7 @@ class _AddOptionsSheet extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
                       fontSize: 16.sp.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -113,8 +114,7 @@ class _AddOptionsSheet extends StatelessWidget {
           const Divider(),
 
           // Action options
-          _buildOptionTile(
-            context,
+          OptionTile(
             icon: Icons.create_new_folder_outlined,
             title: 'add_options.create_subfolder.title'.tr(),
             description: 'add_options.create_subfolder.description'.tr(),
@@ -124,8 +124,7 @@ class _AddOptionsSheet extends StatelessWidget {
             },
           ),
 
-          _buildOptionTile(
-            context,
+          OptionTile(
             icon: Icons.document_scanner_outlined,
             title: 'add_options.scan_document.title'.tr(),
             description: 'add_options.scan_document.description'.tr(),
@@ -135,8 +134,7 @@ class _AddOptionsSheet extends StatelessWidget {
             },
           ),
 
-          _buildOptionTile(
-            context,
+          OptionTile(
             icon: Icons.file_upload_outlined,
             title: 'add_options.import_documents.title'.tr(),
             description: 'add_options.import_documents.description'.tr(),
@@ -147,8 +145,7 @@ class _AddOptionsSheet extends StatelessWidget {
           ),
 
           if (onMoveDocuments != null)
-            _buildOptionTile(
-              context,
+            OptionTile(
               icon: Icons.drive_file_move_outlined,
               title: 'add_options.move_documents_here.title'.tr(),
               description: 'add_options.move_documents_here.description'.tr(),
@@ -160,66 +157,6 @@ class _AddOptionsSheet extends StatelessWidget {
           // Bottom padding for safe area
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
-      ),
-    );
-  }
-
-  Widget _buildOptionTile(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String description,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                icon,
-                color: Theme.of(context).primaryColor,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.notoSerif(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: GoogleFonts.notoSerif(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.grey.shade400,
-            ),
-          ],
-        ),
       ),
     );
   }

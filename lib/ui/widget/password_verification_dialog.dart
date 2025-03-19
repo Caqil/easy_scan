@@ -217,7 +217,8 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                   },
             child: Text(
               'common.cancel'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 color: colorScheme.primary,
               ),
             ),

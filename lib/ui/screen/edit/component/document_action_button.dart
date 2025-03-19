@@ -48,7 +48,7 @@ class DocumentActionButtons extends StatelessWidget {
               icon: isPasswordProtected ? Icons.lock : Icons.lock_outline,
               label: isPasswordProtected
                   ? 'document.password_protected'.tr()
-                  : 'pdf.assword'.tr(),
+                  : 'pdf.password'.tr(),
               isActive: isPasswordProtected,
               onTap: onPasswordTap,
             ),
@@ -118,12 +118,12 @@ class DocumentActionButtons extends StatelessWidget {
               SizedBox(height: 1.h),
               Text(
                 label,
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   color: isActive
                       ? colorScheme.primary
                       : colorScheme.onSurfaceVariant,
                   fontSize: 8.sp,
-                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.w700,
                 ),
               ),
             ],

@@ -98,7 +98,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: _searchQuery.isEmpty
             ? Text('ScanPro', style: GoogleFonts.lilitaOne(fontSize: 25.sp))
             : CupertinoSearchTextField(
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     color: Theme.of(context).textTheme.bodySmall?.color),
                 controller: _searchController,
                 placeholder: 'Search all documents...',
@@ -553,7 +554,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             SizedBox(height: 16),
             Text(
               'no_documents_yet'.tr(),
-              style: GoogleFonts.notoSerif(fontSize: 16.sp),
+              style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w700, fontSize: 16.sp),
             ),
           ],
         ),
@@ -598,7 +600,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             title: Text(
               document.name,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -608,7 +610,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 Text(
                   DateTimeUtils.getFriendlyDate(document.modifiedAt),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
                     color: Colors.grey.shade600,
                   ),
@@ -618,7 +621,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Text(
                       'pages_count'
                           .tr(namedArgs: {'count': '${document.pageCount}'}),
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700,
                         fontSize: 12.sp,
                         color: Colors.grey.shade600,
                       ),
@@ -748,7 +752,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     child: Text(
                       '${favorites.length}',
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.primary,
                       ),
@@ -828,7 +832,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 children: [
                                   Text(
                                     document.name,
-                                    style: GoogleFonts.notoSerif(
+                                    style: GoogleFonts.slabo27px(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14.sp,
                                     ),
@@ -847,7 +851,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       Text(
                                         DateTimeUtils.getFriendlyDate(
                                             document.modifiedAt),
-                                        style: GoogleFonts.notoSerif(
+                                        style: GoogleFonts.slabo27px(
+                                          fontWeight: FontWeight.w700,
                                           fontSize: 10.sp,
                                           color: Colors.grey.shade600,
                                         ),
@@ -867,7 +872,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         'pages_count'.tr(namedArgs: {
                                           'count': ' ${document.pageCount}'
                                         }),
-                                        style: GoogleFonts.notoSerif(
+                                        style: GoogleFonts.slabo27px(
+                                          fontWeight: FontWeight.w700,
                                           fontSize: 10.sp,
                                           color: Colors.grey.shade600,
                                         ),

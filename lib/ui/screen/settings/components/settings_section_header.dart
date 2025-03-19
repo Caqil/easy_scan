@@ -19,7 +19,7 @@ class SettingsSectionHeader extends StatelessWidget {
           EdgeInsets.only(left: 24.r, right: 24.r, top: 8.r, bottom: 4.r),
       child: Text(
         title,
-        style: GoogleFonts.notoSerif(
+        style: GoogleFonts.slabo27px(
           fontSize: 14.sp,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.primary,

@@ -87,14 +87,15 @@ class BarcodeActionSheet extends ConsumerWidget {
                     children: [
                       Text(
                         contentType.label,
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         _truncateText(scan.barcodeValue, 40),
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
+                          fontWeight: FontWeight.w700,
                           fontSize: 10.sp,
                           color: Colors.grey.shade600,
                         ),
@@ -228,7 +229,8 @@ class BarcodeActionSheet extends ConsumerWidget {
             const SizedBox(height: 8),
             Text(
               label,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 10.sp,
                 color: Colors.black,
               ),

@@ -113,7 +113,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           const SizedBox(height: 24),
           Text(
             'simple_view.compression_level'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -139,7 +139,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               children: [
                 Text(
                   FileUtils.getCompressionLevelTitle()!,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.sp,
                     color: Theme.of(context).colorScheme.primary,
@@ -148,7 +148,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                 const SizedBox(height: 8),
                 Text(
                   FileUtils.getCompressionLevelDescription()!,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
                   ),
                 ),
@@ -158,7 +159,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           const SizedBox(height: 24),
           Text(
             'simple_view.expected_results'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -180,7 +181,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           const SizedBox(height: 24),
           Text(
             'advanced_view.advanced_settings'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -232,7 +233,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                 Expanded(
                   child: Text(
                     'advanced_view.warning'.tr(),
-                    style: GoogleFonts.notoSerif(fontSize: 12.sp),
+                    style: GoogleFonts.slabo27px(
+                        fontWeight: FontWeight.w700, fontSize: 12.sp),
                   ),
                 ),
               ],
@@ -241,7 +243,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           const SizedBox(height: 24),
           Text(
             'simple_view.expected_results'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -280,7 +282,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                   ),
                   Text(
                     '${(_compressionProgress * 100).round()}%',
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.slabo27px(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.primary,
@@ -293,7 +295,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           const SizedBox(height: 24),
           Text(
             'compressing_view.compressing_pdf'.tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -302,7 +304,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           Text(
             'compressing_view.using_cloud_api'.tr(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
+              fontWeight: FontWeight.w700,
               fontSize: 14.sp,
               color: Colors.grey.shade600,
             ),
@@ -326,7 +329,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                 const SizedBox(width: 8),
                 Text(
                   _getCompressionStatusMessage(_compressionProgress),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 14.sp,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
@@ -384,7 +388,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
               children: [
                 Text(
                   widget.document.name,
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
                     fontSize: 16.sp,
                   ),
@@ -396,7 +400,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                   'stats.file_size'.tr(namedArgs: {
                     'size': '${FileUtils.formatFileSize(_originalFileSize)}'
                   }),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
                     color: Colors.grey.shade700,
                   ),
@@ -405,7 +410,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                 Text(
                   'stats.pages'
                       .tr(namedArgs: {'count': '${widget.document.pageCount}'}),
-                  style: GoogleFonts.notoSerif(
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
                     color: Colors.grey.shade700,
                   ),
@@ -422,7 +428,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
                       const SizedBox(width: 4),
                       Text(
                         'stats.password_protected',
-                        style: GoogleFonts.notoSerif(
+                        style: GoogleFonts.slabo27px(
+                          fontWeight: FontWeight.w700,
                           fontSize: 12.sp,
                           color: Colors.grey.shade700,
                         ),
@@ -553,11 +560,11 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
             const SizedBox(height: 8),
             Text(
               label,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 color: isSelected
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w700,
                 fontSize: 14.sp,
               ),
             ),
@@ -583,14 +590,14 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           children: [
             Text(
               label,
-              style: GoogleFonts.notoSerif(
-                fontWeight: FontWeight.w500,
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 14.sp,
               ),
             ),
             Text(
               '${value.round()}%',
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: 14.sp,
@@ -611,14 +618,16 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
           children: [
             Text(
               'slider.more_compression'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 10.sp,
                 color: Colors.grey.shade600,
               ),
             ),
             Text(
               'slider.better_quality'.tr(),
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
                 fontSize: 10.sp,
                 color: Colors.grey.shade600,
               ),
@@ -700,7 +709,8 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.w700,
             fontSize: 12.sp,
             color: Colors.grey.shade600,
           ),
@@ -708,7 +718,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
         const SizedBox(height: 4),
         Text(
           value,
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
             color: valueColor,
