@@ -10,6 +10,16 @@
         android:label="ScanPro"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+        <queries>
+  <intent>
+    <action android:name="android.intent.action.VIEW" />
+    <data android:scheme="https" />
+  </intent>
+  <intent>
+    <action android:name="android.intent.action.SEND" />
+    <data android:mimeType="*/*" />
+  </intent>
+</queries>
         <activity
             android:name=".MainActivity"
             android:exported="true"

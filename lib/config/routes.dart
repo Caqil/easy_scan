@@ -107,16 +107,16 @@ class AppRoutes {
             path: barcodeHistory,
             builder: (context, state) => const BarcodeHistoryScreen(),
           ),
-          GoRoute(
-            path: '/backup-settings',
-            builder: (context, state) => const BackupSettingsScreen(),
-          ),
+          // GoRoute(
+          //   path: '/backup-settings',
+          //   builder: (context, state) => const BackupSettingsScreen(),
+          // ),
 
           // Add the backup restore screen route
-          GoRoute(
-            path: '/backup-restore',
-            builder: (context, state) => const BackupRestoreScreen(),
-          ),
+          // GoRoute(
+          //   path: '/backup-restore',
+          //   builder: (context, state) => const BackupRestoreScreen(),
+          // ),
         ],
       ),
 

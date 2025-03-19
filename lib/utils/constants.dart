@@ -16,9 +16,9 @@ class AppConstants {
   static const int thumbnailSize = 300;
 
   // Backup constants
-  static const String backupFolderName = 'EasyScan Backups';
+  static const String backupFolderName = 'scanpro Backups';
   static const int maxBackupHistory = 10;
-  static const String backupFilePrefix = 'easy_scan_backup_';
+  static const String backupFilePrefix = 'scanpro_backup_';
 
   // Folder colors
   static const List<int> folderColors = [

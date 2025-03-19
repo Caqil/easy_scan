@@ -15,6 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'components/settings_navigation_tile.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -207,17 +208,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
 
                 SettingsDivider(),
-                SettingsNavigationTile(
-                  icon: Icons.folder,
-                  iconColor: Colors.blue,
-                  title: "backup.title".tr(),
-                  subtitle: settings.defaultSaveLocation.isEmpty
-                      ? "backup.create_first_backup_description".tr()
-                      : settings.defaultSaveLocation,
-                  onTap: () {
-                    AppRoutes.navigateToBackupSettings(context);
-                  },
-                ),
+                // SettingsNavigationTile(
+                //   icon: Icons.folder,
+                //   iconColor: Colors.blue,
+                //   title: "backup.title".tr(),
+                //   subtitle: settings.defaultSaveLocation.isEmpty
+                //       ? "backup.create_first_backup_description".tr()
+                //       : settings.defaultSaveLocation,
+                //   onTap: () {
+                //     AppRoutes.navigateToBackupSettings(context);
+                //   },
+                // ),
               ],
             ),
 
@@ -245,7 +246,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   title: "settings.privacy_policy".tr(),
                   subtitle: "settings.privacy_policy_desc".tr(),
                   onTap: () {
-                    _showPrivacyPolicy(context);
+                    _launchUrl('https://scanpro.cc/privacy');
+                  },
+                ),
+
+                SettingsDivider(),
+
+                // Terms of Service
+                SettingsNavigationTile(
+                  icon: Icons.description_outlined,
+                  iconColor: Colors.grey,
+                  title: "settings.terms_of_service".tr(),
+                  subtitle: "settings.terms_of_service_desc".tr(),
+                  onTap: () {
+                    _launchUrl('https://scanpro.cc/terms');
                   },
                 ),
 
@@ -258,7 +272,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   title: "settings.about".tr(),
                   subtitle: "settings.about_desc".tr(),
                   onTap: () {
-                    _showAboutDialog(context);
+                    _launchUrl('https://scanpro.cc/about');
                   },
                 ),
               ],
@@ -468,7 +482,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               title: Text("settings.faqs".tr()),
               onTap: () {
                 Navigator.pop(context);
-                // Navigate to FAQs
+                _launchUrl('https://scanpro.cc/support');
               },
             ),
             ListTile(
@@ -476,7 +490,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               title: Text("settings.contact_support".tr()),
               onTap: () {
                 Navigator.pop(context);
-                // Open email client
+                _launchEmailClient();
               },
             ),
             ListTile(
@@ -484,7 +498,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               title: Text("settings.user_guide".tr()),
               onTap: () {
                 Navigator.pop(context);
-                // Open user guide
+                _launchUrl('https://scanpro.cc/guide');
               },
             ),
           ],
@@ -493,58 +507,57 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  void _showPrivacyPolicy(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("settings.privacy_policy".tr()),
-        content: SingleChildScrollView(
-          child: Text(
-            "This is a placeholder for the privacy policy. In a real app, this would contain your actual privacy policy text.",
-            style: TextStyle(fontSize: 14.sp),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("common.close".tr()),
-          ),
-        ],
-      ),
-    );
+  Future<void> _launchUrl(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        if (context.mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'settings.could_not_launch_url'.tr(),
+            type: SnackBarType.error,
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'settings.could_not_launch_url'.tr(),
+          type: SnackBarType.error,
+        );
+      }
+    }
   }
 
-  void _showAboutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("About Easy Scan"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Easy Scan is a document scanning app that allows you to scan, organize, and manage your documents easily.",
-              style: TextStyle(fontSize: 14.sp),
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              "Version: 1.0.0",
-              style: TextStyle(fontSize: 14.sp),
-            ),
-            Text(
-              "Build: 2023.03.25",
-              style: TextStyle(fontSize: 14.sp),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("OK"),
-          ),
-        ],
-      ),
+  Future<void> _launchEmailClient() async {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: 'support@scanpro.cc',
+      queryParameters: {
+        'subject': 'Support Request for Easy Scan App',
+        'body': 'Hello Support Team,\n\n',
+      },
     );
+
+    try {
+      if (!await launchUrl(emailLaunchUri)) {
+        if (context.mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'settings.could_not_launch_email'.tr(),
+            type: SnackBarType.error,
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'settings.could_not_launch_email'.tr(),
+          type: SnackBarType.error,
+        );
+      }
+    }
   }
 }

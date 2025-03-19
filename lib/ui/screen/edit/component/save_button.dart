@@ -21,7 +21,7 @@ class SaveButton extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: onSave,
         icon: const Icon(Icons.save_alt_rounded),
-        label: Text('save_as_pdf'.tr()),
+        label: Text('pdf.save_as_pdf'.tr()),
         style: OutlinedButton.styleFrom(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,

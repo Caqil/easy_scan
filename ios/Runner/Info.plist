@@ -36,18 +36,12 @@
 	<string>Permission is needed to save scanned documents to your photo library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Photo library access is needed to import images for scanning</string>
-	<key>NSUbiquitousContainers</key>
-	<dict>
-		<key>iCloud.com.example.easyScan</key>
-		<dict>
-			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
-			<true/>
-			<key>NSUbiquitousContainerName</key>
-			<string>Easy Scan</string>
-			<key>NSUbiquitousContainerSupportedFolderLevels</key>
-			<string>Any</string>
-		</dict>
-	</dict>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+		<string>mailto</string>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>

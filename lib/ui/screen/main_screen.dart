@@ -66,6 +66,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 
   void _onItemTapped(int index) {
+    // Close any open bottom sheets first
+    Navigator.of(context).popUntil((route) => route.isFirst);
+
     // Handle the Scan button separately (middle item)
     if (index == 2) {
       // Scan button (middle position)
@@ -202,11 +205,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         activeIndex: _selectedIndex,
         splashColor: colorScheme.primary.withOpacity(0.2),
         gapLocation: GapLocation.none, // Remove gap in the center
-        leftCornerRadius: 16,
+        leftCornerRadius: 10,
         rightCornerRadius: 10,
 
         onTap: _onItemTapped,
-        height: 55.h,
+        height: 50.h,
       ),
     );
   }
