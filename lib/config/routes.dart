@@ -1,5 +1,7 @@
 import 'package:scanpro/config/app_transition.dart';
 import 'package:scanpro/ui/screen/all_documents.dart';
+import 'package:scanpro/ui/screen/backup/backup_restore_screnn.dart';
+import 'package:scanpro/ui/screen/backup/backup_setting_screen.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_generator_screen.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_history_screen.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_scanner_screen.dart';
@@ -31,6 +33,8 @@ class AppRoutes {
   static const String pdfMerger = '/pdf_merger';
   static const String allDocuments = '/all_documents';
   static const String compression = '/compression';
+  static const String backupSettings = '/backup-settings';
+  static const String backupRestore = '/backup-restore';
   static const String scan = '/scan';
   static const String barcodeScan = '/barcode/scan';
   static const String barcodeGenerate = '/barcode/generate';
@@ -102,6 +106,16 @@ class AppRoutes {
           GoRoute(
             path: barcodeHistory,
             builder: (context, state) => const BarcodeHistoryScreen(),
+          ),
+          GoRoute(
+            path: '/backup-settings',
+            builder: (context, state) => const BackupSettingsScreen(),
+          ),
+
+          // Add the backup restore screen route
+          GoRoute(
+            path: '/backup-restore',
+            builder: (context, state) => const BackupRestoreScreen(),
           ),
         ],
       ),
@@ -285,5 +299,13 @@ class AppRoutes {
 
   static void navigateToBarcodeHistory(BuildContext context) {
     context.go(barcodeHistory);
+  }
+
+  static void navigateToBackupSettings(BuildContext context) {
+    GoRouter.of(context).push(AppRoutes.backupSettings);
+  }
+
+  static void navigateToBackupRestore(BuildContext context) {
+    GoRouter.of(context).push(AppRoutes.backupRestore);
   }
 }

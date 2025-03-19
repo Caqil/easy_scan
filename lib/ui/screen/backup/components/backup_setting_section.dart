@@ -14,7 +14,7 @@ import 'package:scanpro/ui/screen/backup/cloud_backup_screen.dart';
 import 'package:scanpro/ui/screen/backup/components/backup_dialogs.dart';
 
 class BackupSettingsSection extends ConsumerStatefulWidget {
-  const BackupSettingsSection({super.key});
+  const BackupSettingsSection({Key? key}) : super(key: key);
 
   @override
   ConsumerState<BackupSettingsSection> createState() =>
@@ -108,7 +108,7 @@ class _BackupSettingsSectionState extends ConsumerState<BackupSettingsSection> {
           child: Text(
             'backup.title'.tr(),
             style: GoogleFonts.notoSerif(
-              fontSize: 15.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).primaryColor,
             ),
@@ -475,24 +475,6 @@ class _BackupSettingsSectionState extends ConsumerState<BackupSettingsSection> {
           activeColor: Theme.of(context).primaryColor,
         ),
       ],
-    );
-  }
-}
-
-class BackupSettingsScreen extends ConsumerWidget {
-  const BackupSettingsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'backup.title'.tr(),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: BackupSettingsSection(),
-      ),
     );
   }
 }

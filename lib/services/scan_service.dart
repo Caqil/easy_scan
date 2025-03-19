@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
 
@@ -32,14 +31,12 @@ class ScanService {
     });
   }
 
-  /// Scan documents using the camera
   Future<void> scanDocuments({
     required BuildContext context,
     required WidgetRef ref,
     required Function(bool) setLoading,
     VoidCallback? onSuccess,
   }) async {
-    // Check for camera permission first
     final hasPermission = await PermissionUtils.hasCameraPermission();
     if (!hasPermission) {
       final granted = await PermissionUtils.requestCameraPermission();
@@ -51,11 +48,8 @@ class ScanService {
 
     try {
       setLoading(true);
-
-      // Get the pictures - this will show the scanner UI
       List<String> imagePaths = [];
       try {
-        // Get scanned document paths (as images)
         dynamic result = await FlutterDocScanner().getScannedDocumentAsImages(
           page: 2, // Default to 4 pages, adjust as needed
         );

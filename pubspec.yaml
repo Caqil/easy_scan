@@ -69,6 +69,7 @@ dependencies:
   extension_google_sign_in_as_googleapis_auth: ^2.0.12
   archive: ^4.0.4
   icloud_storage_sync: ^0.0.2
+  shared_preferences: ^2.5.2
 
 dev_dependencies:
   flutter_test:

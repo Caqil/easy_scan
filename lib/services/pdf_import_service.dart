@@ -4,7 +4,6 @@ import 'package:scanpro/utils/constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
-import 'package:flutter/material.dart';
 import '../models/document.dart';
 import '../utils/file_utils.dart';
 import 'pdf_service.dart';

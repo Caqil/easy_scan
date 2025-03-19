@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/config/routes.dart';
-import 'package:scanpro/models/app_settings.dart';
 import 'package:scanpro/providers/locale_provider.dart';
 import 'package:scanpro/providers/settings_provider.dart';
 import 'package:scanpro/services/auth_service.dart';
@@ -28,13 +27,11 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final AuthService _authService = AuthService();
   bool _isBiometricAvailable = false;
-  bool _isCloudAvailable = false;
 
   @override
   void initState() {
     super.initState();
     _checkBiometricAvailability();
-    _checkCloudAvailability();
   }
 
   Future<void> _checkBiometricAvailability() async {
@@ -44,14 +41,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         _isBiometricAvailable = isAvailable;
       });
     }
-  }
-
-  Future<void> _checkCloudAvailability() async {
-    // This would check if cloud services are available
-    // For now, we'll assume they are
-    setState(() {
-      _isCloudAvailable = true;
-    });
   }
 
   @override
@@ -218,74 +207,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
 
                 SettingsDivider(),
-
-                // Default Save Location
                 SettingsNavigationTile(
                   icon: Icons.folder,
                   iconColor: Colors.blue,
-                  title: "settings.default_save_location".tr(),
+                  title: "backup.title".tr(),
                   subtitle: settings.defaultSaveLocation.isEmpty
-                      ? "settings.default_location".tr()
+                      ? "backup.create_first_backup_description".tr()
                       : settings.defaultSaveLocation,
                   onTap: () {
-                    _showSaveLocationPicker(context, ref, settings);
-                  },
-                ),
-              ],
-            ),
-
-            // Backup & Cloud Settings
-            SettingsSectionHeader(title: "settings.backup_cloud".tr()),
-            SettingsCard(
-              children: [
-                // Cloud Backup Toggle
-                SettingsSwitchTile(
-                  icon: Icons.cloud_upload,
-                  iconColor: Colors.cyan,
-                  title: "settings.cloud_backup".tr(),
-                  subtitle: _isCloudAvailable
-                      ? (settings.cloudBackupEnabled
-                          ? "settings.cloud_backup_on".tr()
-                          : "settings.cloud_backup_off".tr())
-                      : "settings.cloud_not_available".tr(),
-                  value: _isCloudAvailable && settings.cloudBackupEnabled,
-                  onChanged: (value) {
-                    ref.read(settingsProvider.notifier).toggleCloudBackup();
-                    if (value) {
-                      _showCloudServiceSelector(context);
-                    }
-                  },
-                ),
-
-                SettingsDivider(),
-
-                // Backup Now
-                SettingsNavigationTile(
-                  icon: Icons.backup,
-                  iconColor: Colors.teal,
-                  title: "settings.backup_now".tr(),
-                  subtitle: "settings.backup_now_desc".tr(),
-                  onTap: () {
-                    settings.cloudBackupEnabled && _isCloudAvailable
-                        ? _performBackup(context)
-                        : null;
-                  },
-                ),
-
-                SettingsDivider(),
-
-                // Restore from Backup
-                SettingsNavigationTile(
-                  icon: Icons.restore,
-                  iconColor: Colors.deepPurple,
-                  title: "settings.restore".tr(),
-                  subtitle: "settings.restore_desc".tr(),
-                  onTap: () {
-                    settings.cloudBackupEnabled && _isCloudAvailable
-                        ? () {
-                            _showRestoreConfirmation(context);
-                          }
-                        : null;
+                    AppRoutes.navigateToBackupSettings(context);
                   },
                 ),
               ],
@@ -511,229 +441,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         },
       ),
     );
-  }
-
-  void _showSaveLocationPicker(
-      BuildContext context, WidgetRef ref, AppSettings settings) {
-    // Show a folder picker dialog
-    // For now, we'll just show some options
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.all(24.r),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "settings.select_save_location".tr(),
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            ListTile(
-              leading: Icon(Icons.folder),
-              title: Text("Documents"),
-              onTap: () {
-                Navigator.pop(context);
-                ref
-                    .read(settingsProvider.notifier)
-                    .setDefaultSaveLocation("Documents");
-                AppDialogs.showSnackBar(context,
-                    message: "settings.save_location_set".tr(),
-                    type: SnackBarType.success);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.folder),
-              title: Text("Easy Scan"),
-              onTap: () {
-                Navigator.pop(context);
-                ref
-                    .read(settingsProvider.notifier)
-                    .setDefaultSaveLocation("Easy Scan");
-                AppDialogs.showSnackBar(context,
-                    message: "settings.save_location_set".tr(),
-                    type: SnackBarType.success);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.create_new_folder_outlined),
-              title: Text("settings.create_new_folder".tr()),
-              onTap: () {
-                Navigator.pop(context);
-                _showNewFolderDialog(context, ref);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showNewFolderDialog(BuildContext context, WidgetRef ref) {
-    final TextEditingController controller = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("settings.create_new_folder".tr()),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: "settings.folder_name".tr(),
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("common.cancel".tr()),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.text.isNotEmpty) {
-                Navigator.pop(context);
-                ref
-                    .read(settingsProvider.notifier)
-                    .setDefaultSaveLocation(controller.text);
-                AppDialogs.showSnackBar(context,
-                    message: "settings.folder_created".tr(),
-                    type: SnackBarType.success);
-              }
-            },
-            child: Text("common.create".tr()),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showCloudServiceSelector(BuildContext context) {
-    // Would show available cloud services
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.all(24.r),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "settings.select_cloud_service".tr(),
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            ListTile(
-              leading: Icon(Icons.cloud, color: Colors.blue),
-              title: Text("Google Drive"),
-              onTap: () {
-                Navigator.pop(context);
-                AppDialogs.showSnackBar(context,
-                    message: "Connected to Google Drive",
-                    type: SnackBarType.success);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.cloud, color: Colors.lightBlue),
-              title: Text("Dropbox"),
-              onTap: () {
-                Navigator.pop(context);
-                AppDialogs.showSnackBar(context,
-                    message: "Connected to Dropbox",
-                    type: SnackBarType.success);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.cloud, color: Colors.grey),
-              title: Text("OneDrive"),
-              onTap: () {
-                Navigator.pop(context);
-                AppDialogs.showSnackBar(context,
-                    message: "Connected to OneDrive",
-                    type: SnackBarType.success);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _performBackup(BuildContext context) {
-    // Show a loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16.h),
-            Text("settings.backing_up".tr()),
-          ],
-        ),
-      ),
-    );
-
-    // Simulate backup
-    Future.delayed(Duration(seconds: 2), () {
-      Navigator.pop(context); // Close dialog
-      AppDialogs.showSnackBar(context,
-          message: "settings.backup_complete".tr(), type: SnackBarType.success);
-    });
-  }
-
-  void _showRestoreConfirmation(BuildContext context) {
-    AppDialogs.showConfirmDialog(
-      context,
-      title: "settings.restore_confirm_title".tr(),
-      message: "settings.restore_confirm_message".tr(),
-      confirmText: "settings.restore".tr(),
-      cancelText: "common.cancel".tr(),
-    ).then((confirmed) {
-      if (confirmed) {
-        _performRestore(context);
-      }
-    });
-  }
-
-  void _performRestore(BuildContext context) {
-    // Show a loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16.h),
-            Text("settings.restoring".tr()),
-          ],
-        ),
-      ),
-    );
-
-    // Simulate restore
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pop(context); // Close dialog
-      AppDialogs.showSnackBar(context,
-          message: "settings.restore_complete".tr(),
-          type: SnackBarType.success);
-    });
   }
 
   void _showHelpOptions(BuildContext context) {

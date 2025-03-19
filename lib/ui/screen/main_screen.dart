@@ -39,7 +39,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   // Updated to include 5 labels with Scan in the middle
   final _labelList = <String>[
-    'labels.hme'.tr(),
+    'labels.home'.tr(),
     'labels.folders'.tr(),
     'labels.scan'.tr(),
     'labels.convert'.tr(),

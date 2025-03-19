@@ -1,14 +1,16 @@
 import 'dart:io';
+import 'package:scanpro/main.dart';
+import 'package:scanpro/models/app_settings.dart';
+import 'package:scanpro/models/backup_settings.dart';
+import 'package:scanpro/models/language.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
-import 'package:scanpro/models/backup_settings.dart';
+import 'package:scanpro/services/backup_destination_adapter.dart';
 import '../models/document.dart';
 import '../models/folder.dart';
-import '../models/app_settings.dart';
 import '../utils/constants.dart';
 
 class StorageService {
-  /// Initialize the storage and required boxes
   Future<void> initialize() async {
     try {
       // Initialize Hive
@@ -27,30 +29,28 @@ class StorageService {
       Hive.registerAdapter(DocumentAdapter());
       Hive.registerAdapter(FolderAdapter());
       Hive.registerAdapter(AppSettingsAdapter());
+      Hive.registerAdapter(LanguageAdapter()); // Add this line
       Hive.registerAdapter(BackupSettingsAdapter());
-
+      Hive.registerAdapter(BackupDestinationAdapter());
       // Open boxes
       await Hive.openBox<Document>(AppConstants.documentsBoxName);
       await Hive.openBox<Folder>(AppConstants.foldersBoxName);
       await Hive.openBox(AppConstants.settingsBoxName);
+      await Hive.openBox<Language>(AppConstants.settingsBoxLanguages);
       await Hive.openBox(AppConstants.backupSettingsBoxName);
-
       // Create documents directory if it doesn't exist
       final Directory documentsDir = Directory('${appDocDir.path}/documents');
       if (!await documentsDir.exists()) {
         await documentsDir.create(recursive: true);
       }
-
-      // Create backups directory if it doesn't exist
       final Directory backupsDir = Directory('${appDocDir.path}/backups');
       if (!await backupsDir.exists()) {
         await backupsDir.create(recursive: true);
       }
-
-      print(
+      logger.info(
           'Storage initialized successfully. Documents directory: ${documentsDir.path}');
     } catch (e) {
-      print('Error initializing storage: $e');
+      logger.error('Error initializing storage: $e');
       rethrow;
     }
   }
@@ -71,16 +71,45 @@ class StorageService {
     }
   }
 
+  Future<String> getBackupsPath() async {
+    final appDocDir = await getApplicationDocumentsDirectory();
+    return '${appDocDir.path}/backups';
+  }
+
+  Future<BackupSettings> getBackupSettings() async {
+    try {
+      final box = Hive.box(AppConstants.backupSettingsBoxName);
+      final settings = box.get(AppConstants.backupSettingsKey);
+
+      if (settings != null) {
+        return settings as BackupSettings;
+      }
+
+      // Create default settings if not exists
+      final defaultSettings = BackupSettings();
+      await box.put(AppConstants.backupSettingsKey, defaultSettings);
+
+      return defaultSettings;
+    } catch (e) {
+      logger.error('Error getting backup settings: $e');
+      return BackupSettings(); // Return default settings
+    }
+  }
+
+  /// Save backup settings
+  Future<void> saveBackupSettings(BackupSettings settings) async {
+    try {
+      final box = Hive.box(AppConstants.backupSettingsBoxName);
+      await box.put(AppConstants.backupSettingsKey, settings);
+    } catch (e) {
+      logger.error('Error saving backup settings: $e');
+    }
+  }
+
   /// Get documents directory path
   Future<String> getDocumentsPath() async {
     final appDocDir = await getApplicationDocumentsDirectory();
     return '${appDocDir.path}/documents';
-  }
-
-  /// Get backups directory path
-  Future<String> getBackupsPath() async {
-    final appDocDir = await getApplicationDocumentsDirectory();
-    return '${appDocDir.path}/backups';
   }
 
   /// Get available storage space in MB
@@ -129,37 +158,6 @@ class StorageService {
       return true;
     } catch (e) {
       return false;
-    }
-  }
-
-  /// Get or create backup settings
-  Future<BackupSettings> getBackupSettings() async {
-    try {
-      final box = Hive.box(AppConstants.backupSettingsBoxName);
-      final settings = box.get(AppConstants.backupSettingsKey);
-
-      if (settings != null) {
-        return settings as BackupSettings;
-      }
-
-      // Create default settings if not exists
-      final defaultSettings = BackupSettings();
-      await box.put(AppConstants.backupSettingsKey, defaultSettings);
-
-      return defaultSettings;
-    } catch (e) {
-      print('Error getting backup settings: $e');
-      return BackupSettings(); // Return default settings
-    }
-  }
-
-  /// Save backup settings
-  Future<void> saveBackupSettings(BackupSettings settings) async {
-    try {
-      final box = Hive.box(AppConstants.backupSettingsBoxName);
-      await box.put(AppConstants.backupSettingsKey, settings);
-    } catch (e) {
-      print('Error saving backup settings: $e');
     }
   }
 }

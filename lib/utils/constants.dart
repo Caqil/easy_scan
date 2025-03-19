@@ -3,6 +3,7 @@ class AppConstants {
   static const String documentsBoxName = 'documents';
   static const String foldersBoxName = 'folders';
   static const String settingsBoxName = 'settings';
+  static const String settingsBoxLanguages = 'languages';
   static const String backupSettingsBoxName = 'backup_settings';
 
   // Hive keys

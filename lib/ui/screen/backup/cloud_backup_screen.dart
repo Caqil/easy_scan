@@ -57,8 +57,6 @@ class _CloudBackupScreenState extends ConsumerState<CloudBackupScreen> {
     switch (widget.backupDestination) {
       case BackupDestination.googleDrive:
         return 'Google Drive';
-      case BackupDestination.iCloud:
-        return 'iCloud';
       case BackupDestination.local:
         return 'backup.local_storage'.tr();
     }
@@ -354,12 +352,9 @@ class _CloudBackupScreenState extends ConsumerState<CloudBackupScreen> {
     switch (widget.backupDestination) {
       case BackupDestination.googleDrive:
         return Icons.drive_folder_upload;
-      case BackupDestination.iCloud:
-        return Icons.cloud;
       case BackupDestination.local:
         return Icons.smartphone;
     }
-    return null;
   }
 
   Future<void> _createBackup() async {

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'package:http/http.dart' as http;
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
@@ -12,9 +11,10 @@ import 'package:scanpro/models/document.dart';
 import 'package:scanpro/models/folder.dart';
 import 'package:scanpro/utils/constants.dart';
 import 'package:scanpro/utils/file_utils.dart';
+import 'package:scanpro/utils/local_storage_manager.dart';
 
 // Backup Types
-enum BackupDestination { googleDrive, iCloud, local }
+enum BackupDestination { googleDrive, local }
 
 class BackupService {
   // Static keys for backup files
@@ -30,17 +30,13 @@ class BackupService {
       'https://www.googleapis.com/auth/drive.file',
     ],
   );
-
-// Update this method in your BackupService class to make context optional
   Future<String> createBackup({
     required BackupDestination destination,
-    BuildContext? context, // Make context optional
+    BuildContext? context,
     Function(double)? onProgress,
   }) async {
     try {
       onProgress?.call(0.05);
-
-      // 1. Create temp directory for backup files
       final tempDir = await getTemporaryDirectory();
       final backupDir = Directory('${tempDir.path}/backup');
 
@@ -50,33 +46,27 @@ class BackupService {
       await backupDir.create(recursive: true);
 
       onProgress?.call(0.1);
-
-      // 2. Export Hive boxes to files
       await _exportHiveBoxes(backupDir.path, onProgress);
-
       onProgress?.call(0.5);
 
-      // 3. Create backup metadata
       final metadata = await _createBackupMetadata();
       final metadataFile = File('${backupDir.path}/$_backupMetadataFileName');
       await metadataFile.writeAsString(jsonEncode(metadata));
 
+      final settingsBox = Hive.box(AppConstants.settingsBoxName);
+      debugPrint('Settings box before backup: ${settingsBox.toMap()}');
+      final appSettings = settingsBox.get('app_settings');
+      debugPrint('AppSettings instance: $appSettings');
+
       onProgress?.call(0.6);
-
-      // 4. Zip all files into a single backup file
       final backupFilePath = await _createBackupZip(backupDir.path);
-
       onProgress?.call(0.7);
 
-      // 5. Upload to selected destination
       String resultMessage;
       switch (destination) {
         case BackupDestination.googleDrive:
           resultMessage =
               await _uploadToGoogleDrive(backupFilePath, onProgress);
-          break;
-        case BackupDestination.iCloud:
-          resultMessage = await _uploadToICloud(backupFilePath, onProgress);
           break;
         case BackupDestination.local:
           resultMessage = await _saveToLocalStorage(backupFilePath, onProgress);
@@ -108,9 +98,7 @@ class BackupService {
           backupFilePath =
               await _downloadFromGoogleDrive(backupId!, onProgress);
           break;
-        case BackupDestination.iCloud:
-          backupFilePath = await _downloadFromICloud(backupId!, onProgress);
-          break;
+
         case BackupDestination.local:
           backupFilePath = await _getFromLocalStorage(onProgress);
           break;
@@ -168,8 +156,6 @@ class BackupService {
       switch (source) {
         case BackupDestination.googleDrive:
           return await _getGoogleDriveBackups();
-        case BackupDestination.iCloud:
-          return await _getICloudBackups();
         case BackupDestination.local:
           return await _getLocalBackups();
       }
@@ -292,7 +278,7 @@ class BackupService {
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final zipPath = '${appDir.path}/easy_scan_backup_$timestamp.zip';
+      final zipPath = '${appDir.path}/scanpro_backup_$timestamp.zip';
 
       // Create file paths to include in the backup
       final docsBox = Hive.box<Document>(AppConstants.documentsBoxName);
@@ -638,196 +624,53 @@ class BackupService {
     }
   }
 
-  // ICLOUD IMPLEMENTATIONS
-
-  // Upload backup to iCloud
-  Future<String> _uploadToICloud(
-      String backupFilePath, Function(double)? onProgress) async {
-    // This implementation would use the iCloud storage sync plugin
-    // For now, we'll use a placeholder implementation
-
-    try {
-      onProgress?.call(0.75);
-
-      // In a real implementation, you would use something like:
-      // final result = await IcloudStorageSync().uploadFileToICloud(
-      //   sourcePath: backupFilePath,
-      //   destinationName: path.basename(backupFilePath),
-      // );
-
-      await Future.delayed(const Duration(seconds: 1)); // Simulated upload time
-
-      onProgress?.call(0.95);
-
-      return 'Backup uploaded to iCloud: ${path.basename(backupFilePath)}';
-    } catch (e) {
-      debugPrint('Error uploading to iCloud: $e');
-      rethrow;
-    }
-  }
-
-  // Download backup from iCloud
-  Future<String> _downloadFromICloud(
-      String fileName, Function(double)? onProgress) async {
-    // This implementation would use the iCloud storage sync plugin
-    // For now, we'll use a placeholder implementation
-
-    try {
-      onProgress?.call(0.15);
-
-      final tempDir = await getTemporaryDirectory();
-      final localPath = '${tempDir.path}/$fileName';
-
-      // In a real implementation, you would use something like:
-      // final success = await IcloudStorageSync().downloadFileFromICloud(
-      //   documentURL: fileName,
-      //   destinationPath: localPath,
-      // );
-
-      await Future.delayed(
-          const Duration(seconds: 1)); // Simulated download time
-
-      // Create placeholder file
-      final file = File(localPath);
-      await file.writeAsString('iCloud backup placeholder');
-
-      onProgress?.call(0.25);
-
-      return localPath;
-    } catch (e) {
-      debugPrint('Error downloading from iCloud: $e');
-      rethrow;
-    }
-  }
-
-  // Get available backups from iCloud
-  Future<List<Map<String, dynamic>>> _getICloudBackups() async {
-    // This implementation would use the iCloud storage sync plugin
-    // For now, we'll return a placeholder list
-
-    try {
-      // In a real implementation, you would use something like:
-      // final files = await IcloudStorageSync().listAllFiles() ?? [];
-      // final backups = files.where((path) => path.contains('EasyScan_Backup')).toList();
-
-      // Return placeholder data
-      return [
-        {
-          'id': 'placeholder_1',
-          'name': 'EasyScan_Backup_Placeholder_1.zip',
-          'date': DateTime.now().subtract(const Duration(days: 1)).toString(),
-          'size': '2.5 MB',
-        },
-        {
-          'id': 'placeholder_2',
-          'name': 'EasyScan_Backup_Placeholder_2.zip',
-          'date': DateTime.now().subtract(const Duration(days: 7)).toString(),
-          'size': '3.1 MB',
-        },
-      ];
-    } catch (e) {
-      debugPrint('Error getting iCloud backups: $e');
-      return [];
-    }
-  }
-
-  // LOCAL STORAGE IMPLEMENTATIONS
-
-  // Save backup to local storage
+  /// Save backup to local storage
   Future<String> _saveToLocalStorage(
       String backupFilePath, Function(double)? onProgress) async {
     try {
       onProgress?.call(0.75);
 
-      final appDir = await getApplicationDocumentsDirectory();
-      final backupsDir = Directory('${appDir.path}/backups');
-
-      if (!await backupsDir.exists()) {
-        await backupsDir.create(recursive: true);
-      }
-
-      final fileName = path.basename(backupFilePath);
-      final targetPath = '${backupsDir.path}/$fileName';
-
-      await File(backupFilePath).copy(targetPath);
+      // Use the LocalBackupManager to save the file
+      final localManager = LocalBackupManager();
+      final targetPath = await localManager.saveBackupToLocal(backupFilePath);
 
       onProgress?.call(0.95);
 
-      return 'Backup saved to local storage: $fileName';
+      return 'Backup saved to local storage: ${path.basename(targetPath)}';
     } catch (e) {
       debugPrint('Error saving to local storage: $e');
       rethrow;
     }
   }
 
-  // Get backup from local storage
+  /// Get backup from local storage
   Future<String> _getFromLocalStorage(Function(double)? onProgress) async {
     try {
       onProgress?.call(0.1);
 
-      // Show file picker to select backup file
-      // In a real implementation, you would use a plugin like file_picker
-      // For now, we'll use a placeholder implementation
+      // Use the LocalBackupManager to pick a backup file
+      final localManager = LocalBackupManager();
+      final filePath = await localManager.pickBackupFile();
 
-      final appDir = await getApplicationDocumentsDirectory();
-      final backupsDir = Directory('${appDir.path}/backups');
-
-      if (!await backupsDir.exists()) {
-        throw Exception('No backups found in local storage');
+      // Verify it's a valid backup file
+      if (!path.basename(filePath).startsWith(AppConstants.backupFilePrefix)) {
+        throw Exception('The selected file is not a valid EasyScan backup');
       }
 
-      final files = await backupsDir.list().toList();
-      final backupFiles = files
-          .whereType<File>()
-          .where((file) => path.basename(file.path).contains('EasyScan_Backup'))
-          .toList();
-
-      if (backupFiles.isEmpty) {
-        throw Exception('No backups found in local storage');
-      }
-
-      // Sort by name descending (newest first assuming timestamp in name)
-      backupFiles.sort(
-          (a, b) => path.basename(b.path).compareTo(path.basename(a.path)));
-
-      // Return the path of the most recent backup
       onProgress?.call(0.2);
-      return backupFiles.first.path;
+      return filePath;
     } catch (e) {
       debugPrint('Error getting from local storage: $e');
       rethrow;
     }
   }
 
-  // Get available backups from local storage
+  /// Get available backups from local storage
   Future<List<Map<String, dynamic>>> _getLocalBackups() async {
     try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final backupsDir = Directory('${appDir.path}/backups');
-
-      if (!await backupsDir.exists()) {
-        return [];
-      }
-
-      final files = await backupsDir.list().toList();
-      final backupFiles = files
-          .whereType<File>()
-          .where((file) => path.basename(file.path).contains('EasyScan_Backup'))
-          .toList();
-
-      // Sort by name descending (newest first assuming timestamp in name)
-      backupFiles.sort(
-          (a, b) => path.basename(b.path).compareTo(path.basename(a.path)));
-
-      return await Future.wait(backupFiles.map((file) async {
-        final stat = await file.stat();
-        return {
-          'id': file.path,
-          'name': path.basename(file.path),
-          'date': stat.modified.toString(),
-          'size': FileUtils.formatFileSize(stat.size),
-        };
-      }));
+      // Use the LocalBackupManager to list backups
+      final localManager = LocalBackupManager();
+      return await localManager.listLocalBackups();
     } catch (e) {
       debugPrint('Error getting local backups: $e');
       return [];

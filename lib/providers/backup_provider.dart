@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:scanpro/services/backup_service.dart';
+import 'package:scanpro/utils/constants.dart';
 import '../services/backup_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // State class for backup operations
 class BackupState {
@@ -55,34 +58,31 @@ class BackupNotifier extends StateNotifier<BackupState> {
     // Load last backup date on initialization
     _loadLastBackupDate();
   }
-
-  // Load last backup date from persistent storage
   Future<void> _loadLastBackupDate() async {
     try {
-      // In a real implementation, you would load this from shared preferences
-      // For now, we'll use a placeholder
-      // final prefs = await SharedPreferences.getInstance();
-      // final lastBackupTimestamp = prefs.getInt('last_backup_timestamp');
-      // if (lastBackupTimestamp != null) {
-      //   state = state.copyWith(
-      //     lastBackupDate: DateTime.fromMillisecondsSinceEpoch(lastBackupTimestamp),
-      //   );
-      // }
+      final settingsBox = Hive.box(AppConstants.settingsBoxName);
+      final lastBackupTimestamp =
+          settingsBox.get('last_backup_timestamp') as int?;
+      if (lastBackupTimestamp != null) {
+        state = state.copyWith(
+          lastBackupDate:
+              DateTime.fromMillisecondsSinceEpoch(lastBackupTimestamp),
+        );
+      }
     } catch (e) {
-      debugPrint('Error loading last backup date: $e');
+      debugPrint('Error loading last backup date from Hive: $e');
     }
   }
 
-  // Save last backup date to persistent storage
+  // Save last backup date to Hive
   Future<void> _saveLastBackupDate(DateTime date) async {
     try {
-      // In a real implementation, you would save this to shared preferences
-      // For now, we'll use a placeholder
-      // final prefs = await SharedPreferences.getInstance();
-      // await prefs.setInt('last_backup_timestamp', date.millisecondsSinceEpoch);
+      final settingsBox = Hive.box(AppConstants.settingsBoxName);
+      await settingsBox.put(
+          'last_backup_timestamp', date.millisecondsSinceEpoch);
       state = state.copyWith(lastBackupDate: date);
     } catch (e) {
-      debugPrint('Error saving last backup date: $e');
+      debugPrint('Error saving last backup date to Hive: $e');
     }
   }
 
@@ -166,8 +166,7 @@ class BackupNotifier extends StateNotifier<BackupState> {
   }
 
   // Load available backups
-  Future<void> loadAvailableBackups(
-      BackupDestination source) async {
+  Future<void> loadAvailableBackups(BackupDestination source) async {
     try {
       state = state.copyWith(clearMessages: true);
 
@@ -186,8 +185,6 @@ class BackupNotifier extends StateNotifier<BackupState> {
     switch (destination) {
       case BackupDestination.googleDrive:
         return Platform.isAndroid || Platform.isIOS;
-      case BackupDestination.iCloud:
-        return Platform.isIOS;
       case BackupDestination.local:
         return true;
     }

@@ -34,7 +34,7 @@ class BackupDialogs {
   static Future<void> showBackupSuccessDialog(
     BuildContext context,
     String message,
-   BackupDestination destination,
+    BackupDestination destination,
   ) async {
     return showDialog(
       context: context,
@@ -95,8 +95,7 @@ class _QuickBackupBottomSheet extends ConsumerStatefulWidget {
 
 class _QuickBackupBottomSheetState
     extends ConsumerState<_QuickBackupBottomSheet> {
- BackupDestination _selectedDestination =
-     BackupDestination.local;
+  BackupDestination _selectedDestination = BackupDestination.local;
   bool _isBackingUp = false;
   double _progress = 0.0;
 
@@ -104,18 +103,11 @@ class _QuickBackupBottomSheetState
   void initState() {
     super.initState();
 
-    // Set initial destination based on platform
-    if (Platform.isIOS) {
-      _selectedDestination = BackupDestination.iCloud;
-    } else if (Platform.isAndroid) {
-      _selectedDestination =BackupDestination.googleDrive;
-    }
+    _selectedDestination = BackupDestination.googleDrive;
   }
 
   @override
   Widget build(BuildContext context) {
-    final backupState = ref.watch(backupProvider);
-
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -273,12 +265,6 @@ class _QuickBackupBottomSheetState
 
     return Column(
       children: [
-        if (isIOS)
-          _buildDestinationOption(
-            title: 'iCloud',
-            icon: Icons.cloud,
-            destination: BackupDestination.iCloud,
-          ),
         if (isAndroid || isIOS)
           _buildDestinationOption(
             title: 'Google Drive',
@@ -438,8 +424,7 @@ class _AutoBackupSettingsDialogState
     extends ConsumerState<_AutoBackupSettingsDialog> {
   bool _autoBackupEnabled = false;
   String _autoBackupFrequency = 'weekly';
-BackupDestination _autoBackupDestination =
-     BackupDestination.local;
+  BackupDestination _autoBackupDestination = BackupDestination.local;
 
   @override
   void initState() {
@@ -449,13 +434,7 @@ BackupDestination _autoBackupDestination =
     // For now, we'll use placeholder values
     _autoBackupEnabled = false;
     _autoBackupFrequency = 'weekly';
-
-    // Set initial destination based on platform
-    if (Platform.isIOS) {
-      _autoBackupDestination = BackupDestination.iCloud;
-    } else if (Platform.isAndroid) {
-      _autoBackupDestination = BackupDestination.googleDrive;
-    }
+    _autoBackupDestination = BackupDestination.googleDrive;
   }
 
   @override
@@ -554,18 +533,6 @@ BackupDestination _autoBackupDestination =
 
     return Column(
       children: [
-        if (isIOS)
-          RadioListTile<BackupDestination>(
-            title: const Text('iCloud'),
-            value: BackupDestination.iCloud,
-            groupValue: _autoBackupDestination,
-            onChanged: (value) {
-              setState(() {
-                _autoBackupDestination = value!;
-              });
-            },
-            activeColor: Theme.of(context).primaryColor,
-          ),
         if (isAndroid || isIOS)
           RadioListTile<BackupDestination>(
             title: const Text('Google Drive'),
@@ -696,8 +663,6 @@ class _BackupResultDialog extends StatelessWidget {
     switch (destination) {
       case BackupDestination.googleDrive:
         return 'backup.saved_to_gdrive'.tr();
-      case BackupDestination.iCloud:
-        return 'backup.saved_to_icloud'.tr();
       case BackupDestination.local:
         return 'backup.saved_to_local'.tr();
       default:

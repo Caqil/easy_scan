@@ -26,13 +26,7 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-
-    // Check which platforms are supported and set initial destination
-    if (Platform.isIOS) {
-      _selectedDestination = BackupDestination.iCloud;
-    } else if (Platform.isAndroid) {
-      _selectedDestination = BackupDestination.googleDrive;
-    }
+    _selectedDestination = BackupDestination.local;
 
     // Load available backups
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -54,7 +48,10 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen>
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text('backup.title'.tr()),
+        title: Text(
+          'backup.title'.tr(),
+          style: GoogleFonts.lilitaOne(fontSize: 25.sp),
+        ),
       ),
       body: Column(
         children: [
@@ -200,7 +197,7 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen>
                 ? null
                 : () => _createBackup(),
             icon: const Icon(Icons.backup),
-            label: Text('backup.create_backup'.tr()),
+            label: Text('backup.backup_now'.tr()),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
               shape: RoundedRectangleBorder(
@@ -223,7 +220,7 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'backup.restore_source'.tr(),
+                'backup.restore'.tr(),
                 style: GoogleFonts.notoSerif(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
@@ -239,7 +236,7 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen>
                         .read(backupProvider.notifier)
                         .loadAvailableBackups(_selectedDestination),
                 icon: const Icon(Icons.refresh),
-                label: Text('backup.refresh_list'.tr()),
+                label: Text('backup.refresh'.tr()),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 40),
                 ),
@@ -324,13 +321,6 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen>
 
     return Column(
       children: [
-        if (isIOS)
-          _buildDestinationOption(
-            icon: Icons.cloud,
-            title: 'iCloud',
-            subtitle: 'backup.icloud_description'.tr(),
-            destination: BackupDestination.iCloud,
-          ),
         if (isAndroid || isIOS)
           _buildDestinationOption(
             icon: Icons.drive_folder_upload,
@@ -523,7 +513,7 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen>
               _tabController.animateTo(0); // Switch to backup tab
             },
             icon: const Icon(Icons.add),
-            label: Text('backup.create_backup'.tr()),
+            label: Text('backup.backup_now'.tr()),
           ),
         ],
       ),

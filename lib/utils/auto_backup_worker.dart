@@ -85,8 +85,6 @@ class AutoBackupWorker {
     switch (destination) {
       case BackupDestination.googleDrive:
         return Platform.isAndroid || Platform.isIOS;
-      case BackupDestination.iCloud:
-        return Platform.isIOS;
       case BackupDestination.local:
         return true;
     }
