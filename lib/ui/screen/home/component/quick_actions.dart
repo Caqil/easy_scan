@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scanpro/config/subscription_navigator.dart';
 import 'package:scanpro/ui/screen/premium/components/premium_banner.dart';
 import 'package:scanpro/ui/screen/premium/premium_screen.dart';
 
@@ -36,12 +37,7 @@ class QuickActions extends ConsumerWidget {
           SizedBox(height: 10.h),
           PremiumBanner(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PremiumScreen(),
-                ),
-              );
+             SubscriptionNavigator.openPremiumScreen(context);
             },
           ),
           SizedBox(height: 10.h),

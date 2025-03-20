@@ -1,188 +1,487 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:scanpro/main.dart';
 import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
-
-import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/ui/screen/premium/components/premium_feature_item.dart';
 
 class PremiumScreen extends ConsumerStatefulWidget {
   const PremiumScreen({Key? key}) : super(key: key);
 
   @override
-  _PremiumScreenState createState() => _PremiumScreenState();
+  ConsumerState<PremiumScreen> createState() => _PremiumScreenState();
 }
 
 class _PremiumScreenState extends ConsumerState<PremiumScreen> {
-  String _selectedPlan = 'monthly';
-  bool _isLoading = false;
-  List<Package> _packages = [];
-
-  // Premium features specific to the app
-  final List<Map<String, String>> _premiumFeatures = [
-    {
-      'icon': 'assets/icons/ocr.png',
-      'title': 'premium.advanced_ocr'.tr(),
-      'description': 'premium.advanced_ocr_desc'.tr(),
-    },
-    {
-      'icon': 'assets/icons/security.png',
-      'title': 'premium.enhanced_security'.tr(),
-      'description': 'premium.enhanced_security_desc'.tr(),
-    },
-    {
-      'icon': 'assets/icons/cloud.png',
-      'title': 'premium.cloud_sync'.tr(),
-      'description': 'premium.cloud_sync_desc'.tr(),
-    },
-    {
-      'icon': 'assets/icons/unlimited.png',
-      'title': 'premium.unlimited_scans'.tr(),
-      'description': 'premium.unlimited_scans_desc'.tr(),
-    },
-  ];
+  bool _isLoading = true;
+  bool _purchasing = false;
+  String? _selectedProductId;
+  List<ProductDetails> _products = [];
+  String _errorMessage = '';
+  bool _loadingProducts = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchPackages();
+    _loadProducts();
   }
 
-  Future<void> _fetchPackages() async {
-    try {
-      final subscriptionService = ref.read(subscriptionServiceProvider);
-      final packages = await subscriptionService.getSubscriptionPackages();
-
-      // Debug print to understand available packages
-      debugPrint('Available Packages:');
-      for (var pkg in packages) {
-        debugPrint(
-            'Package Type: ${pkg.packageType}, Identifier: ${pkg.identifier}');
-      }
-
-      setState(() {
-        _packages = packages;
-      });
-    } catch (e) {
-      AppDialogs.showSnackBar(
-        context,
-        message: 'premium.packages_fetch_error'.tr(),
-        type: SnackBarType.error,
-      );
-    }
-  }
-
-  void _selectPlan(String plan) {
+  Future<void> _loadProducts() async {
     setState(() {
-      _selectedPlan = plan;
-    });
-  }
-
-  Future<void> _subscribe() async {
-    if (_packages.isEmpty) {
-      AppDialogs.showSnackBar(
-        context,
-        message: 'premium.no_packages'.tr(),
-        type: SnackBarType.error,
-      );
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
+      _loadingProducts = true;
+      _errorMessage = '';
     });
 
     try {
       final subscriptionService = ref.read(subscriptionServiceProvider);
+      final products = await subscriptionService.getSubscriptionPackages();
 
-      // Find the correct package based on selected plan
-      Package? selectedPackage;
-
-      // Check packages to find the correct one
-      for (var pkg in _packages) {
-        // Log package details for debugging
-        debugPrint(
-            'Checking package: ${pkg.packageType}, Identifier: ${pkg.identifier}');
-
-        // Logic to match the selected plan type
-        if (_selectedPlan == 'monthly' &&
-            (pkg.packageType == PackageType.monthly ||
-                pkg.identifier.toLowerCase().contains('monthly'))) {
-          selectedPackage = pkg;
-          break;
-        } else if (_selectedPlan == 'yearly' &&
-            (pkg.packageType == PackageType.annual ||
-                pkg.identifier.toLowerCase().contains('yearly'))) {
-          selectedPackage = pkg;
-          break;
-        }
-      }
-
-      // If no specific package found, fall back to first package
-      selectedPackage ??= _packages.first;
-
-      // Log selected package for debugging
-      debugPrint(
-          'Selected Package: ${selectedPackage.packageType}, Identifier: ${selectedPackage.identifier}');
-
-      // Attempt to purchase the selected package
-      await subscriptionService.purchasePackage(selectedPackage);
-
-      // Navigate away or show success
-      if (mounted) {
-        Navigator.of(context).pop();
-        AppDialogs.showSnackBar(
-          context,
-          message: 'premium.subscription_success'.tr(),
-          type: SnackBarType.success,
-        );
-      }
-    } catch (e) {
-      AppDialogs.showSnackBar(
-        context,
-        message: 'premium.subscription_failed'
-            .tr(namedArgs: {'error': e.toString()}),
-        type: SnackBarType.error,
-      );
-    } finally {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          _products = products;
+          _loadingProducts = false;
+
+          // Default select the monthly subscription if available
+          ProductDetails? monthlyProduct;
+
+          // Safely find the monthly product
+          for (var product in products) {
+            if (product.id == 'scanpro_premium_monthly') {
+              monthlyProduct = product;
+              break;
+            }
+          }
+
+          // Fallback to the first product if monthly not found
+          if (monthlyProduct == null && products.isNotEmpty) {
+            monthlyProduct = products.first;
+          }
+
+          if (monthlyProduct != null) {
+            _selectedProductId = monthlyProduct.id;
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _loadingProducts = false;
+          _errorMessage = 'subscription.load_error'.tr();
+          logger.error('Error loading products: $e');
         });
       }
     }
   }
 
-  Widget _buildPlanOption({
-    required String planType,
+  Future<void> _purchase() async {
+    if (_selectedProductId == null || _products.isEmpty) {
+      setState(() {
+        _errorMessage = 'subscription.select_plan'.tr();
+      });
+      return;
+    }
+
+    // Find the selected product safely
+    ProductDetails? selectedProduct;
+    for (var product in _products) {
+      if (product.id == _selectedProductId) {
+        selectedProduct = product;
+        break;
+      }
+    }
+
+    // If product not found, use the first one as fallback
+    if (selectedProduct == null && _products.isNotEmpty) {
+      selectedProduct = _products.first;
+    }
+
+    // Check if we have a product to purchase
+    if (selectedProduct == null) {
+      setState(() {
+        _errorMessage = 'subscription.no_product'.tr();
+      });
+      return;
+    }
+
+    setState(() {
+      _purchasing = true;
+      _errorMessage = '';
+    });
+
+    try {
+      final subscriptionService = ref.read(subscriptionServiceProvider);
+
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16.h),
+                Text('subscription.processing'.tr()),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      final success =
+          await subscriptionService.purchasePackage(selectedProduct);
+
+      // Close loading dialog
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      if (mounted) {
+        if (success) {
+          Navigator.of(context).pop(); // Close the premium screen
+          AppDialogs.showSnackBar(
+            context,
+            message: 'subscription.success'.tr(),
+            type: SnackBarType.success,
+          );
+        } else {
+          setState(() {
+            _errorMessage = 'subscription.failed'.tr();
+          });
+        }
+      }
+    } catch (e) {
+      // Close loading dialog if open
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      if (mounted) {
+        setState(() {
+          _errorMessage = _getErrorMessage(e);
+        });
+
+        AppDialogs.showSnackBar(
+          context,
+          message: _getErrorMessage(e),
+          type: SnackBarType.error,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _purchasing = false;
+        });
+      }
+    }
+  }
+
+  String _getErrorMessage(dynamic error) {
+    final errorString = error.toString().toLowerCase();
+
+    if (errorString.contains('cancel') ||
+        errorString.contains('user canceled')) {
+      return 'subscription.canceled'.tr();
+    } else if (errorString.contains('network')) {
+      return 'subscription.network_error'.tr();
+    } else if (errorString.contains('already purchased')) {
+      return 'subscription.already_purchased'.tr();
+    }
+
+    return 'subscription.error'.tr();
+  }
+
+  Future<void> _restorePurchases() async {
+    setState(() {
+      _purchasing = true;
+      _errorMessage = '';
+    });
+
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16.h),
+                Text('subscription.restoring'.tr()),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      final subscriptionService = ref.read(subscriptionServiceProvider);
+      final restored = await subscriptionService.restorePurchases();
+
+      // Close loading dialog
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      if (mounted) {
+        if (restored) {
+          Navigator.of(context).pop(); // Close premium screen if restored
+          AppDialogs.showSnackBar(
+            context,
+            message: 'subscription.restore_success'.tr(),
+            type: SnackBarType.success,
+          );
+        } else {
+          AppDialogs.showSnackBar(
+            context,
+            message: 'subscription.no_purchases'.tr(),
+            type: SnackBarType.warning,
+          );
+        }
+      }
+    } catch (e) {
+      // Close loading dialog if open
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'subscription.restore_error'.tr(),
+          type: SnackBarType.error,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _purchasing = false;
+        });
+      }
+    }
+  }
+
+  void _showTermsAndConditions() {
+    AppDialogs.showSnackBar(
+      context,
+      message: 'subscription.terms_info'.tr(),
+      type: SnackBarType.normal,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          'subscription.already_purchased'.tr(),
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: _loadingProducts
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // App Icon and Title
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 80.w,
+                          height: 80.w,
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          child: const Icon(
+                            Icons.document_scanner,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                        ),
+                        SizedBox(height: 20.h),
+                        Text(
+                          'subscription.main_title'.tr(),
+                          style: GoogleFonts.slabo27px(
+                            fontSize: 22.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          'subscription.subtitle'.tr(),
+                          style: GoogleFonts.slabo27px(
+                            fontSize: 14.sp,
+                            color: Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Free Access Option
+                  _buildOptionCard(
+                    title: 'subscription.free_option'.tr(),
+                    subtitle: 'subscription.free_desc'.tr(),
+                    selected: false,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+
+                  // Subscription options
+                  if (_products.isNotEmpty) ...[
+                    // Monthly Option
+                    _buildMonthlyOption(),
+
+                    // Yearly Option
+                    _buildYearlyOption(),
+                  ],
+
+                  if (_errorMessage.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.all(16.r),
+                      child: Text(
+                        _errorMessage,
+                        style: TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+
+                  Padding(
+                    padding: EdgeInsets.all(16.r),
+                    child: Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: _purchasing ? null : _purchase,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            minimumSize: Size(double.infinity, 50.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                          ),
+                          child: _purchasing
+                              ? SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                      color: Colors.white, strokeWidth: 2),
+                                )
+                              : Text(
+                                  'subscription.continue'.tr(),
+                                  style: GoogleFonts.slabo27px(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+
+                        SizedBox(height: 16.h),
+
+                        // Terms and Restore
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed:
+                                  _purchasing ? null : _showTermsAndConditions,
+                              child: Text(
+                                'subscription.terms'.tr(),
+                                style: GoogleFonts.slabo27px(
+                                  color: Colors.grey[600],
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              '•',
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                            TextButton(
+                              onPressed: _purchasing ? null : _restorePurchases,
+                              child: Text(
+                                'subscription.other_plans'.tr(),
+                                style: GoogleFonts.slabo27px(
+                                  color: Colors.grey[600],
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+    );
+  }
+
+  Widget _buildOptionCard({
     required String title,
-    required String details,
-    String? savings,
+    required String subtitle,
+    String? price,
+    String? label,
+    required bool selected,
+    required VoidCallback onTap,
   }) {
     return GestureDetector(
-      onTap: () => _selectPlan(planType),
+      onTap: onTap,
       child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
+          color: selected
+              ? Colors.blue.withOpacity(0.1)
+              : Colors.grey.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: _selectedPlan == planType
-                ? Theme.of(context).colorScheme.primary
-                : Colors.grey.shade300,
-            width: 2,
+            color: selected ? Colors.blue : Colors.grey.withOpacity(0.2),
+            width: selected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(12),
-          color: _selectedPlan == planType
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-              : Colors.white,
         ),
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         child: Row(
           children: [
-            if (_selectedPlan == planType)
-              Icon(Icons.check_circle,
-                  color: Theme.of(context).colorScheme.primary),
-            SizedBox(width: 16),
+            Container(
+              width: 24.w,
+              height: 24.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: selected ? Colors.blue : Colors.transparent,
+                border: selected ? null : Border.all(color: Colors.grey),
+              ),
+              child: selected
+                  ? const Icon(Icons.check, color: Colors.white, size: 16)
+                  : null,
+            ),
+            SizedBox(width: 12.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,229 +489,124 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                   Text(
                     title,
                     style: GoogleFonts.slabo27px(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.sp,
                     ),
                   ),
-                  Text(
-                    details,
-                    style: GoogleFonts.slabo27px(
-                      color: Colors.grey,
+                  if (subtitle.isNotEmpty)
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.slabo27px(
+                        color: Colors.grey[600],
+                        fontSize: 14.sp,
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
-            if (savings != null)
+            if (price != null)
               Text(
-                savings,
+                price,
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  fontSize: 16.sp,
                 ),
               ),
+            if (label != null) ...[
+              SizedBox(width: 8.w),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: Text(
+                  label,
+                  style: GoogleFonts.slabo27px(
+                    color: Colors.white,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('premium.title'.tr()),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Premium Features Section
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                child: Text(
-                  'premium.features_title'.tr(),
-                  style: GoogleFonts.slabo27px(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+  Widget _buildMonthlyOption() {
+    ProductDetails? monthlyProduct;
 
-              // Features List
-              ...(_premiumFeatures
-                  .map((feature) => _buildFeatureItem(feature))),
-
-              // Subscription Plans
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                child: Text(
-                  'premium.choose_plan'.tr(),
-                  style: GoogleFonts.slabo27px(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              // Monthly Plan
-              _buildPlanOption(
-                planType: 'monthly',
-                title: 'premium.monthly_plan'.tr(),
-                details: 'premium.monthly_plan_details'.tr(),
-              ),
-              SizedBox(height: 16),
-
-              // Yearly Plan
-              _buildPlanOption(
-                planType: 'yearly',
-                title: 'premium.yearly_plan'.tr(),
-                details: 'premium.yearly_plan_details'.tr(),
-                savings: 'premium.yearly_savings'.tr(),
-              ),
-
-              // Continue Button
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 24.h),
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _subscribe,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    minimumSize: Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                          'premium.continue'.tr(),
-                          style: GoogleFonts.slabo27px(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                ),
-              ),
-
-              // Additional Options
-              Padding(
-                padding: EdgeInsets.only(bottom: 16.h),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: () => _showTerms(),
-                      child: Text(
-                        'premium.terms'.tr(),
-                        style: GoogleFonts.slabo27px(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => _restorePurchases(),
-                      child: Text(
-                        'premium.restore'.tr(),
-                        style: GoogleFonts.slabo27px(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFeatureItem(Map<String, String> feature) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
-      child: Row(
-        children: [
-          Image.asset(
-            feature['icon']!,
-            width: 40.w,
-            height: 40.h,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  feature['title']!,
-                  style: GoogleFonts.slabo27px(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  feature['description']!,
-                  style: GoogleFonts.slabo27px(
-                    fontSize: 14.sp,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showTerms() {}
-
-  Future<void> _restorePurchases() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final subscriptionService = ref.read(subscriptionServiceProvider);
-      final restored = await subscriptionService.restorePurchases();
-
-      if (restored) {
-        if (mounted) {
-          AppDialogs.showSnackBar(
-            context,
-            message: 'premium.restore_success'.tr(),
-            type: SnackBarType.success,
-          );
-        }
-      } else {
-        if (mounted) {
-          AppDialogs.showSnackBar(
-            context,
-            message: 'premium.restore_failed'.tr(),
-            type: SnackBarType.error,
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        AppDialogs.showSnackBar(
-          context,
-          message:
-              'premium.restore_error'.tr(namedArgs: {'error': e.toString()}),
-          type: SnackBarType.error,
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+    // Safely find the monthly product
+    for (var product in _products) {
+      if (product.id == 'scanpro_premium_monthly') {
+        monthlyProduct = product;
+        break;
       }
     }
+
+    // Fallback to the first product if monthly not found
+    if (monthlyProduct == null && _products.isNotEmpty) {
+      monthlyProduct = _products.first;
+    }
+
+    // If we have no products at all, show a placeholder
+    if (monthlyProduct == null) {
+      return SizedBox.shrink();
+    }
+
+    return _buildOptionCard(
+      title: 'subscription.monthly_title'.tr(),
+      subtitle: 'subscription.monthly_desc'.tr(),
+      price: monthlyProduct.price,
+      label: 'subscription.most_popular'.tr(),
+      selected: _selectedProductId == monthlyProduct.id,
+      onTap: () {
+        setState(() {
+          _selectedProductId = monthlyProduct!.id;
+        });
+      },
+    );
+  }
+
+  Widget _buildYearlyOption() {
+    ProductDetails? yearlyProduct;
+    ProductDetails? alternativeProduct;
+
+    // Safely find products
+    for (var product in _products) {
+      if (product.id == 'scanpro_premium_yearly') {
+        yearlyProduct = product;
+      }
+
+      if (product.id != 'scanpro_premium_monthly' &&
+          alternativeProduct == null) {
+        alternativeProduct = product;
+      }
+    }
+
+    // Use yearly if found, otherwise use alternative, or the last product
+    final selectedProduct = yearlyProduct ??
+        alternativeProduct ??
+        (_products.isNotEmpty ? _products.last : null);
+
+    // If we have no products at all, show a placeholder
+    if (selectedProduct == null) {
+      return SizedBox.shrink();
+    }
+
+    return _buildOptionCard(
+      title: 'subscription.yearly_title'.tr(),
+      subtitle: 'subscription.yearly_desc'.tr(),
+      price: selectedProduct.price,
+      selected: _selectedProductId == selectedProduct.id,
+      onTap: () {
+        setState(() {
+          _selectedProductId = selectedProduct.id;
+        });
+      },
+    );
   }
 }

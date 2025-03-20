@@ -6,24 +6,24 @@ class PremiumBanner extends StatelessWidget {
   final VoidCallback onTap;
 
   const PremiumBanner({
-    Key? key,
+    super.key,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 4.h),
-        padding: EdgeInsets.all(12.r),
+        margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
-              Color(0xFFF8A1C4), // Pink color
-              Color(0xFFFFC107), // Orange color
+              Color(0xFF2196F3), // Blue
+              Color(0xFF673AB7), // Purple
             ],
           ),
           borderRadius: BorderRadius.circular(16.r),
@@ -52,19 +52,19 @@ class PremiumBanner extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    'Get Premium with a 3-day free trial',
+                    'Get Premium with a 7-day free trial',
                     style: GoogleFonts.slabo27px(
                       fontSize: 12.sp,
-                      color: Colors.white70,
+                      color: Colors.white.withOpacity(0.8),
                     ),
                   ),
                   SizedBox(height: 8.h),
-                  // Play Now button
+                  // Try Now button
                   Container(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 3.h),
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF6A3EA1), // Purple button color
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Text(
@@ -72,34 +72,28 @@ class PremiumBanner extends StatelessWidget {
                       style: GoogleFonts.slabo27px(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: const Color(0xFF673AB7),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            // Candy graphics
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Image.asset(
-                  'assets/icons/document.png', // Replace with your candy star asset
-                  width: 60.w,
-                  height: 60.h,
-                  fit: BoxFit.contain,
+            // Icon
+            Container(
+              width: 60.w,
+              height: 60.w,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white24,
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                  size: 36.r,
                 ),
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Image.asset(
-                    'assets/images/candy_circle.png', // Replace with your candy circle asset
-                    width: 40.w,
-                    height: 40.h,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),

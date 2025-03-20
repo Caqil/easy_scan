@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:scanpro/app.dart';
 import 'package:scanpro/services/logger_service.dart';
+import 'package:scanpro/services/subscription_service.dart';
 import 'services/storage_service.dart';
 import 'firebase_options.dart';
 
@@ -32,6 +33,13 @@ void main() async {
     logger.info(
         'Starting app with saved locale: ${initialLocale.languageCode}_${initialLocale.countryCode}');
   }
+  final container = ProviderContainer();
+
+  // Initialize subscription service
+  await container.read(subscriptionServiceProvider).initialize();
+
+  // Restore subscription status
+  await container.read(subscriptionServiceProvider).refreshSubscriptionStatus();
   runApp(
     ProviderScope(
       child: EasyLocalization(

@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:lottie/lottie.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:scanpro/utils/purchase_utils.dart';
 
 class SubscriptionStep extends ConsumerStatefulWidget {
   final VoidCallback onSubscriptionHandled;
@@ -28,11 +27,9 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
   String _errorMessage = '';
   bool _hasSubscription = false;
   bool _showPackages = false;
-  Map<String, List<Package>> _subscriptionOptions = {
-    'monthly': [],
-    'yearly': [],
-  };
+  List<ProductDetails> _products = [];
   late AnimationController _animationController;
+  String? _selectedProductId;
 
   @override
   void initState() {
@@ -44,6 +41,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
 
     // Check current subscription status
     _checkSubscriptionStatus();
+    _loadProducts();
     _animationController.forward();
   }
 
@@ -66,9 +64,6 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
       final hasActiveSubscription =
           await subscriptionService.hasActiveTrialOrSubscription();
 
-      // Load subscription options in background
-      _loadSubscriptionOptions();
-
       setState(() {
         _hasSubscription = hasActiveSubscription;
         _isLoading = false;
@@ -82,7 +77,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
       setState(() {
         _isLoading = false;
         _hasError = true;
-        _errorMessage = PurchaseUtils.handlePurchaseError(e)!;
+        _errorMessage = e.toString();
       });
 
       if (mounted) {
@@ -95,30 +90,42 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
     }
   }
 
-  Future<void> _loadSubscriptionOptions() async {
+  Future<void> _loadProducts() async {
     try {
       final subscriptionService = ref.read(subscriptionServiceProvider);
-      final options = await subscriptionService.getSubscriptionOptions();
+      final products = await subscriptionService.getSubscriptionPackages();
+
       if (mounted) {
         setState(() {
-          _subscriptionOptions = options;
-          if (options['yearly']!.isEmpty) {
-            print('No yearly plans available');
+          _products = products;
+
+          // Default select the yearly product if available
+          ProductDetails? yearlyProduct;
+
+          // Safely find the yearly product
+          for (var product in products) {
+            if (product.id == 'scanpro_premium_yearly') {
+              yearlyProduct = product;
+              break;
+            }
+          }
+
+          // Fallback to the first product if yearly not found
+          if (yearlyProduct == null && products.isNotEmpty) {
+            yearlyProduct = products.first;
+          }
+
+          if (yearlyProduct != null) {
+            _selectedProductId = yearlyProduct.id;
           }
         });
       }
     } catch (e) {
-      print('Error loading subscription options: $e');
-      if (mounted) {
-        setState(() {
-          _hasError = true;
-          _errorMessage = 'Failed to load plans';
-        });
-      }
+      // Handle silently
     }
   }
 
-  Future<void> _startFreeTrial() async {
+  Future<void> _startTrial() async {
     setState(() {
       _isLoading = true;
       _hasError = false;
@@ -142,17 +149,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
         setState(() {
           _isLoading = false;
           _hasError = true;
-
-          // Handle known RevenueCat error types
-          if (e is PurchasesError) {
-            if (e.code == PurchasesErrorCode.purchaseCancelledError) {
-              _errorMessage = 'onboarding.subscription_cancelled'.tr();
-            } else {
-              _errorMessage = PurchaseUtils.handlePurchaseError(e)!;
-            }
-          } else {
-            _errorMessage = PurchaseUtils.handlePurchaseError(e)!;
-          }
+          _errorMessage = e.toString();
         });
 
         AppDialogs.showSnackBar(
@@ -160,6 +157,47 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
           message: 'onboarding.subscription_error'.tr(),
           type: SnackBarType.error,
         );
+      }
+    }
+  }
+
+  Future<void> _purchasePackage(ProductDetails package) async {
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+    });
+
+    try {
+      final subscriptionService = ref.read(subscriptionServiceProvider);
+      final success = await subscriptionService.purchasePackage(package);
+
+      if (mounted) {
+        if (success) {
+          setState(() {
+            _hasSubscription = true;
+            _isLoading = false;
+          });
+
+          AppDialogs.showSnackBar(
+            context,
+            message: 'onboarding.subscription_successful'.tr(),
+            type: SnackBarType.success,
+          );
+
+          widget.onSubscriptionHandled();
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _hasError = true;
+          _errorMessage = e.toString();
+        });
       }
     }
   }
@@ -211,54 +249,6 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
           message: 'onboarding.restore_error'.tr(),
           type: SnackBarType.error,
         );
-      }
-    }
-  }
-
-  Future<void> _purchasePackage(Package package) async {
-    setState(() {
-      _isLoading = true;
-      _hasError = false;
-      _errorMessage = ''; // Reset error message
-    });
-
-    try {
-      final subscriptionService = ref.read(subscriptionServiceProvider);
-      await subscriptionService.purchasePackage(package);
-
-      if (mounted) {
-        setState(() {
-          _hasSubscription = true;
-          _isLoading = false;
-        });
-
-        AppDialogs.showSnackBar(
-          context,
-          message: 'onboarding.subscription_successful'.tr(),
-          type: SnackBarType.success,
-        );
-
-        widget.onSubscriptionHandled();
-      }
-    } catch (e) {
-      if (mounted) {
-        // Custom error handling with specific cases
-        String? customErrorMessage = PurchaseUtils.handlePurchaseError(e);
-
-        setState(() {
-          _isLoading = false;
-          _hasError = true;
-          _errorMessage = customErrorMessage!;
-        });
-
-        // Only show snackbar for non-cancellation errors
-        if (!customErrorMessage!.contains('cancelled')) {
-          AppDialogs.showSnackBar(
-            context,
-            message: customErrorMessage,
-            type: SnackBarType.error,
-          );
-        }
       }
     }
   }
@@ -404,8 +394,6 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
             // Show subscription packages if requested
             if (_showPackages) _buildSubscriptionPackages(colorScheme),
 
-            // if (_hasError) _buildErrorMessage(colorScheme),
-
             // Start trial button or success message
             if (_hasSubscription)
               _buildSubscriptionActiveCard(colorScheme)
@@ -465,7 +453,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
   Widget _buildFeaturesList(ColorScheme colorScheme) {
     final features = [
       {
-        'icon': Icons.text_format,
+        'icon': Icons.document_scanner,
         'title': 'onboarding.ocr_feature'.tr(),
         'description': 'onboarding.ocr_feature_desc'.tr(),
       },
@@ -558,7 +546,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
         ElevatedButton(
           onPressed: _isLoading
               ? null
-              : () => _showPackages ? _togglePackages() : _startFreeTrial(),
+              : () => _showPackages ? _togglePackages() : _startTrial(),
           style: ElevatedButton.styleFrom(
             backgroundColor: colorScheme.primary,
             foregroundColor: colorScheme.onPrimary,
@@ -658,9 +646,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
   }
 
   Widget _buildSubscriptionPackages(ColorScheme colorScheme) {
-    // Show loading indicator while fetching packages
-    if (_subscriptionOptions['monthly']!.isEmpty &&
-        _subscriptionOptions['yearly']!.isEmpty) {
+    if (_products.isEmpty) {
       return Container(
         margin: EdgeInsets.only(bottom: 24.h),
         child: Center(
@@ -683,7 +669,6 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
       );
     }
 
-    // Build subscription options cards
     return Container(
       margin: EdgeInsets.only(bottom: 24.h),
       child: Column(
@@ -699,129 +684,110 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
           ),
           SizedBox(height: 16.h),
 
-          // Monthly plans
-          if (_subscriptionOptions['monthly']!.isNotEmpty) ...[
-            Text(
-              'onboarding.monthly_plans'.tr(),
-              style: GoogleFonts.slabo27px(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            ..._subscriptionOptions['monthly']!
-                .map((package) => _buildPackageCard(package, colorScheme)),
-            SizedBox(height: 16.h),
-          ],
-
-          // Yearly plans
-          if (_subscriptionOptions['yearly']!.isNotEmpty) ...[
-            Text(
-              'onboarding.yearly_plans'.tr(),
-              style: GoogleFonts.slabo27px(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            ..._subscriptionOptions['yearly']!
-                .map((package) => _buildPackageCard(package, colorScheme)),
-            SizedBox(height: 16.h),
-          ],
-
-          // Other plans
-          if (_subscriptionOptions['other']!.isNotEmpty) ...[
-            Text(
-              'onboarding.other_plans'.tr(),
-              style: GoogleFonts.slabo27px(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            ..._subscriptionOptions['other']!
-                .map((package) => _buildPackageCard(package, colorScheme)),
-          ],
+          // List of available products
+          ..._products
+              .map((product) => _buildProductCard(product, colorScheme)),
         ],
       ),
     );
   }
 
-  Widget _buildPackageCard(Package package, ColorScheme colorScheme) {
-    final hasFreeTrial = package.storeProduct.introductoryPrice != null;
+  Widget _buildProductCard(ProductDetails product, ColorScheme colorScheme) {
+    final bool isMonthly = product.id == 'scanpro_premium_monthly';
+    final bool isYearly = product.id == 'scanpro_premium_yearly';
+    final bool isSelected = _selectedProductId == product.id;
 
     return Card(
-      margin: EdgeInsets.only(bottom: 8.h),
-      elevation: 0,
+      margin: EdgeInsets.only(bottom: 12.h),
+      elevation: isSelected ? 2 : 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(12.r),
         side: BorderSide(
-          color: colorScheme.outlineVariant,
+          color: isSelected
+              ? colorScheme.primary
+              : colorScheme.outline.withOpacity(0.3),
+          width: isSelected ? 2 : 1,
         ),
       ),
       child: InkWell(
-        onTap: () => _purchasePackage(package),
-        borderRadius: BorderRadius.circular(8.r),
+        onTap: () {
+          setState(() {
+            _selectedProductId = product.id;
+          });
+        },
+        borderRadius: BorderRadius.circular(12.r),
         child: Padding(
-          padding: EdgeInsets.all(12.r),
+          padding: EdgeInsets.all(16.r),
           child: Row(
             children: [
+              // Radio selection indicator
               Container(
-                width: 40.w,
-                height: 40.w,
+                width: 24.w,
+                height: 24.w,
                 decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
                   shape: BoxShape.circle,
+                  color: isSelected ? colorScheme.primary : Colors.transparent,
+                  border: isSelected
+                      ? null
+                      : Border.all(color: colorScheme.outline.withOpacity(0.5)),
                 ),
-                child: Icon(
-                  hasFreeTrial ? Icons.star : Icons.auto_awesome,
-                  color: colorScheme.primary,
-                  size: 20.r,
-                ),
+                child: isSelected
+                    ? Icon(Icons.check, color: Colors.white, size: 16.r)
+                    : null,
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: 16.w),
+
+              // Product details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      package.storeProduct.title
-                          .replaceAll('(ScanPro)', '')
-                          .trim(),
+                      isMonthly
+                          ? 'onboarding.monthly_plan'.tr()
+                          : isYearly
+                              ? 'onboarding.yearly_plan'.tr()
+                              : product.title,
                       style: GoogleFonts.slabo27px(
-                        fontSize: 14.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (hasFreeTrial)
-                      Text(
-                        'onboarding.free_trial_available'.tr(),
-                        style: GoogleFonts.slabo27px(
-                          fontSize: 12.sp,
-                          color: Colors.green,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      isMonthly
+                          ? 'onboarding.monthly_details'.tr()
+                          : isYearly
+                              ? 'onboarding.yearly_details'.tr()
+                              : product.description,
+                      style: GoogleFonts.slabo27px(
+                        fontSize: 12.sp,
+                        color: colorScheme.onSurface.withOpacity(0.7),
                       ),
+                    ),
                   ],
                 ),
               ),
+
+              // Price
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${package.storeProduct.price} ${package.storeProduct.currencyCode}',
+                    product.price,
                     style: GoogleFonts.slabo27px(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: colorScheme.primary,
                     ),
                   ),
-                  if (hasFreeTrial)
+                  if (isYearly)
                     Text(
-                      '7-day free trial',
+                      '83% savings', // You can calculate this dynamically
                       style: GoogleFonts.slabo27px(
                         fontSize: 12.sp,
-                        color: colorScheme.onSurfaceVariant,
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                 ],
