@@ -65,6 +65,9 @@ dependencies:
   easy_localization: ^3.0.7+1
   logger: ^2.5.0
   mailer: ^6.4.1
+  lottie: ^3.3.1
+  purchases_flutter: ^8.6.1
+  shared_preferences: ^2.5.2
   # google_sign_in: ^6.3.0
   # googleapis: ^14.0.0
   # extension_google_sign_in_as_googleapis_auth: ^2.0.12

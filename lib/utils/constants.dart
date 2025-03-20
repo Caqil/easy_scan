@@ -1,26 +1,18 @@
+// Update the constants.dart file to add onboarding constants
+
 class AppConstants {
-  // Hive box names
+  // Existing constants
   static const String documentsBoxName = 'documents';
   static const String foldersBoxName = 'folders';
   static const String settingsBoxName = 'settings';
   static const String settingsBoxLanguages = 'languages';
-  static const String backupSettingsBoxName = 'backup_settings';
-
-  // Hive keys
   static const String settingsKey = 'app_settings';
-  static const String backupSettingsKey = 'backup_settings';
-
-  // App constants
   static const int defaultPdfQuality = 80;
   static const int defaultImageQuality = 85;
   static const int thumbnailSize = 300;
-
-  // Backup constants
   static const String backupFolderName = 'scanpro Backups';
   static const int maxBackupHistory = 10;
   static const String backupFilePrefix = 'scanpro_backup_';
-
-  // Folder colors
   static const List<int> folderColors = [
     0xFF2196F3, // Blue
     0xFF4CAF50, // Green
@@ -39,4 +31,15 @@ class AppConstants {
     0xFFCDDC39, // Lime
     0xFF03A9F4, // Light Blue
   ];
+
+  // New constants for onboarding
+  static const String hasCompletedOnboardingKey = 'has_completed_onboarding';
+
+  // Subscription constants
+  static const String subscriptionStatusKey = 'subscription_status';
+  static const String trialStartedKey = 'trial_started';
+  static const String trialExpirationKey = 'trial_expiration';
+
+  // Free trial duration in days
+  static const int trialDurationDays = 7;
 }

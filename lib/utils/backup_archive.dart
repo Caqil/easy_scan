@@ -61,9 +61,6 @@ class BackupArchiver {
 
       // Encode the archive as a zip and write to file
       final encodedZip = ZipEncoder().encode(archive);
-      if (encodedZip == null) {
-        throw Exception('Failed to encode zip archive');
-      }
 
       await zipFile.writeAsBytes(encodedZip);
 

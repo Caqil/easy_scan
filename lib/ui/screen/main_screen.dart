@@ -1,6 +1,7 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/config/routes.dart';
+import 'package:scanpro/providers/locale_provider.dart';
 import 'package:scanpro/services/scan_service.dart';
 import 'package:scanpro/ui/widget/component/scan_initial_view.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -129,7 +130,22 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
+    final localState = ref.watch(localProvider);
+    String currentLanguageLabel = "English";
+    if (localState.languages.isNotEmpty) {
+      try {
+        final currentLang = localState.languages.firstWhere(
+          (lang) =>
+              lang.languageCode == context.locale.languageCode &&
+              (lang.countryCode == context.locale.countryCode ||
+                  lang.countryCode == null),
+          orElse: () => localState.languages.first,
+        );
+        currentLanguageLabel = currentLang.label;
+      } catch (e) {
+        // Default to English if something goes wrong
+      }
+    }
     return Scaffold(
       // Body remains the same
       body: widget.child,

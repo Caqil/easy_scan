@@ -35,7 +35,7 @@ class LocalNotifier extends StateNotifier<LocalState> {
     _loadLanguages();
     _loadSavedLocale();
   }
-  Future<void> _loadSavedLocale() async {
+  Future<Locale> _loadSavedLocale() async {
     try {
       final box = await Hive.openBox('settings');
       final storedLocale = box.get('locale');
@@ -49,11 +49,17 @@ class LocalNotifier extends StateNotifier<LocalState> {
         state = state.copyWith(selectedLocale: locale);
         logger.info(
             'Loaded saved locale: ${locale.languageCode}_${locale.countryCode}');
+
+        // Return the locale so it can be applied in the app
+        return locale;
       } else {
-        logger.info('No saved locale found');
+        // Set default locale when none is found
+        logger.info('No saved locale found, defaulting to English');
+        return Locale('en', 'US');
       }
     } catch (e) {
       logger.error('Error loading saved locale: $e');
+      return const Locale('en', 'US'); // Safe default
     }
   }
 

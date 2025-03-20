@@ -1504,5 +1504,47 @@
       },
       "tip": "Saat menghubungi dukungan tentang masalah, sertakan detail tentang perangkat Anda, versi aplikasi, dan langkah-langkah untuk mereproduksi masalah."
     }
+  },
+  "onboarding": {
+    "skip_title": "Skip Setup?",
+    "skip_message": "You can configure these settings later, but some features may not work correctly without proper setup.",
+    "next": "Next",
+    "get_started": "Get Started",
+    "selected": "Selected",
+    "grant": "Grant",
+    "granted": "Granted",
+    
+    "permissions_title": "App Permissions",
+    "permissions_description": "ScanPro needs a few permissions to work correctly. Please grant access to the following:",
+    "camera_permission": "Camera Access",
+    "camera_permission_desc": "To scan documents and take photos",
+    "storage_permission": "Storage Access",
+    "storage_permission_desc": "To save and manage your documents",
+    
+    "language_title": "Choose Your Language",
+    "language_description": "Select your preferred language for the app interface. You can change this later in settings.",
+    
+    "theme_title": "Select Your Theme",
+    "theme_description": "Choose a theme that's easier on your eyes. You can always change this later in the app settings.",
+    "light_theme": "Light Theme",
+    "dark_theme": "Dark Theme",
+    
+    "subscription_title": "Try Premium Features",
+    "subscription_description": "Start your 7-day free trial to access all premium features. No payment required now.",
+    "trial_info": "Your free trial includes unlimited access to all premium features. You can cancel anytime before the trial ends without being charged.",
+    "start_free_trial": "Start Free Trial",
+    "trial_started": "Trial Started",
+    "maybe_later": "Maybe Later",
+    "subscription_check_error": "Couldn't check subscription status. You can try again later in settings.",
+    "subscription_error": "Couldn't start the trial. Please try again later.",
+    
+    "ocr_feature": "Text Recognition",
+    "ocr_feature_desc": "Extract and search text in your documents",
+    "security_feature": "Document Security",
+    "security_feature_desc": "Password protect your sensitive documents",
+    "cloud_feature": "Cloud Backup",
+    "cloud_feature_desc": "Securely store your documents in the cloud",
+    "unlimited_feature": "Unlimited Scans",
+    "unlimited_feature_desc": "No limits on document scans and conversions"
   }
 }

@@ -3,10 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:scanpro/app.dart';
 import 'package:scanpro/services/logger_service.dart';
 import 'services/storage_service.dart';
 import 'firebase_options.dart';
+
 final logger = LoggerService();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,12 +23,21 @@ void main() async {
   );
   final storageService = StorageService();
   await storageService.initialize();
+  Locale initialLocale = const Locale('en', 'US'); // Default
+  final settingsBox = await Hive.openBox('settings');
+  final storedLocale = settingsBox.get('locale');
+  if (storedLocale != null) {
+    initialLocale =
+        Locale(storedLocale['languageCode'], storedLocale['countryCode']);
+    logger.info(
+        'Starting app with saved locale: ${initialLocale.languageCode}_${initialLocale.countryCode}');
+  }
   runApp(
     ProviderScope(
       child: EasyLocalization(
           path: 'assets/languages',
           fallbackLocale: Locale('en', 'US'),
-          startLocale: Locale('en', 'US'),
+          startLocale: initialLocale,
           supportedLocales: const [
             Locale("en", "US"),
             Locale("id", "ID"),

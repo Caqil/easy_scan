@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,33 +16,30 @@ class GuideWidgets {
       controller: scrollController,
       padding: EdgeInsets.all(16.r),
       children: [
-        buildSectionHeader("Getting Started with ScanPro"),
-        buildImagePlaceholder("Welcome Screen"),
-        buildParagraph(
-            "Welcome to ScanPro, your complete document scanning and management solution. "
-            "This guide will help you get the most out of your app."),
-        buildSubsectionHeader("Initial Setup"),
-        buildParagraph(
-            "When you first open ScanPro, you'll be guided through a brief setup process:"),
-        buildNumberedStep(1, "Permission Setup",
-            "Grant camera and storage permissions when prompted to enable scanning and saving documents."),
-        buildNumberedStep(2, "Language Selection",
-            "Choose your preferred language from the available options."),
-        buildNumberedStep(3, "Theme Selection",
-            "Pick light or dark theme, which you can always change later in settings."),
-        buildSubsectionHeader("Home Screen Overview"),
-        buildParagraph(
-            "The home screen is your command center for all ScanPro features:"),
-        buildFeatureExplanation("Recent Documents",
-            "Quickly access your most recently scanned or viewed documents."),
-        buildFeatureExplanation("Scan Button",
-            "The large circular button at the bottom center starts a new scan."),
-        buildFeatureExplanation("Folders",
-            "Organize your documents in custom folders for easy access."),
-        buildFeatureExplanation("Search",
-            "Find any document by searching for names, content (if OCR was used), or tags."),
-        buildTipBox(
-            "You can customize your home screen layout in Settings → Appearance → Home Layout."),
+        _buildSubsectionHeader("user_guide.getting_started.initial_setup".tr()),
+        _buildParagraph(
+            "user_guide.getting_started.setup_steps.permissions".tr()),
+        _buildNumberedStep(
+            1, "", "user_guide.getting_started.setup_steps.permissions".tr()),
+        _buildNumberedStep(
+            2, "", "user_guide.getting_started.setup_steps.language".tr()),
+        _buildNumberedStep(
+            3, "", "user_guide.getting_started.setup_steps.theme".tr()),
+        _buildSubsectionHeader("user_guide.getting_started.home_screen".tr()),
+        _buildParagraph("user_guide.getting_started.home_screen_desc".tr()),
+        _buildFeatureExplanation(
+            "user_guide.getting_started.features.recent_docs".tr(),
+            "user_guide.getting_started.features.recent_docs".tr()),
+        _buildFeatureExplanation(
+            "user_guide.getting_started.features.scan_button".tr(),
+            "user_guide.getting_started.features.scan_button".tr()),
+        _buildFeatureExplanation(
+            "user_guide.getting_started.features.folders".tr(),
+            "user_guide.getting_started.features.folders".tr()),
+        _buildFeatureExplanation(
+            "user_guide.getting_started.features.search".tr(),
+            "user_guide.getting_started.features.search".tr()),
+        _buildTipBox("user_guide.getting_started.tip".tr()),
         SizedBox(height: 24.h),
       ],
     );
@@ -52,46 +50,53 @@ class GuideWidgets {
       controller: scrollController,
       padding: EdgeInsets.all(16.r),
       children: [
-        buildSectionHeader("Document Scanning"),
-        buildImagePlaceholder("Scanning Interface"),
-        buildParagraph(
-            "Scanning documents is the core function of ScanPro. The app provides multiple ways to capture high-quality document images."),
-        buildSubsectionHeader("Starting a Scan"),
-        buildParagraph("You can start a new scan in several ways:"),
-        buildBulletPoint("Tap the scan button on the home screen"),
-        buildBulletPoint("Tap the + button and select 'Scan Document'"),
-        buildBulletPoint(
-            "From a folder, tap the scan icon to add directly to that folder"),
-        buildSubsectionHeader("Scanning Modes"),
-        buildFeatureExplanation("Auto Mode",
-            "The app automatically detects document edges and captures the image when steady."),
-        buildFeatureExplanation("Manual Mode",
-            "You control when to capture the image with the capture button."),
-        buildFeatureExplanation("Batch Mode",
-            "Continuously scan multiple pages for multi-page documents."),
-        buildSubsectionHeader("Scan Settings"),
-        buildParagraph("Before scanning, you can adjust various settings:"),
-        buildFeatureExplanation("Color Mode",
-            "Choose between Color, Grayscale, or Black & White scanning."),
-        buildFeatureExplanation("Document Type",
-            "Select Document, Receipt, ID Card, or Photo for optimized processing."),
-        buildFeatureExplanation(
-            "Edge Detection", "Enable or disable automatic edge detection."),
-        buildFeatureExplanation("OCR (Text Recognition)",
-            "Enable to make text in your documents searchable."),
-        buildFeatureExplanation("Quality",
-            "Adjust the image quality (higher quality means larger file size)."),
-        buildTipBox(
-            "For best results, scan in a well-lit environment with the document placed on a contrasting background."),
-        buildSubsectionHeader("Reviewing and Editing Scans"),
-        buildParagraph(
-            "After scanning, you'll be taken to the review screen where you can:"),
-        buildBulletPoint("Adjust cropping boundaries"),
-        buildBulletPoint("Rotate or flip the image"),
-        buildBulletPoint("Apply filters and enhancements"),
-        buildBulletPoint("Retake a scan if needed"),
-        buildBulletPoint("Add more pages (for multi-page documents)"),
-        buildBulletPoint("Rearrange pages by dragging"),
+        _buildSubsectionHeader(
+            "user_guide.document_scanning.starting_scan".tr()),
+        _buildParagraph(
+            "user_guide.document_scanning.scan_methods.home_button".tr()),
+        _buildBulletPoint(
+            "user_guide.document_scanning.scan_methods.home_button".tr()),
+        _buildBulletPoint(
+            "user_guide.document_scanning.scan_methods.plus_button".tr()),
+        _buildBulletPoint(
+            "user_guide.document_scanning.scan_methods.folder_scan".tr()),
+        _buildSubsectionHeader(
+            "user_guide.document_scanning.scanning_modes".tr()),
+        _buildFeatureExplanation(
+            "Auto Mode", "user_guide.document_scanning.modes.auto".tr()),
+        _buildFeatureExplanation(
+            "Manual Mode", "user_guide.document_scanning.modes.manual".tr()),
+        _buildFeatureExplanation(
+            "Batch Mode", "user_guide.document_scanning.modes.batch".tr()),
+        _buildSubsectionHeader(
+            "user_guide.document_scanning.scan_settings".tr()),
+        _buildParagraph("user_guide.document_scanning.settings_desc".tr()),
+        _buildFeatureExplanation("Color Mode",
+            "user_guide.document_scanning.settings.color_mode".tr()),
+        _buildFeatureExplanation("Document Type",
+            "user_guide.document_scanning.settings.document_type".tr()),
+        _buildFeatureExplanation("Edge Detection",
+            "user_guide.document_scanning.settings.edge_detection".tr()),
+        _buildFeatureExplanation(
+            "OCR", "user_guide.document_scanning.settings.ocr".tr()),
+        _buildFeatureExplanation(
+            "Quality", "user_guide.document_scanning.settings.quality".tr()),
+        _buildTipBox("user_guide.document_scanning.tip".tr()),
+        _buildSubsectionHeader("user_guide.document_scanning.reviewing".tr()),
+        _buildParagraph(
+            "user_guide.document_scanning.reviewing_options.crop".tr()),
+        _buildBulletPoint(
+            "user_guide.document_scanning.reviewing_options.crop".tr()),
+        _buildBulletPoint(
+            "user_guide.document_scanning.reviewing_options.rotate".tr()),
+        _buildBulletPoint(
+            "user_guide.document_scanning.reviewing_options.filters".tr()),
+        _buildBulletPoint(
+            "user_guide.document_scanning.reviewing_options.retake".tr()),
+        _buildBulletPoint(
+            "user_guide.document_scanning.reviewing_options.add_pages".tr()),
+        _buildBulletPoint(
+            "user_guide.document_scanning.reviewing_options.rearrange".tr()),
         SizedBox(height: 24.h),
       ],
     );
@@ -102,37 +107,35 @@ class GuideWidgets {
       controller: scrollController,
       padding: EdgeInsets.all(16.r),
       children: [
-        buildSectionHeader("Document Management"),
-        buildImagePlaceholder("Document Library"),
-        buildParagraph(
-            "ScanPro makes it easy to manage your growing collection of documents."),
-        buildSubsectionHeader("Document Library"),
-        buildParagraph(
-            "Your Document Library contains all scanned and imported documents. Here you can:"),
-        buildBulletPoint("View all documents in a list or grid view"),
-        buildBulletPoint("Sort documents by name, date, size, or type"),
-        buildBulletPoint("Filter documents by type (PDF, image, etc.)"),
-        buildBulletPoint("Search for specific documents"),
-        buildSubsectionHeader("Document Actions"),
-        buildParagraph("For each document, you can:"),
-        buildFeatureExplanation(
-            "View", "Open the document to read its contents."),
-        buildFeatureExplanation("Rename", "Change the document's name."),
-        buildFeatureExplanation(
-            "Edit", "Modify the document's contents or appearance."),
-        buildFeatureExplanation(
-            "Share", "Send the document via email, messaging apps, etc."),
-        buildFeatureExplanation(
-            "Move", "Relocate the document to another folder."),
-        buildFeatureExplanation(
-            "Add to Favorites", "Mark important documents for quick access."),
-        buildFeatureExplanation(
-            "Delete", "Remove the document from your library."),
-        buildSubsectionHeader("Recent and Favorites"),
-        buildParagraph(
-            "Access your most recent and favorite documents quickly from the home screen."),
-        buildTipBox(
-            "You can perform batch operations by long-pressing a document to enter selection mode, then selecting multiple documents."),
+        _buildSubsectionHeader("user_guide.document_management.library".tr()),
+        _buildParagraph("user_guide.document_management.library_desc".tr()),
+        _buildBulletPoint(
+            "user_guide.document_management.library_features.view".tr()),
+        _buildBulletPoint(
+            "user_guide.document_management.library_features.sort".tr()),
+        _buildBulletPoint(
+            "user_guide.document_management.library_features.filter".tr()),
+        _buildBulletPoint(
+            "user_guide.document_management.library_features.search".tr()),
+        _buildSubsectionHeader("user_guide.document_management.actions".tr()),
+        _buildParagraph("user_guide.document_management.actions_desc".tr()),
+        _buildFeatureExplanation(
+            "View", "user_guide.document_management.doc_actions.view".tr()),
+        _buildFeatureExplanation(
+            "Rename", "user_guide.document_management.doc_actions.rename".tr()),
+        _buildFeatureExplanation(
+            "Edit", "user_guide.document_management.doc_actions.edit".tr()),
+        _buildFeatureExplanation(
+            "Share", "user_guide.document_management.doc_actions.share".tr()),
+        _buildFeatureExplanation(
+            "Move", "user_guide.document_management.doc_actions.move".tr()),
+        _buildFeatureExplanation("Add to Favorites",
+            "user_guide.document_management.doc_actions.favorite".tr()),
+        _buildFeatureExplanation(
+            "Delete", "user_guide.document_management.doc_actions.delete".tr()),
+        _buildSubsectionHeader("user_guide.document_management.recents".tr()),
+        _buildParagraph("user_guide.document_management.recents_desc".tr()),
+        _buildTipBox("user_guide.document_management.tip".tr()),
         SizedBox(height: 24.h),
       ],
     );
@@ -143,41 +146,43 @@ class GuideWidgets {
       controller: scrollController,
       padding: EdgeInsets.all(16.r),
       children: [
-        buildSectionHeader("Organization with Folders"),
-        buildImagePlaceholder("Folder Structure"),
-        buildParagraph(
-            "Keep your documents organized using folders and subfolders in ScanPro."),
-        buildSubsectionHeader("Creating Folders"),
-        buildParagraph("To create a new folder:"),
-        buildNumberedStep(1, "", "Tap the + button and select 'Create Folder'"),
-        buildNumberedStep(2, "", "Enter a name for your folder"),
-        buildNumberedStep(3, "", "Select a color and icon (optional)"),
-        buildNumberedStep(4, "", "Tap 'Create' to save your new folder"),
-        buildSubsectionHeader("Subfolder Structure"),
-        buildParagraph(
-            "ScanPro supports nested folders for hierarchical organization:"),
-        buildBulletPoint(
-            "Open a folder and tap + to create a subfolder within it"),
-        buildBulletPoint(
-            "Subfolders can contain both documents and additional subfolders"),
-        buildBulletPoint(
-            "Navigate up and down the folder structure using the breadcrumb navigation"),
-        buildSubsectionHeader("Moving Documents"),
-        buildParagraph("To move documents between folders:"),
-        buildNumberedStep(1, "", "Long-press a document to select it"),
-        buildNumberedStep(2, "", "Select multiple documents if needed"),
-        buildNumberedStep(3, "", "Tap the 'Move' option"),
-        buildNumberedStep(4, "", "Select the destination folder"),
-        buildSubsectionHeader("Managing Folders"),
-        buildParagraph("You can manage your folders by:"),
-        buildFeatureExplanation(
-            "Rename", "Change a folder's name, color, or icon."),
-        buildFeatureExplanation(
-            "Delete", "Remove a folder and optionally its contents."),
-        buildFeatureExplanation("Move",
-            "Relocate a folder to become a subfolder of another folder."),
-        buildTipBox(
-            "Create folders based on document categories (e.g., Receipts, ID Documents, Work) or time periods (e.g., 2023, 2024)."),
+        _buildSubsectionHeader("user_guide.organization.creating_folders".tr()),
+        _buildParagraph("user_guide.organization.creating_steps.step1".tr()),
+        _buildNumberedStep(
+            1, "", "user_guide.organization.creating_steps.step1".tr()),
+        _buildNumberedStep(
+            2, "", "user_guide.organization.creating_steps.step2".tr()),
+        _buildNumberedStep(
+            3, "", "user_guide.organization.creating_steps.step3".tr()),
+        _buildNumberedStep(
+            4, "", "user_guide.organization.creating_steps.step4".tr()),
+        _buildSubsectionHeader("user_guide.organization.subfolders".tr()),
+        _buildParagraph("user_guide.organization.subfolders_desc".tr()),
+        _buildBulletPoint(
+            "user_guide.organization.subfolder_features.create".tr()),
+        _buildBulletPoint(
+            "user_guide.organization.subfolder_features.content".tr()),
+        _buildBulletPoint(
+            "user_guide.organization.subfolder_features.navigate".tr()),
+        _buildSubsectionHeader("user_guide.organization.moving".tr()),
+        _buildParagraph("user_guide.organization.moving_steps.step1".tr()),
+        _buildNumberedStep(
+            1, "", "user_guide.organization.moving_steps.step1".tr()),
+        _buildNumberedStep(
+            2, "", "user_guide.organization.moving_steps.step2".tr()),
+        _buildNumberedStep(
+            3, "", "user_guide.organization.moving_steps.step3".tr()),
+        _buildNumberedStep(
+            4, "", "user_guide.organization.moving_steps.step4".tr()),
+        _buildSubsectionHeader("user_guide.organization.managing_folders".tr()),
+        _buildParagraph("user_guide.organization.managing_desc".tr()),
+        _buildFeatureExplanation(
+            "Rename", "user_guide.organization.folder_actions.rename".tr()),
+        _buildFeatureExplanation(
+            "Delete", "user_guide.organization.folder_actions.delete".tr()),
+        _buildFeatureExplanation(
+            "Move", "user_guide.organization.folder_actions.move".tr()),
+        _buildTipBox("user_guide.organization.tip".tr()),
         SizedBox(height: 24.h),
       ],
     );
@@ -188,38 +193,33 @@ class GuideWidgets {
       controller: scrollController,
       padding: EdgeInsets.all(16.r),
       children: [
-        buildSectionHeader("Editing & Enhancing Documents"),
-        buildImagePlaceholder("Editing Interface"),
-        buildParagraph(
-            "ScanPro provides powerful tools to improve the quality and usefulness of your scanned documents."),
-        buildSubsectionHeader("Image Enhancement"),
-        buildParagraph("Improve document readability with:"),
-        buildFeatureExplanation(
-            "Auto Enhance", "One-tap improvement for contrast and clarity."),
-        buildFeatureExplanation("Brightness and Contrast",
-            "Manual adjustment sliders for precise control."),
-        buildFeatureExplanation("Color Correction",
-            "Fix color issues or convert to grayscale/black & white."),
-        buildFeatureExplanation("Noise Reduction",
-            "Remove specks and artifacts from scanned images."),
-        buildSubsectionHeader("Document Editing"),
-        buildParagraph("Edit document content with:"),
-        buildFeatureExplanation(
-            "Crop & Rotate", "Adjust document boundaries or orientation."),
-        buildFeatureExplanation("Text Recognition (OCR)",
-            "Convert image text to editable digital text."),
-        buildFeatureExplanation(
-            "Text Editing", "Modify recognized text directly in the app."),
-        buildFeatureExplanation("Highlight & Annotate",
-            "Add notes, highlights, or signatures to documents."),
-        buildSubsectionHeader("Page Management"),
-        buildParagraph("For multi-page documents, you can:"),
-        buildBulletPoint("Add new pages to existing documents"),
-        buildBulletPoint("Remove specific pages"),
-        buildBulletPoint("Rearrange page order by dragging"),
-        buildBulletPoint("Extract pages to create new documents"),
-        buildTipBox(
-            "For text-heavy documents, enable OCR during scanning or apply it later to make text searchable and editable."),
+        _buildSubsectionHeader("user_guide.editing.enhancement".tr()),
+        _buildParagraph("user_guide.editing.enhancement_desc".tr()),
+        _buildFeatureExplanation(
+            "Auto Enhance", "user_guide.editing.enhancement_tools.auto".tr()),
+        _buildFeatureExplanation("Brightness and Contrast",
+            "user_guide.editing.enhancement_tools.brightness".tr()),
+        _buildFeatureExplanation("Color Correction",
+            "user_guide.editing.enhancement_tools.color".tr()),
+        _buildFeatureExplanation("Noise Reduction",
+            "user_guide.editing.enhancement_tools.noise".tr()),
+        _buildSubsectionHeader("user_guide.editing.editing".tr()),
+        _buildParagraph("user_guide.editing.editing_desc".tr()),
+        _buildFeatureExplanation(
+            "Crop & Rotate", "user_guide.editing.editing_tools.crop".tr()),
+        _buildFeatureExplanation("Text Recognition (OCR)",
+            "user_guide.editing.editing_tools.ocr".tr()),
+        _buildFeatureExplanation(
+            "Text Editing", "user_guide.editing.editing_tools.text".tr()),
+        _buildFeatureExplanation("Highlight & Annotate",
+            "user_guide.editing.editing_tools.annotate".tr()),
+        _buildSubsectionHeader("user_guide.editing.page_management".tr()),
+        _buildParagraph("user_guide.editing.page_desc".tr()),
+        _buildBulletPoint("user_guide.editing.page_actions.add".tr()),
+        _buildBulletPoint("user_guide.editing.page_actions.remove".tr()),
+        _buildBulletPoint("user_guide.editing.page_actions.rearrange".tr()),
+        _buildBulletPoint("user_guide.editing.page_actions.extract".tr()),
+        _buildTipBox("user_guide.editing.tip".tr()),
         SizedBox(height: 24.h),
       ],
     );
@@ -230,43 +230,40 @@ class GuideWidgets {
       controller: scrollController,
       padding: EdgeInsets.all(16.r),
       children: [
-        buildSectionHeader("PDF Tools"),
-        buildImagePlaceholder("PDF Operations"),
-        buildParagraph(
-            "ScanPro offers comprehensive PDF management capabilities."),
-        buildSubsectionHeader("Creating PDFs"),
-        buildParagraph("Create PDFs from various sources:"),
-        buildBulletPoint("Convert scanned documents directly to PDF"),
-        buildBulletPoint("Combine multiple scans into a single PDF"),
-        buildBulletPoint("Convert images from your gallery to PDF"),
-        buildBulletPoint("Import existing PDFs for editing"),
-        buildSubsectionHeader("PDF Compression"),
-        buildParagraph("Reduce file size while maintaining quality:"),
-        buildFeatureExplanation("Low Compression",
-            "Minimal compression, highest quality (90% of original size)."),
-        buildFeatureExplanation("Medium Compression",
-            "Balanced compression (50-60% of original size)."),
-        buildFeatureExplanation("High Compression",
-            "Maximum file size reduction (30-40% of original size)."),
-        buildSubsectionHeader("PDF Operations"),
-        buildParagraph("Manipulate PDF files with these tools:"),
-        buildFeatureExplanation(
-            "Merge PDFs", "Combine multiple PDF files into one document."),
-        buildFeatureExplanation(
-            "Split PDF", "Divide a PDF into multiple smaller documents."),
-        buildFeatureExplanation(
-            "Extract Pages", "Pull specific pages from a larger PDF."),
-        buildFeatureExplanation(
-            "Rearrange Pages", "Change the order of pages within a PDF."),
-        buildFeatureExplanation(
-            "Rotate Pages", "Correct the orientation of individual pages."),
-        buildSubsectionHeader("PDF Conversion"),
-        buildParagraph("Convert PDFs to other formats:"),
-        buildBulletPoint("PDF to Images (JPG, PNG)"),
-        buildBulletPoint("PDF to Text (with OCR)"),
-        buildBulletPoint("PDF to other document formats"),
-        buildTipBox(
-            "Use PDF compression when sharing large documents via email or messaging apps to avoid size limitations."),
+        _buildSubsectionHeader("user_guide.pdf_tools.creating".tr()),
+        _buildParagraph("user_guide.pdf_tools.creating_desc".tr()),
+        _buildBulletPoint("user_guide.pdf_tools.creating_methods.scan".tr()),
+        _buildBulletPoint("user_guide.pdf_tools.creating_methods.combine".tr()),
+        _buildBulletPoint("user_guide.pdf_tools.creating_methods.images".tr()),
+        _buildBulletPoint("user_guide.pdf_tools.creating_methods.import".tr()),
+        _buildSubsectionHeader("user_guide.pdf_tools.compression".tr()),
+        _buildParagraph("user_guide.pdf_tools.compression_desc".tr()),
+        _buildFeatureExplanation("Low Compression",
+            "user_guide.pdf_tools.compression_levels.low".tr()),
+        _buildFeatureExplanation("Medium Compression",
+            "user_guide.pdf_tools.compression_levels.medium".tr()),
+        _buildFeatureExplanation("High Compression",
+            "user_guide.pdf_tools.compression_levels.high".tr()),
+        _buildSubsectionHeader("user_guide.pdf_tools.operations".tr()),
+        _buildParagraph("user_guide.pdf_tools.operations_desc".tr()),
+        _buildFeatureExplanation(
+            "Merge PDFs", "user_guide.pdf_tools.pdf_operations.merge".tr()),
+        _buildFeatureExplanation(
+            "Split PDF", "user_guide.pdf_tools.pdf_operations.split".tr()),
+        _buildFeatureExplanation("Extract Pages",
+            "user_guide.pdf_tools.pdf_operations.extract".tr()),
+        _buildFeatureExplanation("Rearrange Pages",
+            "user_guide.pdf_tools.pdf_operations.rearrange".tr()),
+        _buildFeatureExplanation(
+            "Rotate Pages", "user_guide.pdf_tools.pdf_operations.rotate".tr()),
+        _buildSubsectionHeader("user_guide.pdf_tools.conversion".tr()),
+        _buildParagraph("user_guide.pdf_tools.conversion_desc".tr()),
+        _buildBulletPoint(
+            "user_guide.pdf_tools.conversion_options.images".tr()),
+        _buildBulletPoint("user_guide.pdf_tools.conversion_options.text".tr()),
+        _buildBulletPoint(
+            "user_guide.pdf_tools.conversion_options.formats".tr()),
+        _buildTipBox("user_guide.pdf_tools.tip".tr()),
         SizedBox(height: 24.h),
       ],
     );
@@ -277,47 +274,40 @@ class GuideWidgets {
       controller: scrollController,
       padding: EdgeInsets.all(16.r),
       children: [
-        buildSectionHeader("Document Security"),
-        buildImagePlaceholder("Security Features"),
-        buildParagraph(
-            "Protect your sensitive documents with ScanPro's security features."),
-        buildSubsectionHeader("App Security"),
-        buildParagraph("Secure access to the entire app:"),
-        buildFeatureExplanation("Biometric Authentication",
-            "Use fingerprint or face recognition to open the app."),
-        buildFeatureExplanation(
-            "PIN Protection", "Set a numeric PIN code for app access."),
-        buildFeatureExplanation("Auto-Lock",
-            "Automatically lock the app after a period of inactivity."),
-        buildSubsectionHeader("Document Encryption"),
-        buildParagraph(
-            "Add an extra layer of protection to individual documents:"),
-        buildFeatureExplanation(
-            "Password Protection", "Encrypt PDFs with password protection."),
-        buildFeatureExplanation("Change Password",
-            "Update passwords for already protected documents."),
-        buildFeatureExplanation("Remove Protection",
-            "Remove password encryption when no longer needed."),
-        buildSubsectionHeader("Private Folder"),
-        buildParagraph(
-            "The Private Folder feature offers additional security for your most sensitive documents:"),
-        buildBulletPoint(
-            "Documents in Private Folders require authentication to view"),
-        buildBulletPoint(
-            "Private Folders are hidden from the main document list"),
-        buildBulletPoint(
-            "Additional biometric verification before accessing Private Folders"),
-        buildSubsectionHeader("Security Best Practices"),
-        buildParagraph("Recommendations for keeping your documents secure:"),
-        buildBulletPoint(
-            "Use strong, unique passwords for document protection"),
-        buildBulletPoint(
-            "Enable biometric authentication for convenient security"),
-        buildBulletPoint("Regularly back up important documents"),
-        buildBulletPoint(
-            "Be cautious when sharing documents containing sensitive information"),
-        buildTipBox(
-            "Remember your document passwords! If you forget a PDF password, you won't be able to access the document contents."),
+        _buildSubsectionHeader("user_guide.security.app_security".tr()),
+        _buildParagraph("user_guide.security.app_security_desc".tr()),
+        _buildFeatureExplanation("Biometric Authentication",
+            "user_guide.security.app_security_features.biometric".tr()),
+        _buildFeatureExplanation("PIN Protection",
+            "user_guide.security.app_security_features.pin".tr()),
+        _buildFeatureExplanation("Auto-Lock",
+            "user_guide.security.app_security_features.auto_lock".tr()),
+        _buildSubsectionHeader("user_guide.security.encryption".tr()),
+        _buildParagraph("user_guide.security.encryption_desc".tr()),
+        _buildFeatureExplanation("Password Protection",
+            "user_guide.security.encryption_features.password".tr()),
+        _buildFeatureExplanation("Change Password",
+            "user_guide.security.encryption_features.change".tr()),
+        _buildFeatureExplanation("Remove Protection",
+            "user_guide.security.encryption_features.remove".tr()),
+        _buildSubsectionHeader("user_guide.security.private_folder".tr()),
+        _buildParagraph("user_guide.security.private_folder_desc".tr()),
+        _buildBulletPoint(
+            "user_guide.security.private_folder_features.auth".tr()),
+        _buildBulletPoint(
+            "user_guide.security.private_folder_features.hidden".tr()),
+        _buildBulletPoint(
+            "user_guide.security.private_folder_features.biometric".tr()),
+        _buildSubsectionHeader("user_guide.security.best_practices".tr()),
+        _buildParagraph("user_guide.security.practices_desc".tr()),
+        _buildBulletPoint(
+            "user_guide.security.security_practices.strong_passwords".tr()),
+        _buildBulletPoint(
+            "user_guide.security.security_practices.biometric".tr()),
+        _buildBulletPoint("user_guide.security.security_practices.backup".tr()),
+        _buildBulletPoint(
+            "user_guide.security.security_practices.sharing".tr()),
+        _buildTipBox("user_guide.security.tip".tr()),
         SizedBox(height: 24.h),
       ],
     );
@@ -328,41 +318,37 @@ class GuideWidgets {
       controller: scrollController,
       padding: EdgeInsets.all(16.r),
       children: [
-        buildSectionHeader("Importing & Exporting"),
-        buildImagePlaceholder("Import/Export Options"),
-        buildParagraph(
-            "ScanPro provides various options for bringing documents in and sharing them out."),
-        buildSubsectionHeader("Importing Documents"),
-        buildParagraph("Add existing documents to your library:"),
-        buildFeatureExplanation(
-            "Import from Gallery", "Add photos from your device gallery."),
-        buildFeatureExplanation(
-            "Import PDF Files", "Add existing PDFs from your device storage."),
-        buildFeatureExplanation("Import from Cloud Storage",
-            "Import documents from Google Drive, Dropbox, etc."),
-        buildFeatureExplanation("Import from Other Apps",
-            "Receive documents shared from other applications."),
-        buildSubsectionHeader("Exporting & Sharing"),
-        buildParagraph("Share your documents in various ways:"),
-        buildFeatureExplanation("Share as PDF", "Send documents as PDF files."),
-        buildFeatureExplanation(
-            "Share as Images", "Share individual pages as image files."),
-        buildFeatureExplanation("Multiple Sharing Options",
-            "Email, messaging apps, cloud storage, and more."),
-        buildFeatureExplanation(
-            "Batch Sharing", "Share multiple documents at once."),
-        buildSubsectionHeader("Backup & Restore"),
-        buildParagraph("Safeguard your document collection:"),
-        buildFeatureExplanation(
-            "Local Backup", "Save a backup to your device storage."),
-        buildFeatureExplanation(
-            "Cloud Backup", "Back up to Google Drive or other cloud services."),
-        buildFeatureExplanation(
-            "Automatic Backup", "Schedule regular backups of your library."),
-        buildFeatureExplanation("Restore from Backup",
-            "Recover your documents from a previous backup."),
-        buildTipBox(
-            "Regular backups are essential for preventing data loss. Set up automatic backups in Settings → Backup & Restore."),
+        _buildSubsectionHeader("user_guide.import_export.importing".tr()),
+        _buildParagraph("user_guide.import_export.importing_desc".tr()),
+        _buildFeatureExplanation("Import from Gallery",
+            "user_guide.import_export.import_methods.gallery".tr()),
+        _buildFeatureExplanation("Import PDF Files",
+            "user_guide.import_export.import_methods.pdf".tr()),
+        _buildFeatureExplanation("Import from Cloud Storage",
+            "user_guide.import_export.import_methods.cloud".tr()),
+        _buildFeatureExplanation("Import from Other Apps",
+            "user_guide.import_export.import_methods.apps".tr()),
+        _buildSubsectionHeader("user_guide.import_export.exporting".tr()),
+        _buildParagraph("user_guide.import_export.exporting_desc".tr()),
+        _buildFeatureExplanation(
+            "Share as PDF", "user_guide.import_export.export_methods.pdf".tr()),
+        _buildFeatureExplanation("Share as Images",
+            "user_guide.import_export.export_methods.images".tr()),
+        _buildFeatureExplanation("Multiple Sharing Options",
+            "user_guide.import_export.export_methods.options".tr()),
+        _buildFeatureExplanation("Batch Sharing",
+            "user_guide.import_export.export_methods.batch".tr()),
+        _buildSubsectionHeader("user_guide.import_export.backup".tr()),
+        _buildParagraph("user_guide.import_export.backup_desc".tr()),
+        _buildFeatureExplanation("Local Backup",
+            "user_guide.import_export.backup_methods.local".tr()),
+        _buildFeatureExplanation("Cloud Backup",
+            "user_guide.import_export.backup_methods.cloud".tr()),
+        _buildFeatureExplanation("Automatic Backup",
+            "user_guide.import_export.backup_methods.auto".tr()),
+        _buildFeatureExplanation("Restore from Backup",
+            "user_guide.import_export.backup_methods.restore".tr()),
+        _buildTipBox("user_guide.import_export.tip".tr()),
         SizedBox(height: 24.h),
       ],
     );
@@ -373,53 +359,41 @@ class GuideWidgets {
       controller: scrollController,
       padding: EdgeInsets.all(16.r),
       children: [
-        buildSectionHeader("Settings & Preferences"),
-        buildImagePlaceholder("Settings Screen"),
-        buildParagraph("Customize ScanPro to work just the way you want it."),
-        buildSubsectionHeader("Appearance Settings"),
-        buildParagraph("Customize the app's look and feel:"),
-        buildFeatureExplanation(
-            "Theme", "Choose between Light, Dark, or System default theme."),
-        buildFeatureExplanation("Language",
-            "Select your preferred language from multiple options."),
-        buildFeatureExplanation("Home Screen Layout",
-            "Customize which elements appear on your home screen."),
-        buildSubsectionHeader("Scanning Preferences"),
-        buildParagraph("Default settings for document scanning:"),
-        buildFeatureExplanation("Default Scan Mode",
-            "Set your preferred scanning mode (Auto, Manual, Batch)."),
-        buildFeatureExplanation("Default Color Mode",
-            "Choose the default color processing (Color, Grayscale, B&W)."),
-        buildFeatureExplanation("Auto-Enhancement",
-            "Enable automatic image enhancement for all scans."),
-        buildFeatureExplanation(
-            "Default Quality", "Set the quality level for document scanning."),
-        buildSubsectionHeader("Document Settings"),
-        buildParagraph("Configure document management options:"),
-        buildFeatureExplanation("Default Save Location",
-            "Set where new documents are saved by default."),
-        buildFeatureExplanation(
-            "PDF Quality", "Set the default quality for PDF creation."),
-        buildFeatureExplanation(
-            "OCR Settings", "Configure text recognition preferences."),
-        buildSubsectionHeader("Security Settings"),
-        buildParagraph("Configure app security:"),
-        buildFeatureExplanation("Biometric Authentication",
-            "Enable fingerprint/face recognition unlock."),
-        buildFeatureExplanation(
-            "PIN Setup", "Create or change your app access PIN."),
-        buildFeatureExplanation("Auto-Lock Timer",
-            "Set how quickly the app locks after inactivity."),
-        buildSubsectionHeader("Backup Settings"),
-        buildParagraph("Configure backup options:"),
-        buildFeatureExplanation(
-            "Auto Backup", "Enable and schedule automatic backups."),
-        buildFeatureExplanation(
-            "Backup Location", "Choose where backups are stored."),
-        buildFeatureExplanation(
-            "Backup Content", "Select what data is included in backups."),
-        buildTipBox(
-            "Take some time to explore the Settings menu and customize ScanPro to match your workflow and preferences."),
+        _buildSubsectionHeader(
+            "user_guide.troubleshooting.scanning_issues".tr()),
+        _buildParagraph(
+            "user_guide.troubleshooting.scanning_solutions_desc".tr()),
+        _buildFeatureExplanation("Poor Image Quality",
+            "user_guide.troubleshooting.scanning_solutions.quality".tr()),
+        _buildFeatureExplanation("Edge Detection Problems",
+            "user_guide.troubleshooting.scanning_solutions.edges".tr()),
+        _buildFeatureExplanation("OCR Not Working Well",
+            "user_guide.troubleshooting.scanning_solutions.ocr".tr()),
+        _buildFeatureExplanation("Camera Not Working",
+            "user_guide.troubleshooting.scanning_solutions.camera".tr()),
+        _buildSubsectionHeader(
+            "user_guide.troubleshooting.management_issues".tr()),
+        _buildParagraph(
+            "user_guide.troubleshooting.management_solutions_desc".tr()),
+        _buildFeatureExplanation("Missing Documents",
+            "user_guide.troubleshooting.management_solutions.missing".tr()),
+        _buildFeatureExplanation("Can't Open Document",
+            "user_guide.troubleshooting.management_solutions.open".tr()),
+        _buildFeatureExplanation("App Performance Slow",
+            "user_guide.troubleshooting.management_solutions.performance".tr()),
+        _buildFeatureExplanation("Storage Space Issues",
+            "user_guide.troubleshooting.management_solutions.storage".tr()),
+        _buildSubsectionHeader("user_guide.troubleshooting.support".tr()),
+        _buildParagraph("user_guide.troubleshooting.support_desc".tr()),
+        _buildFeatureExplanation("In-App Help",
+            "user_guide.troubleshooting.support_options.help".tr()),
+        _buildFeatureExplanation("Email Support",
+            "user_guide.troubleshooting.support_options.email".tr()),
+        _buildFeatureExplanation("Knowledge Base",
+            "user_guide.troubleshooting.support_options.knowledge".tr()),
+        _buildFeatureExplanation("Feedback & Feature Requests",
+            "user_guide.troubleshooting.support_options.feedback".tr()),
+        _buildTipBox("user_guide.troubleshooting.tip".tr()),
         SizedBox(height: 24.h),
       ],
     );
@@ -430,42 +404,49 @@ class GuideWidgets {
       controller: scrollController,
       padding: EdgeInsets.all(16.r),
       children: [
-        buildSectionHeader("Troubleshooting & Support"),
-        buildImagePlaceholder("Support Options"),
-        buildParagraph(
-            "Solutions for common issues and how to get help when needed."),
-        buildSubsectionHeader("Common Scanning Issues"),
-        buildParagraph("Solutions for scanning problems:"),
-        buildFeatureExplanation("Poor Image Quality",
-            "Ensure good lighting, keep the camera steady, and try using Auto Enhancement."),
-        buildFeatureExplanation("Edge Detection Problems",
-            "Use a contrasting background, or switch to Manual mode and adjust crop manually."),
-        buildFeatureExplanation("OCR Not Working Well",
-            "Ensure the document is well-lit, clearly visible, and properly aligned."),
-        buildFeatureExplanation("Camera Not Working",
-            "Check camera permissions in your device settings."),
-        buildSubsectionHeader("Document Management Issues"),
-        buildParagraph("Solutions for library problems:"),
-        buildFeatureExplanation("Missing Documents",
-            "Check different folders, use the search function, or restore from backup."),
-        buildFeatureExplanation("Can't Open Document",
-            "For password-protected PDFs, ensure you have the correct password."),
-        buildFeatureExplanation("App Performance Slow",
-            "Try clearing the cache or restarting the app."),
-        buildFeatureExplanation("Storage Space Issues",
-            "Use the 'Clean Temporary Files' option in Settings, or compress large documents."),
-        buildSubsectionHeader("Getting Support"),
-        buildParagraph("Ways to get help with ScanPro:"),
-        buildFeatureExplanation(
-            "In-App Help", "This User Guide and FAQ sections."),
-        buildFeatureExplanation(
-            "Email Support", "Contact our support team at support@scanpro.cc."),
-        buildFeatureExplanation(
-            "Knowledge Base", "Visit our website for additional resources."),
-        buildFeatureExplanation("Feedback & Feature Requests",
-            "Share your ideas and suggestions with our team."),
-        buildTipBox(
-            "When contacting support about an issue, include details about your device, app version, and steps to reproduce the problem."),
+        _buildSubsectionHeader("user_guide.settings.appearance".tr()),
+        _buildParagraph("user_guide.settings.appearance_desc".tr()),
+        _buildFeatureExplanation(
+            "Theme", "user_guide.settings.appearance_settings.theme".tr()),
+        _buildFeatureExplanation("Language",
+            "user_guide.settings.appearance_settings.language".tr()),
+        _buildFeatureExplanation("Home Screen Layout",
+            "user_guide.settings.appearance_settings.layout".tr()),
+        _buildSubsectionHeader("user_guide.settings.scanning".tr()),
+        _buildParagraph("user_guide.settings.scanning_desc".tr()),
+        _buildFeatureExplanation("Default Scan Mode",
+            "user_guide.settings.scanning_settings.mode".tr()),
+        _buildFeatureExplanation("Default Color Mode",
+            "user_guide.settings.scanning_settings.color".tr()),
+        _buildFeatureExplanation("Auto-Enhancement",
+            "user_guide.settings.scanning_settings.enhancement".tr()),
+        _buildFeatureExplanation("Default Quality",
+            "user_guide.settings.scanning_settings.quality".tr()),
+        _buildSubsectionHeader("user_guide.settings.document".tr()),
+        _buildParagraph("user_guide.settings.document_desc".tr()),
+        _buildFeatureExplanation("Default Save Location",
+            "user_guide.settings.document_settings.location".tr()),
+        _buildFeatureExplanation("PDF Quality",
+            "user_guide.settings.document_settings.quality".tr()),
+        _buildFeatureExplanation(
+            "OCR Settings", "user_guide.settings.document_settings.ocr".tr()),
+        _buildSubsectionHeader("user_guide.settings.security".tr()),
+        _buildParagraph("user_guide.settings.security_desc".tr()),
+        _buildFeatureExplanation("Biometric Authentication",
+            "user_guide.settings.security_settings.biometric".tr()),
+        _buildFeatureExplanation(
+            "PIN Setup", "user_guide.settings.security_settings.pin".tr()),
+        _buildFeatureExplanation("Auto-Lock Timer",
+            "user_guide.settings.security_settings.auto_lock".tr()),
+        _buildSubsectionHeader("user_guide.settings.backup".tr()),
+        _buildParagraph("user_guide.settings.backup_desc".tr()),
+        _buildFeatureExplanation(
+            "Auto Backup", "user_guide.settings.backup_settings.auto".tr()),
+        _buildFeatureExplanation("Backup Location",
+            "user_guide.settings.backup_settings.location".tr()),
+        _buildFeatureExplanation("Backup Content",
+            "user_guide.settings.backup_settings.content".tr()),
+        _buildTipBox("user_guide.settings.tip".tr()),
         SizedBox(height: 40.h),
       ],
     );
@@ -473,7 +454,7 @@ class GuideWidgets {
 
   // Helper Widgets
 
-  Widget buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
       child: Text(
@@ -487,7 +468,7 @@ class GuideWidgets {
     );
   }
 
-  Widget buildSubsectionHeader(String title) {
+  Widget _buildSubsectionHeader(String title) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Text(
@@ -501,7 +482,7 @@ class GuideWidgets {
     );
   }
 
-  Widget buildParagraph(String content) {
+  Widget _buildParagraph(String content) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
       child: Text(
@@ -515,7 +496,7 @@ class GuideWidgets {
     );
   }
 
-  Widget buildImagePlaceholder(String imageLabel) {
+  Widget _buildImagePlaceholder(String imageLabel) {
     return Container(
       height: 180.h,
       margin: EdgeInsets.only(bottom: 16.h),
@@ -545,7 +526,7 @@ class GuideWidgets {
     );
   }
 
-  Widget buildBulletPoint(String content) {
+  Widget _buildBulletPoint(String content) {
     return Padding(
       padding: EdgeInsets.only(bottom: 6.h, left: 16.w),
       child: Row(
@@ -576,7 +557,7 @@ class GuideWidgets {
     );
   }
 
-  Widget buildNumberedStep(int number, String title, String content) {
+  Widget _buildNumberedStep(int number, String title, String content) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h, left: 16.w),
       child: Row(
@@ -629,7 +610,7 @@ class GuideWidgets {
     );
   }
 
-  Widget buildFeatureExplanation(String feature, String explanation) {
+  Widget _buildFeatureExplanation(String feature, String explanation) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h, left: 8.w),
       child: Row(
@@ -662,7 +643,7 @@ class GuideWidgets {
     );
   }
 
-  Widget buildTipBox(String tip) {
+  Widget _buildTipBox(String tip) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16.h),
       padding: EdgeInsets.all(16.r),

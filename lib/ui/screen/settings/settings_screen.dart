@@ -56,7 +56,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         final currentLang = localState.languages.firstWhere(
           (lang) =>
               lang.languageCode == context.locale.languageCode &&
-              (lang.countryCode == context.locale.countryCode),
+              (lang.countryCode == context.locale.countryCode ||
+                  lang.countryCode == null),
           orElse: () => localState.languages.first,
         );
         currentLanguageLabel = currentLang.label;
