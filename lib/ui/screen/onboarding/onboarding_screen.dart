@@ -152,6 +152,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     setState(() {
       _subscriptionHandled = true;
     });
+    // Immediately proceed to complete onboarding
     _completeOnboarding();
   }
 
@@ -182,6 +183,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
       });
     }
   }
+
 
   void _showSkipDialog() {
     showGeneralDialog(

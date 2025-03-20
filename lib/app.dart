@@ -34,6 +34,37 @@ class _DocAppState extends ConsumerState<DocApp> {
     });
   }
 
+  Future<void> _initializeApp() async {
+    try {
+      // Initialize subscription service first
+      final subscriptionService = ref.read(subscriptionServiceProvider);
+      await subscriptionService.initialize();
+
+      // Then check subscription status
+      await subscriptionService.refreshSubscriptionStatus();
+
+      // Check if onboarding is needed
+      final prefs = await SharedPreferences.getInstance();
+      final hasCompletedOnboarding =
+          prefs.getBool(AppConstants.hasCompletedOnboardingKey) ?? false;
+
+      // Set initial state for onboarding provider
+      ref.read(hasCompletedOnboardingProvider.notifier).state =
+          hasCompletedOnboarding;
+
+      setState(() {
+        _showOnboarding = !hasCompletedOnboarding;
+        _isInitialized = true;
+      });
+    } catch (e) {
+      // Handle initialization errors
+      print('Error initializing app: $e');
+      setState(() {
+        _isInitialized = true;
+      });
+    }
+  }
+
   Future<void> _initializeLocale() async {
     // Access localeState to trigger locale loading
     final localState = ref.read(localProvider);
@@ -55,34 +86,6 @@ class _DocAppState extends ConsumerState<DocApp> {
           logger.info(
               'Locale set to: ${savedLocale.languageCode}_${savedLocale.countryCode}');
         }
-      });
-    }
-  }
-
-  Future<void> _initializeApp() async {
-    try {
-      // Initialize subscription service
-      final subscriptionService = ref.read(subscriptionServiceProvider);
-      await subscriptionService.initialize();
-
-      // Check if onboarding is needed
-      final prefs = await SharedPreferences.getInstance();
-      final hasCompletedOnboarding =
-          prefs.getBool(AppConstants.hasCompletedOnboardingKey) ?? false;
-
-      // Set initial state for onboarding provider
-      ref.read(hasCompletedOnboardingProvider.notifier).state =
-          hasCompletedOnboarding;
-
-      setState(() {
-        _showOnboarding = !hasCompletedOnboarding;
-        _isInitialized = true;
-      });
-    } catch (e) {
-      // Handle initialization errors
-      print('Error initializing app: $e');
-      setState(() {
-        _isInitialized = true;
       });
     }
   }
