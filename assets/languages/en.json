@@ -1183,328 +1183,296 @@
   },
   "user_guide": {
     "title": "User Guide",
-    "section": {
-      "getting_started": "Getting Started",
-      "document_scanning": "Document Scanning",
-      "document_management": "Document Management",
-      "organization": "Organization",
-      "editing": "Editing & Enhancing",
-      "pdf_tools": "PDF Tools",
-      "security": "Security",
-      "import_export": "Import & Export",
-      "settings": "Settings",
-      "troubleshooting": "Troubleshooting"
-    },
     "getting_started": {
-      "title": "Getting Started with ScanPro",
-      "intro": "Welcome to ScanPro, your complete document scanning and management solution. This guide will help you get the most out of your app.",
       "initial_setup": "Initial Setup",
       "setup_steps": {
-        "permissions": "Grant camera and storage permissions when prompted to enable scanning and saving documents.",
-        "language": "Choose your preferred language from the available options.",
-        "theme": "Pick light or dark theme, which you can always change later in settings."
+        "permissions": "Allow necessary permissions for the app to function properly. This includes camera access for scanning and storage access for saving documents.",
+        "language": "Select your preferred language from the available options in the settings menu.",
+        "theme": "Choose between light and dark themes based on your preference."
       },
-      "home_screen": "Home Screen Overview",
-      "home_screen_desc": "The home screen is your command center for all ScanPro features:",
+      "home_screen": "Home Screen",
+      "home_screen_desc": "The home screen is your central hub for accessing all features of the app.",
       "features": {
-        "recent_docs": "Quickly access your most recently scanned or viewed documents.",
-        "scan_button": "The large circular button at the bottom center starts a new scan.",
-        "folders": "Organize your documents in custom folders for easy access.",
-        "search": "Find any document by searching for names, content (if OCR was used), or tags."
+        "recent_docs": "Recent Documents - Quick access to your recently viewed or edited documents.",
+        "scan_button": "Scan Button - Tap to start scanning a new document.",
+        "folders": "Folders - Organize your documents in custom folders.",
+        "search": "Search - Find your documents quickly by name or content."
       },
-      "tip": "You can customize your home screen layout in Settings → Appearance → Home Layout."
+      "tip": "Tip: You can customize your home screen layout in the settings menu to show your most frequently used features."
     },
     "document_scanning": {
-      "title": "Document Scanning",
-      "intro": "Scanning documents is the core function of ScanPro. The app provides multiple ways to capture high-quality document images.",
       "starting_scan": "Starting a Scan",
       "scan_methods": {
-        "home_button": "Tap the scan button on the home screen",
-        "plus_button": "Tap the + button and select 'Scan Document'",
-        "folder_scan": "From a folder, tap the scan icon to add directly to that folder"
+        "home_button": "Tap the large scan button on the home screen to quickly start a new scan.",
+        "plus_button": "Use the plus button in the bottom navigation bar for scanning options.",
+        "folder_scan": "Open a folder and tap the scan button to save directly to that folder."
       },
       "scanning_modes": "Scanning Modes",
       "modes": {
-        "auto": "The app automatically detects document edges and captures the image when steady.",
-        "manual": "You control when to capture the image with the capture button.",
-        "batch": "Continuously scan multiple pages for multi-page documents."
+        "auto": "Automatically detects document edges and enhances the image quality for best results.",
+        "manual": "Gives you full control over the cropping, enhancement, and other settings.",
+        "batch": "Scan multiple pages in succession without having to tap the scan button each time."
       },
       "scan_settings": "Scan Settings",
-      "settings_desc": "Before scanning, you can adjust various settings:",
+      "settings_desc": "Customize your scanning experience with the following settings:",
       "settings": {
-        "color_mode": "Choose between Color, Grayscale, or Black & White scanning.",
-        "document_type": "Select Document, Receipt, ID Card, or Photo for optimized processing.",
-        "edge_detection": "Enable or disable automatic edge detection.",
-        "ocr": "Enable to make text in your documents searchable.",
-        "quality": "Adjust the image quality (higher quality means larger file size)."
+        "color_mode": "Choose between color, grayscale, or black & white for your scans.",
+        "document_type": "Select from document, receipt, ID card, or photo to optimize processing.",
+        "edge_detection": "Enable or disable automatic edge detection for document boundaries.",
+        "ocr": "Turn on Optical Character Recognition to make your document text searchable.",
+        "quality": "Adjust the resolution from low (faster) to high (better quality)."
       },
       "reviewing": "Reviewing and Editing Scans",
       "reviewing_options": {
-        "crop": "Adjust cropping boundaries",
-        "rotate": "Rotate or flip the image",
-        "filters": "Apply filters and enhancements",
-        "retake": "Retake a scan if needed",
-        "add_pages": "Add more pages (for multi-page documents)",
-        "rearrange": "Rearrange pages by dragging"
+        "crop": "Adjust the cropping boundaries to properly frame your document.",
+        "rotate": "Rotate the scan 90°, 180°, or 270° to correct orientation.",
+        "filters": "Apply color corrections, contrast adjustments, or other enhancements.",
+        "retake": "Discard and retake a poor scan if needed.",
+        "add_pages": "Add more pages to create a multi-page document.",
+        "rearrange": "Drag and drop to reorder pages in a multi-page document."
       },
-      "tip": "For best results, scan in a well-lit environment with the document placed on a contrasting background."
+      "tip": "Tip: For best results, scan in a well-lit environment with the document on a contrasting background."
     },
     "document_management": {
-      "title": "Document Management",
-      "intro": "ScanPro makes it easy to manage your growing collection of documents.",
       "library": "Document Library",
-      "library_desc": "Your Document Library contains all scanned and imported documents. Here you can:",
+      "library_desc": "The document library shows all your scanned and imported documents.",
       "library_features": {
-        "view": "View all documents in a list or grid view",
-        "sort": "Sort documents by name, date, size, or type",
-        "filter": "Filter documents by type (PDF, image, etc.)",
-        "search": "Search for specific documents"
+        "view": "View all documents or filter by folders, favorites, or document type.",
+        "sort": "Sort documents by name, date, size, or custom order.",
+        "filter": "Filter documents by tags, type, or other criteria.",
+        "search": "Search for documents by name or content (if OCR is enabled)."
       },
       "actions": "Document Actions",
-      "actions_desc": "For each document, you can:",
+      "actions_desc": "For each document, you can perform the following actions:",
       "doc_actions": {
-        "view": "Open the document to read its contents.",
-        "rename": "Change the document's name.",
-        "edit": "Modify the document's contents or appearance.",
-        "share": "Send the document via email, messaging apps, etc.",
-        "move": "Relocate the document to another folder.",
-        "favorite": "Mark important documents for quick access.",
-        "delete": "Remove the document from your library."
+        "view": "Open and view the document with zoom and scroll options.",
+        "rename": "Change the document name for better organization.",
+        "edit": "Modify the document content, crop, or apply filters.",
+        "share": "Share the document via email, messaging, or other apps.",
+        "move": "Move the document to a different folder.",
+        "favorite": "Mark frequently used documents as favorites for quick access.",
+        "delete": "Remove documents you no longer need."
       },
-      "recents": "Recent and Favorites",
-      "recents_desc": "Access your most recent and favorite documents quickly from the home screen.",
-      "tip": "You can perform batch operations by long-pressing a document to enter selection mode, then selecting multiple documents."
+      "recents": "Recent Documents",
+      "recents_desc": "The app keeps track of your recently accessed documents for quick access.",
+      "tip": "Tip: Use tags to categorize your documents for easier searching and filtering later."
     },
     "organization": {
-      "title": "Organization with Folders",
-      "intro": "Keep your documents organized using folders and subfolders in ScanPro.",
       "creating_folders": "Creating Folders",
       "creating_steps": {
-        "step1": "Tap the + button and select 'Create Folder'",
-        "step2": "Enter a name for your folder",
-        "step3": "Select a color and icon (optional)",
-        "step4": "Tap 'Create' to save your new folder"
+        "step1": "Tap the folder icon in the navigation bar to access the folders view.",
+        "step2": "Tap the '+' button to create a new folder.",
+        "step3": "Enter a name for your folder and select a color for easy identification.",
+        "step4": "Tap 'Create' to save your new folder."
       },
-      "subfolders": "Subfolder Structure",
-      "subfolders_desc": "ScanPro supports nested folders for hierarchical organization:",
+      "subfolders": "Working with Subfolders",
+      "subfolders_desc": "You can create a hierarchical structure with folders and subfolders:",
       "subfolder_features": {
-        "create": "Open a folder and tap + to create a subfolder within it",
-        "content": "Subfolders can contain both documents and additional subfolders",
-        "navigate": "Navigate up and down the folder structure using the breadcrumb navigation"
+        "create": "In a folder view, tap '+' and select 'Create Subfolder' to add a subfolder.",
+        "content": "Subfolders can contain documents just like regular folders.",
+        "navigate": "Tap on a folder to view its contents, including any subfolders."
       },
       "moving": "Moving Documents",
       "moving_steps": {
-        "step1": "Long-press a document to select it",
-        "step2": "Select multiple documents if needed",
-        "step3": "Tap the 'Move' option",
-        "step4": "Select the destination folder"
+        "step1": "Long-press on a document to enter selection mode.",
+        "step2": "Select one or more documents you want to move.",
+        "step3": "Tap the 'Move' button in the action bar.",
+        "step4": "Choose the destination folder and confirm."
       },
       "managing_folders": "Managing Folders",
-      "managing_desc": "You can manage your folders by:",
+      "managing_desc": "You can perform various actions on your folders:",
       "folder_actions": {
-        "rename": "Change a folder's name, color, or icon.",
-        "delete": "Remove a folder and optionally its contents.",
-        "move": "Relocate a folder to become a subfolder of another folder."
+        "rename": "Change a folder's name or color to better fit your organizational scheme.",
+        "delete": "Remove a folder and optionally decide what to do with its contents.",
+        "move": "Change a folder's position in the hierarchy by moving it to become a subfolder of another folder."
       },
-      "tip": "Create folders based on document categories (e.g., Receipts, ID Documents, Work) or time periods (e.g., 2023, 2024)."
+      "tip": "Tip: Create folders that match your document categories such as 'Bills', 'Receipts', 'Work', or 'Personal'."
     },
     "editing": {
-      "title": "Editing & Enhancing Documents",
-      "intro": "ScanPro provides powerful tools to improve the quality and usefulness of your scanned documents.",
-      "enhancement": "Image Enhancement",
-      "enhancement_desc": "Improve document readability with:",
+      "enhancement": "Document Enhancement",
+      "enhancement_desc": "Improve the quality and readability of your scanned documents:",
       "enhancement_tools": {
-        "auto": "One-tap improvement for contrast and clarity.",
-        "brightness": "Manual adjustment sliders for precise control.",
-        "color": "Fix color issues or convert to grayscale/black & white.",
-        "noise": "Remove specks and artifacts from scanned images."
+        "auto": "One-tap enhancement to automatically optimize brightness, contrast, and clarity.",
+        "brightness": "Manually adjust brightness and contrast for better readability.",
+        "color": "Fine-tune colors, saturation, and white balance.",
+        "noise": "Remove specks, dots, and other imperfections from scans."
       },
       "editing": "Document Editing",
-      "editing_desc": "Edit document content with:",
+      "editing_desc": "Make changes to your document's content and appearance:",
       "editing_tools": {
-        "crop": "Adjust document boundaries or orientation.",
-        "ocr": "Convert image text to editable digital text.",
-        "text": "Modify recognized text directly in the app.",
-        "annotate": "Add notes, highlights, or signatures to documents."
+        "crop": "Resize, crop, or rotate pages to get the perfect alignment and aspect ratio.",
+        "ocr": "Extract text from your documents to make them searchable and editable.",
+        "text": "Edit recognized text directly in the app for minor corrections.",
+        "annotate": "Add highlights, underlines, notes, or redactions to important sections."
       },
       "page_management": "Page Management",
       "page_desc": "For multi-page documents, you can:",
       "page_actions": {
-        "add": "Add new pages to existing documents",
-        "remove": "Remove specific pages",
-        "rearrange": "Rearrange page order by dragging",
-        "extract": "Extract pages to create new documents"
+        "add": "Add more pages to an existing document.",
+        "remove": "Delete pages you don't need.",
+        "rearrange": "Change the order of pages by dragging and dropping.",
+        "extract": "Save a specific page as a separate document."
       },
-      "tip": "For text-heavy documents, enable OCR during scanning or apply it later to make text searchable and editable."
+      "tip": "Tip: For documents with small text, try scanning at a higher resolution and then using text enhancement options for better readability."
     },
     "pdf_tools": {
-      "title": "PDF Tools",
-      "intro": "ScanPro offers comprehensive PDF management capabilities.",
       "creating": "Creating PDFs",
-      "creating_desc": "Create PDFs from various sources:",
+      "creating_desc": "There are several ways to create PDF files in the app:",
       "creating_methods": {
-        "scan": "Convert scanned documents directly to PDF",
-        "combine": "Combine multiple scans into a single PDF",
-        "images": "Convert images from your gallery to PDF",
-        "import": "Import existing PDFs for editing"
+        "scan": "Scan physical documents directly to PDF format.",
+        "combine": "Combine multiple scans into a single PDF document.",
+        "images": "Convert images from your gallery into PDF format.",
+        "import": "Import existing PDF files from your device or cloud storage."
       },
       "compression": "PDF Compression",
-      "compression_desc": "Reduce file size while maintaining quality:",
+      "compression_desc": "Reduce file size while maintaining necessary quality:",
       "compression_levels": {
-        "low": "Minimal compression, highest quality (90% of original size).",
-        "medium": "Balanced compression (50-60% of original size).",
-        "high": "Maximum file size reduction (30-40% of original size)."
+        "low": "Minimal compression with high image quality, best for documents with fine details or images.",
+        "medium": "Balanced compression with good quality, suitable for most documents.",
+        "high": "High compression with reduced quality, ideal for email attachments or documents where quality is less critical."
       },
       "operations": "PDF Operations",
-      "operations_desc": "Manipulate PDF files with these tools:",
+      "operations_desc": "Perform various actions on your PDF files:",
       "pdf_operations": {
-        "merge": "Combine multiple PDF files into one document.",
+        "merge": "Combine multiple PDF files into a single document.",
         "split": "Divide a PDF into multiple smaller documents.",
-        "extract": "Pull specific pages from a larger PDF.",
+        "extract": "Save specific pages as separate files.",
         "rearrange": "Change the order of pages within a PDF.",
-        "rotate": "Correct the orientation of individual pages."
+        "rotate": "Correct the orientation of pages."
       },
-      "conversion": "PDF Conversion",
-      "conversion_desc": "Convert PDFs to other formats:",
+      "conversion": "File Conversion",
+      "conversion_desc": "Convert between different file formats:",
       "conversion_options": {
-        "images": "PDF to Images (JPG, PNG)",
-        "text": "PDF to Text (with OCR)",
-        "formats": "PDF to other document formats"
+        "images": "Export PDF pages as image files (JPG, PNG).",
+        "text": "Extract plain text from PDF documents.",
+        "formats": "Convert to and from various formats like DOCX, XLSX, or HTML."
       },
-      "tip": "Use PDF compression when sharing large documents via email or messaging apps to avoid size limitations."
+      "tip": "Tip: When sharing PDFs by email, use the medium or high compression level to reduce file size while keeping the document readable."
     },
     "security": {
-      "title": "Document Security",
-      "intro": "Protect your sensitive documents with ScanPro's security features.",
       "app_security": "App Security",
-      "app_security_desc": "Secure access to the entire app:",
+      "app_security_desc": "Protect access to the app and all your documents:",
       "app_security_features": {
-        "biometric": "Use fingerprint or face recognition to open the app.",
-        "pin": "Set a numeric PIN code for app access.",
-        "auto_lock": "Automatically lock the app after a period of inactivity."
+        "biometric": "Use fingerprint or face recognition to unlock the app.",
+        "pin": "Set a numeric PIN code as an alternative authentication method.",
+        "auto_lock": "Configure the app to automatically lock after a period of inactivity."
       },
       "encryption": "Document Encryption",
-      "encryption_desc": "Add an extra layer of protection to individual documents:",
+      "encryption_desc": "Secure individual documents with password protection:",
       "encryption_features": {
-        "password": "Encrypt PDFs with password protection.",
-        "change": "Update passwords for already protected documents.",
-        "remove": "Remove password encryption when no longer needed."
+        "password": "Set a password for sensitive documents to prevent unauthorized access.",
+        "change": "Update passwords for documents that already have protection.",
+        "remove": "Remove password protection when it's no longer needed."
       },
       "private_folder": "Private Folder",
-      "private_folder_desc": "The Private Folder feature offers additional security for your most sensitive documents:",
+      "private_folder_desc": "Store your most sensitive documents in a specially protected location:",
       "private_folder_features": {
-        "auth": "Documents in Private Folders require authentication to view",
-        "hidden": "Private Folders are hidden from the main document list",
-        "biometric": "Additional biometric verification before accessing Private Folders"
+        "auth": "Requires additional authentication to access, even if the app is already unlocked.",
+        "hidden": "Keeps documents invisible from the main library view.",
+        "biometric": "Offers biometric protection for maximum security."
       },
       "best_practices": "Security Best Practices",
-      "practices_desc": "Recommendations for keeping your documents secure:",
+      "practices_desc": "Follow these guidelines to keep your documents secure:",
       "security_practices": {
-        "strong_passwords": "Use strong, unique passwords for document protection",
-        "biometric": "Enable biometric authentication for convenient security",
-        "backup": "Regularly back up important documents",
-        "sharing": "Be cautious when sharing documents containing sensitive information"
+        "strong_passwords": "Use strong, unique passwords for document protection.",
+        "biometric": "Enable biometric authentication for the most secure access.",
+        "backup": "Regularly back up your documents to prevent loss.",
+        "sharing": "Be cautious when sharing sensitive documents."
       },
-      "tip": "Remember your document passwords! If you forget a PDF password, you won't be able to access the document contents."
+      "tip": "Tip: For highly sensitive documents, use both app-level security and document-level password protection for multiple layers of security."
     },
     "import_export": {
-      "title": "Importing & Exporting",
-      "intro": "ScanPro provides various options for bringing documents in and sharing them out.",
       "importing": "Importing Documents",
-      "importing_desc": "Add existing documents to your library:",
+      "importing_desc": "Add existing documents to your library from various sources:",
       "import_methods": {
-        "gallery": "Add photos from your device gallery.",
-        "pdf": "Add existing PDFs from your device storage.",
-        "cloud": "Import documents from Google Drive, Dropbox, etc.",
+        "gallery": "Select images from your device's photo gallery.",
+        "pdf": "Import PDF files from your device storage.",
+        "cloud": "Access documents from cloud storage services like Google Drive or Dropbox.",
         "apps": "Receive documents shared from other applications."
       },
-      "exporting": "Exporting & Sharing",
-      "exporting_desc": "Share your documents in various ways:",
+      "exporting": "Exporting Documents",
+      "exporting_desc": "Share your documents with others or other applications:",
       "export_methods": {
-        "pdf": "Send documents as PDF files.",
-        "images": "Share individual pages as image files.",
-        "options": "Email, messaging apps, cloud storage, and more.",
-        "batch": "Share multiple documents at once."
+        "pdf": "Export documents as PDF files for universal compatibility.",
+        "images": "Save document pages as individual image files.",
+        "options": "Choose from various quality and format options depending on your needs.",
+        "batch": "Export multiple documents at once in a batch operation."
       },
-      "backup": "Backup & Restore",
-      "backup_desc": "Safeguard your document collection:",
+      "backup": "Backup and Restore",
+      "backup_desc": "Safeguard your documents against loss or device changes:",
       "backup_methods": {
-        "local": "Save a backup to your device storage.",
-        "cloud": "Back up to Google Drive or other cloud services.",
-        "auto": "Schedule regular backups of your library.",
-        "restore": "Recover your documents from a previous backup."
+        "local": "Create backups stored on your device's storage.",
+        "cloud": "Sync your documents to cloud storage for access across devices.",
+        "auto": "Set up automatic backups on a regular schedule.",
+        "restore": "Recover your documents from a previous backup when needed."
       },
-      "tip": "Regular backups are essential for preventing data loss. Set up automatic backups in Settings → Backup & Restore."
+      "tip": "Tip: Create regular backups of your documents, especially before updating the app or changing devices, to ensure you never lose important information."
     },
     "settings": {
-      "title": "Settings & Preferences",
-      "intro": "Customize ScanPro to work just the way you want it.",
       "appearance": "Appearance Settings",
-      "appearance_desc": "Customize the app's look and feel:",
+      "appearance_desc": "Customize how the app looks and feels:",
       "appearance_settings": {
-        "theme": "Choose between Light, Dark, or System default theme.",
-        "language": "Select your preferred language from multiple options.",
-        "layout": "Customize which elements appear on your home screen."
+        "theme": "Switch between light and dark themes or follow system settings.",
+        "language": "Choose your preferred language from the available options.",
+        "layout": "Customize the layout of the home screen and document list."
       },
-      "scanning": "Scanning Preferences",
-      "scanning_desc": "Default settings for document scanning:",
+      "scanning": "Scanning Settings",
+      "scanning_desc": "Configure default behavior for document scanning:",
       "scanning_settings": {
-        "mode": "Set your preferred scanning mode (Auto, Manual, Batch).",
-        "color": "Choose the default color processing (Color, Grayscale, B&W).",
-        "enhancement": "Enable automatic image enhancement for all scans.",
-        "quality": "Set the quality level for document scanning."
+        "mode": "Set the default scanning mode (Auto, Manual, or Batch).",
+        "color": "Choose the default color mode for new scans.",
+        "enhancement": "Enable or disable automatic image enhancement.",
+        "quality": "Set the default resolution for document scanning."
       },
       "document": "Document Settings",
-      "document_desc": "Configure document management options:",
+      "document_desc": "Manage how documents are handled and stored:",
       "document_settings": {
-        "location": "Set where new documents are saved by default.",
-        "quality": "Set the default quality for PDF creation.",
-        "ocr": "Configure text recognition preferences."
+        "location": "Choose where documents are saved on your device.",
+        "quality": "Set the default quality level for PDF creation.",
+        "ocr": "Configure OCR language and performance options."
       },
       "security": "Security Settings",
-      "security_desc": "Configure app security:",
+      "security_desc": "Protect your documents and app access:",
       "security_settings": {
-        "biometric": "Enable fingerprint/face recognition unlock.",
-        "pin": "Create or change your app access PIN.",
-        "auto_lock": "Set how quickly the app locks after inactivity."
+        "biometric": "Enable or disable fingerprint or face recognition unlock.",
+        "pin": "Set up or change your PIN code.",
+        "auto_lock": "Configure how quickly the app locks after inactivity."
       },
       "backup": "Backup Settings",
-      "backup_desc": "Configure backup options:",
+      "backup_desc": "Configure how your documents are backed up:",
       "backup_settings": {
-        "auto": "Enable and schedule automatic backups.",
+        "auto": "Enable or disable automatic backups.",
         "location": "Choose where backups are stored.",
-        "content": "Select what data is included in backups."
+        "content": "Select which content is included in backups."
       },
-      "tip": "Take some time to explore the Settings menu and customize ScanPro to match your workflow and preferences."
+      "tip": "Tip: Visit the settings menu regularly to check for new options and features as the app is updated."
     },
     "troubleshooting": {
-      "title": "Troubleshooting & Support",
-      "intro": "Solutions for common issues and how to get help when needed.",
-      "scanning_issues": "Common Scanning Issues",
-      "scanning_solutions_desc": "Solutions for scanning problems:",
+      "scanning_issues": "Scanning Issues",
+      "scanning_solutions_desc": "Solutions for common scanning problems:",
       "scanning_solutions": {
-        "quality": "Ensure good lighting, keep the camera steady, and try using Auto Enhancement.",
-        "edges": "Use a contrasting background, or switch to Manual mode and adjust crop manually.",
-        "ocr": "Ensure the document is well-lit, clearly visible, and properly aligned.",
-        "camera": "Check camera permissions in your device settings."
+        "quality": "If scans appear blurry, ensure good lighting and hold the camera steady, or try using a higher quality setting.",
+        "edges": "If edge detection isn't working properly, try placing the document on a contrasting background or switch to manual mode.",
+        "ocr": "For OCR problems, ensure the text is clear and well-lit, and check that you've selected the correct language.",
+        "camera": "If the camera won't focus or open, check your permissions settings and restart the app or device."
       },
       "management_issues": "Document Management Issues",
-      "management_solutions_desc": "Solutions for library problems:",
+      "management_solutions_desc": "Resolving problems with your document library:",
       "management_solutions": {
-        "missing": "Check different folders, use the search function, or restore from backup.",
-        "open": "For password-protected PDFs, ensure you have the correct password.",
-        "performance": "Try clearing the cache or restarting the app.",
-        "storage": "Use the 'Clean Temporary Files' option in Settings, or compress large documents."
+        "missing": "If documents are missing, check different folders, use the search function, or restore from a backup.",
+        "open": "If a document won't open, it might be corrupted - try importing it again or recovering from a backup.",
+        "performance": "If the app feels slow, try clearing the cache in settings or restarting your device.",
+        "storage": "If you're running out of space, use the compression feature on PDFs or delete unnecessary documents."
       },
       "support": "Getting Support",
-      "support_desc": "Ways to get help with ScanPro:",
+      "support_desc": "When you need additional help:",
       "support_options": {
-        "help": "This User Guide and FAQ sections.",
-        "email": "Contact our support team at support@scanpro.cc.",
-        "knowledge": "Visit our website for additional resources.",
-        "feedback": "Share your ideas and suggestions with our team."
+        "help": "Check the in-app help section for guides and FAQs.",
+        "email": "Contact our support team via email for personalized assistance.",
+        "knowledge": "Browse our online knowledge base for solutions to common problems.",
+        "feedback": "Submit feature requests or bug reports to help us improve the app."
       },
-      "tip": "When contacting support about an issue, include details about your device, app version, and steps to reproduce the problem."
+      "tip": "Tip: Before contacting support, try restarting the app and your device, as this can resolve many common issues."
     }
   }
 

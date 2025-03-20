@@ -64,6 +64,7 @@ dependencies:
   go_router: ^14.8.1
   easy_localization: ^3.0.7+1
   logger: ^2.5.0
+  mailer: ^6.4.1
   # google_sign_in: ^6.3.0
   # googleapis: ^14.0.0
   # extension_google_sign_in_as_googleapis_auth: ^2.0.12
