@@ -1,7 +1,6 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/config/routes.dart';
-import 'package:scanpro/providers/locale_provider.dart';
 import 'package:scanpro/services/scan_service.dart';
 import 'package:scanpro/ui/widget/component/scan_initial_view.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -91,31 +90,39 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Padding(
+      builder: (bottomSheetContext) => Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+          bottom: MediaQuery.of(bottomSheetContext).viewInsets.bottom,
         ),
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(bottomSheetContext).size.height * 0.5,
           child: ScanInitialView(
             onScanPressed: () {
+              // Close the bottom sheet immediately using the bottom sheet's context
+              Navigator.pop(bottomSheetContext);
+              // Perform the scan operation
               scanService.scanDocuments(
-                context: context,
+                context: context, // Use the parent context for navigation
                 ref: ref,
                 setLoading: (isLoading) =>
                     setState(() => _isLoading = isLoading),
                 onSuccess: () {
+                  // Redirect to edit screen after success
                   AppRoutes.navigateToEdit(context);
                 },
               );
             },
             onImportPressed: () {
+              // Close the bottom sheet immediately using the bottom sheet's context
+              Navigator.pop(bottomSheetContext);
+              // Perform the import operation
               scanService.pickImages(
-                context: context,
+                context: context, // Use the parent context for navigation
                 ref: ref,
                 setLoading: (isLoading) =>
                     setState(() => _isLoading = isLoading),
                 onSuccess: () {
+                  // Redirect to edit screen after success
                   AppRoutes.navigateToEdit(context);
                 },
               );
@@ -130,25 +137,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final localState = ref.watch(localProvider);
-    String currentLanguageLabel = "English";
-    if (localState.languages.isNotEmpty) {
-      try {
-        final currentLang = localState.languages.firstWhere(
-          (lang) =>
-              lang.languageCode == context.locale.languageCode &&
-              (lang.countryCode == context.locale.countryCode ||
-                  lang.countryCode == null),
-          orElse: () => localState.languages.first,
-        );
-        currentLanguageLabel = currentLang.label;
-      } catch (e) {
-        // Default to English if something goes wrong
-      }
-    }
+
     return Scaffold(
       // Body remains the same
-      body: widget.child,
+      body: _isLoading
+          ? Container(
+              color: Colors.black45,
+              child: const Center(child: CircularProgressIndicator()),
+            )
+          : widget.child,
 
       bottomNavigationBar: AnimatedBottomNavigationBar.builder(
         itemCount: _iconList.length,

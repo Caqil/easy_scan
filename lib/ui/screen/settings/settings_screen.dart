@@ -5,7 +5,6 @@ import 'package:scanpro/providers/settings_provider.dart';
 import 'package:scanpro/services/auth_service.dart';
 import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
-import 'package:scanpro/ui/screen/settings/components/app_header.dart';
 import 'package:scanpro/ui/screen/settings/components/settings_card.dart';
 import 'package:scanpro/ui/screen/settings/components/settings_divider.dart';
 import 'package:scanpro/ui/screen/settings/components/settings_section_header.dart';

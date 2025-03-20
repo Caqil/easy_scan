@@ -79,82 +79,79 @@ class _PermissionStepState extends State<PermissionStep>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Header
-                Text(
-                  'onboarding.permissions_title'.tr(),
-                  style: GoogleFonts.poppins(
-                    fontSize: 28.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 12.h),
-                Text(
-                  'onboarding.permissions_description'.tr(),
-                  style: GoogleFonts.poppins(
-                    fontSize: 14.sp,
-                    color: Colors.grey[600],
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 40.h),
+    final colorScheme = Theme.of(context).colorScheme;
 
-                // Lottie Animation
-                Container(
-                  height: 220.h,
-                  width: double.infinity,
-                  child: Lottie.asset(
-                    'assets/animations/permissions.json',
-                    fit: BoxFit.contain,
-                    controller: _animationController,
-                    onLoaded: (composition) {
-                      _animationController.duration = composition.duration;
-                    },
-                  ),
-                ),
-
-                SizedBox(height: 40.h),
-
-                // Permission Cards
-                _buildPermissionCard(
-                  title: 'onboarding.camera_permission'.tr(),
-                  description: 'onboarding.camera_permission_desc'.tr(),
-                  icon: Icons.camera_alt,
-                  isGranted: _cameraPermissionGranted,
-                  onRequestPermission: _requestCameraPermission,
-                ),
-                SizedBox(height: 20.h),
-                _buildPermissionCard(
-                  title: 'onboarding.storage_permission'.tr(),
-                  description: 'onboarding.storage_permission_desc'.tr(),
-                  icon: Icons.storage,
-                  isGranted: _storagePermissionGranted,
-                  onRequestPermission: _requestStoragePermission,
-                ),
-
-                SizedBox(height: 40.h),
-
-                // Progress Indicator
-                if (_isCheckingPermissions)
-                  CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-              ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Text(
+              'onboarding.permissions_title'.tr(),
+              style: GoogleFonts.slabo27px(
+                fontSize: 26.sp,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.primary,
+              ),
             ),
-          ),
+            SizedBox(height: 12.h),
+            Text(
+              'onboarding.permissions_description'.tr(),
+              style: GoogleFonts.slabo27px(
+                fontSize: 14.sp,
+                color: colorScheme.onSurface.withOpacity(0.7),
+                height: 1.5,
+              ),
+            ),
+            SizedBox(height: 32.h),
+
+            // Lottie Animation
+            Center(
+              child: Container(
+                height: 180.h,
+                child: Lottie.asset(
+                  'assets/animations/permissions.json',
+                  fit: BoxFit.contain,
+                  controller: _animationController,
+                  onLoaded: (composition) {
+                    _animationController.duration = composition.duration;
+                  },
+                ),
+              ),
+            ),
+
+            SizedBox(height: 32.h),
+
+            // Permission Cards
+            _buildPermissionCard(
+              title: 'onboarding.camera_permission'.tr(),
+              description: 'onboarding.camera_permission_desc'.tr(),
+              icon: Icons.camera_alt,
+              isGranted: _cameraPermissionGranted,
+              onRequestPermission: _requestCameraPermission,
+            ),
+            SizedBox(height: 16.h),
+            _buildPermissionCard(
+              title: 'onboarding.storage_permission'.tr(),
+              description: 'onboarding.storage_permission_desc'.tr(),
+              icon: Icons.folder_outlined,
+              isGranted: _storagePermissionGranted,
+              onRequestPermission: _requestStoragePermission,
+            ),
+
+            SizedBox(height: 32.h),
+
+            // Progress Indicator
+            if (_isCheckingPermissions)
+              Center(
+                child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(colorScheme.primary),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -167,29 +164,28 @@ class _PermissionStepState extends State<PermissionStep>
     required bool isGranted,
     required VoidCallback onRequestPermission,
   }) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: isGranted
-              ? Colors.green.withOpacity(0.5)
-              : Colors.grey.withOpacity(0.2),
-          width: 1.5,
-        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
+            offset: const Offset(0, 2),
           ),
         ],
+        border: Border.all(
+          color: isGranted
+              ? colorScheme.primary.withOpacity(0.5)
+              : Colors.grey.withOpacity(0.2),
+          width: isGranted ? 1.5 : 1,
+        ),
       ),
       child: Padding(
-        padding: EdgeInsets.all(20.r),
+        padding: EdgeInsets.all(16.r),
         child: Row(
           children: [
             // Icon Container
@@ -197,28 +193,17 @@ class _PermissionStepState extends State<PermissionStep>
               width: 48.w,
               height: 48.w,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: isGranted
-                      ? [Colors.green.shade300, Colors.green.shade500]
-                      : [
-                          Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.2),
-                          Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.4),
-                        ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: isGranted
+                    ? colorScheme.primary.withOpacity(0.2)
+                    : colorScheme.surfaceVariant,
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Icon(
-                isGranted ? Icons.check_circle : icon,
-                color: Colors.white,
-                size: 28.r,
+                isGranted ? Icons.check : icon,
+                color: isGranted
+                    ? colorScheme.primary
+                    : colorScheme.primary.withOpacity(0.7),
+                size: 24.r,
               ),
             ),
             SizedBox(width: 16.w),
@@ -230,18 +215,18 @@ class _PermissionStepState extends State<PermissionStep>
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.slabo27px(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(height: 4.h),
                   Text(
                     description,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.slabo27px(
                       fontSize: 12.sp,
-                      color: Colors.grey[600],
+                      color: colorScheme.onSurface.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -253,40 +238,49 @@ class _PermissionStepState extends State<PermissionStep>
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: isGranted
-                  ? Chip(
-                      label: Text(
-                        'onboarding.granted'.tr(),
-                        style: GoogleFonts.poppins(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.green.shade700,
-                        ),
+                  ? Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(16.r),
                       ),
-                      backgroundColor: Colors.green.shade50,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.r),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.check_circle_outline,
+                            size: 16.r,
+                            color: Colors.green,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            'onboarding.granted'.tr(),
+                            style: GoogleFonts.slabo27px(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 12.w),
                     )
-                  : ElevatedButton(
+                  : OutlinedButton(
                       onPressed: onRequestPermission,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 10.h,
-                        ),
-                        elevation: 2,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: colorScheme.primary,
+                        side: BorderSide(color: colorScheme.primary),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 8.h),
                       ),
                       child: Text(
                         'onboarding.grant'.tr(),
-                        style: GoogleFonts.poppins(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
+                        style: GoogleFonts.slabo27px(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),

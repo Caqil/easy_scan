@@ -1,7 +1,5 @@
 import 'package:scanpro/config/app_transition.dart';
 import 'package:scanpro/ui/screen/all_documents.dart';
-import 'package:scanpro/ui/screen/backup/backup_restore_screnn.dart';
-import 'package:scanpro/ui/screen/backup/backup_setting_screen.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_generator_screen.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_history_screen.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_scanner_screen.dart';

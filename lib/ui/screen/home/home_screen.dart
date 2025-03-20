@@ -69,6 +69,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  void _handleScanAction() {
+    final scanService = ref.read(scanServiceProvider);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: ScanInitialView(
+            onScanPressed: () {
+              scanService.scanDocuments(
+                context: context,
+                ref: ref,
+                setLoading: (isLoading) =>
+                    setState(() => _isLoading = isLoading),
+                onSuccess: () {
+                  AppRoutes.navigateToEdit(context);
+                },
+              );
+            },
+            onImportPressed: () {
+              scanService.pickImages(
+                context: context,
+                ref: ref,
+                setLoading: (isLoading) =>
+                    setState(() => _isLoading = isLoading),
+                onSuccess: () {
+                  AppRoutes.navigateToEdit(context);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   void showCompressionOptions(
       BuildContext context, Document document, WidgetRef ref) {
     showModalBottomSheet(
@@ -285,46 +326,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   if (recentDocuments.isEmpty &&
                       rootFolders.isEmpty &&
                       allDocuments.isEmpty)
-                    EmptyState(onScan: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => Padding(
-                          padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom,
-                          ),
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height *
-                                0.5, // Half screen height
-                            child: ScanInitialView(
-                              onScanPressed: () {
-                                scanService.scanDocuments(
-                                  context: context,
-                                  ref: ref,
-                                  setLoading: (isLoading) =>
-                                      setState(() => _isLoading = isLoading),
-                                  onSuccess: () {
-                                    AppRoutes.navigateToEdit(context);
-                                  },
-                                );
-                              },
-                              onImportPressed: () {
-                                scanService.pickImages(
-                                  context: context,
-                                  ref: ref,
-                                  setLoading: (isLoading) =>
-                                      setState(() => _isLoading = isLoading),
-                                  onSuccess: () {
-                                    AppRoutes.navigateToEdit(context);
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
+                    EmptyState(onScan: _handleScanAction),
                 ],
               ),
             ),

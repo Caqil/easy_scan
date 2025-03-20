@@ -96,24 +96,6 @@ class ScanService {
         return;
       }
 
-      // Processing loading screen
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('scan.processing_scanned_images'.tr())
-              ],
-            ),
-          ),
-        );
-      }
-
       // Process all images and add to scan provider
       ref.read(scanProvider.notifier).clearPages(); // Clear any existing pages
 
