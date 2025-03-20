@@ -726,6 +726,7 @@
 "cannot_preview_file_format": "Tidak dapat melihat pratinjau format file ini (.{extension})",
 "open_with_another_app": "Buka dengan aplikasi lain",
 "settings": {
+  "user_guide_desc": "Pelajari cara menggunakan ScanPro secara efektif",
   "loading_languages": "Memuat bahasa...",
   "current_language": "Bahasa Saat Ini",
   "available_languages": "Bahasa yang Tersedia",
@@ -1157,24 +1158,351 @@
   }
 },
 "support": {
-  "help_contact": "Help / Contact",
-  "name": "Name",
-  "your_name": "Your name",
-  "name_required": "Please enter your name",
+  "help_contact": "Bantuan / Kontak",
+  "name": "Nama",
+  "your_name": "Nama Anda",
+  "name_required": "Harap masukkan nama Anda",
   "email": "Email",
-  "your_email": "Your email address",
-  "email_required": "Please enter your email address",
-  "valid_email_required": "Please enter a valid email address",
-  "subject": "Subject",
-  "message": "Message",
-  "write_message": "Write a message",
-  "message_required": "Please enter your message",
-  "attachments": "Attachments (Optional)",
-  "add_image": "Add Image",
-  "image_pick_error": "Error selecting image. Please try again.",
-  "include_diagnostic": "I agree to share the diagnostic information attached in this message.",
-  "send_message": "Send message",
-  "message_sent": "Your message has been sent successfully!",
-  "send_error": "Error sending message. Please try again."
-}
+  "your_email": "Alamat email Anda",
+  "email_required": "Harap masukkan alamat email Anda",
+  "valid_email_required": "Harap masukkan alamat email yang valid",
+  "subject": "Subjek",
+  "message": "Pesan",
+  "write_message": "Tulis pesan",
+  "message_required": "Harap masukkan pesan Anda",
+  "attachments": "Lampiran (Opsional)",
+  "max_attachments": "Maksimum lampiran 3",
+  "add_image": "Tambah Gambar",
+  "image_pick_error": "Kesalahan saat memilih gambar. Silakan coba lagi.",
+  "include_diagnostic": "Saya setuju untuk membagikan informasi diagnostik yang dilampirkan dalam pesan ini.",
+  "send_message": "Kirim pesan",
+  "message_sent": "Pesan Anda telah berhasil dikirim!",
+  "send_error": "Kesalahan saat mengirim pesan. Silakan coba lagi."
+},
+"user_guide": {
+    "title": "Panduan Pengguna",
+    "section": {
+      "getting_started": "Memulai",
+      "document_scanning": "Pemindaian Dokumen",
+      "document_management": "Manajemen Dokumen",
+      "organization": "Organisasi",
+      "editing": "Pengeditan & Penyempurnaan",
+      "pdf_tools": "Alat PDF",
+      "security": "Keamanan",
+      "import_export": "Impor & Ekspor",
+      "settings": "Pengaturan",
+      "troubleshooting": "Pemecahan Masalah"
+    },
+    "getting_started": {
+      "title": "Memulai dengan ScanPro",
+      "intro": "Selamat datang di ScanPro, solusi lengkap untuk pemindaian dan manajemen dokumen Anda. Panduan ini akan membantu Anda memaksimalkan penggunaan aplikasi Anda.",
+      "initial_setup": "Pengaturan Awal",
+      "setup_steps": {
+        "permissions": "Berikan izin kamera dan penyimpanan saat diminta untuk mengaktifkan pemindaian dan penyimpanan dokumen.",
+        "language": "Pilih bahasa yang Anda inginkan dari opsi yang tersedia.",
+        "theme": "Pilih tema terang atau gelap, yang selalu dapat Anda ubah nanti di pengaturan."
+      },
+      "home_screen": "Ikhtisar Layar Utama",
+      "home_screen_desc": "Layar utama adalah pusat komando Anda untuk semua fitur ScanPro:",
+      "features": {
+        "recent_docs": "Akses cepat ke dokumen yang baru saja Anda pindai atau lihat.",
+        "scan_button": "Tombol lingkaran besar di tengah bawah memulai pemindaian baru.",
+        "folders": "Atur dokumen Anda dalam folder khusus untuk akses mudah.",
+        "search": "Temukan dokumen apa pun dengan mencari nama, konten (jika OCR digunakan), atau tag."
+      },
+      "tip": "Anda dapat menyesuaikan tata letak layar utama di Pengaturan → Penampilan → Tata Letak Utama."
+    },
+    "document_scanning": {
+      "title": "Pemindaian Dokumen",
+      "intro": "Memindai dokumen adalah fungsi inti dari ScanPro. Aplikasi ini menyediakan beberapa cara untuk menangkap gambar dokumen berkualitas tinggi.",
+      "starting_scan": "Memulai Pemindaian",
+      "scan_methods": {
+        "home_button": "Ketuk tombol pindai di layar utama",
+        "plus_button": "Ketuk tombol + dan pilih 'Pindai Dokumen'",
+        "folder_scan": "Dari folder, ketuk ikon pindai untuk menambahkannya langsung ke folder tersebut"
+      },
+      "scanning_modes": "Mode Pemindaian",
+      "modes": {
+        "auto": "Aplikasi secara otomatis mendeteksi tepi dokumen dan menangkap gambar saat stabil.",
+        "manual": "Anda mengontrol kapan menangkap gambar dengan tombol tangkap.",
+        "batch": "Pindai beberapa halaman secara terus-menerus untuk dokumen multi-halaman."
+      },
+      "scan_settings": "Pengaturan Pemindaian",
+      "settings_desc": "Sebelum memindai, Anda dapat menyesuaikan berbagai pengaturan:",
+      "settings": {
+        "color_mode": "Pilih antara pemindaian Berwarna, Skala Abu-abu, atau Hitam & Putih.",
+        "document_type": "Pilih Dokumen, Kuitansi, Kartu ID, atau Foto untuk pemrosesan yang dioptimalkan.",
+        "edge_detection": "Aktifkan atau nonaktifkan deteksi tepi otomatis.",
+        "ocr": "Aktifkan untuk membuat teks dalam dokumen Anda dapat dicari.",
+        "quality": "Sesuaikan kualitas gambar (kualitas lebih tinggi berarti ukuran file lebih besar)."
+      },
+      "reviewing": "Meninjau dan Mengedit Hasil Pindaian",
+      "reviewing_options": {
+        "crop": "Sesuaikan batas pemotongan",
+        "rotate": "Putar atau balik gambar",
+        "filters": "Terapkan filter dan penyempurnaan",
+        "retake": "Ambil ulang pindaian jika diperlukan",
+        "add_pages": "Tambahkan lebih banyak halaman (untuk dokumen multi-halaman)",
+        "rearrange": "Susun ulang halaman dengan menyeret"
+      },
+      "tip": "Untuk hasil terbaik, pindai di lingkungan dengan pencahayaan baik dan dokumen diletakkan pada latar belakang yang kontras."
+    },
+    "document_management": {
+      "title": "Manajemen Dokumen",
+      "intro": "ScanPro memudahkan Anda mengelola koleksi dokumen yang terus bertambah.",
+      "library": "Perpustakaan Dokumen",
+      "library_desc": "Perpustakaan Dokumen Anda berisi semua dokumen yang dipindai dan diimpor. Di sini Anda dapat:",
+      "library_features": {
+        "view": "Lihat semua dokumen dalam tampilan daftar atau kisi",
+        "sort": "Urutkan dokumen berdasarkan nama, tanggal, ukuran, atau jenis",
+        "filter": "Filter dokumen berdasarkan jenis (PDF, gambar, dll.)",
+        "search": "Cari dokumen tertentu"
+      },
+      "actions": "Aksi Dokumen",
+      "actions_desc": "Untuk setiap dokumen, Anda dapat:",
+      "doc_actions": {
+        "view": "Buka dokumen untuk membaca isinya.",
+        "rename": "Ubah nama dokumen.",
+        "edit": "Ubah isi atau tampilan dokumen.",
+        "share": "Kirim dokumen melalui email, aplikasi pesan, dll.",
+        "move": "Pindahkan dokumen ke folder lain.",
+        "favorite": "Tandai dokumen penting untuk akses cepat.",
+        "delete": "Hapus dokumen dari perpustakaan Anda."
+      },
+      "recents": "Terbaru dan Favorit",
+      "recents_desc": "Akses dokumen terbaru dan favorit Anda dengan cepat dari layar utama.",
+      "tip": "Anda dapat melakukan operasi batch dengan menekan lama dokumen untuk masuk ke mode seleksi, lalu memilih beberapa dokumen."
+    },
+    "organization": {
+      "title": "Organisasi dengan Folder",
+      "intro": "Jaga dokumen Anda tetap teratur menggunakan folder dan subfolder di ScanPro.",
+      "creating_folders": "Membuat Folder",
+      "creating_steps": {
+        "step1": "Ketuk tombol + dan pilih 'Buat Folder'",
+        "step2": "Masukkan nama untuk folder Anda",
+        "step3": "Pilih warna dan ikon (opsional)",
+        "step4": "Ketuk 'Buat' untuk menyimpan folder baru Anda"
+      },
+      "subfolders": "Struktur Subfolder",
+      "subfolders_desc": "ScanPro mendukung folder bertingkat untuk organisasi hierarkis:",
+      "subfolder_features": {
+        "create": "Buka folder dan ketuk + untuk membuat subfolder di dalamnya",
+        "content": "Subfolder dapat berisi dokumen dan subfolder tambahan",
+        "navigate": "Navigasi naik dan turun struktur folder menggunakan navigasi breadcrumb"
+      },
+      "moving": "Memindahkan Dokumen",
+      "moving_steps": {
+        "step1": "Tekan lama dokumen untuk memilihnya",
+        "step2": "Pilih beberapa dokumen jika diperlukan",
+        "step3": "Ketuk opsi 'Pindah'",
+        "step4": "Pilih folder tujuan"
+      },
+      "managing_folders": "Mengelola Folder",
+      "managing_desc": "Anda dapat mengelola folder Anda dengan:",
+      "folder_actions": {
+        "rename": "Ubah nama, warna, atau ikon folder.",
+        "delete": "Hapus folder dan opsional isinya.",
+        "move": "Pindahkan folder untuk menjadi subfolder dari folder lain."
+      },
+      "tip": "Buat folder berdasarkan kategori dokumen (misalnya, Kuitansi, Dokumen ID, Pekerjaan) atau periode waktu (misalnya, 2023, 2024)."
+    },
+    "editing": {
+      "title": "Pengeditan & Penyempurnaan Dokumen",
+      "intro": "ScanPro menyediakan alat canggih untuk meningkatkan kualitas dan kegunaan dokumen yang Anda pindai.",
+      "enhancement": "Penyempurnaan Gambar",
+      "enhancement_desc": "Tingkatkan keterbacaan dokumen dengan:",
+      "enhancement_tools": {
+        "auto": "Peningkatan satu ketukan untuk kontras dan kejernihan.",
+        "brightness": "Penggeser penyesuaian manual untuk kontrol presisi.",
+        "color": "Perbaiki masalah warna atau ubah ke skala abu-abu/hitam & putih.",
+        "noise": "Hapus bintik dan artefak dari gambar yang dipindai."
+      },
+      "editing": "Pengeditan Dokumen",
+      "editing_desc": "Edit konten dokumen dengan:",
+      "editing_tools": {
+        "crop": "Sesuaikan batas atau orientasi dokumen.",
+        "ocr": "Ubah teks gambar menjadi teks digital yang dapat diedit.",
+        "text": "Ubah teks yang dikenali langsung di aplikasi.",
+        "annotate": "Tambahkan catatan, sorotan, atau tanda tangan ke dokumen."
+      },
+      "page_management": "Manajemen Halaman",
+      "page_desc": "Untuk dokumen multi-halaman, Anda dapat:",
+      "page_actions": {
+        "add": "Tambahkan halaman baru ke dokumen yang ada",
+        "remove": "Hapus halaman tertentu",
+        "rearrange": "Susun ulang urutan halaman dengan menyeret",
+        "extract": "Ekstrak halaman untuk membuat dokumen baru"
+      },
+      "tip": "Untuk dokumen dengan banyak teks, aktifkan OCR saat memindai atau terapkan setelahnya untuk membuat teks dapat dicari dan diedit."
+    },
+    "pdf_tools": {
+      "title": "Alat PDF",
+      "intro": "ScanPro menawarkan kemampuan manajemen PDF yang komprehensif.",
+      "creating": "Membuat PDF",
+      "creating_desc": "Buat PDF dari berbagai sumber:",
+      "creating_methods": {
+        "scan": "Ubah dokumen yang dipindai langsung ke PDF",
+        "combine": "Gabungkan beberapa pindaian menjadi satu PDF",
+        "images": "Ubah gambar dari galeri Anda ke PDF",
+        "import": "Impor PDF yang ada untuk diedit"
+      },
+      "compression": "Kompresi PDF",
+      "compression_desc": "Kurangi ukuran file sambil mempertahankan kualitas:",
+      "compression_levels": {
+        "low": "Kompresi minimal, kualitas tertinggi (90% dari ukuran asli).",
+        "medium": "Kompresi seimbang (50-60% dari ukuran asli).",
+        "high": "Pengurangan ukuran file maksimum (30-40% dari ukuran asli)."
+      },
+      "operations": "Operasi PDF",
+      "operations_desc": "Manipulasi file PDF dengan alat ini:",
+      "pdf_operations": {
+        "merge": "Gabungkan beberapa file PDF menjadi satu dokumen.",
+        "split": "Bagi PDF menjadi beberapa dokumen kecil.",
+        "extract": "Ambil halaman tertentu dari PDF yang lebih besar.",
+        "rearrange": "Ubah urutan halaman dalam PDF.",
+        "rotate": "Koreksi orientasi halaman individu."
+      },
+      "conversion": "Konversi PDF",
+      "conversion_desc": "Konversi PDF ke format lain:",
+      "conversion_options": {
+        "images": "PDF ke Gambar (JPG, PNG)",
+        "text": "PDF ke Teks (dengan OCR)",
+        "formats": "PDF ke format dokumen lain"
+      },
+      "tip": "Gunakan kompresi PDF saat berbagi dokumen besar melalui email atau aplikasi pesan untuk menghindari batasan ukuran."
+    },
+    "security": {
+      "title": "Keamanan Dokumen",
+      "intro": "Lindungi dokumen sensitif Anda dengan fitur keamanan ScanPro.",
+      "app_security": "Keamanan Aplikasi",
+      "app_security_desc": "Amankan akses ke seluruh aplikasi:",
+      "app_security_features": {
+        "biometric": "Gunakan sidik jari atau pengenalan wajah untuk membuka aplikasi.",
+        "pin": "Atur kode PIN numerik untuk akses aplikasi.",
+        "auto_lock": "Kunci aplikasi secara otomatis setelah periode tidak aktif."
+      },
+      "encryption": "Enkripsi Dokumen",
+      "encryption_desc": "Tambahkan lapisan perlindungan ekstra ke dokumen individu:",
+      "encryption_features": {
+        "password": "Enkripsi PDF dengan perlindungan kata sandi.",
+        "change": "Perbarui kata sandi untuk dokumen yang sudah dilindungi.",
+        "remove": "Hapus enkripsi kata sandi saat tidak lagi diperlukan."
+      },
+      "private_folder": "Folder Pribadi",
+      "private_folder_desc": "Fitur Folder Pribadi menawarkan keamanan tambahan untuk dokumen paling sensitif Anda:",
+      "private_folder_features": {
+        "auth": "Dokumen di Folder Pribadi memerlukan autentikasi untuk dilihat",
+        "hidden": "Folder Pribadi disembunyikan dari daftar dokumen utama",
+        "biometric": "Verifikasi biometrik tambahan sebelum mengakses Folder Pribadi"
+      },
+      "best_practices": "Praktik Keamanan Terbaik",
+      "practices_desc": "Rekomendasi untuk menjaga keamanan dokumen Anda:",
+      "security_practices": {
+        "strong_passwords": "Gunakan kata sandi yang kuat dan unik untuk perlindungan dokumen",
+        "biometric": "Aktifkan autentikasi biometrik untuk keamanan yang nyaman",
+        "backup": "Cadangkan dokumen penting secara rutin",
+        "sharing": "Berhati-hati saat berbagi dokumen yang berisi informasi sensitif"
+      },
+      "tip": "Ingat kata sandi dokumen Anda! Jika Anda lupa kata sandi PDF, Anda tidak akan dapat mengakses isi dokumen."
+    },
+    "import_export": {
+      "title": "Impor & Ekspor",
+      "intro": "ScanPro menyediakan berbagai opsi untuk memasukkan dokumen dan membagikannya keluar.",
+      "importing": "Mengimpor Dokumen",
+      "importing_desc": "Tambahkan dokumen yang sudah ada ke perpustakaan Anda:",
+      "import_methods": {
+        "gallery": "Tambahkan foto dari galeri perangkat Anda.",
+        "pdf": "Tambahkan PDF yang ada dari penyimpanan perangkat Anda.",
+        "cloud": "Impor dokumen dari Google Drive, Dropbox, dll.",
+        "apps": "Terima dokumen yang dibagikan dari aplikasi lain."
+      },
+      "exporting": "Mengekspor & Berbagi",
+      "exporting_desc": "Bagikan dokumen Anda dengan berbagai cara:",
+      "export_methods": {
+        "pdf": "Kirim dokumen sebagai file PDF.",
+        "images": "Bagikan halaman individu sebagai file gambar.",
+        "options": "Email, aplikasi pesan, penyimpanan cloud, dan lainnya.",
+        "batch": "Bagikan beberapa dokumen sekaligus."
+      },
+      "backup": "Cadangan & Pemulihan",
+      "backup_desc": "Lindungi koleksi dokumen Anda:",
+      "backup_methods": {
+        "local": "Simpan cadangan ke penyimpanan perangkat Anda.",
+        "cloud": "Cadangkan ke Google Drive atau layanan cloud lainnya.",
+        "auto": "Jadwalkan cadangan rutin dari perpustakaan Anda.",
+        "restore": "Pulihkan dokumen Anda dari cadangan sebelumnya."
+      },
+      "tip": "Cadangan rutin sangat penting untuk mencegah kehilangan data. Atur cadangan otomatis di Pengaturan → Cadangan & Pemulihan."
+    },
+    "settings": {
+      "title": "Pengaturan & Preferensi",
+      "intro": "Sesuaikan ScanPro agar bekerja sesuai keinginan Anda.",
+      "appearance": "Pengaturan Penampilan",
+      "appearance_desc": "Sesuaikan tampilan dan nuansa aplikasi:",
+      "appearance_settings": {
+        "theme": "Pilih antara tema Terang, Gelap, atau bawaan Sistem.",
+        "language": "Pilih bahasa yang Anda inginkan dari beberapa opsi.",
+        "layout": "Sesuaikan elemen mana yang muncul di layar utama Anda."
+      },
+      "scanning": "Preferensi Pemindaian",
+      "scanning_desc": "Pengaturan bawaan untuk pemindaian dokumen:",
+      "scanning_settings": {
+        "mode": "Atur mode pemindaian yang Anda inginkan (Otomatis, Manual, Batch).",
+        "color": "Pilih pemrosesan warna bawaan (Berwarna, Skala Abu-abu, H&P).",
+        "enhancement": "Aktifkan penyempurnaan gambar otomatis untuk semua pindaian.",
+        "quality": "Atur tingkat kualitas untuk pemindaian dokumen."
+      },
+      "document": "Pengaturan Dokumen",
+      "document_desc": "Konfigurasikan opsi manajemen dokumen:",
+      "document_settings": {
+        "location": "Atur tempat penyimpanan dokumen baru secara bawaan.",
+        "quality": "Atur kualitas bawaan untuk pembuatan PDF.",
+        "ocr": "Konfigurasikan preferensi pengenalan teks."
+      },
+      "security": "Pengaturan Keamanan",
+      "security_desc": "Konfigurasikan keamanan aplikasi:",
+      "security_settings": {
+        "biometric": "Aktifkan buka kunci dengan sidik jari/pengenalan wajah.",
+        "pin": "Buat atau ubah PIN akses aplikasi Anda.",
+        "auto_lock": "Atur seberapa cepat aplikasi terkunci setelah tidak aktif."
+      },
+      "backup": "Pengaturan Cadangan",
+      "backup_desc": "Konfigurasikan opsi cadangan:",
+      "backup_settings": {
+        "auto": "Aktifkan dan jadwalkan cadangan otomatis.",
+        "location": "Pilih tempat penyimpanan cadangan.",
+        "content": "Pilih data apa yang disertakan dalam cadangan."
+      },
+      "tip": "Luangkan waktu untuk menjelajahi menu Pengaturan dan sesuaikan ScanPro agar sesuai dengan alur kerja dan preferensi Anda."
+    },
+    "troubleshooting": {
+      "title": "Pemecahan Masalah & Dukungan",
+      "intro": "Solusi untuk masalah umum dan cara mendapatkan bantuan saat dibutuhkan.",
+      "scanning_issues": "Masalah Pemindaian Umum",
+      "scanning_solutions_desc": "Solusi untuk masalah pemindaian:",
+      "scanning_solutions": {
+        "quality": "Pastikan pencahayaan baik, jaga kamera tetap stabil, dan coba gunakan Penyempurnaan Otomatis.",
+        "edges": "Gunakan latar belakang yang kontras, atau beralih ke mode Manual dan sesuaikan pemotongan secara manual.",
+        "ocr": "Pastikan dokumen cukup terang, terlihat jelas, dan sejajar dengan baik.",
+        "camera": "Periksa izin kamera di pengaturan perangkat Anda."
+      },
+      "management_issues": "Masalah Manajemen Dokumen",
+      "management_solutions_desc": "Solusi untuk masalah perpustakaan:",
+      "management_solutions": {
+        "missing": "Periksa folder yang berbeda, gunakan fungsi pencarian, atau pulihkan dari cadangan.",
+        "open": "Untuk PDF yang dilindungi kata sandi, pastikan Anda memiliki kata sandi yang benar.",
+        "performance": "Coba hapus cache atau mulai ulang aplikasi.",
+        "storage": "Gunakan opsi 'Bersihkan File Sementara' di Pengaturan, atau kompres dokumen besar."
+      },
+      "support": "Mendapatkan Dukungan",
+      "support_desc": "Cara mendapatkan bantuan dengan ScanPro:",
+      "support_options": {
+        "help": "Panduan Pengguna ini dan bagian FAQ.",
+        "email": "Hubungi tim dukungan kami di support@scanpro.cc.",
+        "knowledge": "Kunjungi situs web kami untuk sumber daya tambahan.",
+        "feedback": "Bagikan ide dan saran Anda dengan tim kami."
+      },
+      "tip": "Saat menghubungi dukungan tentang masalah, sertakan detail tentang perangkat Anda, versi aplikasi, dan langkah-langkah untuk mereproduksi masalah."
+    }
+  }
 }

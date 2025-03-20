@@ -85,6 +85,8 @@ PODS:
   - Flutter (1.0.0)
   - flutter_doc_scanner (0.0.1):
     - Flutter
+  - flutter_email_sender (0.0.1):
+    - Flutter
   - flutter_image_compress_common (1.0.0):
     - Flutter
     - Mantle
@@ -234,6 +236,7 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
   - flutter_doc_scanner (from `.symlinks/plugins/flutter_doc_scanner/ios`)
+  - flutter_email_sender (from `.symlinks/plugins/flutter_email_sender/ios`)
   - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - local_auth_darwin (from `.symlinks/plugins/local_auth_darwin/darwin`)
@@ -292,6 +295,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_doc_scanner:
     :path: ".symlinks/plugins/flutter_doc_scanner/ios"
+  flutter_email_sender:
+    :path: ".symlinks/plugins/flutter_email_sender/ios"
   flutter_image_compress_common:
     :path: ".symlinks/plugins/flutter_image_compress_common/ios"
   image_picker_ios:
@@ -335,6 +340,7 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 6c963bd2a86aca0481eef4f48f5a4df783ae5917
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_doc_scanner: cd7ad8a27227cd7e8ccce50951623678cbde0ec6
+  flutter_email_sender: e03bdda7637bcd3539bfe718fddd980e9508efaa
   flutter_image_compress_common: ec1d45c362c9d30a3f6a0426c297f47c52007e3e
   GoogleAppMeasurement: fc0817122bd4d4189164f85374e06773b9561896
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7

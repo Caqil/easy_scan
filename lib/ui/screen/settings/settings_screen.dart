@@ -78,13 +78,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // App info header
-            AppHeaderWidget(
-              appName: "Easy Scan",
-              version: "Version 1.0.0",
-              icon: Icons.document_scanner,
-            ),
-
             SizedBox(height: 16.h),
 
             // Appearance settings
@@ -162,16 +155,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                 SettingsDivider(),
 
-                // Auto-lock
-                SettingsNavigationTile(
-                  icon: Icons.lock_clock,
-                  iconColor: Colors.orange,
-                  title: "settings.auto_lock".tr(),
-                  subtitle: "settings.auto_lock_desc".tr(),
-                  onTap: () {
-                    _showAutoLockOptions(context, ref);
-                  },
-                ),
+                // // Auto-lock
+                // SettingsNavigationTile(
+                //   icon: Icons.lock_clock,
+                //   iconColor: Colors.orange,
+                //   title: "settings.auto_lock".tr(),
+                //   subtitle: "settings.auto_lock_desc".tr(),
+                //   onTap: () {
+                //     _showAutoLockOptions(context, ref);
+                //   },
+                // ),
               ],
             ),
 
@@ -497,12 +490,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 AppRoutes.navigateToContactSupport(context);
               },
             ),
-            ListTile(
-              leading: Icon(Icons.description_outlined),
-              title: Text("settings.user_guide".tr()),
+            SettingsNavigationTile(
+              icon: Icons.menu_book_outlined,
+              iconColor: Colors.green,
+              title: "settings.user_guide".tr(),
+              subtitle: "settings.user_guide_desc".tr(),
               onTap: () {
                 Navigator.pop(context);
-                _launchUrl('https://scanpro.cc/guide');
+                AppRoutes.navigateToUserGuide(context);
               },
             ),
           ],

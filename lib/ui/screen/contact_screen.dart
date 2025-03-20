@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 import '../common/app_bar.dart';
 import '../common/dialogs.dart';
 
@@ -29,7 +30,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   bool _isSending = false;
 
   List<String> _attachmentPaths = [];
-  List<String> _subjectOptions = [
+  final List<String> _subjectOptions = [
     'Report a Problem',
     'Feature Request',
     'Billing Question',
@@ -54,8 +55,8 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
       appBar: CustomAppBar(
         title: Text(
           "support.help_contact".tr(),
-          style: GoogleFonts.notoSerif(
-            fontSize: 20.sp,
+          style: GoogleFonts.lilitaOne(
+            fontSize: 25.sp,
           ),
         ),
       ),
@@ -72,7 +73,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(16.w),
+                  padding: EdgeInsets.all(7.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -170,8 +171,8 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   Widget _buildFieldLabel(String label) {
     return Text(
       label,
-      style: GoogleFonts.notoSerif(
-        fontSize: 16.sp,
+      style: GoogleFonts.slabo27px(
+        fontSize: 14.sp,
         fontWeight: FontWeight.w500,
       ),
     );
@@ -188,10 +189,10 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType ?? TextInputType.text,
-      style: GoogleFonts.notoSerif(),
+      style: GoogleFonts.slabo27px(),
       decoration: InputDecoration(
         hintText: hintText,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 5.h),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -205,7 +206,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
           borderSide: BorderSide(
               color: Theme.of(context).colorScheme.primary, width: 2),
         ),
-        errorStyle: GoogleFonts.notoSerif(
+        errorStyle: GoogleFonts.slabo27px(
           color: Colors.redAccent,
         ),
         filled: true,
@@ -227,7 +228,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
           child: DropdownButton<String>(
             value: _selectedSubject,
             isExpanded: true,
-            style: GoogleFonts.notoSerif(),
+            style: GoogleFonts.slabo27px(),
             items: _subjectOptions.map((String subject) {
               return DropdownMenuItem<String>(
                 value: subject,
@@ -253,7 +254,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
       children: [
         Text(
           "support.max_attachments".tr(args: ["3"]),
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontSize: 12.sp,
             color: Colors.grey,
           ),
@@ -350,7 +351,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
             Text(
               "support.add_image".tr(),
               textAlign: TextAlign.center,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.slabo27px(
                 fontSize: 12.sp,
                 color: Colors.grey,
               ),
@@ -367,7 +368,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
         Expanded(
           child: Text(
             "support.include_diagnostic".tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 14.sp,
             ),
           ),
@@ -379,7 +380,6 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
               _includeDeviceInfo = value;
             });
           },
-          activeColor: Theme.of(context).colorScheme.primary,
         ),
       ],
     );
@@ -410,7 +410,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
               )
             : Text(
                 "support.send_message".tr(),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -453,6 +453,12 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
     });
 
     try {
+      // SMTP configuration (e.g., Gmail)
+      String smtpUsername = 'your-email@gmail.com'; // Replace with your email
+      String smtpPassword =
+          'your-app-password'; // Replace with your App Password
+      final smtpServer = gmail(smtpUsername, smtpPassword);
+
       // Gather diagnostic information
       String deviceInfo = '';
       if (_includeDeviceInfo) {
@@ -466,21 +472,18 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
         deviceInfo += 'User Email: ${_emailController.text}\n';
       }
 
-      // Prepare the email
-      final Email email = Email(
-        body: _messageController.text + deviceInfo,
-        subject: _selectedSubject,
-        recipients: [
-          'support@scanpro.app'
-        ], // Replace with your actual support email
-        cc: [],
-        bcc: [],
-        attachmentPaths: _attachmentPaths,
-        isHTML: false,
-      );
+      // Prepare the email message
+      final message = Message()
+        ..from = Address(smtpUsername, _nameController.text) // Sender's name
+        ..recipients
+            .add('support@scanpro.app') // Replace with your support email
+        ..subject = _selectedSubject
+        ..text = _messageController.text + deviceInfo
+        ..attachments =
+            _attachmentPaths.map((path) => FileAttachment(File(path))).toList();
 
       // Send the email
-      await FlutterEmailSender.send(email);
+      final sendReport = await send(message, smtpServer);
 
       // Clear the form
       if (mounted) {
@@ -502,7 +505,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
       if (mounted) {
         AppDialogs.showSnackBar(
           context,
-          message: "support.send_error".tr() + ": ${e.toString()}",
+          message: "${"support.send_error".tr()}: ${e.toString()}",
           type: SnackBarType.error,
         );
       }

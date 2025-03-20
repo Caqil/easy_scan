@@ -104,7 +104,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
               SizedBox(width: 12.w),
               Text(
                 "faq.welcome_to_faq".tr(),
-                style: GoogleFonts.notoSerif(
+                style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primary,
@@ -115,7 +115,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
           SizedBox(height: 8.h),
           Text(
             "faq.introduction".tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 14.sp,
               color: Theme.of(context).colorScheme.onSurface,
             ),
@@ -167,7 +167,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
     return ExpansionTile(
       title: Text(
         question,
-        style: GoogleFonts.notoSerif(
+        style: GoogleFonts.slabo27px(
           fontSize: 14.sp,
           fontWeight: FontWeight.w600,
         ),
@@ -176,7 +176,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
       children: [
         Text(
           answer,
-          style: GoogleFonts.notoSerif(
+          style: GoogleFonts.slabo27px(
             fontSize: 14.sp,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -200,7 +200,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
         children: [
           Text(
             "faq.need_more_help".tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -208,7 +208,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
           SizedBox(height: 8.h),
           Text(
             "faq.contact_support".tr(),
-            style: GoogleFonts.notoSerif(
+            style: GoogleFonts.slabo27px(
               fontSize: 14.sp,
             ),
           ),

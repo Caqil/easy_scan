@@ -15,6 +15,7 @@ import 'package:scanpro/ui/screen/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:scanpro/ui/screen/user_guide/user_guide_screen.dart';
 import '../models/document.dart';
 import '../models/folder.dart';
 import '../ui/screen/edit/edit_screen.dart';
@@ -118,6 +119,11 @@ class AppRoutes {
           GoRoute(
             path: contactSupport,
             builder: (context, state) => const ContactSupportScreen(),
+          ),
+          GoRoute(
+            path: '/userguide',
+            name: 'userGuide',
+            builder: (context, state) => const UserGuideScreen(),
           ),
           // GoRoute(
           //   path: '/backup-settings',
@@ -270,6 +276,10 @@ class AppRoutes {
 
   static void navigateToFaq(BuildContext context) {
     context.push(faq);
+  }
+
+  static void navigateToUserGuide(BuildContext context) {
+    context.pushNamed('userGuide');
   }
 
   static void navigateToView(BuildContext context, Document? document) {
