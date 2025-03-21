@@ -13,6 +13,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   syncfusion_flutter_pdf: ^28.2.9
   syncfusion_flutter_pdfviewer: ^28.1.37
+  auto_size_text: ^3.0.0
 
   camera: ^0.10.5+5
   image_picker: ^1.0.7
@@ -75,6 +76,8 @@ dependencies:
   # icloud_storage_sync: ^0.0.2
   # shared_preferences: ^2.5.2
 
+  archive: any
+  http_parser: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -130,7 +131,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Text(
+                  AutoSizeText(
                     widget.title,
                     style: GoogleFonts.slabo27px(
                       fontSize: 16.sp,
@@ -167,7 +168,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                           fontWeight: FontWeight.w700, fontSize: 14.sp),
                     ),
                     const SizedBox(height: 20),
-                    Text(
+                    AutoSizeText(
                       'folder_creator.select_color'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
@@ -240,7 +241,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: Text('common.cancel'.tr()),
+                            child: AutoSizeText('common.cancel'.tr()),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -253,7 +254,7 @@ class _CreateFolderBottomSheetState extends State<_CreateFolderBottomSheet> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: Text('folder_creator.create'.tr()),
+                            child: AutoSizeText('folder_creator.create'.tr()),
                           ),
                         ),
                       ],

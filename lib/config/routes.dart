@@ -11,6 +11,7 @@ import 'package:scanpro/ui/screen/languages/languages_screen.dart';
 import 'package:scanpro/ui/screen/merger/pdf_merge_screen.dart';
 import 'package:scanpro/ui/screen/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/ui/screen/user_guide/user_guide_screen.dart';
@@ -168,7 +169,7 @@ class AppRoutes {
                       const Icon(Icons.error_outline,
                           size: 64, color: Colors.red),
                       const SizedBox(height: 16),
-                      Text(
+                      AutoSizeText(
                         'Document not found or invalid',
                         style: GoogleFonts.slabo27px(
                             fontWeight: FontWeight.w700, fontSize: 16),
@@ -176,7 +177,7 @@ class AppRoutes {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () => navigateToHome(context),
-                        child: const Text('Go to Home'),
+                        child: const AutoSizeText('Go to Home'),
                       ),
                     ],
                   ),
@@ -239,7 +240,7 @@ class AppRoutes {
           children: [
             const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
-            Text(
+            AutoSizeText(
               'Route not found: ${state.error}',
               style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w700, fontSize: 16),
@@ -247,7 +248,7 @@ class AppRoutes {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => navigateToHome(context),
-              child: const Text('Go to Home'),
+              child: const AutoSizeText('Go to Home'),
             ),
           ],
         ),

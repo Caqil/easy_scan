@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -9,7 +10,7 @@ class HelpDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("help_dialog.title".tr()),
+      title: AutoSizeText("help_dialog.title".tr()),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +34,7 @@ class HelpDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text("help_dialog.close_button".tr()),
+          child: AutoSizeText("help_dialog.close_button".tr()),
         ),
       ],
     );
@@ -43,7 +44,7 @@ class HelpDialog extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AutoSizeText(
           title,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
@@ -51,7 +52,7 @@ class HelpDialog extends StatelessWidget {
           ),
         ),
         SizedBox(height: 4.h),
-        Text(description),
+        AutoSizeText(description),
       ],
     );
   }

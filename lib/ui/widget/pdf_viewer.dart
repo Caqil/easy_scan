@@ -3,11 +3,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/ui/widget/password_verification_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../models/document.dart';
-
 class PDFViewerWidget extends StatefulWidget {
   final Document document;
   final bool showAppBar;
@@ -79,7 +79,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
           children: [
             const Icon(Icons.error_outline, size: 48, color: Colors.red),
             const SizedBox(height: 16),
-            Text(
+            AutoSizeText(
               _errorMessage!,
               textAlign: TextAlign.center,
               style: GoogleFonts.slabo27px(
@@ -87,7 +87,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('common.go_back'.tr()),
+              child: AutoSizeText('common.go_back'.tr()),
             ),
           ],
         ),
@@ -106,7 +106,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
               color: Colors.red,
             ),
             SizedBox(height: 16),
-            Text(
+            AutoSizeText(
               'pdf.file_not_found'.tr(),
               textAlign: TextAlign.center,
               style: GoogleFonts.slabo27px(
@@ -154,7 +154,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     Expanded(
-                      child: Text(
+                      child: AutoSizeText(
                         widget.document.name,
                         style: GoogleFonts.slabo27px(
                           fontSize: 16.sp,
@@ -191,7 +191,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                             children: [
                               Icon(Icons.bookmark),
                               SizedBox(width: 8),
-                              Text('common.add_bookmark'.tr()),
+                              AutoSizeText('common.add_bookmark'.tr()),
                             ],
                           ),
                         ),
@@ -201,7 +201,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                             children: [
                               Icon(Icons.print),
                               SizedBox(width: 8),
-                              Text('share.print'.tr()),
+                              AutoSizeText('share.print'.tr()),
                             ],
                           ),
                         ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -53,7 +54,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(
+        title: AutoSizeText(
           "support.help_contact".tr(),
           style: GoogleFonts.lilitaOne(
             fontSize: 25.sp,
@@ -169,7 +170,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   }
 
   Widget _buildFieldLabel(String label) {
-    return Text(
+    return AutoSizeText(
       label,
       style: GoogleFonts.slabo27px(
         fontSize: 14.sp,
@@ -232,7 +233,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
             items: _subjectOptions.map((String subject) {
               return DropdownMenuItem<String>(
                 value: subject,
-                child: Text(subject),
+                child: AutoSizeText(subject),
               );
             }).toList(),
             onChanged: (String? newValue) {
@@ -252,7 +253,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AutoSizeText(
           "support.max_attachments".tr(args: ["3"]),
           style: GoogleFonts.slabo27px(
             fontSize: 12.sp,
@@ -348,7 +349,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
               color: colorScheme.primary,
             ),
             SizedBox(height: 8.h),
-            Text(
+            AutoSizeText(
               "support.add_image".tr(),
               textAlign: TextAlign.center,
               style: GoogleFonts.slabo27px(
@@ -366,7 +367,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
     return Row(
       children: [
         Expanded(
-          child: Text(
+          child: AutoSizeText(
             "support.include_diagnostic".tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 14.sp,
@@ -408,7 +409,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                   strokeWidth: 2,
                 ),
               )
-            : Text(
+            : AutoSizeText(
                 "support.send_message".tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,

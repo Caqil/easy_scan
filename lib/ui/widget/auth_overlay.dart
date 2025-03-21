@@ -1,6 +1,7 @@
 // auth_overlay.dart
 import 'package:scanpro/models/auth_state.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthOverlay extends ConsumerWidget {
@@ -40,12 +41,12 @@ class AuthOverlay extends ConsumerWidget {
                   ? const CircularProgressIndicator()
                   : const Icon(Icons.fingerprint, size: 64, color: Colors.blue),
               const SizedBox(height: 24),
-              Text(
+              AutoSizeText(
                 'Authentication Required',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
-              Text(
+              AutoSizeText(
                 'This app is protected with biometric authentication.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -54,7 +55,7 @@ class AuthOverlay extends ConsumerWidget {
               ElevatedButton(
                 onPressed:
                     authState.isAuthenticating ? null : authState.authenticate,
-                child: Text(authState.isAuthenticating
+                child: AutoSizeText(authState.isAuthenticating
                     ? 'Authenticating...'
                     : 'Authenticate'),
               ),

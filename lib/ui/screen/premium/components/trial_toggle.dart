@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -24,14 +25,14 @@ class TrialToggle extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   'trial_explanation.start_hint'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
                     fontSize: 16.sp,
                   ),
                 ),
-                Text(
+                AutoSizeText(
                   'trial_explanation.price_info_1'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 12.sp,

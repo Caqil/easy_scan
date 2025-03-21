@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -65,14 +66,14 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
         children: [
           // Password protection toggle
           SwitchListTile(
-            title: Text(
+            title: AutoSizeText(
               'password_protection'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
                 fontSize: 14.sp,
               ),
             ),
-            subtitle: Text(
+            subtitle: AutoSizeText(
               _isProtectionEnabled
                   ? 'document_will_be_protected'.tr()
                   : 'add_password_to_protect'.tr(),

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -182,14 +183,14 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      AutoSizeText(
                         'folder_selector.select_folder'.tr(),
                         style: GoogleFonts.slabo27px(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
+                      AutoSizeText(
                         'folder_selector.choose_destination'.tr(),
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
@@ -283,7 +284,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: Text(
+                    child: AutoSizeText(
                       'folder_selector.create_new_folder'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
@@ -310,7 +311,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 color: Theme.of(context).primaryColor.withOpacity(0.1),
-                child: Text(
+                child: AutoSizeText(
                   'folder_selector.select_current_folder'.tr(
                     namedArgs: {'name': _breadcrumbs.last},
                   ),
@@ -398,7 +399,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                           : Colors.grey.shade600,
                     ),
                   if (isFirst) const SizedBox(width: 4),
-                  Text(
+                  AutoSizeText(
                     _breadcrumbs[i],
                     style: GoogleFonts.slabo27px(
                       color: isLast
@@ -445,7 +446,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
               color: Colors.grey.shade400,
             ),
             const SizedBox(height: 16),
-            Text(
+            AutoSizeText(
               'folder_selector.no_subfolders_found'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 16,
@@ -454,7 +455,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            AutoSizeText(
               'folder_selector.create_subfolder_here'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -507,7 +508,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  AutoSizeText(
                     folder.name,
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
@@ -515,7 +516,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                     ),
                   ),
                   if (hasSubfolders)
-                    Text(
+                    AutoSizeText(
                       'folder_selector.subfolder_count'.tr(
                         namedArgs: {'count': subfolders.length.toString()},
                       ),

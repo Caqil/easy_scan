@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,7 +23,7 @@ class ConversionScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(
+        title: AutoSizeText(
           "conversion_screen.title".tr(),
           style: GoogleFonts.lilitaOne(fontSize: 25.sp),
         ),
@@ -99,7 +100,7 @@ class ConversionScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Title and description
-        Text(
+        AutoSizeText(
           "conversion_screen.header_title".tr(),
           style: GoogleFonts.slabo27px(
             fontSize: 24.sp,
@@ -108,7 +109,7 @@ class ConversionScreen extends ConsumerWidget {
           ),
         ),
         SizedBox(height: 8.h),
-        Text(
+        AutoSizeText(
           "conversion_screen.header_description".tr(),
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.w700,

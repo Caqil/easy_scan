@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart'; // Add this import
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -53,7 +54,7 @@ class CustomQRCode extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (title != null) ...[
-            Text(
+            AutoSizeText(
               title!.tr(), // Apply translation if title is a key
               style: GoogleFonts.slabo27px(
                 color: primaryColor,
@@ -95,7 +96,7 @@ class CustomQRCode extends StatelessWidget {
                   : null,
               errorStateBuilder: (ctx, err) {
                 return Center(
-                  child: Text(
+                  child: AutoSizeText(
                     'qr_code.error'.tr(), // Use translation key
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
@@ -163,7 +164,7 @@ class GradientQRCode extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (title != null) ...[
-            Text(
+            AutoSizeText(
               title!.tr(), // Apply translation if title is a key
               style: GoogleFonts.slabo27px(
                 color: Colors.white,
@@ -256,7 +257,7 @@ class TransparentQRCode extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (title != null) ...[
-                Text(
+                AutoSizeText(
                   title!.tr(), // Apply translation if title is a key
                   style: GoogleFonts.slabo27px(
                     color: Colors.white,
@@ -354,7 +355,7 @@ class ThemedQRCode extends StatelessWidget {
                 size: 20.sp,
               ),
               SizedBox(width: 8.w),
-              Text(
+              AutoSizeText(
                 typeSettings.title.tr(), // Apply translation to title
                 style: GoogleFonts.slabo27px(
                   color: Colors.white,

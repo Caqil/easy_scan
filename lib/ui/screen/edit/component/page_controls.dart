@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -53,7 +54,7 @@ class PageControls extends StatelessWidget {
               size: 18,
             ),
             const SizedBox(width: 4),
-            Text(
+            AutoSizeText(
               'common.delete'.tr(),
               style: GoogleFonts.slabo27px(
                 color: Colors.white,
@@ -86,7 +87,7 @@ class PageControls extends StatelessWidget {
             size: 16,
           ),
           const SizedBox(width: 6),
-          Text(
+          AutoSizeText(
             '${currentPageIndex + 1} / $pageCount',
             style: GoogleFonts.slabo27px(
               color: Colors.white,

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -90,7 +91,7 @@ class DocumentCard extends StatelessWidget {
           color: Colors.black.withOpacity(0.6),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Text(
+        child: AutoSizeText(
           '${index + 1}',
           style: GoogleFonts.slabo27px(
             color: Colors.white,
@@ -170,7 +171,7 @@ class DocumentCard extends StatelessWidget {
           size: 14,
         ),
         const SizedBox(width: 4),
-        Text(
+        AutoSizeText(
           label,
           textAlign: TextAlign.center,
           style: GoogleFonts.slabo27px(

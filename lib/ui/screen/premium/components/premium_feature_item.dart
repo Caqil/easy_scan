@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -42,7 +43,7 @@ class PremiumFeatureItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   title,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
@@ -50,7 +51,7 @@ class PremiumFeatureItem extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 4.h),
-                Text(
+                AutoSizeText(
                   description,
                   style: GoogleFonts.slabo27px(
                     fontSize: 14.sp,

@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'loading_overlay.dart';
@@ -86,7 +87,7 @@ class _PdfEditPreviewState extends State<PdfEditPreview> {
                 children: [
                   const Icon(Icons.error_outline, color: Colors.red, size: 48),
                   const SizedBox(height: 16),
-                  Text(
+                  AutoSizeText(
                     _errorMessage!,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.slabo27px(

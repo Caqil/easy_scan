@@ -9,6 +9,7 @@ import 'package:scanpro/services/pdf_compression_api_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -73,7 +74,7 @@ class _CompressionBottomSheetState
                 size: 24,
               ),
               const SizedBox(width: 12),
-              Text(
+              AutoSizeText(
                 'compress_pdf'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 18.sp,
@@ -83,7 +84,7 @@ class _CompressionBottomSheetState
             ],
           ),
           const SizedBox(height: 16),
-          Text(
+          AutoSizeText(
             'documents'.tr(namedArgs: {'name': widget.document.name}),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
@@ -91,7 +92,7 @@ class _CompressionBottomSheetState
             ),
           ),
           SizedBox(height: 15.h),
-          Text(
+          AutoSizeText(
             'compression_level'.tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
@@ -114,7 +115,7 @@ class _CompressionBottomSheetState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   FileUtils.getCompressionLevelTitle()!,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
@@ -123,7 +124,7 @@ class _CompressionBottomSheetState
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
+                AutoSizeText(
                   FileUtils.getCompressionLevelDescription()!,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
@@ -143,7 +144,7 @@ class _CompressionBottomSheetState
             ),
             const SizedBox(height: 16),
             Center(
-              child: Text(
+              child: AutoSizeText(
                 'compressing'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w700,
@@ -166,7 +167,7 @@ class _CompressionBottomSheetState
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text('common.cancel'.tr()),
+                  child: AutoSizeText('common.cancel'.tr()),
                 ),
               ),
               const SizedBox(width: 16),
@@ -188,7 +189,7 @@ class _CompressionBottomSheetState
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white),
                         )
-                      : Text('compress'.tr()),
+                      : AutoSizeText('compress'.tr()),
                 ),
               ),
             ],
@@ -285,7 +286,7 @@ class _CompressionBottomSheetState
                   : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 4),
-            Text(
+            AutoSizeText(
               label,
               style: GoogleFonts.slabo27px(
                 color: isSelected

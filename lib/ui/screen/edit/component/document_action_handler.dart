@@ -7,6 +7,7 @@ import 'package:scanpro/ui/screen/edit/component/edit_screen_controller.dart';
 import 'package:scanpro/ui/widget/color_selector.dart';
 import 'package:scanpro/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -67,7 +68,7 @@ class DocumentActionHandler {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(width: 12),
-                    Text(
+                    AutoSizeText(
                       'document_actions.password_protection'.tr(),
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -90,7 +91,7 @@ class DocumentActionHandler {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text('common.cancel'.tr()),
+                      child: AutoSizeText('common.cancel'.tr()),
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton(
@@ -99,7 +100,7 @@ class DocumentActionHandler {
                             controller.passwordController.text.isNotEmpty;
                         Navigator.pop(context);
                       },
-                      child: Text('document_actions.apply'.tr()),
+                      child: AutoSizeText('document_actions.apply'.tr()),
                     ),
                   ],
                 ),
@@ -274,7 +275,7 @@ class DocumentActionHandler {
                     Icon(Icons.water,
                         color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 12),
-                    Text(
+                    AutoSizeText(
                       'document_actions.add_watermark'.tr(),
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -289,7 +290,7 @@ class DocumentActionHandler {
                   children: [
                     Row(
                       children: [
-                        Text('document_actions.watermark_type'.tr(),
+                        AutoSizeText('document_actions.watermark_type'.tr(),
                             style: GoogleFonts.slabo27px(
                                 fontWeight: FontWeight.bold)),
                         const SizedBox(width: 16),
@@ -297,11 +298,11 @@ class DocumentActionHandler {
                           segments: const [
                             ButtonSegment(
                                 value: 'text',
-                                label: Text('Text'),
+                                label: AutoSizeText('Text'),
                                 icon: Icon(Icons.text_fields)),
                             ButtonSegment(
                                 value: 'image',
-                                label: Text('Image'),
+                                label: AutoSizeText('Image'),
                                 icon: Icon(Icons.image)),
                           ],
                           selected: {watermarkType},
@@ -387,7 +388,7 @@ class DocumentActionHandler {
                               }
                             },
                             icon: Icon(Icons.upload_file),
-                            label: Text(imageBytes == null
+                            label: AutoSizeText(imageBytes == null
                                 ? 'document_actions.select_image'.tr()
                                 : 'document_actions.change_image'.tr()),
                           ),
@@ -396,7 +397,7 @@ class DocumentActionHandler {
                     const SizedBox(height: 20),
                     Row(
                       children: [
-                        Text('document_actions.opacity'.tr(),
+                        AutoSizeText('document_actions.opacity'.tr(),
                             style: GoogleFonts.slabo27px(
                                 fontWeight: FontWeight.bold)),
                         Expanded(
@@ -412,7 +413,7 @@ class DocumentActionHandler {
                             },
                           ),
                         ),
-                        Text('${(opacity * 100).round()}%'),
+                        AutoSizeText('${(opacity * 100).round()}%'),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -422,7 +423,8 @@ class DocumentActionHandler {
                         children: [
                           Row(
                             children: [
-                              Text('document_actions.color_mode.color'.tr(),
+                              AutoSizeText(
+                                  'document_actions.color_mode.color'.tr(),
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(width: 16),
@@ -443,7 +445,7 @@ class DocumentActionHandler {
                           const SizedBox(height: 20),
                           Row(
                             children: [
-                              Text('document_actions.font_size'.tr(),
+                              AutoSizeText('document_actions.font_size'.tr(),
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
                               Expanded(
@@ -459,7 +461,7 @@ class DocumentActionHandler {
                                   },
                                 ),
                               ),
-                              Text(fontSize.round().toString()),
+                              AutoSizeText(fontSize.round().toString()),
                             ],
                           ),
                         ],
@@ -475,7 +477,7 @@ class DocumentActionHandler {
                         child: Center(
                           child: RotationTransition(
                             turns: const AlwaysStoppedAnimation(-45 / 360),
-                            child: Text(
+                            child: AutoSizeText(
                               watermarkText.isEmpty
                                   ? 'WATERMARK'
                                   : watermarkText,
@@ -530,7 +532,7 @@ class DocumentActionHandler {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text('common.cancel'.tr()),
+                      child: AutoSizeText('common.cancel'.tr()),
                     ),
                     const SizedBox(width: 16),
                     OutlinedButton(
@@ -557,7 +559,8 @@ class DocumentActionHandler {
                         }
                         Navigator.pop(context, true);
                       },
-                      child: Text('document_actions.apply_watermark'.tr()),
+                      child:
+                          AutoSizeText('document_actions.apply_watermark'.tr()),
                     ),
                   ],
                 ),

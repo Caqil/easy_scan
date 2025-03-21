@@ -3,6 +3,7 @@ import 'package:scanpro/config/routes.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scanpro/ui/screen/onboarding/onboarding_screen.dart';
@@ -13,6 +14,7 @@ import 'providers/settings_provider.dart';
 import 'ui/widget/auth_wrapper.dart';
 import 'ui/widget/auth_overlay.dart';
 import 'package:scanpro/services/subscription_service.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 void main() {
   runApp(ProviderScope(child: DocApp()));
@@ -168,7 +170,7 @@ class SplashScreen extends StatelessWidget {
               valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
             ),
             SizedBox(height: 20.h),
-            Text(
+            AutoSizeText(
               'common.loading'.tr(), // Using easy_localization
               style: TextStyle(
                 fontSize: 16.sp,

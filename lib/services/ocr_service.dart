@@ -44,7 +44,7 @@ class OcrService {
   static const String _ocrEndpoint = '/ocr/extract';
 
   /// Extract text from a PDF or image file using OCR
-  Future<OcrResult> extractText({
+  Future<OcrResult> extractAutoSizeText({
     required File file,
     String language = 'eng',
     String pageRange = 'all',
@@ -167,7 +167,7 @@ class OcrService {
             'Document file does not exist: ${document.pdfPath}');
       }
 
-      return extractText(
+      return extractAutoSizeText(
         file: file,
         language: language,
         pageRange: pageRange,

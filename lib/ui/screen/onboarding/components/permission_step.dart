@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/utils/permission_utils.dart';
@@ -88,7 +89,7 @@ class _PermissionStepState extends State<PermissionStep>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
-            Text(
+            AutoSizeText(
               'onboarding.permissions_title'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 26.sp,
@@ -97,7 +98,7 @@ class _PermissionStepState extends State<PermissionStep>
               ),
             ),
             SizedBox(height: 12.h),
-            Text(
+            AutoSizeText(
               'onboarding.permissions_description'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 14.sp,
@@ -213,7 +214,7 @@ class _PermissionStepState extends State<PermissionStep>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  AutoSizeText(
                     title,
                     style: GoogleFonts.slabo27px(
                       fontSize: 16.sp,
@@ -222,7 +223,7 @@ class _PermissionStepState extends State<PermissionStep>
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  Text(
+                  AutoSizeText(
                     description,
                     style: GoogleFonts.slabo27px(
                       fontSize: 12.sp,
@@ -254,7 +255,7 @@ class _PermissionStepState extends State<PermissionStep>
                             color: Colors.green,
                           ),
                           SizedBox(width: 4.w),
-                          Text(
+                          AutoSizeText(
                             'onboarding.granted'.tr(),
                             style: GoogleFonts.slabo27px(
                               fontSize: 12.sp,
@@ -276,7 +277,7 @@ class _PermissionStepState extends State<PermissionStep>
                         padding: EdgeInsets.symmetric(
                             horizontal: 16.w, vertical: 8.h),
                       ),
-                      child: Text(
+                      child: AutoSizeText(
                         'onboarding.grant'.tr(),
                         style: GoogleFonts.slabo27px(
                           fontSize: 12.sp,

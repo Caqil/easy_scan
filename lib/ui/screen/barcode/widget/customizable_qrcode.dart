@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -90,7 +91,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Title
-                Text(
+                AutoSizeText(
                   title,
                   style: GoogleFonts.slabo27px(
                     color: useGradient ? Colors.white : foregroundColor,
@@ -170,7 +171,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          AutoSizeText(
             'custom_qr.customize_title'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
@@ -198,7 +199,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
 
           // Gradient toggle
           SwitchListTile(
-            title: Text('custom_qr.use_gradient'.tr()),
+            title: AutoSizeText('custom_qr.use_gradient'.tr()),
             value: useGradient,
             onChanged: (value) {
               setState(() {
@@ -234,7 +235,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           SizedBox(height: 16.h),
 
           // Eye shape selection
-          Text(
+          AutoSizeText(
             'custom_qr.eye_shape'.tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
@@ -246,7 +247,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           SizedBox(height: 16.h),
 
           // Data module shape selection
-          Text(
+          AutoSizeText(
             'custom_qr.data_module_shape'.tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
@@ -259,7 +260,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
 
           // Shadow toggle
           SwitchListTile(
-            title: Text('custom_qr.show_shadow'.tr()),
+            title: AutoSizeText('custom_qr.show_shadow'.tr()),
             value: showShadow,
             onChanged: (value) {
               setState(() {
@@ -274,10 +275,10 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
 
           // Logo options
           ExpansionTile(
-            title: Text('custom_qr.logo_options'.tr()),
+            title: AutoSizeText('custom_qr.logo_options'.tr()),
             children: [
               SwitchListTile(
-                title: Text('custom_qr.show_logo'.tr()),
+                title: AutoSizeText('custom_qr.show_logo'.tr()),
                 value: showLogo,
                 onChanged: (value) {
                   setState(() {
@@ -294,7 +295,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
                     ElevatedButton.icon(
                       onPressed: _pickLogo,
                       icon: Icon(Icons.image),
-                      label: Text('custom_qr.select_logo'.tr()),
+                      label: AutoSizeText('custom_qr.select_logo'.tr()),
                     ),
                     SizedBox(width: 12.w),
                     if (logoBytes != null)
@@ -316,7 +317,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
                   ],
                 ),
                 SizedBox(height: 12.h),
-                Text('custom_qr.logo_size'.tr()),
+                AutoSizeText('custom_qr.logo_size'.tr()),
                 Slider(
                   value: logoSize,
                   min: 30,
@@ -339,7 +340,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           ElevatedButton.icon(
             onPressed: _captureAndExportQR,
             icon: Icon(Icons.save),
-            label: Text('custom_qr.save_qr'.tr()),
+            label: AutoSizeText('custom_qr.save_qr'.tr()),
             style: ElevatedButton.styleFrom(
               minimumSize: Size(double.infinity, 48.h),
             ),
@@ -354,7 +355,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AutoSizeText(
           label,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.w700,
@@ -403,7 +404,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AutoSizeText(
           label,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.w700,
@@ -508,7 +509,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
         final isSelected = eyeShape == entry.key;
 
         return ChoiceChip(
-          label: Text(entry.value),
+          label: AutoSizeText(entry.value),
           selected: isSelected,
           onSelected: (selected) {
             if (selected) {
@@ -534,7 +535,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
         final isSelected = dataModuleShape == entry.key;
 
         return ChoiceChip(
-          label: Text(entry.value),
+          label: AutoSizeText(entry.value),
           selected: isSelected,
           onSelected: (selected) {
             if (selected) {

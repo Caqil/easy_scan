@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 enum SnackBarType {
@@ -22,12 +23,12 @@ class AppDialogs {
         context: context,
         builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                title: Text(title),
-                content: Text(message),
+                title: AutoSizeText(title),
+                content: AutoSizeText(message),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: Text(cancelText),
+                    child: AutoSizeText(cancelText),
                   ),
                   TextButton(
                     onPressed: () {
@@ -37,7 +38,7 @@ class AppDialogs {
                     style: isDangerous
                         ? TextButton.styleFrom(foregroundColor: Colors.red)
                         : null,
-                    child: Text(confirmText),
+                    child: AutoSizeText(confirmText),
                   ),
                 ],
               ),
@@ -60,7 +61,7 @@ class AppDialogs {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title),
+        title: AutoSizeText(title),
         content: TextField(
           controller: controller,
           obscureText: isPassword,
@@ -73,7 +74,7 @@ class AppDialogs {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(cancelText),
+            child: AutoSizeText(cancelText),
           ),
           TextButton(
             onPressed: () {
@@ -81,7 +82,7 @@ class AppDialogs {
                 Navigator.pop(context, controller.text.trim());
               }
             },
-            child: Text(confirmText),
+            child: AutoSizeText(confirmText),
           ),
         ],
       ),
@@ -142,7 +143,7 @@ class AppDialogs {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Expanded(
-                  child: Text(
+                  child: AutoSizeText(
                     message,
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
@@ -167,7 +168,7 @@ class AppDialogs {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       backgroundColor: Colors.transparent,
                     ),
-                    child: Text(action.label),
+                    child: AutoSizeText(action.label),
                   ),
                 ],
               ],

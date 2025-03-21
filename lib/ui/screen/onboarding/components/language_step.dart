@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -101,7 +102,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
-            Text(
+            AutoSizeText(
               'onboarding.language_title'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 26.sp,
@@ -110,7 +111,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
               ),
             ),
             SizedBox(height: 12.h),
-            Text(
+            AutoSizeText(
               'onboarding.language_description'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 14.sp,
@@ -152,7 +153,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
             SizedBox(height: 32.h),
 
             // Language selection heading
-            Text(
+            AutoSizeText(
               'onboarding.select_your_language'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 18.sp,
@@ -235,7 +236,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
                   shape: BoxShape.circle,
                 ),
                 child: Center(
-                  child: Text(
+                  child: AutoSizeText(
                     language.languageCode.toUpperCase(),
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.bold,
@@ -249,7 +250,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
 
               // Language name
               Expanded(
-                child: Text(
+                child: AutoSizeText(
                   language.label,
                   style: GoogleFonts.slabo27px(
                     fontSize: 16.sp,

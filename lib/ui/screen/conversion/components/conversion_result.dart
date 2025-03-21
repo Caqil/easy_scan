@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -48,7 +49,7 @@ class ConversionResultSection extends StatelessWidget {
               Icon(Icons.error_outline,
                   color: Colors.red.shade700, size: 20.sp),
               SizedBox(width: 8.w),
-              Text(
+              AutoSizeText(
                 "conversion_result.error.title".tr(), // Localized string
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
@@ -59,7 +60,7 @@ class ConversionResultSection extends StatelessWidget {
             ],
           ),
           SizedBox(height: 8.h),
-          Text(
+          AutoSizeText(
             state.error!,
             style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700, color: Colors.red.shade700),
@@ -86,7 +87,7 @@ class ConversionResultSection extends StatelessWidget {
               Icon(Icons.check_circle_outline,
                   color: Colors.green.shade700, size: 20.sp),
               SizedBox(width: 8.w),
-              Text(
+              AutoSizeText(
                 "conversion_result.success.title".tr(), // Localized string
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
@@ -97,7 +98,7 @@ class ConversionResultSection extends StatelessWidget {
             ],
           ),
           SizedBox(height: 8.h),
-          Text(
+          AutoSizeText(
             "conversion_result.success.file_saved".tr(
                 namedArgs: {'saved': path.basename(state.convertedFilePath!)}),
           ),
@@ -108,7 +109,7 @@ class ConversionResultSection extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: () => OpenFile.open(state.convertedFilePath!),
                   icon: const Icon(Icons.file_open),
-                  label: Text("conversion_result.success.open"
+                  label: AutoSizeText("conversion_result.success.open"
                       .tr()), // Localized string
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
@@ -128,7 +129,7 @@ class ConversionResultSection extends StatelessWidget {
                     );
                   },
                   icon: const Icon(Icons.share),
-                  label: Text("conversion_result.success.share"
+                  label: AutoSizeText("conversion_result.success.share"
                       .tr()), // Localized string
                 ),
               ),
@@ -159,7 +160,7 @@ class ConversionResultSection extends StatelessWidget {
                 }
               },
               icon: const Icon(Icons.save_alt),
-              label: Text("conversion_result.success.save_to_library"
+              label: AutoSizeText("conversion_result.success.save_to_library"
                   .tr()), // Localized string
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.green.shade700,

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -142,7 +143,7 @@ class _SubscriptionOptionsWidgetState extends State<SubscriptionOptionsWidget> {
                       Row(
                         children: [
                           Flexible(
-                            child: Text(
+                            child: AutoSizeText(
                               title,
                               style: GoogleFonts.slabo27px(
                                 fontWeight: FontWeight.w600,
@@ -165,7 +166,7 @@ class _SubscriptionOptionsWidgetState extends State<SubscriptionOptionsWidget> {
                                 color: Colors.green.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(6.r),
                               ),
-                              child: Text(
+                              child: AutoSizeText(
                                 savingsText,
                                 style: GoogleFonts.slabo27px(
                                   color: Colors.green[700],
@@ -178,7 +179,7 @@ class _SubscriptionOptionsWidgetState extends State<SubscriptionOptionsWidget> {
                         ],
                       ),
                       SizedBox(height: 4.h),
-                      Text(
+                      AutoSizeText(
                         subtitle,
                         style: GoogleFonts.slabo27px(
                           color: Theme.of(context)
@@ -196,7 +197,7 @@ class _SubscriptionOptionsWidgetState extends State<SubscriptionOptionsWidget> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
+                    AutoSizeText(
                       price,
                       style: GoogleFonts.slabo13px(
                         fontWeight: FontWeight.bold,
@@ -232,7 +233,7 @@ class _SubscriptionOptionsWidgetState extends State<SubscriptionOptionsWidget> {
                       ),
                     ],
                   ),
-                  child: Text(
+                  child: AutoSizeText(
                     'subscription.most_popular'.tr(),
                     style: GoogleFonts.slabo27px(
                       color: Colors.white,

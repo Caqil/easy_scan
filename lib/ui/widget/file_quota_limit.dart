@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -67,7 +68,7 @@ class FileQuotaStatusWidget extends ConsumerWidget {
                 size: 20.r,
               ),
               SizedBox(width: 8.w),
-              Text(
+              AutoSizeText(
                 isPremium
                     ? 'limit.unlimited'.tr()
                     : 'limit.file_counter'.tr(
@@ -97,7 +98,7 @@ class FileQuotaStatusWidget extends ConsumerWidget {
                     minimumSize: Size(0, 0),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: Text(
+                  child: AutoSizeText(
                     'limit.upgrade'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.bold,
@@ -143,7 +144,7 @@ class FileQuotaStatusWidget extends ConsumerWidget {
   Widget _buildErrorWidget(BuildContext context) {
     return Container(
       padding: padding,
-      child: Text(
+      child: AutoSizeText(
         'Error loading quota information',
         style: TextStyle(color: Theme.of(context).colorScheme.error),
       ),

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -61,7 +62,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
           ),
 
           // Title
-          Text(
+          AutoSizeText(
             'trial_explanation.title'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 28.sp,
@@ -111,14 +112,14 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
             padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: Column(
               children: [
-                Text(
+                AutoSizeText(
                   'trial_explanation.price_info_1'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 18.sp,
                     color: Colors.white,
                   ),
                 ),
-                Text(
+                AutoSizeText(
                   'trial_explanation.price_info_2'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 18.sp,
@@ -138,7 +139,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   'trial_explanation.cancel_title'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 20.sp,
@@ -147,7 +148,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
                   ),
                 ),
                 SizedBox(height: 8.h),
-                Text(
+                AutoSizeText(
                   'trial_explanation.cancel_desc'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 16.sp,
@@ -168,7 +169,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
                   color: Colors.red.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
-                child: Text(
+                child: AutoSizeText(
                   _errorMessage,
                   style: GoogleFonts.slabo27px(
                     fontSize: 14.sp,
@@ -202,7 +203,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
                             strokeWidth: 2,
                           ),
                         )
-                      : Text(
+                      : AutoSizeText(
                           'trial_explanation.start_button'.tr(),
                           style: GoogleFonts.slabo27px(
                             fontSize: 18.sp,
@@ -228,7 +229,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
                   ),
                   child: _isStarting
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(
+                      : AutoSizeText(
                           'Start my free trial now',
                           style: GoogleFonts.slabo27px(
                             fontSize: 18.sp,
@@ -237,7 +238,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
                         ),
                 ),
                 SizedBox(height: 8.h),
-                Text(
+                AutoSizeText(
                   '2 taps to start, super easy to cancel',
                   style: GoogleFonts.slabo27px(
                     fontSize: 14.sp,
@@ -298,7 +299,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              AutoSizeText(
                 day,
                 style: GoogleFonts.slabo27px(
                   fontSize: 20.sp,
@@ -307,7 +308,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
                 ),
               ),
               SizedBox(height: 4.h),
-              Text(
+              AutoSizeText(
                 description,
                 style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,

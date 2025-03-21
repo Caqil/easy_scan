@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -25,14 +26,14 @@ class BottomLinks extends StatelessWidget {
           style: TextButton.styleFrom(
             foregroundColor: Colors.grey[600],
           ),
-          child: Text(
+          child: AutoSizeText(
             'subscription.terms'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 14.sp,
             ),
           ),
         ),
-        Text(
+        AutoSizeText(
           '•',
           style: TextStyle(color: Colors.grey[600]),
         ),
@@ -41,7 +42,7 @@ class BottomLinks extends StatelessWidget {
           style: TextButton.styleFrom(
             foregroundColor: Colors.grey[600],
           ),
-          child: Text(
+          child: AutoSizeText(
             'subscription.restore_purchases'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 14.sp,

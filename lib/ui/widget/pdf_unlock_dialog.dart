@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -131,7 +132,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
-                  child: Text(
+                  child: AutoSizeText(
                     'pdf.unlock.title'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontSize: 18.sp,
@@ -145,7 +146,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
             SizedBox(height: 16.h),
 
             // Description
-            Text(
+            AutoSizeText(
               'pdf.unlock.description'
                   .tr(namedArgs: {'name': widget.document.name}),
               style: GoogleFonts.slabo27px(
@@ -195,7 +196,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                   ),
                   SizedBox(width: 8.w),
                   Expanded(
-                    child: Text(
+                    child: AutoSizeText(
                       _errorMessage,
                       style: GoogleFonts.slabo27px(
                         fontSize: 12.sp,
@@ -219,7 +220,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
               ),
               SizedBox(height: 8.h),
               Center(
-                child: Text(
+                child: AutoSizeText(
                   'pdf.unlock.processing'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 12.sp,
@@ -244,7 +245,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                     ),
-                    child: Text('common.cancel'.tr()),
+                    child: AutoSizeText('common.cancel'.tr()),
                   ),
                 ),
                 SizedBox(width: 16.w),
@@ -263,7 +264,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                             height: 20.r,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : Text('pdf.unlock.unlock_button'.tr()),
+                        : AutoSizeText('pdf.unlock.unlock_button'.tr()),
                   ),
                 ),
               ],

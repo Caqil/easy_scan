@@ -48,7 +48,7 @@
 
 //     return Scaffold(
 //       appBar: CustomAppBar(
-//         title: Text(
+//         title: AutoSizeText(
 //           'backup.title'.tr(),
 //           style: GoogleFonts.lilitaOne(fontSize: 25.sp),
 //         ),
@@ -82,7 +82,7 @@
 //                           color: Colors.red.shade800, size: 20),
 //                       const SizedBox(width: 8),
 //                       Expanded(
-//                         child: Text(
+//                         child: AutoSizeText(
 //                           'Error occurred:',
 //                           style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -95,7 +95,7 @@
 //                     ],
 //                   ),
 //                   const SizedBox(height: 8),
-//                   Text(
+//                   AutoSizeText(
 //                     backupState.errorMessage!,
 //                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -106,7 +106,7 @@
 //                   TextButton(
 //                     onPressed: () =>
 //                         ref.read(backupProvider.notifier).clearMessages(),
-//                     child: Text('Dismiss'),
+//                     child: AutoSizeText('Dismiss'),
 //                   ),
 //                 ],
 //               ),
@@ -125,7 +125,7 @@
 //                           color: Colors.green.shade800, size: 20),
 //                       const SizedBox(width: 8),
 //                       Expanded(
-//                         child: Text(
+//                         child: AutoSizeText(
 //                           'Success!',
 //                           style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -138,7 +138,7 @@
 //                     ],
 //                   ),
 //                   const SizedBox(height: 8),
-//                   Text(
+//                   AutoSizeText(
 //                     backupState.successMessage!,
 //                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -153,7 +153,7 @@
 //                         exit(0);
 //                       },
 //                       icon: Icon(Icons.refresh),
-//                       label: Text('Restart App Now'),
+//                       label: AutoSizeText('Restart App Now'),
 //                       style: ElevatedButton.styleFrom(
 //                         backgroundColor: Colors.green.shade700,
 //                         foregroundColor: Colors.white,
@@ -162,7 +162,7 @@
 //                   TextButton(
 //                     onPressed: () =>
 //                         ref.read(backupProvider.notifier).clearMessages(),
-//                     child: Text('Dismiss'),
+//                     child: AutoSizeText('Dismiss'),
 //                   ),
 //                 ],
 //               ),
@@ -200,7 +200,7 @@
 //             color: Theme.of(context).primaryColor,
 //           ),
 //           const SizedBox(height: 8),
-//           Text(
+//           AutoSizeText(
 //             isBackup ? 'backup.creating_backup'.tr() : 'backup.restoring'.tr(),
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -208,7 +208,7 @@
 //               fontSize: 14.sp,
 //             ),
 //           ),
-//           Text(
+//           AutoSizeText(
 //             '${(progress * 100).toStringAsFixed(0)}%',
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -229,7 +229,7 @@
 //         children: [
 //           _buildLastBackupInfo(state),
 //           const SizedBox(height: 24),
-//           Text(
+//           AutoSizeText(
 //             'backup.destination'.tr(),
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -247,7 +247,7 @@
 //                 ? null
 //                 : () => _createBackup(),
 //             icon: const Icon(Icons.backup),
-//             label: Text('backup.backup_now'.tr()),
+//             label: AutoSizeText('backup.backup_now'.tr()),
 //             style: ElevatedButton.styleFrom(
 //               minimumSize: const Size(double.infinity, 50),
 //               shape: RoundedRectangleBorder(
@@ -269,7 +269,7 @@
 //           child: Column(
 //             crossAxisAlignment: CrossAxisAlignment.start,
 //             children: [
-//               Text(
+//               AutoSizeText(
 //                 'backup.restore'.tr(),
 //                 style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -287,7 +287,7 @@
 //                         .read(backupProvider.notifier)
 //                         .loadAvailableBackups(_selectedDestination),
 //                 icon: const Icon(Icons.refresh),
-//                 label: Text('backup.refresh'.tr()),
+//                 label: AutoSizeText('backup.refresh'.tr()),
 //                 style: OutlinedButton.styleFrom(
 //                   minimumSize: const Size(double.infinity, 40),
 //                 ),
@@ -341,7 +341,7 @@
 //             child: Column(
 //               crossAxisAlignment: CrossAxisAlignment.start,
 //               children: [
-//                 Text(
+//                 AutoSizeText(
 //                   'backup.last_backup'.tr(),
 //                   style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -350,7 +350,7 @@
 //                   ),
 //                 ),
 //                 const SizedBox(height: 4),
-//                 Text(
+//                 AutoSizeText(
 //                   lastBackupDate != null
 //                       ? DateFormat('MMM dd, yyyy HH:mm').format(lastBackupDate)
 //                       : 'backup.never'.tr(),
@@ -443,7 +443,7 @@
 //                 child: Column(
 //                   crossAxisAlignment: CrossAxisAlignment.start,
 //                   children: [
-//                     Text(
+//                     AutoSizeText(
 //                       title,
 //                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -454,7 +454,7 @@
 //                       ),
 //                     ),
 //                     const SizedBox(height: 4),
-//                     Text(
+//                     AutoSizeText(
 //                       subtitle,
 //                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -502,7 +502,7 @@
 //             children: [
 //               Icon(Icons.info_outline, color: Colors.blue.shade700, size: 20),
 //               const SizedBox(width: 8),
-//               Text(
+//               AutoSizeText(
 //                 'backup.what_is_included'.tr(),
 //                 style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -514,7 +514,7 @@
 //             ],
 //           ),
 //           const SizedBox(height: 8),
-//           Text(
+//           AutoSizeText(
 //             'backup.included_items'.tr(),
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -523,7 +523,7 @@
 //             ),
 //           ),
 //           const SizedBox(height: 8),
-//           Text(
+//           AutoSizeText(
 //             'backup.warning'.tr(),
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -548,7 +548,7 @@
 //             color: Colors.grey.shade400,
 //           ),
 //           const SizedBox(height: 16),
-//           Text(
+//           AutoSizeText(
 //             'backup.no_backups_found'.tr(),
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -558,7 +558,7 @@
 //             ),
 //           ),
 //           const SizedBox(height: 8),
-//           Text(
+//           AutoSizeText(
 //             'backup.create_first_backup'.tr(),
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -573,7 +573,7 @@
 //               _tabController.animateTo(0); // Switch to backup tab
 //             },
 //             icon: const Icon(Icons.add),
-//             label: Text('backup.backup_now'.tr()),
+//             label: AutoSizeText('backup.backup_now'.tr()),
 //           ),
 //         ],
 //       ),
@@ -598,7 +598,7 @@
 //               color: Theme.of(context).primaryColor,
 //             ),
 //           ),
-//           title: Text(
+//           title: AutoSizeText(
 //             backup['name'] ?? 'Unknown',
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -606,7 +606,7 @@
 //               fontSize: 14.sp,
 //             ),
 //           ),
-//           subtitle: Text(
+//           subtitle: AutoSizeText(
 //             '${backup['date'] ?? 'Unknown'} • ${backup['size'] ?? 'Unknown'}',
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 

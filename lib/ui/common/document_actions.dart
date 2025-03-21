@@ -4,6 +4,7 @@ import 'package:scanpro/services/documents_share_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/screen/compression/components/compression_tools.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -191,7 +192,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      AutoSizeText(
                         document.name,
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.bold,
@@ -201,7 +202,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: 2.h),
-                      Text(
+                      AutoSizeText(
                         '${document.pageCount} pages • ${DateTimeUtils.formatDateTime(document.modifiedAt)}',
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -42,7 +43,7 @@ class AppHeaderWidget extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h),
-          Text(
+          AutoSizeText(
             appName,
             style: GoogleFonts.slabo27px(
               fontSize: 24.sp,
@@ -50,7 +51,7 @@ class AppHeaderWidget extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
-          Text(
+          AutoSizeText(
             version,
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,

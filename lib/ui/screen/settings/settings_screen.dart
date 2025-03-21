@@ -10,6 +10,7 @@ import 'package:scanpro/ui/screen/settings/components/settings_divider.dart';
 import 'package:scanpro/ui/screen/settings/components/settings_section_header.dart';
 import 'package:scanpro/ui/screen/settings/components/settings_switch_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -69,7 +70,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: Text(
+        title: AutoSizeText(
           "settings.title".tr(),
           style: GoogleFonts.lilitaOne(fontSize: 25.sp),
         ),
@@ -295,7 +296,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            AutoSizeText(
               "settings.auto_lock".tr(),
               style: TextStyle(
                 fontSize: 20.sp,
@@ -318,7 +319,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _buildAutoLockOption(BuildContext context, String title, int minutes) {
     return ListTile(
-      title: Text(title),
+      title: AutoSizeText(title),
       onTap: () {
         // Would save the auto-lock setting
         Navigator.pop(context);
@@ -346,7 +347,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   "settings.pdf_quality".tr(),
                   style: TextStyle(
                     fontSize: 20.sp,
@@ -354,7 +355,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ),
                 SizedBox(height: 8.h),
-                Text(
+                AutoSizeText(
                   "settings.pdf_quality_desc".tr(),
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -365,14 +366,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    AutoSizeText(
                       "Lower Quality",
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Colors.grey.shade600,
                       ),
                     ),
-                    Text(
+                    AutoSizeText(
                       "Higher Quality",
                       style: TextStyle(
                         fontSize: 12.sp,
@@ -396,7 +397,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    AutoSizeText(
                       "$selectedQuality%",
                       style: TextStyle(
                         fontSize: 24.sp,
@@ -418,7 +419,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             borderRadius: BorderRadius.circular(8.r),
                           ),
                         ),
-                        child: Text("common.cancel".tr()),
+                        child: AutoSizeText("common.cancel".tr()),
                       ),
                     ),
                     SizedBox(width: 16.w),
@@ -440,7 +441,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             borderRadius: BorderRadius.circular(8.r),
                           ),
                         ),
-                        child: Text("common.save".tr()),
+                        child: AutoSizeText("common.save".tr()),
                       ),
                     ),
                   ],
@@ -466,7 +467,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            AutoSizeText(
               "settings.help_support".tr(),
               style: TextStyle(
                 fontSize: 20.sp,

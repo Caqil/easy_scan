@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -51,7 +52,7 @@ class TopicSelector extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 alignment: Alignment.center,
-                child: Text(
+                child: AutoSizeText(
                   topics[index],
                   style: GoogleFonts.slabo27px(
                     fontSize: 12.sp,

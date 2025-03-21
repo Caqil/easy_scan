@@ -5,6 +5,7 @@ import 'package:scanpro/ui/screen/home/widget/image_viewer_widget.dart';
 import 'package:scanpro/ui/screen/home/widget/text_viewer_widget.dart';
 import 'package:scanpro/ui/widget/pdf_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
 
@@ -59,7 +60,7 @@ class DocumentViewerWidget extends StatelessWidget {
             children: [
               const Icon(Icons.file_present, size: 64, color: Colors.grey),
               const SizedBox(height: 16),
-              Text(
+              AutoSizeText(
                 'cannot_preview_file_format'
                     .tr(namedArgs: {'extension': extension}),
                 style: const TextStyle(fontSize: 16),
@@ -70,7 +71,7 @@ class DocumentViewerWidget extends StatelessWidget {
                   // Open with external viewer if available
                   _openWithExternalApp(document.pdfPath);
                 },
-                child: Text('open_with_another_app'.tr()),
+                child: AutoSizeText('open_with_another_app'.tr()),
               ),
             ],
           ),

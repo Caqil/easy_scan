@@ -5,6 +5,7 @@ import 'package:scanpro/providers/document_provider.dart';
 import 'package:scanpro/ui/common/document_actions.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -191,7 +192,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    AutoSizeText(
                                       widget.document.name,
                                       style: GoogleFonts.slabo27px(
                                         fontSize: 16,
@@ -203,7 +204,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    Text(
+                                    AutoSizeText(
                                       '${widget.document.pageCount} pages',
                                       style: GoogleFonts.slabo27px(
                                         fontWeight: FontWeight.w700,
@@ -369,7 +370,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    AutoSizeText(
                                       widget.document.name,
                                       style: GoogleFonts.slabo27px(
                                         fontSize: 16.sp,
@@ -441,7 +442,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                       children: [
                         const CircularProgressIndicator(),
                         const SizedBox(height: 16),
-                        Text(
+                        AutoSizeText(
                           'Processing...',
                           style: GoogleFonts.slabo27px(
                             fontWeight: FontWeight.w700,
@@ -512,7 +513,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
+            child: AutoSizeText(
               label,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,

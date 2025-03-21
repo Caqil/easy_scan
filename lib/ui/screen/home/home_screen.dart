@@ -15,6 +15,7 @@ import 'package:scanpro/ui/common/pdf_merger.dart';
 import 'package:scanpro/ui/screen/compression/components/compression_bottomsheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -137,7 +138,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: _searchQuery.isEmpty
-            ? Text('ScanPro', style: GoogleFonts.lilitaOne(fontSize: 25.sp))
+            ? AutoSizeText('ScanPro',
+                style: GoogleFonts.lilitaOne(fontSize: 25.sp))
             : CupertinoSearchTextField(
                 style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
@@ -240,6 +242,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onCompress: () {
                       PdfCompressionUtils.showCompressionOptions(context, ref);
                     },
+                    onFavorite: _showFavorites,
+                    onMoreTools: () {},
                   ),
                   const SizedBox(height: 24),
                   if (recentDocuments.isNotEmpty)
@@ -354,7 +358,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            AutoSizeText(
               'ocr.extract_text'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 18,
@@ -362,7 +366,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
+            AutoSizeText(
               'ocr.select_document'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -437,7 +441,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               color: Theme.of(context).colorScheme.primary,
             ),
             const SizedBox(height: 12),
-            Text(
+            AutoSizeText(
               label,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -481,7 +485,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            AutoSizeText(
               'pdf.password_protected_documents'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 18,
@@ -489,7 +493,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            AutoSizeText(
               'pdf.select_document_to_open'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -517,7 +521,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               top: false,
               child: OutlinedButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('common.cancel'),
+                child: const AutoSizeText('common.cancel'),
               ),
             ),
           ],
@@ -550,7 +554,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
         ),
-        title: Text(
+        title: AutoSizeText(
           document.name,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
@@ -559,7 +563,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        subtitle: Text(
+        subtitle: AutoSizeText(
           DateTimeUtils.getFriendlyDate(document.modifiedAt),
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.w700,
@@ -616,7 +620,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         context: context,
         builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                title: Text('document.rename_document'.tr()),
+                title: AutoSizeText('document.rename_document'.tr()),
                 content: CupertinoTextField(
                   controller: controller,
                   autofocus: true,
@@ -624,7 +628,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('common.cancel'.tr()),
+                    child: AutoSizeText('common.cancel'.tr()),
                   ),
                   TextButton(
                     onPressed: () {
@@ -632,7 +636,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Navigator.pop(context, controller.text.trim());
                       }
                     },
-                    child: Text('common.rename'.tr()),
+                    child: AutoSizeText('common.rename'.tr()),
                   ),
                 ],
               ),
@@ -710,13 +714,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           context: context,
           builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                    title: Text('document.delete_document'.tr()),
-                    content: Text('delete_folder_confirm'
+                    title: AutoSizeText('document.delete_document'.tr()),
+                    content: AutoSizeText('document.delete_confirm_message'
                         .tr(namedArgs: {'folderName': document.name})),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: Text('common.cancel'.tr()),
+                        child: AutoSizeText('common.cancel'.tr()),
                       ),
                       TextButton(
                         onPressed: () {
@@ -728,7 +732,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         },
                         style:
                             TextButton.styleFrom(foregroundColor: Colors.red),
-                        child: Text('common.delete'.tr()),
+                        child: AutoSizeText('common.delete'.tr()),
                       ),
                     ],
                   )),
@@ -790,7 +794,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               color: Colors.grey,
             ),
             SizedBox(height: 16),
-            Text(
+            AutoSizeText(
               'no_documents_yet'.tr(),
               style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w700, fontSize: 16.sp),
@@ -836,7 +840,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
             ),
-            title: Text(
+            title: AutoSizeText(
               document.name,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.bold,
@@ -846,7 +850,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   DateTimeUtils.getFriendlyDate(document.modifiedAt),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
@@ -856,7 +860,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 Row(
                   children: [
-                    Text(
+                    AutoSizeText(
                       'pages_count'
                           .tr(namedArgs: {'count': '${document.pageCount}'}),
                       style: GoogleFonts.slabo27px(
@@ -970,7 +974,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         size: 28,
                       ),
                       const SizedBox(width: 12),
-                      Text(
+                      AutoSizeText(
                         'favorites'.tr(),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -988,7 +992,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           .withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
+                    child: AutoSizeText(
                       '${favorites.length}',
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
@@ -1068,7 +1072,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  AutoSizeText(
                                     document.name,
                                     style: GoogleFonts.slabo27px(
                                       fontWeight: FontWeight.bold,
@@ -1086,7 +1090,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         color: Colors.grey,
                                       ),
                                       const SizedBox(width: 4),
-                                      Text(
+                                      AutoSizeText(
                                         DateTimeUtils.getFriendlyDate(
                                             document.modifiedAt),
                                         style: GoogleFonts.slabo27px(
@@ -1106,7 +1110,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         color: Colors.grey,
                                       ),
                                       const SizedBox(width: 4),
-                                      Text(
+                                      AutoSizeText(
                                         'pages_count'.tr(namedArgs: {
                                           'count': ' ${document.pageCount}'
                                         }),
@@ -1187,7 +1191,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('common.close'),
+                    child: const AutoSizeText('common.close'),
                   ),
                 ),
               ),

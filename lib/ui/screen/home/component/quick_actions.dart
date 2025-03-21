@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,8 @@ class QuickActions extends ConsumerWidget {
   final VoidCallback onUnlock;
   final VoidCallback onMerge;
   final VoidCallback onCompress;
+  final VoidCallback onFavorite;
+  final VoidCallback onMoreTools;
 
   const QuickActions({
     super.key,
@@ -22,13 +25,14 @@ class QuickActions extends ConsumerWidget {
     required this.onUnlock,
     required this.onMerge,
     required this.onCompress,
+    required this.onFavorite,
+    required this.onMoreTools,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(vertical: 5.h),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16.r),
@@ -48,19 +52,31 @@ class QuickActions extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildActionItem(context, Icons.qr_code_scanner, 'barcode'.tr(),
-                  onScan, Colors.blue),
+              _buildActionItem(context, Icons.compress, 'compress_pdf'.tr(),
+                  onCompress, Colors.red),
               _buildActionItem(context, Icons.merge_type,
                   'merge_pdf.title'.tr(), onMerge, Colors.purple),
               _buildActionItem(context, Icons.text_snippet,
                   'ocr.extract_text'.tr(), onOcr, Colors.green),
               _buildActionItem(context, Icons.lock_open,
                   'pdf.unlock.title'.tr(), onUnlock, Colors.orange),
-              _buildActionItem(context, Icons.compress, 'compress_pdf'.tr(),
-                  onCompress, Colors.red),
             ],
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 12.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildActionItem(context, Icons.qr_code_scanner, 'barcode'.tr(),
+                  onScan, Colors.blue),
+              _buildActionItem(context, Icons.favorite_border, 'favorite'.tr(),
+                  onFavorite, Colors.pink),
+              _buildActionItem(context, Icons.folder_open,
+                  'folder_screen.folders_section'.tr(), onFolders, Colors.teal),
+              _buildActionItem(context, Icons.more_horiz, 'more_tools'.tr(),
+                  onMoreTools, Colors.grey),
+            ],
+          ),
+          SizedBox(height: 12.h),
           PremiumBanner(
             onTap: () => SubscriptionNavigator.openPremiumScreen(context),
           ),
@@ -70,7 +86,7 @@ class QuickActions extends ConsumerWidget {
   }
 
   Widget _buildHeader() {
-    return Text(
+    return AutoSizeText(
       'quick_actions'.tr(),
       style: GoogleFonts.inter(
         fontWeight: FontWeight.w600,
@@ -94,7 +110,7 @@ class QuickActions extends ConsumerWidget {
         splashColor: color.withOpacity(0.2),
         highlightColor: color.withOpacity(0.1),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.h),
+          padding: EdgeInsets.symmetric(vertical: 2.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -111,15 +127,15 @@ class QuickActions extends ConsumerWidget {
                 ),
               ),
               SizedBox(height: 6.h),
-              Text(
+              AutoSizeText(
                 label,
                 style: GoogleFonts.inter(
                   fontWeight: FontWeight.w500,
-                  fontSize: 8.sp,
+                  fontSize: 11.sp,
                   color: Colors.grey[700],
                 ),
                 textAlign: TextAlign.center,
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ],

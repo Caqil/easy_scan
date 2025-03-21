@@ -6,6 +6,7 @@ import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/common/document_actions.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -89,7 +90,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16.h),
-              child: Text(
+              child: AutoSizeText(
                 'sort_documents'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 18.sp,
@@ -98,7 +99,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               ),
             ),
             ListTile(
-              title: Text('newest_first'.tr()),
+              title: AutoSizeText('newest_first'.tr()),
               leading: Icon(
                 Icons.arrow_downward,
                 color: _currentSortOption == SortOption.newest
@@ -115,7 +116,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               },
             ),
             ListTile(
-              title: Text('oldest_first'.tr()),
+              title: AutoSizeText('oldest_first'.tr()),
               leading: Icon(
                 Icons.arrow_upward,
                 color: _currentSortOption == SortOption.oldest
@@ -132,7 +133,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               },
             ),
             ListTile(
-              title: Text('name_az'.tr()),
+              title: AutoSizeText('name_az'.tr()),
               leading: Icon(
                 Icons.sort_by_alpha,
                 color: _currentSortOption == SortOption.nameAZ
@@ -149,7 +150,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               },
             ),
             ListTile(
-              title: Text('name_za'.tr()),
+              title: AutoSizeText('name_za'.tr()),
               leading: Icon(
                 Icons.sort_by_alpha,
                 color: _currentSortOption == SortOption.nameZA
@@ -401,7 +402,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                             color: primaryColor,
                           ),
                           SizedBox(width: 8.w),
-                          Text(
+                          AutoSizeText(
                             'Showing ${currentPageDocs.length} of ${filteredDocs.length} documents',
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
@@ -421,7 +422,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                             color: primaryColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20.r),
                           ),
-                          child: Text(
+                          child: AutoSizeText(
                             'Page ${_currentPage + 1} of $totalPages',
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
@@ -446,7 +447,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                             if (totalPages > 5 && index == 4) {
                               return Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 4.w),
-                                child: Text(
+                                child: AutoSizeText(
                                   '...',
                                   style: GoogleFonts.slabo27px(
                                     color: primaryColor,
@@ -527,7 +528,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                                   )
                                 : Icon(Icons.description, color: Colors.grey),
                           ),
-                          title: Text(
+                          title: AutoSizeText(
                             document.name,
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.bold,
@@ -536,7 +537,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          subtitle: Text(
+                          subtitle: AutoSizeText(
                             '${document.pageCount} pages',
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
@@ -598,7 +599,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                       color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(20.r),
                     ),
-                    child: Text(
+                    child: AutoSizeText(
                       '${_currentPage + 1} / $totalPages',
                       style: GoogleFonts.slabo27px(
                         fontSize: 14.sp,
@@ -675,7 +676,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               color: Colors.grey.shade400,
             ),
             SizedBox(height: 16.h),
-            Text(
+            AutoSizeText(
               _isSearching
                   ? 'empty_state.searching.no_documents_match'.tr()
                   : 'not_searching.no_documents_found'.tr(),
@@ -686,7 +687,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               ),
             ),
             SizedBox(height: 8.h),
-            Text(
+            AutoSizeText(
               _isSearching
                   ? 'empty_state.searching.try_different_term'.tr()
                   : 'not_searching.scan_or_import'.tr(),
@@ -705,7 +706,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                   Navigator.pushNamed(context, '/scan');
                 },
                 icon: const Icon(Icons.add),
-                label: Text('not_searching.create_new_document'.tr()),
+                label: AutoSizeText('not_searching.create_new_document'.tr()),
               ),
             ],
           ],

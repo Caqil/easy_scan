@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -284,7 +285,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                                 color: Colors.red.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(10.r),
                               ),
-                              child: Text(
+                              child: AutoSizeText(
                                 _errorMessage,
                                 style: GoogleFonts.slabo27px(
                                   color: Colors.white,

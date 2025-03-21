@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -184,7 +185,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     }
   }
 
-
   void _showSkipDialog() {
     showGeneralDialog(
       context: context,
@@ -193,14 +193,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
         return AlertDialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-          title: Text(
+          title: AutoSizeText(
             'onboarding.skip_title'.tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.bold,
               fontSize: 18.sp,
             ),
           ),
-          content: Text(
+          content: AutoSizeText(
             'onboarding.skip_message'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 14.sp,
@@ -209,7 +209,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(
+              child: AutoSizeText(
                 'common.cancel'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
@@ -230,7 +230,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
               ),
-              child: Text(
+              child: AutoSizeText(
                 'common.skip'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
@@ -277,7 +277,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                 valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
               ),
               SizedBox(height: 24.h),
-              Text(
+              AutoSizeText(
                 'onboarding.initializing'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,
@@ -403,7 +403,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Step name
-                Text(
+                AutoSizeText(
                   _getStepName(),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
@@ -462,7 +462,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
               color: colorScheme.primaryContainer.withOpacity(0.3),
               borderRadius: BorderRadius.circular(16.r),
             ),
-            child: Text(
+            child: AutoSizeText(
               '${_currentPage + 1}/$_totalPages',
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.bold,
@@ -561,7 +561,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        AutoSizeText(
                           _currentPage == _totalPages - 1
                               ? 'onboarding.get_started'.tr()
                               : 'onboarding.next'.tr(),

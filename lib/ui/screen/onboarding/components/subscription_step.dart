@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -202,7 +203,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            AutoSizeText(
               'onboarding.subscription_title'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 26.sp,
@@ -211,7 +212,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
               ),
             ),
             SizedBox(height: 12.h),
-            Text(
+            AutoSizeText(
               'onboarding.subscription_description'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 14.sp,
@@ -240,7 +241,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  AutoSizeText(
                     'onboarding.premium_features'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontSize: 18.sp,
@@ -278,7 +279,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                     padding:
                         EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
                   ),
-                  child: Text(
+                  child: AutoSizeText(
                     'onboarding.restore_purchases'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontSize: 14.sp,
@@ -299,7 +300,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                     padding:
                         EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
                   ),
-                  child: Text(
+                  child: AutoSizeText(
                     'onboarding.maybe_later'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontSize: 14.sp,
@@ -383,7 +384,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   title,
                   style: GoogleFonts.slabo27px(
                     fontSize: 15.sp,
@@ -392,7 +393,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                   ),
                 ),
                 SizedBox(height: 4.h),
-                Text(
+                AutoSizeText(
                   description,
                   style: GoogleFonts.slabo27px(
                     fontSize: 12.sp,
@@ -427,7 +428,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   'subscription.free_option'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 14.sp,
@@ -436,7 +437,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                   ),
                 ),
                 SizedBox(height: 4.h),
-                Text(
+                AutoSizeText(
                   'trial_explanation.price_info_1'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 14.sp,
@@ -510,7 +511,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                       size: 20.r,
                     ),
                     SizedBox(width: 8.w),
-                    Text(
+                    AutoSizeText(
                       _showPackages
                           ? 'onboarding.hide_options'.tr()
                           : (_isTrialEnabled
@@ -531,7 +532,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
             style: TextButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
             ),
-            child: Text(
+            child: AutoSizeText(
               'onboarding.see_subscription_plans'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 14.sp,
@@ -565,7 +566,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
             size: 24.r,
           ),
           SizedBox(width: 12.w),
-          Text(
+          AutoSizeText(
             'onboarding.subscription_active'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
@@ -589,7 +590,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                 valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
               ),
               SizedBox(height: 16.h),
-              Text(
+              AutoSizeText(
                 'onboarding.loading_options'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 14.sp,
@@ -607,7 +608,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          AutoSizeText(
             'onboarding.subscription_plans'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 18.sp,
@@ -775,7 +776,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                         Row(
                           children: [
                             Flexible(
-                              child: Text(
+                              child: AutoSizeText(
                                 title,
                                 style: GoogleFonts.slabo27px(
                                   fontSize: 16.sp,
@@ -794,7 +795,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                                   color: Colors.green.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(6.r),
                                 ),
-                                child: Text(
+                                child: AutoSizeText(
                                   savingsText,
                                   style: GoogleFonts.slabo27px(
                                     color: Colors.green[700],
@@ -807,7 +808,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                           ],
                         ),
                         SizedBox(height: 4.h),
-                        Text(
+                        AutoSizeText(
                           description,
                           style: GoogleFonts.slabo27px(
                             fontSize: 12.sp,
@@ -820,7 +821,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
+                      AutoSizeText(
                         product.price,
                         style: GoogleFonts.slabo27px(
                           fontSize: 16.sp,
@@ -855,7 +856,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                       ),
                     ],
                   ),
-                  child: Text(
+                  child: AutoSizeText(
                     'onboarding.best_value'.tr(),
                     style: GoogleFonts.slabo27px(
                       color: Colors.white,

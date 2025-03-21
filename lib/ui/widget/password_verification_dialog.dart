@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -126,7 +126,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
               size: 24,
             ),
             const SizedBox(width: 12),
-            Text('pdf.protected_document'.tr()),
+            AutoSizeText('pdf.protected_document'.tr()),
           ],
         ),
         content: Container(
@@ -135,7 +135,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              AutoSizeText(
                 'pdf.enter_password_prompt'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
@@ -195,7 +195,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                         color: theme.colorScheme.error,
                       ),
                       SizedBox(width: 4.w),
-                      Text(
+                      AutoSizeText(
                         'pdf.check_password_error'.tr(),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.error,
@@ -215,7 +215,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                     Navigator.pop(context);
                     widget.onCancelled?.call();
                   },
-            child: Text(
+            child: AutoSizeText(
               'common.cancel'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -236,7 +236,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                       ),
                     ),
                   )
-                : Text('pdf.unlock.title'.tr()),
+                : AutoSizeText('pdf.unlock.title'.tr()),
           ),
         ],
       ),

@@ -1,12 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/models/document.dart';
 import 'package:scanpro/providers/document_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../main.dart';
 import '../../services/pdf_service.dart';
 
@@ -49,7 +49,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          AutoSizeText(
             widget.document.isPasswordProtected
                 ? 'password_sheet.change_password'.tr()
                 : 'password_sheet.add_password'.tr(),
@@ -59,7 +59,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          AutoSizeText(
             widget.document.isPasswordProtected
                 ? 'password_sheet.enter_new_password'
                     .tr(namedArgs: {'name': widget.document.name})
@@ -106,7 +106,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text('common.cancel'.tr()),
+                  child: AutoSizeText('common.cancel'.tr()),
                 ),
               ),
               const SizedBox(width: 16),
@@ -125,7 +125,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : Text('common.save'.tr()),
+                      : AutoSizeText('common.save'.tr()),
                 ),
               ),
             ],

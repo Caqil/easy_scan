@@ -196,13 +196,13 @@
 //       context: context,
 //       barrierDismissible: false,
 //       builder: (ctx) => AlertDialog(
-//         title: Text('Restart Recommended'),
-//         content: Text(
+//         title: AutoSizeText('Restart Recommended'),
+//         content: AutoSizeText(
 //             'To ensure all data is loaded correctly, please restart the app.'),
 //         actions: [
 //           TextButton(
 //             onPressed: () => Navigator.pop(ctx),
-//             child: Text('OK'),
+//             child: AutoSizeText('OK'),
 //           ),
 //         ],
 //       ),

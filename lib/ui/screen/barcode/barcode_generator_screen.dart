@@ -6,6 +6,7 @@ import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:scanpro/ui/screen/barcode/qr_code_customization_screen.dart';
 import 'package:scanpro/ui/screen/barcode/widget/custom_qr_code.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,7 +76,7 @@ class _BarcodeGeneratorScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(
+        title: AutoSizeText(
           'barcode_generator.title'.tr(),
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
@@ -105,7 +106,7 @@ class _BarcodeGeneratorScreenState
                   child: ElevatedButton.icon(
                     onPressed: _validateAndGenerate,
                     icon: const Icon(Icons.qr_code),
-                    label: Text(_isGenerating
+                    label: AutoSizeText(_isGenerating
                         ? 'barcode_generator.generating'.tr()
                         : 'barcode_generator.generate_barcode'.tr()),
                     style: ElevatedButton.styleFrom(
@@ -137,7 +138,7 @@ class _BarcodeGeneratorScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AutoSizeText(
           'barcode_generator.barcode_type'.tr(),
           style: GoogleFonts.slabo27px(
             fontSize: 16.sp,
@@ -243,7 +244,7 @@ class _BarcodeGeneratorScreenState
               ),
             ),
             SizedBox(height: 8.h),
-            Text(
+            AutoSizeText(
               label,
               style: GoogleFonts.slabo27px(
                 color: isSelected ? accentColor : Colors.grey.shade700,
@@ -300,7 +301,7 @@ class _BarcodeGeneratorScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          AutoSizeText(
             'barcode_generator.enter_details'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
@@ -420,14 +421,14 @@ class _BarcodeGeneratorScreenState
                 border: Border.all(color: Colors.grey.shade200),
               ),
               child: SwitchListTile(
-                title: Text(
+                title: AutoSizeText(
                   'barcode_generator.security'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
                     fontSize: 14.sp,
                   ),
                 ),
-                subtitle: Text(
+                subtitle: AutoSizeText(
                   _wifiEncryption
                       ? 'barcode_generator.wpa_wpa2'.tr()
                       : 'barcode_generator.none_open'.tr(),
@@ -554,7 +555,7 @@ class _BarcodeGeneratorScreenState
               color: accentColor,
             ),
             SizedBox(width: 8.w),
-            Text(
+            AutoSizeText(
               label,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -634,7 +635,7 @@ class _BarcodeGeneratorScreenState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   'barcode_generator.encoded_data'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 12.sp,
@@ -643,7 +644,7 @@ class _BarcodeGeneratorScreenState
                   ),
                 ),
                 SizedBox(height: 4.h),
-                Text(
+                AutoSizeText(
                   _generatedData,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
@@ -820,7 +821,7 @@ class _BarcodeGeneratorScreenState
               ),
             ),
             SizedBox(height: 4.h),
-            Text(
+            AutoSizeText(
               label,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -1106,7 +1107,7 @@ class _BarcodeGeneratorScreenState
           children: [
             Padding(
               padding: EdgeInsets.all(16.w),
-              child: Text(
+              child: AutoSizeText(
                 'barcode_generator.saved_qr_code'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 18.sp,
@@ -1126,11 +1127,11 @@ class _BarcodeGeneratorScreenState
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('barcode_generator.close'.tr()),
+                    child: AutoSizeText('barcode_generator.close'.tr()),
                   ),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.share),
-                    label: Text('common.share'.tr()),
+                    label: AutoSizeText('common.share'.tr()),
                     onPressed: () {
                       Navigator.pop(context);
                       Share.shareXFiles([XFile(file.path)]);

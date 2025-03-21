@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -57,7 +58,8 @@ class ConversionButton extends StatelessWidget {
               ),
             ),
             SizedBox(width: 12.w),
-            Text("conversion_button.converting".tr()), // Localized string
+            AutoSizeText(
+                "conversion_button.converting".tr()), // Localized string
           ],
         ),
         SizedBox(height: 6.h),
@@ -75,7 +77,7 @@ class ConversionButton extends StatelessWidget {
       children: [
         Icon(state.inputFormat?.icon ?? Icons.file_present, size: 20.sp),
         SizedBox(width: 8.w),
-        Text(
+        AutoSizeText(
           "conversion_button.convert".tr(), // Localized string
           style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700, fontSize: 16.sp),

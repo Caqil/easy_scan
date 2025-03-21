@@ -6,6 +6,7 @@ import 'package:scanpro/providers/settings_provider.dart';
 import 'package:scanpro/services/auth_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthWrapper extends ConsumerStatefulWidget {
@@ -66,7 +67,7 @@ class _AuthWrapperState extends ConsumerState<AuthWrapper> {
           if (!authenticated && mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('auth.auth_failed'.tr()),
+                content: AutoSizeText('auth.auth_failed'.tr()),
                 behavior: SnackBarBehavior.floating,
               ),
             );

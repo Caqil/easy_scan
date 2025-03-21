@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,7 +22,7 @@ class SaveButton extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: onSave,
         icon: const Icon(Icons.save_alt_rounded),
-        label: Text('pdf.save_as_pdf'.tr()),
+        label: AutoSizeText('pdf.save_as_pdf'.tr()),
         style: OutlinedButton.styleFrom(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,

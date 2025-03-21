@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/models/document.dart';
@@ -141,7 +142,7 @@ class DocumentShareService {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('share.limit_reached.title'.tr()),
+        title: AutoSizeText('share.limit_reached.title'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -151,14 +152,14 @@ class DocumentShareService {
               size: 48,
             ),
             SizedBox(height: 16),
-            Text(
+            AutoSizeText(
               'share.limit_reached.message'.tr(
                 namedArgs: {'limit': '5'},
               ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8),
-            Text(
+            AutoSizeText(
               'share.limit_reached.upgrade_prompt'.tr(),
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -168,7 +169,7 @@ class DocumentShareService {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('common.cancel'.tr()),
+            child: AutoSizeText('common.cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () {
@@ -183,7 +184,7 @@ class DocumentShareService {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            child: Text('share.limit_reached.upgrade'.tr()),
+            child: AutoSizeText('share.limit_reached.upgrade'.tr()),
           ),
         ],
       ),

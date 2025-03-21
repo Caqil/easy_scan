@@ -3,6 +3,7 @@ import 'package:scanpro/models/barcode_scan.dart';
 import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:scanpro/ui/screen/barcode/qr_code_customization_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -55,7 +56,7 @@ class BarcodeResultScreen extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          AutoSizeText(
             'barcode_result.customized_qr'.tr(),
             style: GoogleFonts.slabo27px(
               color: Colors.white,
@@ -91,7 +92,7 @@ class BarcodeResultScreen extends ConsumerWidget {
     final customizedScan = _findCustomizedScan(ref);
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(
+        title: AutoSizeText(
           'barcode_result.scan_result'.tr(),
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
@@ -125,7 +126,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                                 Theme.of(context).primaryColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16.r),
                           ),
-                          child: Text(
+                          child: AutoSizeText(
                             contentType,
                             style: GoogleFonts.slabo27px(
                               color: Theme.of(context).primaryColor,
@@ -149,7 +150,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                                   : Colors.orange.withOpacity(0.3),
                             ),
                           ),
-                          child: Text(
+                          child: AutoSizeText(
                             isQrCode
                                 ? 'barcode_result.qr_code'.tr()
                                 : 'barcode_result.barcode'.tr(),
@@ -179,7 +180,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                     SizedBox(height: 24.h),
 
                     // Barcode Value
-                    Text(
+                    AutoSizeText(
                       'barcode_result.content'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
@@ -188,7 +189,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                       ),
                     ),
                     SizedBox(height: 4.h),
-                    Text(
+                    AutoSizeText(
                       barcodeValue,
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
@@ -200,7 +201,7 @@ class BarcodeResultScreen extends ConsumerWidget {
 
                     // Technical Info
                     ExpansionTile(
-                      title: Text(
+                      title: AutoSizeText(
                         'barcode_result.technical_details'.tr(),
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
@@ -211,7 +212,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                       iconColor: Theme.of(context).primaryColor,
                       children: [
                         ListTile(
-                          title: Text(
+                          title: AutoSizeText(
                             'barcode_result.barcode_format'.tr(),
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
@@ -219,7 +220,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                               color: Colors.grey.shade600,
                             ),
                           ),
-                          subtitle: Text(
+                          subtitle: AutoSizeText(
                             barcodeFormat,
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
@@ -229,7 +230,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                           dense: true,
                         ),
                         ListTile(
-                          title: Text(
+                          title: AutoSizeText(
                             'barcode_result.barcode_type'.tr(),
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
@@ -237,7 +238,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                               color: Colors.grey.shade600,
                             ),
                           ),
-                          subtitle: Text(
+                          subtitle: AutoSizeText(
                             barcodeType,
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
@@ -318,7 +319,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           );
         },
         icon: const Icon(Icons.copy),
-        label: Text('barcode_result.copy_to_clipboard'.tr()),
+        label: AutoSizeText('barcode_result.copy_to_clipboard'.tr()),
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 12.h),
           shape: RoundedRectangleBorder(
@@ -336,7 +337,7 @@ class BarcodeResultScreen extends ConsumerWidget {
         ElevatedButton.icon(
           onPressed: () => _navigateToCustomizationScreen(context, ref),
           icon: const Icon(Icons.edit),
-          label: Text('barcode_result.customize_qr_code'.tr()),
+          label: AutoSizeText('barcode_result.customize_qr_code'.tr()),
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Colors.white,
@@ -358,7 +359,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => _launchUrl(barcodeValue, context),
             icon: const Icon(Icons.open_in_browser),
-            label: Text('barcode_result.open_in_browser'.tr()),
+            label: AutoSizeText('barcode_result.open_in_browser'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               shape: RoundedRectangleBorder(
@@ -378,7 +379,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => _launchUrl('tel:$phoneNumber', context),
             icon: const Icon(Icons.phone),
-            label: Text('barcode_result.call_number'.tr()),
+            label: AutoSizeText('barcode_result.call_number'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               backgroundColor: Colors.green,
@@ -395,7 +396,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           OutlinedButton.icon(
             onPressed: () => _launchUrl('sms:$phoneNumber', context),
             icon: const Icon(Icons.message),
-            label: Text('barcode_result.send_message'.tr()),
+            label: AutoSizeText('barcode_result.send_message'.tr()),
             style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               shape: RoundedRectangleBorder(
@@ -415,7 +416,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => _launchUrl('mailto:$email', context),
             icon: const Icon(Icons.email),
-            label: Text('barcode_result.send_email'.tr()),
+            label: AutoSizeText('barcode_result.send_email'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               backgroundColor: Colors.blue,
@@ -444,7 +445,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                 );
               },
               icon: const Icon(Icons.wifi),
-              label: Text('barcode_result.connect_to_network'.tr()),
+              label: AutoSizeText('barcode_result.connect_to_network'.tr()),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 backgroundColor: Colors.blue,
@@ -469,7 +470,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                   );
                 },
                 icon: const Icon(Icons.password),
-                label: Text('barcode_result.copy_password'.tr()),
+                label: AutoSizeText('barcode_result.copy_password'.tr()),
                 style: OutlinedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                   shape: RoundedRectangleBorder(
@@ -496,7 +497,7 @@ class BarcodeResultScreen extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => _launchUrl(mapUrl, context),
             icon: const Icon(Icons.map),
-            label: Text('barcode_result.open_in_maps'.tr()),
+            label: AutoSizeText('barcode_result.open_in_maps'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               backgroundColor: Colors.green,
@@ -519,7 +520,7 @@ class BarcodeResultScreen extends ConsumerWidget {
       OutlinedButton.icon(
         onPressed: () => _shareResult(context),
         icon: const Icon(Icons.share),
-        label: Text('barcode_result.share_qr_code'.tr()),
+        label: AutoSizeText('barcode_result.share_qr_code'.tr()),
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 12.h),
           shape: RoundedRectangleBorder(
@@ -701,7 +702,7 @@ class BarcodeResultQRCode extends StatelessWidget {
                   size: 20.sp,
                 ),
                 SizedBox(width: 8.w),
-                Text(
+                AutoSizeText(
                   barcodeType,
                   style: GoogleFonts.slabo27px(
                     color: Colors.white,

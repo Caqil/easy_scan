@@ -2,6 +2,7 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -108,14 +109,14 @@ class _AllFoldersSheet extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      AutoSizeText(
                         title,
                         style: GoogleFonts.slabo27px(
                           fontSize: 16.sp.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
+                      AutoSizeText(
                         '${folders.length} folders',
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
@@ -132,7 +133,7 @@ class _AllFoldersSheet extends ConsumerWidget {
                       onCreateNewFolder!();
                     },
                     icon: const Icon(Icons.add),
-                    label: Text('new'.tr()),
+                    label: AutoSizeText('new'.tr()),
                     style: TextButton.styleFrom(
                       backgroundColor:
                           Theme.of(context).primaryColor.withOpacity(0.1),
@@ -224,7 +225,7 @@ class _AllFoldersSheet extends ConsumerWidget {
             color: Colors.grey.shade400,
           ),
           const SizedBox(height: 16),
-          Text(
+          AutoSizeText(
             'folder_screen.no_folders_yet'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
@@ -233,7 +234,7 @@ class _AllFoldersSheet extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          AutoSizeText(
             'folder_screen.create_folder_prompt'.tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
@@ -248,7 +249,7 @@ class _AllFoldersSheet extends ConsumerWidget {
                 onCreateNewFolder!();
               },
               icon: const Icon(Icons.add),
-              label: Text('folder.create_new_folder'.tr()),
+              label: AutoSizeText('folder.create_new_folder'.tr()),
             ),
           ],
         ],

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../models/format_category.dart';
@@ -23,7 +24,7 @@ class ChipFormatSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AutoSizeText(
           label,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.w700,
@@ -49,7 +50,7 @@ class ChipFormatSelector extends StatelessWidget {
                     size: 24.sp,
                   ),
                   SizedBox(width: 12.w),
-                  Text(
+                  AutoSizeText(
                     selectedFormat!.name,
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
@@ -57,7 +58,7 @@ class ChipFormatSelector extends StatelessWidget {
                     ),
                   ),
                 ] else
-                  Text(
+                  AutoSizeText(
                     '$label Format',
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
@@ -167,7 +168,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
           // Header
           Padding(
             padding: EdgeInsets.all(16.h),
-            child: Text(
+            child: AutoSizeText(
               tr('chip_format_selector.select_format',
                   namedArgs: {'label': widget.label}),
               style: GoogleFonts.slabo27px(
@@ -224,7 +225,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
             children: [
               Icon(Icons.search_off, size: 48.sp, color: Colors.grey),
               SizedBox(height: 16.h),
-              Text(
+              AutoSizeText(
                 'No formats found',
                 style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700, fontSize: 16.sp),
@@ -259,7 +260,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(vertical: 8.h),
-              child: Text(
+              child: AutoSizeText(
                 category,
                 style: GoogleFonts.slabo27px(
                   fontSize: 14.sp,
@@ -290,7 +291,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
         color: isSelected ? Colors.white : format.color,
         size: 15.sp,
       ),
-      label: Text(format.name),
+      label: AutoSizeText(format.name),
       selected: isSelected,
       showCheckmark: false,
       backgroundColor: Colors.grey.shade100,

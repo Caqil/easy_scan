@@ -5,6 +5,7 @@ import 'package:scanpro/models/content_type.dart';
 import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_scanner_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,7 +29,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(
+        title: AutoSizeText(
           'Scan History',
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
@@ -60,7 +61,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
             color: Colors.grey.shade300,
           ),
           SizedBox(height: 16.h),
-          Text(
+          AutoSizeText(
             'No Scan History',
             style: GoogleFonts.slabo27px(
               fontSize: 18.sp,
@@ -69,7 +70,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
             ),
           ),
           SizedBox(height: 8.h),
-          Text(
+          AutoSizeText(
             'Your scanned barcodes will appear here',
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
@@ -89,7 +90,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
               );
             },
             icon: const Icon(Icons.qr_code_scanner),
-            label: Text('scan.start_scanning'.tr()),
+            label: AutoSizeText('scan.start_scanning'.tr()),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(
                 horizontal: 24.w,
@@ -166,15 +167,15 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      _truncateText(scan.barcodeValue, 40),
+                    AutoSizeText(
+                      _truncateAutoSizeText(scan.barcodeValue, 40),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
                         fontSize: 14.sp,
                       ),
                     ),
                     SizedBox(height: 4.h),
-                    Text(
+                    AutoSizeText(
                       scan.isCustomized
                           ? 'Customized • ${_formatDate(scan.timestamp)}'
                           : '${contentType.label} • ${_formatDate(scan.timestamp)}',
@@ -228,7 +229,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
     );
   }
 
-  String _truncateText(String text, int maxLength) {
+  String _truncateAutoSizeText(String text, int maxLength) {
     if (text.length <= maxLength) return text;
     return '${text.substring(0, maxLength)}...';
   }
@@ -279,19 +280,20 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear History'),
-        content: const Text('Are you sure you want to clear all scan history?'),
+        title: const AutoSizeText('Clear History'),
+        content: const AutoSizeText(
+            'Are you sure you want to clear all scan history?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('common.cancel'.tr()),
+            child: AutoSizeText('common.cancel'.tr()),
           ),
           TextButton(
             onPressed: () {
               ref.read(barcodeScanHistoryProvider.notifier).clearHistory();
               Navigator.pop(context);
             },
-            child: const Text('Clear'),
+            child: const AutoSizeText('Clear'),
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),

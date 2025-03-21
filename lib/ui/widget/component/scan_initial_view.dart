@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -64,7 +65,7 @@ class ScanInitialView extends StatelessWidget {
   }
 
   Widget _buildTitle() {
-    return Text(
+    return AutoSizeText(
       'scan.ready_to_scan'.tr(),
       style: GoogleFonts.slabo27px(
         fontSize: 24.sp,
@@ -74,7 +75,7 @@ class ScanInitialView extends StatelessWidget {
   }
 
   Widget _buildSubtitle() {
-    return Text(
+    return AutoSizeText(
       'scan.scan_documents_or_import'.tr(),
       textAlign: TextAlign.center,
       style: GoogleFonts.slabo27px(
@@ -89,7 +90,7 @@ class ScanInitialView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onScanPressed,
       icon: const Icon(Icons.camera_alt),
-      label: Text('scan.start_scanning'.tr()),
+      label: AutoSizeText('scan.start_scanning'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(
@@ -104,7 +105,7 @@ class ScanInitialView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onImportPressed,
       icon: const Icon(Icons.photo_library),
-      label: Text('scan.import_from_gallery'.tr()),
+      label: AutoSizeText('scan.import_from_gallery'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(

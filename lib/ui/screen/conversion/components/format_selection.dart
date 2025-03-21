@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -42,7 +43,7 @@ class FormatSelectionSection extends ConsumerWidget {
                   size: 18.sp,
                 ),
                 SizedBox(width: 8.w),
-                Text(
+                AutoSizeText(
                   "format_selection.title".tr(), // Localized string
                   style: GoogleFonts.slabo27px(
                     fontSize: 16.sp,
@@ -170,7 +171,7 @@ class FormatSelectionSection extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Label text
-                    Text(
+                    AutoSizeText(
                       label,
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
@@ -180,7 +181,7 @@ class FormatSelectionSection extends ConsumerWidget {
                     ),
 
                     // Format name or placeholder
-                    Text(
+                    AutoSizeText(
                       selectedFormat?.name ??
                           "format_selection.select_placeholder"
                               .tr(), // Localized string
@@ -273,7 +274,7 @@ class FormatSelectionSection extends ConsumerWidget {
           ),
           SizedBox(width: 6.w),
           Flexible(
-            child: Text(
+            child: AutoSizeText(
               "format_selection.format_info.hint".tr(), // Localized string
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -378,7 +379,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
             child: Row(
               children: [
-                Text(
+                AutoSizeText(
                   "format_selection.format_picker.title".tr(
                       namedArgs: {'label': widget.label}), // Localized string
                   style: GoogleFonts.slabo27px(
@@ -442,7 +443,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
   Widget _buildSearchResults(List<FormatOption> formats) {
     if (formats.isEmpty) {
       return Center(
-        child: Text(
+        child: AutoSizeText(
           "format_selection.format_picker.no_formats_found"
               .tr(), // Localized string
           style: GoogleFonts.slabo27px(
@@ -475,7 +476,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
             // Category header
             Padding(
               padding: EdgeInsets.only(top: 8.h, bottom: 8.h),
-              child: Text(
+              child: AutoSizeText(
                 "format_selection.format_picker.categories.$category"
                     .tr(), // Localized string
                 style: GoogleFonts.slabo27px(
@@ -533,7 +534,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
               color: format.color,
             ),
             SizedBox(width: 4.w),
-            Text(
+            AutoSizeText(
               format.name,
               style: GoogleFonts.slabo27px(
                 fontSize: 13.sp,

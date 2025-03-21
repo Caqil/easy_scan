@@ -15,6 +15,7 @@ import 'package:scanpro/utils/constants.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -67,8 +68,8 @@ class CompressionOptions {
               children: [
                 const CircularProgressIndicator(),
                 const SizedBox(height: 16),
-                Text('compression.compressing_pdf'.tr()),
-                Text('compression.using_cloud_compression'.tr()),
+                AutoSizeText('compression.compressing_pdf'.tr()),
+                AutoSizeText('compression.using_cloud_compression'.tr()),
               ],
             ),
           ),
@@ -252,16 +253,16 @@ class CompressionOptions {
       builder: (context) => WillPopScope(
         onWillPop: () async => false,
         child: AlertDialog(
-          title: Text('compression.batch_compression'.tr()),
+          title: AutoSizeText('compression.batch_compression'.tr()),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
-              Text('compression.processing_documents'
+              AutoSizeText('compression.processing_documents'
                   .tr(namedArgs: {'count': documents.length.toString()})),
-              Text('compression.using_cloud_compression'.tr()),
-              Text('compression.may_take_a_while'.tr()),
+              AutoSizeText('compression.using_cloud_compression'.tr()),
+              AutoSizeText('compression.may_take_a_while'.tr()),
             ],
           ),
         ),
@@ -434,7 +435,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Text(
+                AutoSizeText(
                   'compression.pdf_cloud_compressor'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 18.sp,
@@ -507,7 +508,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
+                    child: AutoSizeText(
                       'compression.cloud_compression_info'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
@@ -547,7 +548,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('compression.select_pdf_to_compress'.tr()),
+        title: AutoSizeText('compression.select_pdf_to_compress'.tr()),
         content: SizedBox(
           width: double.maxFinite,
           height: 300,
@@ -575,12 +576,12 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                         )
                       : Icon(Icons.picture_as_pdf, color: Colors.red.shade300),
                 ),
-                title: Text(
+                title: AutoSizeText(
                   doc.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                subtitle: Text(
+                subtitle: AutoSizeText(
                   'compression.page_count'
                       .tr(namedArgs: {'count': doc.pageCount.toString()}),
                   style: GoogleFonts.slabo27px(
@@ -602,7 +603,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('common.cancel'.tr()),
+            child: AutoSizeText('common.cancel'.tr()),
           ),
         ],
       ),
@@ -632,7 +633,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: Text('compression.batch_compression'.tr()),
+          title: AutoSizeText('compression.batch_compression'.tr()),
           content: SizedBox(
             width: double.maxFinite,
             child: SingleChildScrollView(
@@ -640,7 +641,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  AutoSizeText(
                     'compression.select_compression_level'.tr(),
                     style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
                   ),
@@ -658,24 +659,27 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                     items: [
                       DropdownMenuItem(
                         value: CompressionLevel.low,
-                        child: Text('compression.low_best_quality'.tr()),
+                        child:
+                            AutoSizeText('compression.low_best_quality'.tr()),
                       ),
                       DropdownMenuItem(
                         value: CompressionLevel.medium,
-                        child: Text('compression.medium_balanced'.tr()),
+                        child: AutoSizeText('compression.medium_balanced'.tr()),
                       ),
                       DropdownMenuItem(
                         value: CompressionLevel.high,
-                        child: Text('compression.high_smaller_size'.tr()),
+                        child:
+                            AutoSizeText('compression.high_smaller_size'.tr()),
                       ),
                       DropdownMenuItem(
                         value: CompressionLevel.maximum,
-                        child: Text('compression.maximum_smallest_size'.tr()),
+                        child: AutoSizeText(
+                            'compression.maximum_smallest_size'.tr()),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text(
+                  AutoSizeText(
                     'compression.select_pdfs_to_compress'.tr(),
                     style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
                   ),
@@ -689,12 +693,12 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                         final doc = pdfDocs[index];
                         final isSelected = selectedDocs.contains(doc);
                         return CheckboxListTile(
-                          title: Text(
+                          title: AutoSizeText(
                             doc.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          subtitle: Text('compression.page_count'.tr(
+                          subtitle: AutoSizeText('compression.page_count'.tr(
                               namedArgs: {'count': doc.pageCount.toString()})),
                           value: isSelected,
                           onChanged: (value) {
@@ -727,7 +731,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                             color: Theme.of(context).colorScheme.primary),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
+                          child: AutoSizeText(
                             'compression.using_cloud_compression'.tr(),
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
@@ -746,7 +750,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('common.cancel'.tr()),
+              child: AutoSizeText('common.cancel'.tr()),
             ),
             TextButton(
               onPressed: selectedDocs.isEmpty
@@ -756,7 +760,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                       CompressionOptions.processBatchCompression(
                           context, ref, selectedDocs, selectedLevel);
                     },
-              child: Text('compression.compress'.tr()),
+              child: AutoSizeText('compression.compress'.tr()),
             ),
           ],
         ),

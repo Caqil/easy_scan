@@ -5,6 +5,7 @@ import 'package:scanpro/services/scan_service.dart';
 import 'package:scanpro/ui/widget/component/scan_initial_view.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -178,7 +179,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                             color: Colors.white,
                             size: 20.sp,
                           ),
-                          Text(
+                          AutoSizeText(
                             'labels.scan'.tr(),
                             style: GoogleFonts.slabo27px(
                               fontSize: 10.sp,
@@ -200,7 +201,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 Column(
                   children: [
                     const SizedBox(height: 4),
-                    Text(
+                    AutoSizeText(
                       _labelList[index],
                       style: GoogleFonts.slabo27px(
                         fontSize: 10.sp,

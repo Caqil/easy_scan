@@ -8,6 +8,7 @@ import 'package:scanpro/ui/screen/edit/component/document_preview.dart';
 import 'package:scanpro/ui/screen/edit/component/edit_screen_controller.dart';
 import 'package:scanpro/ui/screen/edit/component/save_button.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
 
@@ -69,7 +70,8 @@ class _EditScreenViewState extends State<EditScreenView> {
                                 EditMode.imageEdit
                             ? colorScheme.primary
                             : null),
-                    title: Text('edit_screen.editor.edit_as_images'.tr()),
+                    title:
+                        AutoSizeText('edit_screen.editor.edit_as_images'.tr()),
                     selected:
                         widget.controller.currentEditMode == EditMode.imageEdit,
                   ),
@@ -82,7 +84,7 @@ class _EditScreenViewState extends State<EditScreenView> {
                                 EditMode.pdfEdit
                             ? colorScheme.primary
                             : null),
-                    title: Text('edit_screen.editor.edit_as_pdf'.tr()),
+                    title: AutoSizeText('edit_screen.editor.edit_as_pdf'.tr()),
                     selected:
                         widget.controller.currentEditMode == EditMode.pdfEdit,
                   ),
@@ -116,7 +118,7 @@ class _EditScreenViewState extends State<EditScreenView> {
     // Show edit mode indicator in the title
     return Row(
       children: [
-        Text(
+        AutoSizeText(
           widget.controller.isEditingExistingDocument
               ? 'edit_screen.edit_document'.tr()
               : 'edit_screen.new_document'.tr(),
@@ -125,7 +127,7 @@ class _EditScreenViewState extends State<EditScreenView> {
         if (widget.controller.isImageOnlyDocument) ...[
           const SizedBox(width: 8),
           Chip(
-            label: Text('edit_screen.image_editor'.tr(),
+            label: AutoSizeText('edit_screen.image_editor'.tr(),
                 style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700, fontSize: 10)),
             backgroundColor: colorScheme.primaryContainer,
@@ -140,7 +142,7 @@ class _EditScreenViewState extends State<EditScreenView> {
             widget.controller.isPdfInputFile) ...[
           const SizedBox(width: 8),
           Chip(
-            label: Text('edit_screen.pdf_only'.tr(),
+            label: AutoSizeText('edit_screen.pdf_only'.tr(),
                 style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700, fontSize: 10)),
             backgroundColor: colorScheme.primaryContainer,

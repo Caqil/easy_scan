@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// Overlay that displays during processing operations
@@ -27,7 +28,7 @@ class LoadingOverlay extends StatelessWidget {
               color: colorScheme.primary,
             ),
             const SizedBox(height: 16),
-            Text(
+            AutoSizeText(
               'processing'.tr(),
               style: GoogleFonts.slabo27px(
                 color: Colors.white,

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -39,7 +40,7 @@ class CompressionProgressView extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                     strokeWidth: 8,
                   ),
-                  Text(
+                  AutoSizeText(
                     '${(progress * 100).round()}%',
                     style: GoogleFonts.slabo27px(
                       fontSize: 18.sp,
@@ -52,7 +53,7 @@ class CompressionProgressView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          Text(
+          AutoSizeText(
             'compressing_view.compressing_pdf'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 18.sp,
@@ -60,7 +61,7 @@ class CompressionProgressView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          AutoSizeText(
             'compressing_view.using_cloud_api'.tr(),
             textAlign: TextAlign.center,
             style: GoogleFonts.slabo27px(
@@ -86,7 +87,7 @@ class CompressionProgressView extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 8),
-                Text(
+                AutoSizeText(
                   statusMessage,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,

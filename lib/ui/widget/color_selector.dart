@@ -17,7 +17,7 @@ class ColorSelector extends StatelessWidget {
     this.colors,
     this.itemSize = 36,
     this.spacing = 12,
-  })  : assert(colorValues != null || colors != null,
+  }) : assert(colorValues != null || colors != null,
             'Either colorValues or colors must be provided');
 
   @override

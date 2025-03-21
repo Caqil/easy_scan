@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/config/helper.dart';
 import 'package:scanpro/main.dart';
@@ -81,7 +82,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text('compression.compress_pdf'.tr()),
+        title: AutoSizeText('compression.compress_pdf'.tr()),
         actions: [
           IconButton(
             icon: Icon(_isAdvancedMode ? Icons.tune : Icons.tune),

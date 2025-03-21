@@ -4,6 +4,7 @@ import 'package:scanpro/providers/locale_provider.dart';
 import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/screen/languages/components/language_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,7 +35,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: Text("settings.language".tr()),
+        title: AutoSizeText("settings.language".tr()),
         centerTitle: false,
       ),
       body: localState.languages.isEmpty
@@ -50,7 +51,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
         children: [
           CircularProgressIndicator(),
           SizedBox(height: 16),
-          Text(
+          AutoSizeText(
             "settings.loading_languages".tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
@@ -95,7 +96,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        AutoSizeText(
                           "settings.current_language".tr(),
                           style: GoogleFonts.slabo27px(
                             fontSize: 14.sp,
@@ -104,7 +105,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        Text(
+                        AutoSizeText(
                           _getCurrentLanguageName(
                               context.locale, localState.languages),
                           style: GoogleFonts.slabo27px(
@@ -124,7 +125,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
         // Heading for available languages
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.r, vertical: 8.r),
-          child: Text(
+          child: AutoSizeText(
             "settings.available_languages".tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
@@ -193,14 +194,14 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
 
       // Simple success message instead of dialogs and navigation
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Language changed to ${language.label}"),
+        content: AutoSizeText("Language changed to ${language.label}"),
         duration: Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ));
     } catch (e) {
       // Show error if something went wrong
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Error changing language"),
+        content: AutoSizeText("Error changing language"),
         duration: Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ));

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:scanpro/providers/document_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/models/document.dart';

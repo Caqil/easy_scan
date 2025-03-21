@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -69,7 +70,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
   }
 
   Widget _buildTitle() {
-    return Text(
+    return AutoSizeText(
       'barcode_options.title'.tr(),
       style: GoogleFonts.slabo27px(
         fontSize: 24.sp,
@@ -79,7 +80,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
   }
 
   Widget _buildSubtitle() {
-    return Text(
+    return AutoSizeText(
       'barcode_options.subtitle'.tr(),
       textAlign: TextAlign.center,
       style: GoogleFonts.slabo27px(
@@ -94,7 +95,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onScanPressed,
       icon: const Icon(Icons.qr_code_scanner),
-      label: Text('barcode_options.scan_barcode'.tr()),
+      label: AutoSizeText('barcode_options.scan_barcode'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         backgroundColor: Theme.of(context).primaryColor,
@@ -111,7 +112,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onGeneratePressed,
       icon: const Icon(Icons.qr_code),
-      label: Text('barcode_options.generate_barcode'.tr()),
+      label: AutoSizeText('barcode_options.generate_barcode'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(
@@ -126,7 +127,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onHistoryPressed,
       icon: const Icon(Icons.history),
-      label: Text('barcode_options.view_history'.tr()),
+      label: AutoSizeText('barcode_options.view_history'.tr()),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(

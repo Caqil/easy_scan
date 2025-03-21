@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -55,7 +56,7 @@ class DocumentPagePreview extends StatelessWidget {
             children: [
               Icon(Icons.broken_image, size: 64, color: Colors.white54),
               const SizedBox(height: 16),
-              Text(
+              AutoSizeText(
                 'document_preview.unable_to_display_image'
                     .tr(), // Localized string
                 style: GoogleFonts.slabo27px(

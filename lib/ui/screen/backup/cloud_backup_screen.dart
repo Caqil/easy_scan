@@ -69,7 +69,7 @@
 
 //     return Scaffold(
 //       appBar: CustomAppBar(
-//         title: Text('$cloudName ${'backup.backups'.tr()}'),
+//         title: AutoSizeText('$cloudName ${'backup.backups'.tr()}'),
 //         actions: [
 //           IconButton(
 //             icon: const Icon(Icons.refresh),
@@ -92,7 +92,7 @@
 //                       color: Colors.red.shade800, size: 20),
 //                   const SizedBox(width: 8),
 //                   Expanded(
-//                     child: Text(
+//                     child: AutoSizeText(
 //                       _errorMessage!,
 //                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -140,7 +140,7 @@
 //           child: ElevatedButton.icon(
 //             onPressed: _isLoading || _isPerformingAction ? null : _createBackup,
 //             icon: const Icon(Icons.backup),
-//             label: Text('backup.create_new_backup'.tr()),
+//             label: AutoSizeText('backup.create_new_backup'.tr()),
 //             style: ElevatedButton.styleFrom(
 //               minimumSize: const Size(double.infinity, 50),
 //               shape: RoundedRectangleBorder(
@@ -160,7 +160,7 @@
 //         children: [
 //           const CircularProgressIndicator(),
 //           const SizedBox(height: 16),
-//           Text(
+//           AutoSizeText(
 //             'backup.loading_backups'.tr(),
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 //),
@@ -181,7 +181,7 @@
 //             color: Colors.grey.shade400,
 //           ),
 //           const SizedBox(height: 16),
-//           Text(
+//           AutoSizeText(
 //             'backup.no_backups_found_in'.tr(namedArgs: {'cloud': cloudName}),
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -193,7 +193,7 @@
 //           const SizedBox(height: 8),
 //           Padding(
 //             padding: const EdgeInsets.symmetric(horizontal: 32),
-//             child: Text(
+//             child: AutoSizeText(
 //               'backup.create_first_backup_description'.tr(),
 //               style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -236,7 +236,7 @@
 //               size: 24,
 //             ),
 //             const SizedBox(width: 12),
-//             Text(
+//             AutoSizeText(
 //               '$cloudName ${'backup.backups'.tr()}',
 //               style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -247,7 +247,7 @@
 //           ],
 //         ),
 //         const SizedBox(height: 8),
-//         Text(
+//         AutoSizeText(
 //           'backup.available_backups'.tr(),
 //           style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -282,7 +282,7 @@
 //                 ),
 //                 const SizedBox(width: 12),
 //                 Expanded(
-//                   child: Text(
+//                   child: AutoSizeText(
 //                     name,
 //                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -302,7 +302,7 @@
 //                   size: 16,
 //                 ),
 //                 const SizedBox(width: 8),
-//                 Text(
+//                 AutoSizeText(
 //                   date,
 //                   style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -317,7 +317,7 @@
 //                   size: 16,
 //                 ),
 //                 const SizedBox(width: 8),
-//                 Text(
+//                 AutoSizeText(
 //                   size,
 //                   style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -334,7 +334,7 @@
 //                 TextButton.icon(
 //                   onPressed: () => _confirmDeleteBackup(backup),
 //                   icon: const Icon(Icons.delete, size: 18),
-//                   label: Text('common.delete'.tr()),
+//                   label: AutoSizeText('common.delete'.tr()),
 //                   style: TextButton.styleFrom(
 //                     foregroundColor: Colors.red,
 //                   ),
@@ -343,7 +343,7 @@
 //                 ElevatedButton.icon(
 //                   onPressed: () => _confirmRestoreBackup(backup),
 //                   icon: const Icon(Icons.restore, size: 18),
-//                   label: Text('backup.restore'.tr()),
+//                   label: AutoSizeText('backup.restore'.tr()),
 //                   style: ElevatedButton.styleFrom(
 //                     backgroundColor: Theme.of(context).primaryColor,
 //                     foregroundColor: Colors.white,

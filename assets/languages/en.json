@@ -212,7 +212,7 @@
     "no_locked_documents": "No password-protected documents found"
   },
   "ocr": {
-    "extract_text": "Extract Text (OCR)",
+    "extract_text": "Extract Text",
     "extract_text_desc": "Extract text from this document using OCR",
     "extraction_settings": "Extraction Settings",
     "language": "Language",

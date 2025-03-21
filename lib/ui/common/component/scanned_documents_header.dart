@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 /// Header component for the scanned documents view
 class ScannedDocumentsHeader extends StatelessWidget {
@@ -32,7 +33,7 @@ class ScannedDocumentsHeader extends StatelessWidget {
         children: [
           _buildDragIndicator(themeData),
           const SizedBox(width: 12),
-          _buildInfoText(themeData),
+          _buildInfoAutoSizeText(themeData),
           _buildAddButton(),
         ],
       ),
@@ -54,12 +55,12 @@ class ScannedDocumentsHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoText(ThemeData themeData) {
+  Widget _buildInfoAutoSizeText(ThemeData themeData) {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          AutoSizeText(
             'scanned_documents.pages_scanned'.tr(
               namedArgs: {
                 'count': pageCount.toString(),
@@ -72,7 +73,7 @@ class ScannedDocumentsHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 2),
-          Text(
+          AutoSizeText(
             'scanned_documents.drag_to_reorder'.tr(),
             style: themeData.textTheme.bodySmall?.copyWith(
               color: themeData.colorScheme.onSurfaceVariant,
@@ -87,7 +88,7 @@ class ScannedDocumentsHeader extends StatelessWidget {
     return TextButton.icon(
       onPressed: onAddMore,
       icon: const Icon(Icons.add_a_photo, size: 16),
-      label: Text('common.add'.tr()),
+      label: AutoSizeText('common.add'.tr()),
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,

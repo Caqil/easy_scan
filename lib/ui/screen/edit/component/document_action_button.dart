@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -116,7 +117,7 @@ class DocumentActionButtons extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 1.h),
-              Text(
+              AutoSizeText(
                 label,
                 style: GoogleFonts.slabo27px(
                   color: isActive

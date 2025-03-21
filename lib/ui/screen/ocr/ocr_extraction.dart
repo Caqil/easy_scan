@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -83,7 +84,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text('ocr.premium_required.title'.tr()),
+        title: AutoSizeText('ocr.premium_required.title'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -93,7 +94,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
               size: 64.r,
             ),
             SizedBox(height: 16.h),
-            Text(
+            AutoSizeText(
               'ocr.premium_required.message'.tr(),
               textAlign: TextAlign.center,
             ),
@@ -104,7 +105,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text('common.cancel'.tr()),
+            child: AutoSizeText('common.cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () {
@@ -119,7 +120,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            child: Text('common.upgrade'.tr()),
+            child: AutoSizeText('common.upgrade'.tr()),
           ),
         ],
       ),
@@ -194,7 +195,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(
+        title: AutoSizeText(
           'ocr.extract_text'.tr(),
           style: GoogleFonts.slabo27px(
             fontSize: 18.sp,
@@ -265,7 +266,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        AutoSizeText(
                           widget.document.name,
                           style: GoogleFonts.slabo27px(
                             fontSize: 16.sp,
@@ -275,7 +276,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(height: 4.h),
-                        Text(
+                        AutoSizeText(
                           'ocr.pages_count'.tr(
                             namedArgs: {
                               'count': widget.document.pageCount.toString(),
@@ -298,7 +299,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
           SizedBox(height: 24.h),
 
           // OCR Settings
-          Text(
+          AutoSizeText(
             'ocr.extraction_settings'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
@@ -321,7 +322,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
             items: _languages.map((language) {
               return DropdownMenuItem<String>(
                 value: language['code'],
-                child: Text(language['name']),
+                child: AutoSizeText(language['name']),
               );
             }).toList(),
             onChanged: _isProcessing
@@ -342,7 +343,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
             children: [
               Expanded(
                 child: CheckboxListTile(
-                  title: Text(
+                  title: AutoSizeText(
                     'ocr.enhance_scanned'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontSize: 14.sp,
@@ -362,7 +363,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
               ),
               Expanded(
                 child: CheckboxListTile(
-                  title: Text(
+                  title: AutoSizeText(
                     'ocr.preserve_layout'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontSize: 14.sp,
@@ -404,7 +405,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
-                    child: Text(
+                    child: AutoSizeText(
                       _errorMessage,
                       style: GoogleFonts.slabo27px(
                         fontSize: 14.sp,
@@ -430,7 +431,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 SizedBox(height: 8.h),
-                Text(
+                AutoSizeText(
                   'ocr.processing'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 14.sp,
@@ -453,7 +454,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                   borderRadius: BorderRadius.circular(8.r),
                 ),
               ),
-              child: Text(
+              child: AutoSizeText(
                 'ocr.start_extraction'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,
@@ -485,7 +486,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
           ),
           child: Row(
             children: [
-              Text(
+              AutoSizeText(
                 'ocr.extracted_text'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,
@@ -511,7 +512,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
         Expanded(
           child: _extractedText.isEmpty
               ? Center(
-                  child: Text(
+                  child: AutoSizeText(
                     'ocr.no_text_found'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontSize: 16.sp,

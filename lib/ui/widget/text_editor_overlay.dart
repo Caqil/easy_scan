@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/models/scan_result.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TextEditorOverlay extends StatefulWidget {
@@ -95,7 +96,7 @@ class _TextEditorOverlayState extends State<TextEditorOverlay> {
                       : Colors.transparent,
                 ),
                 child: Center(
-                  child: Text(
+                  child: AutoSizeText(
                     element.text,
                     style: GoogleFonts.slabo27px(
                       color: _selectedElement == element
@@ -150,7 +151,7 @@ class _TextEditorOverlayState extends State<TextEditorOverlay> {
                               _selectedElement = null;
                             });
                           },
-                          child: Text('common.done'.tr()),
+                          child: AutoSizeText('common.done'.tr()),
                         ),
                         TextButton(
                           onPressed: () {
@@ -161,7 +162,7 @@ class _TextEditorOverlayState extends State<TextEditorOverlay> {
                             });
                             widget.onTextUpdated(_editableElements);
                           },
-                          child: Text('common.delete'.tr(),
+                          child: AutoSizeText('common.delete'.tr(),
                               style: GoogleFonts.slabo27px(
                                   fontWeight: FontWeight.w700,
                                   color: Colors.red)),

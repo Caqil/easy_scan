@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -54,7 +55,7 @@ class PremiumFeatures extends StatelessWidget {
         children: [
           Padding(
             padding: EdgeInsets.only(bottom: 16.r),
-            child: Text(
+            child: AutoSizeText(
               'Premium Features',
               style: GoogleFonts.slabo27px(
                 fontSize: 18.sp,
@@ -84,14 +85,14 @@ class PremiumFeatures extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          AutoSizeText(
                             feature['title'] as String,
                             style: GoogleFonts.slabo27px(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
+                          AutoSizeText(
                             feature['description'] as String,
                             style: GoogleFonts.slabo27px(
                               fontSize: 12.sp,

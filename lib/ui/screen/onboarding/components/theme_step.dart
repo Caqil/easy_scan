@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -58,7 +59,7 @@ class _ThemeStepState extends ConsumerState<ThemeStep> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: 20.h),
-            Text(
+            AutoSizeText(
               'onboarding.theme_title'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 24.sp,
@@ -68,7 +69,7 @@ class _ThemeStepState extends ConsumerState<ThemeStep> {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),
-            Text(
+            AutoSizeText(
               'onboarding.theme_description'.tr(),
               style: GoogleFonts.slabo27px(
                 fontSize: 16.sp,
@@ -190,7 +191,7 @@ class _ThemeStepState extends ConsumerState<ThemeStep> {
               ),
             ),
             SizedBox(height: 16.h),
-            Text(
+            AutoSizeText(
               title,
               style: GoogleFonts.slabo27px(
                 fontSize: 16.sp,
@@ -207,7 +208,7 @@ class _ThemeStepState extends ConsumerState<ThemeStep> {
                   color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(16.r),
                 ),
-                child: Text(
+                child: AutoSizeText(
                   'onboarding.selected'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 12.sp,

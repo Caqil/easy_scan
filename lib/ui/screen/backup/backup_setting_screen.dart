@@ -105,7 +105,7 @@
 //         // Section header
 //         Padding(
 //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-//           child: Text(
+//           child: AutoSizeText(
 //             'backup.title'.tr(),
 //             style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -133,7 +133,7 @@
 //                       size: 20,
 //                     ),
 //                     const SizedBox(width: 12),
-//                     Text(
+//                     AutoSizeText(
 //                       'backup.last_backup'.tr(),
 //                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -145,7 +145,7 @@
 //                 const SizedBox(height: 8),
 //                 Padding(
 //                   padding: const EdgeInsets.only(left: 32),
-//                   child: Text(
+//                   child: AutoSizeText(
 //                     lastBackupDate != null
 //                         ? DateFormat('MMM dd, yyyy HH:mm')
 //                             .format(lastBackupDate)
@@ -160,7 +160,7 @@
 //                   const SizedBox(height: 4),
 //                   Padding(
 //                     padding: const EdgeInsets.only(left: 32),
-//                     child: Text(
+//                     child: AutoSizeText(
 //                       _getRelativeTime(lastBackupDate),
 //                       style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -227,7 +227,7 @@
 //           title: 'backup.auto_backup'.tr(),
 //           subtitle: _isAutoBackupEnabled
 //               ? 'backup.auto_backup_enabled_desc'
-//                   .tr(namedArgs: {'frequency': _getFrequencyText()})
+//                   .tr(namedArgs: {'frequency': _getFrequencyAutoSizeText()})
 //               : 'backup.auto_backup_disabled'.tr(),
 //           iconData: Icons.schedule,
 //           onTap: () {
@@ -240,7 +240,7 @@
 //     );
 //   }
 
-//   String _getFrequencyText() {
+//   String _getFrequencyAutoSizeText() {
 //     switch (_autoBackupFrequency) {
 //       case 'daily':
 //         return 'backup.daily'.tr();
@@ -272,14 +272,14 @@
 //           color: Theme.of(context).primaryColor,
 //         ),
 //       ),
-//       title: Text(
+//       title: AutoSizeText(
 //         title,
 //         style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
 //           fontWeight: FontWeight.w500,
 //         ),
 //       ),
-//       subtitle: Text(
+//       subtitle: AutoSizeText(
 //         subtitle,
 //         style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -329,14 +329,14 @@
 //       context: context,
 //       builder: (context) => StatefulBuilder(
 //         builder: (context, setState) => AlertDialog(
-//           title: Text('backup.auto_backup_settings'.tr()),
+//           title: AutoSizeText('backup.auto_backup_settings'.tr()),
 //           content: SingleChildScrollView(
 //             child: Column(
 //               mainAxisSize: MainAxisSize.min,
 //               crossAxisAlignment: CrossAxisAlignment.start,
 //               children: [
 //                 SwitchListTile(
-//                   title: Text(
+//                   title: AutoSizeText(
 //                     'backup.enable_auto_backup'.tr(),
 //                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 //),
@@ -351,7 +351,7 @@
 //                 ),
 //                 const Divider(),
 //                 if (_isAutoBackupEnabled) ...[
-//                   Text(
+//                   AutoSizeText(
 //                     'backup.backup_frequency'.tr(),
 //                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -360,7 +360,7 @@
 //                   ),
 //                   const SizedBox(height: 8),
 //                   RadioListTile<String>(
-//                     title: Text('backup.daily'.tr()),
+//                     title: AutoSizeText('backup.daily'.tr()),
 //                     value: 'daily',
 //                     groupValue: _autoBackupFrequency,
 //                     onChanged: (value) {
@@ -371,7 +371,7 @@
 //                     activeColor: Theme.of(context).primaryColor,
 //                   ),
 //                   RadioListTile<String>(
-//                     title: Text('backup.weekly'.tr()),
+//                     title: AutoSizeText('backup.weekly'.tr()),
 //                     value: 'weekly',
 //                     groupValue: _autoBackupFrequency,
 //                     onChanged: (value) {
@@ -382,7 +382,7 @@
 //                     activeColor: Theme.of(context).primaryColor,
 //                   ),
 //                   RadioListTile<String>(
-//                     title: Text('backup.monthly'.tr()),
+//                     title: AutoSizeText('backup.monthly'.tr()),
 //                     value: 'monthly',
 //                     groupValue: _autoBackupFrequency,
 //                     onChanged: (value) {
@@ -393,7 +393,7 @@
 //                     activeColor: Theme.of(context).primaryColor,
 //                   ),
 //                   const Divider(),
-//                   Text(
+//                   AutoSizeText(
 //                     'backup.destination'.tr(),
 //                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -403,7 +403,7 @@
 //                   const SizedBox(height: 8),
 //                   _buildDestinationOptions(setState),
 //                   const Divider(),
-//                   Text(
+//                   AutoSizeText(
 //                     'backup.max_backups'.tr(),
 //                     style: GoogleFonts.slabo27px( fontWeight: FontWeight.w700,
 
@@ -424,7 +424,7 @@
 //                     },
 //                   ),
 //                   Center(
-//                     child: Text(
+//                     child: AutoSizeText(
 //                       'backup.max_backups_count'.tr(
 //                         namedArgs: {'count': _maxBackupCount.toString()},
 //                       ),
@@ -441,14 +441,14 @@
 //           actions: [
 //             TextButton(
 //               onPressed: () => Navigator.pop(context),
-//               child: Text('common.cancel'.tr()),
+//               child: AutoSizeText('common.cancel'.tr()),
 //             ),
 //             TextButton(
 //               onPressed: () {
 //                 Navigator.pop(context);
 //                 _saveBackupSettings();
 //               },
-//               child: Text('common.save'.tr()),
+//               child: AutoSizeText('common.save'.tr()),
 //             ),
 //           ],
 //         ),
@@ -464,7 +464,7 @@
 //       children: [
 //         if (isAndroid || isIOS)
 //           RadioListTile<BackupDestination>(
-//             title: const Text('Google Drive'),
+//             title: const AutoSizeText('Google Drive'),
 //             value: BackupDestination.googleDrive,
 //             groupValue: _autoBackupDestination,
 //             onChanged: (value) {
@@ -475,7 +475,7 @@
 //             activeColor: Theme.of(context).primaryColor,
 //           ),
 //         RadioListTile<BackupDestination>(
-//           title: Text('backup.local_storage'.tr()),
+//           title: AutoSizeText('backup.local_storage'.tr()),
 //           value: BackupDestination.local,
 //           groupValue: _autoBackupDestination,
 //           onChanged: (value) {
@@ -497,7 +497,7 @@
 //   Widget build(BuildContext context, WidgetRef ref) {
 //     return Scaffold(
 //       appBar: AppBar(
-//         title: Text(
+//         title: AutoSizeText(
 //           'backup.title'.tr(),
 //         ),
 //       ),

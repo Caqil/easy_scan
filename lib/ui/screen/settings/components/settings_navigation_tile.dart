@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -37,14 +38,14 @@ class SettingsNavigationTile extends StatelessWidget {
           size: 24.r,
         ),
       ),
-      title: Text(
+      title: AutoSizeText(
         title,
         style: GoogleFonts.slabo27px(
           fontWeight: FontWeight.w700,
           fontSize: 14.sp,
         ),
       ),
-      subtitle: Text(
+      subtitle: AutoSizeText(
         subtitle,
         style: GoogleFonts.slabo27px(
           fontWeight: FontWeight.w700,

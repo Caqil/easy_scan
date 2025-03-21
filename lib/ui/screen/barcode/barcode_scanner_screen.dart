@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/models/barcode_scan.dart';
 import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -49,7 +50,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(
+        title: AutoSizeText(
           'Scan Barcode',
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
@@ -80,7 +81,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
-                  child: Text(
+                  child: AutoSizeText(
                     'Position the barcode within the frame to scan',
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
@@ -199,7 +200,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                 color: Theme.of(context).primaryColor,
               ),
               SizedBox(width: 8.w),
-              Text(
+              AutoSizeText(
                 'Scan Result',
                 style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,
@@ -218,7 +219,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               borderRadius: BorderRadius.circular(8.r),
               border: Border.all(color: Colors.grey.shade200),
             ),
-            child: Text(
+            child: AutoSizeText(
               barcode.rawValue ?? 'No data',
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -233,7 +234,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.copy),
-                  label: const Text('Copy'),
+                  label: const AutoSizeText('Copy'),
                   onPressed: () => _copyToClipboard(barcode.rawValue ?? ''),
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -244,7 +245,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               Expanded(
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.history),
-                  label: Text('common.save'.tr()),
+                  label: AutoSizeText('common.save'.tr()),
                   onPressed: () => _saveScanToHistory(barcode),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -270,7 +271,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
           color: Theme.of(context).primaryColor.withOpacity(0.3),
         ),
       ),
-      child: Text(
+      child: AutoSizeText(
         format,
         style: GoogleFonts.slabo27px(
           fontSize: 10.sp,

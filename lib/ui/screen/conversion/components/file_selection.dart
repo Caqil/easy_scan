@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,7 +40,7 @@ class FileSelectionSection extends StatelessWidget {
                 ? null
                 : () => ref.read(conversionStateProvider.notifier).pickFile(),
             icon: const Icon(Icons.upload_file),
-            label: Text(
+            label: AutoSizeText(
                 "file_selection.select_file_button".tr()), // Localized string
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -70,7 +71,7 @@ class FileSelectionSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   path.basename(state.selectedFile!.path),
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.slabo27px(
@@ -85,7 +86,7 @@ class FileSelectionSection extends StatelessWidget {
                     final info = snapshot.data ??
                         "file_selection.file_info.loading"
                             .tr(); // Localized string
-                    return Text(
+                    return AutoSizeText(
                       info,
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
@@ -122,13 +123,13 @@ class FileSelectionSection extends StatelessWidget {
             color: Colors.grey,
           ),
           SizedBox(height: 12.h),
-          Text(
+          AutoSizeText(
             "file_selection.no_file_selected.title".tr(), // Localized string
             style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700, fontSize: 16.sp),
           ),
           SizedBox(height: 8.h),
-          Text(
+          AutoSizeText(
             "file_selection.no_file_selected.subtitle".tr(), // Localized string
             style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,

@@ -211,7 +211,7 @@
 "no_locked_documents": "Tidak ada dokumen yang dilindungi kata sandi ditemukan"
 },
 "ocr": {
-    "extract_text": "Ekstrak Teks (OCR)",
+    "extract_text": "Ekstrak Teks",
     "extract_text_desc": "Ekstrak teks dari dokumen ini menggunakan OCR",
     "extraction_settings": "Pengaturan Ekstraksi",
     "language": "Bahasa",

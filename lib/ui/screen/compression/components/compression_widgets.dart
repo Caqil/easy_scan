@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/config/helper.dart';
@@ -61,7 +62,7 @@ class DocumentInfoCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AutoSizeText(
                   document.name,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
@@ -71,7 +72,7 @@ class DocumentInfoCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
-                Text(
+                AutoSizeText(
                   'stats.file_size'.tr(namedArgs: {
                     'size': '${FileUtils.formatFileSize(fileSize)}'
                   }),
@@ -82,7 +83,7 @@ class DocumentInfoCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
+                AutoSizeText(
                   'stats.pages'
                       .tr(namedArgs: {'count': '${document.pageCount}'}),
                   style: GoogleFonts.slabo27px(
@@ -101,7 +102,7 @@ class DocumentInfoCard extends StatelessWidget {
                         color: Colors.grey.shade700,
                       ),
                       const SizedBox(width: 4),
-                      Text(
+                      AutoSizeText(
                         'stats.password_protected',
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
@@ -236,7 +237,7 @@ class CompressionOption extends StatelessWidget {
               size: 24,
             ),
             const SizedBox(height: 8),
-            Text(
+            AutoSizeText(
               label,
               style: GoogleFonts.slabo27px(
                 color: isSelected
@@ -279,14 +280,14 @@ class SliderWithLabel extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            AutoSizeText(
               label,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
                 fontSize: 14.sp,
               ),
             ),
-            Text(
+            AutoSizeText(
               '${value.round()}%',
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.bold,
@@ -307,7 +308,7 @@ class SliderWithLabel extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            AutoSizeText(
               'slider.more_compression'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -315,7 +316,7 @@ class SliderWithLabel extends StatelessWidget {
                 color: Colors.grey.shade600,
               ),
             ),
-            Text(
+            AutoSizeText(
               'slider.better_quality'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -419,7 +420,7 @@ class StatColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
+        AutoSizeText(
           label,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.w700,
@@ -428,7 +429,7 @@ class StatColumn extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
+        AutoSizeText(
           value,
           style: GoogleFonts.slabo27px(
             fontSize: 16.sp,
@@ -479,7 +480,7 @@ class CompressionBottomBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text('common.cancel'.tr()),
+                child: AutoSizeText('common.cancel'.tr()),
               ),
             ),
             const SizedBox(width: 16),
@@ -494,7 +495,7 @@ class CompressionBottomBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(isCompressing
+                child: AutoSizeText(isCompressing
                     ? 'buttons.compressing'.tr()
                     : 'buttons.compress'.tr()),
               ),

@@ -7,6 +7,7 @@ import 'package:scanpro/ui/screen/barcode/barcode_result_screen.dart';
 import 'package:scanpro/ui/screen/barcode/qr_code_customization_screen.dart';
 import 'package:scanpro/ui/screen/barcode/widget/barcode_action.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,7 +49,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              AutoSizeText(
                 title.tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 14.sp,
@@ -61,7 +62,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                       () {
                         Navigator.pushNamed(context, '/barcode/history');
                       },
-                  child: Text(
+                  child: AutoSizeText(
                     'recent_barcodes.view_all'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
@@ -197,7 +198,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                               color: Colors.white,
                             ),
                             SizedBox(width: 2.w),
-                            Text(
+                            AutoSizeText(
                               'recent_barcodes.custom'.tr(),
                               style: TextStyle(
                                 color: Colors.white,
@@ -266,7 +267,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                               color: contentType.color,
                             ),
                             SizedBox(width: 2.w),
-                            Text(
+                            AutoSizeText(
                               contentType.label,
                               style: GoogleFonts.slabo27px(
                                 fontWeight: FontWeight.w700,
@@ -283,8 +284,8 @@ class RecentBarcodesWidget extends ConsumerWidget {
                   SizedBox(height: 4.h),
 
                   // QR Code content preview
-                  Text(
-                    _truncateText(scan.barcodeValue, 25),
+                  AutoSizeText(
+                    _truncateAutoSizeText(scan.barcodeValue, 25),
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
                       fontSize: 10.sp,
@@ -485,7 +486,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
     }
   }
 
-  String _truncateText(String text, int maxLength) {
+  String _truncateAutoSizeText(String text, int maxLength) {
     if (text.length <= maxLength) return text;
     return '${text.substring(0, maxLength)}...';
   }

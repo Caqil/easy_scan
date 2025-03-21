@@ -1,5 +1,7 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,8 +33,9 @@ class AdvancedOptionsSection extends StatelessWidget {
         children: [
           // OCR option
           SwitchListTile(
-            title: const Text("advanced_options.enable_ocr.title").tr(),
-            subtitle: const Text("advanced_options.enable_ocr.subtitle").tr(),
+            title:  AutoSizeText("advanced_options.enable_ocr.title".tr()),
+            subtitle:
+                 AutoSizeText("advanced_options.enable_ocr.subtitle".tr()),
             secondary: Icon(
               Icons.document_scanner,
               color: state.ocrEnabled
@@ -52,7 +55,7 @@ class AdvancedOptionsSection extends StatelessWidget {
             SizedBox(height: 8.h),
             ListTile(
               leading: const Icon(Icons.high_quality),
-              title: Text("advanced_options.image_quality".tr()),
+              title: AutoSizeText("advanced_options.image_quality".tr()),
               subtitle: Slider(
                 value: state.quality.toDouble(),
                 min: 10,
@@ -65,7 +68,7 @@ class AdvancedOptionsSection extends StatelessWidget {
                         .read(conversionStateProvider.notifier)
                         .setQuality(value.toInt()),
               ),
-              trailing: Text(
+              trailing: AutoSizeText(
                 "${state.quality}%",
                 style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
               ),

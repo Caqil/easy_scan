@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/services/subscription_service.dart';
@@ -42,18 +43,18 @@ class SubscriptionNavigator {
       final result = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(title),
-          content: Text(message),
+          title: AutoSizeText(title),
+          content: AutoSizeText(message),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: Text(cancelText),
+              child: AutoSizeText(cancelText),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text(actionText),
+              child: AutoSizeText(actionText),
             ),
           ],
         ),

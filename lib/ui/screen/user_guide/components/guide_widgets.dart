@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -457,7 +458,7 @@ class GuideWidgets {
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
-      child: Text(
+      child: AutoSizeText(
         title,
         style: GoogleFonts.slabo27px(
           fontSize: 22.sp,
@@ -471,7 +472,7 @@ class GuideWidgets {
   Widget _buildSubsectionHeader(String title) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12.h),
-      child: Text(
+      child: AutoSizeText(
         title,
         style: GoogleFonts.slabo27px(
           fontSize: 18.sp,
@@ -485,7 +486,7 @@ class GuideWidgets {
   Widget _buildParagraph(String content) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
-      child: Text(
+      child: AutoSizeText(
         content,
         style: GoogleFonts.slabo27px(
           fontSize: 14.sp,
@@ -514,7 +515,7 @@ class GuideWidgets {
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           SizedBox(height: 8.h),
-          Text(
+          AutoSizeText(
             imageLabel,
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
@@ -543,7 +544,7 @@ class GuideWidgets {
           ),
           SizedBox(width: 8.w),
           Expanded(
-            child: Text(
+            child: AutoSizeText(
               content,
               style: GoogleFonts.slabo27px(
                 fontSize: 14.sp,
@@ -571,7 +572,7 @@ class GuideWidgets {
               color: Theme.of(context).colorScheme.primaryContainer,
             ),
             alignment: Alignment.center,
-            child: Text(
+            child: AutoSizeText(
               number.toString(),
               style: GoogleFonts.slabo27px(
                 fontSize: 12.sp,
@@ -586,7 +587,7 @@ class GuideWidgets {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (title.isNotEmpty)
-                  Text(
+                  AutoSizeText(
                     title,
                     style: GoogleFonts.slabo27px(
                       fontSize: 14.sp,
@@ -594,7 +595,7 @@ class GuideWidgets {
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                Text(
+                AutoSizeText(
                   content,
                   style: GoogleFonts.slabo27px(
                     fontSize: 14.sp,
@@ -618,7 +619,7 @@ class GuideWidgets {
         children: [
           SizedBox(
             width: 80.w,
-            child: Text(
+            child: AutoSizeText(
               feature,
               style: GoogleFonts.slabo27px(
                 fontSize: 14.sp,
@@ -629,7 +630,7 @@ class GuideWidgets {
           ),
           SizedBox(width: 8.w),
           Expanded(
-            child: Text(
+            child: AutoSizeText(
               explanation,
               style: GoogleFonts.slabo27px(
                 fontSize: 14.sp,
@@ -664,7 +665,7 @@ class GuideWidgets {
           ),
           SizedBox(width: 12.w),
           Expanded(
-            child: Text(
+            child: AutoSizeText(
               tip,
               style: GoogleFonts.slabo27px(
                 fontSize: 14.sp,

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:scanpro/main.dart';
-import 'package:scanpro/utils/constants.dart';
 
 // Product IDs
 const String kWeeklyProductId = 'scanpro_premium_weekly';

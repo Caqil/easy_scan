@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/models/document.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -44,7 +45,7 @@ class AllDocuments extends StatelessWidget {
                   color: colorScheme.primary,
                 ),
                 SizedBox(width: 8.w),
-                Text(
+                AutoSizeText(
                   'all_documents'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 16.sp.sp,
@@ -59,7 +60,7 @@ class AllDocuments extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
+                    AutoSizeText(
                       'view_all'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
@@ -80,7 +81,7 @@ class AllDocuments extends StatelessWidget {
         // Count indicator
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
-          child: Text(
+          child: AutoSizeText(
             'documents_count'
                 .tr(namedArgs: {'count': documents.length.toString()}),
             style: GoogleFonts.slabo27px(
@@ -162,7 +163,7 @@ class AllDocuments extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              AutoSizeText(
                                 document.name,
                                 style: GoogleFonts.slabo27px(
                                   fontWeight: FontWeight.w700,
@@ -180,7 +181,7 @@ class AllDocuments extends StatelessWidget {
                                     color: Colors.grey,
                                   ),
                                   SizedBox(width: 4.w),
-                                  Text(
+                                  AutoSizeText(
                                     DateTimeUtils.getFriendlyDate(
                                         document.modifiedAt),
                                     style: GoogleFonts.slabo27px(
@@ -196,7 +197,7 @@ class AllDocuments extends StatelessWidget {
                                     color: Colors.grey,
                                   ),
                                   SizedBox(width: 4.w),
-                                  Text(
+                                  AutoSizeText(
                                     'pages_count'.tr(namedArgs: {
                                       'count': document.pageCount.toString()
                                     }),
@@ -236,7 +237,7 @@ class AllDocuments extends StatelessWidget {
                     color: Colors.grey.withOpacity(0.6),
                   ),
                   SizedBox(height: 16.h),
-                  Text(
+                  AutoSizeText(
                     'No documents yet',
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
@@ -245,7 +246,7 @@ class AllDocuments extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8.h),
-                  Text(
+                  AutoSizeText(
                     'Scan or import your first document',
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,

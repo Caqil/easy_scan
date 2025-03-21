@@ -8,6 +8,7 @@ import 'package:scanpro/ui/screen/barcode/widget/customizable_qrcode.dart';
 import 'package:scanpro/utils/constants.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,7 +57,7 @@ class _QRCodeCustomizationScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(
+        title: AutoSizeText(
           'Customize QR Code',
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
@@ -90,7 +91,7 @@ class _QRCodeCustomizationScreenState
                     ),
                     SizedBox(width: 12.w),
                     Expanded(
-                      child: Text(
+                      child: AutoSizeText(
                         'Customize your QR code before saving or sharing. Add a logo, change colors, and more!',
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
@@ -107,7 +108,7 @@ class _QRCodeCustomizationScreenState
 
               // Custom name input field
               if (widget.saveToLibrary) ...[
-                Text(
+                AutoSizeText(
                   'QR Code Name',
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
@@ -180,12 +181,12 @@ class _QRCodeCustomizationScreenState
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: Text('Processing'),
+            title: AutoSizeText('Processing'),
             content: Row(
               children: [
                 CircularProgressIndicator(),
                 SizedBox(width: 16),
-                Text('Saving QR code...'),
+                AutoSizeText('Saving QR code...'),
               ],
             ),
           ),
@@ -283,15 +284,15 @@ class _QRCodeCustomizationScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('QR Code Created'),
+        title: AutoSizeText('QR Code Created'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('What would you like to do next?'),
+            AutoSizeText('What would you like to do next?'),
             if (widget.saveToLibrary) ...[
               SizedBox(height: 8),
-              Text(
+              AutoSizeText(
                 'Your QR code has been saved to your library',
                 style: TextStyle(
                   color: Colors.green,
@@ -308,21 +309,21 @@ class _QRCodeCustomizationScreenState
               Navigator.pop(context);
               Navigator.pop(context, true); // Return true to indicate success
             },
-            child: Text('common.done'.tr()),
+            child: AutoSizeText('common.done'.tr()),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _shareQRCode(qrFile);
             },
-            child: Text('common.share'.tr()),
+            child: AutoSizeText('common.share'.tr()),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _copyToClipboard(qrFile);
             },
-            child: Text('Copy Content'),
+            child: AutoSizeText('Copy Content'),
           ),
         ],
       ),
@@ -369,46 +370,46 @@ class _QRCodeCustomizationScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('QR Code Customization Help'),
+        title: AutoSizeText('QR Code Customization Help'),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              AutoSizeText(
                 'Change Colors',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text(
+              AutoSizeText(
                   'Select different colors for your QR code or use a gradient background.'),
               SizedBox(height: 12),
-              Text(
+              AutoSizeText(
                 'Add Logo',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text(
+              AutoSizeText(
                   'Add a custom logo image to the center of your QR code. Be careful not to make it too large or the code might not scan properly.'),
               SizedBox(height: 12),
-              Text(
+              AutoSizeText(
                 'Change Shapes',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text(
+              AutoSizeText(
                   'Customize the eye and data module shapes for a unique look.'),
               SizedBox(height: 12),
-              Text(
+              AutoSizeText(
                 'Saving and Sharing',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text(
+              AutoSizeText(
                   'Your customized QR code will be saved to your library automatically. You can also share it or copy the content.'),
               SizedBox(height: 12),
-              Text(
+              AutoSizeText(
                 'Scanning',
                 style: TextStyle(
                     fontWeight: FontWeight.w400, fontStyle: FontStyle.italic),
               ),
-              Text(
+              AutoSizeText(
                   'Note: Very heavily customized QR codes may be difficult to scan with some devices. If you have trouble scanning, try using fewer customizations.'),
             ],
           ),
@@ -416,7 +417,7 @@ class _QRCodeCustomizationScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Got it'),
+            child: AutoSizeText('Got it'),
           ),
         ],
       ),

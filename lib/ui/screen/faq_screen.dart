@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,7 +19,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: Text(
+        title: AutoSizeText(
           "faq.title".tr(),
           style: GoogleFonts.lilitaOne(
             fontSize: 25.sp,
@@ -102,7 +103,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
                 size: 24.r,
               ),
               SizedBox(width: 12.w),
-              Text(
+              AutoSizeText(
                 "faq.welcome_to_faq".tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 16.sp,
@@ -113,7 +114,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
             ],
           ),
           SizedBox(height: 8.h),
-          Text(
+          AutoSizeText(
             "faq.introduction".tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 14.sp,
@@ -140,7 +141,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
         ),
       ),
       child: ExpansionTile(
-        title: Text(
+        title: AutoSizeText(
           title,
           style: GoogleFonts.slabo27px(
             fontSize: 16.sp,
@@ -165,7 +166,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
     required String answer,
   }) {
     return ExpansionTile(
-      title: Text(
+      title: AutoSizeText(
         question,
         style: GoogleFonts.slabo27px(
           fontSize: 14.sp,
@@ -174,7 +175,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
       ),
       childrenPadding: EdgeInsets.fromLTRB(16.r, 0, 16.r, 16.r),
       children: [
-        Text(
+        AutoSizeText(
           answer,
           style: GoogleFonts.slabo27px(
             fontSize: 14.sp,
@@ -198,7 +199,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          AutoSizeText(
             "faq.need_more_help".tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 16.sp,
@@ -206,7 +207,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
             ),
           ),
           SizedBox(height: 8.h),
-          Text(
+          AutoSizeText(
             "faq.contact_support".tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 14.sp,
@@ -218,7 +219,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
               // Email support action
             },
             icon: Icon(Icons.email_outlined),
-            label: Text("faq.email_support".tr()),
+            label: AutoSizeText("faq.email_support".tr()),
             style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.r, horizontal: 16.r),
               shape: RoundedRectangleBorder(
