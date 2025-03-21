@@ -200,7 +200,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                             SizedBox(width: 2.w),
                             AutoSizeText(
                               'recent_barcodes.custom'.tr(),
-                              style: TextStyle(
+                              style: GoogleFonts.slabo27px(
                                 color: Colors.white,
                                 fontSize: 8.sp,
                                 fontWeight: FontWeight.bold,

@@ -91,7 +91,7 @@ class LanguageTile extends StatelessWidget {
       child: Center(
         child: AutoSizeText(
           languageCode.toUpperCase(),
-          style: TextStyle(
+          style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
             color: languageColors[languageCode] ?? Colors.grey.shade700,
           ),

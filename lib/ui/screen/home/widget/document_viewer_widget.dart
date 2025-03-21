@@ -1,4 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/models/document.dart';
 import 'package:scanpro/ui/screen/home/widget/image_viewer_widget.dart';
@@ -63,10 +65,10 @@ class DocumentViewerWidget extends StatelessWidget {
               AutoSizeText(
                 'cannot_preview_file_format'
                     .tr(namedArgs: {'extension': extension}),
-                style: const TextStyle(fontSize: 16),
+                style: GoogleFonts.slabo27px(fontSize: 14.sp),
               ),
               const SizedBox(height: 8),
-              ElevatedButton(
+              OutlinedButton(
                 onPressed: () {
                   // Open with external viewer if available
                   _openWithExternalApp(document.pdfPath);

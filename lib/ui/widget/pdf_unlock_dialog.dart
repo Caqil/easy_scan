@@ -250,9 +250,9 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                 ),
                 SizedBox(width: 16.w),
                 Expanded(
-                  child: ElevatedButton(
+                  child: OutlinedButton(
                     onPressed: _isProcessing ? null : _unlockPdf,
-                    style: ElevatedButton.styleFrom(
+                    style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 12.r),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r),

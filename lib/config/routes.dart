@@ -1,3 +1,4 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scanpro/config/app_transition.dart';
 import 'package:scanpro/ui/screen/all_documents.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_generator_screen.dart';
@@ -185,10 +186,10 @@ class AppRoutes {
                       AutoSizeText(
                         'Document not found or invalid',
                         style: GoogleFonts.slabo27px(
-                            fontWeight: FontWeight.w700, fontSize: 16),
+                            fontWeight: FontWeight.w700, fontSize: 14.sp),
                       ),
                       const SizedBox(height: 16),
-                      ElevatedButton(
+                      OutlinedButton(
                         onPressed: () => navigateToHome(context),
                         child: const AutoSizeText('Go to Home'),
                       ),
@@ -256,10 +257,10 @@ class AppRoutes {
             AutoSizeText(
               'Route not found: ${state.error}',
               style: GoogleFonts.slabo27px(
-                  fontWeight: FontWeight.w700, fontSize: 16),
+                  fontWeight: FontWeight.w700, fontSize: 14.sp),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
+            OutlinedButton(
               onPressed: () => navigateToHome(context),
               child: const AutoSizeText('Go to Home'),
             ),

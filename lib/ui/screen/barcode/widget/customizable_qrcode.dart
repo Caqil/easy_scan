@@ -292,7 +292,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
                 SizedBox(height: 12.h),
                 Row(
                   children: [
-                    ElevatedButton.icon(
+                    OutlinedButton.icon(
                       onPressed: _pickLogo,
                       icon: Icon(Icons.image),
                       label: AutoSizeText('custom_qr.select_logo'.tr()),
@@ -337,11 +337,11 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           SizedBox(height: 24.h),
 
           // Export button
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: _captureAndExportQR,
             icon: Icon(Icons.save),
             label: AutoSizeText('custom_qr.save_qr'.tr()),
-            style: ElevatedButton.styleFrom(
+            style: OutlinedButton.styleFrom(
               minimumSize: Size(double.infinity, 48.h),
             ),
           ),

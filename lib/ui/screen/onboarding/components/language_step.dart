@@ -6,8 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/models/language.dart';
 import 'package:scanpro/providers/locale_provider.dart';
-import 'package:lottie/lottie.dart';
-
 class LanguageStep extends ConsumerStatefulWidget {
   final VoidCallback onLanguageSelected;
 
@@ -119,37 +117,6 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
                 height: 1.5,
               ),
             ),
-            SizedBox(height: 32.h),
-
-            // Animation or Illustration
-            Center(
-              child: FadeTransition(
-                opacity: _animationController,
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.2),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: _animationController,
-                    curve: Curves.easeOut,
-                  )),
-                  child: Container(
-                    height: 160.h,
-                    child: Lottie.asset(
-                      'assets/animations/language.json',
-                      fit: BoxFit.contain,
-                      // Fallback if the animation is not available
-                      errorBuilder: (context, error, stackTrace) => Icon(
-                        Icons.language,
-                        size: 100.r,
-                        color: colorScheme.primary.withOpacity(0.5),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
             SizedBox(height: 32.h),
 
             // Language selection heading

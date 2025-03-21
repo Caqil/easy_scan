@@ -126,16 +126,16 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
               size: 24,
             ),
             const SizedBox(width: 12),
-            AutoSizeText('pdf.protected_document'.tr()),
+            Text('pdf.protected_document'.tr()),
           ],
         ),
-        content: Container(
+        content: SizedBox(
           width: 320,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AutoSizeText(
+              Text(
                 'pdf.enter_password_prompt'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
@@ -195,7 +195,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                         color: theme.colorScheme.error,
                       ),
                       SizedBox(width: 4.w),
-                      AutoSizeText(
+                      Text(
                         'pdf.check_password_error'.tr(),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.error,
@@ -215,7 +215,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                     Navigator.pop(context);
                     widget.onCancelled?.call();
                   },
-            child: AutoSizeText(
+            child: Text(
               'common.cancel'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
@@ -236,7 +236,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                       ),
                     ),
                   )
-                : AutoSizeText('pdf.unlock.title'.tr()),
+                : Text('pdf.unlock.title'.tr()),
           ),
         ],
       ),

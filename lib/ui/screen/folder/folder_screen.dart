@@ -103,7 +103,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             : CupertinoSearchTextField(
                 controller: _searchController,
                 placeholder: 'folder_screen.search_placeholder'.tr(),
-                style: const TextStyle(color: Colors.black),
+                style: GoogleFonts.slabo27px(color: Colors.black),
                 onChanged: (value) {
                   setState(() {
                     _searchQuery = value;
@@ -464,7 +464,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                       folder.name,
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 14.sp,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -970,8 +970,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => CupertinoAlertDialog(
-          title:
-              AutoSizeText('folder_screen.dialogs.rename_document_title'.tr()),
+          title: Text('folder_screen.dialogs.rename_document_title'.tr()),
           content: CupertinoTextField(
             controller: controller,
             autofocus: true,
@@ -979,7 +978,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: AutoSizeText('folder_screen.dialogs.cancel_button'.tr()),
+              child: Text('folder_screen.dialogs.cancel_button'.tr()),
             ),
             TextButton(
               onPressed: () {
@@ -987,7 +986,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                   Navigator.pop(context, controller.text.trim());
                 }
               },
-              child: AutoSizeText('folder_screen.dialogs.rename_button'.tr()),
+              child: Text('folder_screen.dialogs.rename_button'.tr()),
             ),
           ],
         ),

@@ -112,7 +112,7 @@ class _AllFoldersSheet extends ConsumerWidget {
                       AutoSizeText(
                         title,
                         style: GoogleFonts.slabo27px(
-                          fontSize: 16.sp.sp,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

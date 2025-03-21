@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/ui/screen/premium/premium_screen.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/services/file_limit_service.dart';
@@ -29,7 +31,7 @@ class PremiumUpgradeUtils {
           backgroundColor: Theme.of(context).dialogBackgroundColor,
           title: Semantics(
             label: 'File limit reached title',
-            child: AutoSizeText(
+            child: Text(
               'limit.file_limit_reached.title'.tr(),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
@@ -63,7 +65,7 @@ class PremiumUpgradeUtils {
             ),
           ),
           SizedBox(height: 20),
-          AutoSizeText(
+          Text(
             'limit.file_limit_reached.message'.tr(namedArgs: {'limit': '5'}),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -71,7 +73,7 @@ class PremiumUpgradeUtils {
                 ),
           ),
           SizedBox(height: 12),
-          AutoSizeText(
+          Text(
             'limit.file_limit_reached.upgrade_prompt'.tr(),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -86,7 +88,7 @@ class PremiumUpgradeUtils {
 
   static List<Widget> _buildDialogActions(BuildContext context) {
     return [
-      ElevatedButton(
+      OutlinedButton(
         onPressed: () {
           Navigator.pop(context);
           if (context.mounted) {
@@ -95,7 +97,7 @@ class PremiumUpgradeUtils {
             );
           }
         },
-        style: ElevatedButton.styleFrom(
+        style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -108,7 +110,8 @@ class PremiumUpgradeUtils {
           label: 'Upgrade to premium button',
           child: Text(
             'limit.file_limit_reached.upgrade'.tr(),
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.bold, fontSize: 14.sp),
           ),
         ),
       ),
@@ -121,7 +124,8 @@ class PremiumUpgradeUtils {
           label: 'Cancel button',
           child: Text(
             'common.cancel'.tr(),
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            style: GoogleFonts.slabo27px(
+                color: Theme.of(context).colorScheme.secondary),
           ),
         ),
       ),

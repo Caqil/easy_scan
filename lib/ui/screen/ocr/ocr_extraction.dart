@@ -75,39 +75,68 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
     final isAvailable = await ocrService.isOcrAvailable();
 
     if (!isAvailable && mounted) {
-      _showPremiumDialog();
+      _showPremiumDialog(context);
     }
   }
 
-  void _showPremiumDialog() {
+  void _showPremiumDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text('ocr.premium_required.title'.tr()),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.lock_outline,
-              color: Colors.amber,
-              size: 64.r,
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              'ocr.premium_required.message'.tr(),
-              textAlign: TextAlign.center,
-            ),
-          ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
+        elevation: 8,
+        title: Text(
+          'ocr.premium_required.title'.tr(),
+          textAlign: TextAlign.center,
+          style: GoogleFonts.slabo27px(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.lock_outline,
+                color: Colors.amber,
+                size:
+                    64, // Removed .r assuming it was from a responsive library
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'ocr.premium_required.message'.tr(),
+                textAlign: TextAlign.center,
+                style: GoogleFonts.slabo27px(
+                  color: Colors.grey[800],
+                  fontSize: 14.sp,
+                ),
+              ),
+            ],
+          ),
+        ),
+        actionsAlignment: MainAxisAlignment.spaceEvenly,
+        actionsPadding: const EdgeInsets.only(bottom: 16),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('common.cancel'.tr()),
+            onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey[600],
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 12,
+              ),
+            ),
+            child: Text(
+              'common.cancel'.tr(),
+              style: GoogleFonts.slabo27px(fontSize: 14.sp),
+            ),
           ),
-          ElevatedButton(
+          OutlinedButton(
             onPressed: () {
               Navigator.pop(context);
               Navigator.push(
@@ -117,10 +146,24 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(
+            style: OutlinedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 12,
+              ),
             ),
-            child: Text('common.upgrade'.tr()),
+            child: Text(
+              'limit.upgrade'.tr(),
+              style: GoogleFonts.slabo27px(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
@@ -446,9 +489,9 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
           // Start extraction button
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: OutlinedButton(
               onPressed: _isProcessing ? null : _extractText,
-              style: ElevatedButton.styleFrom(
+              style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 16.r),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),

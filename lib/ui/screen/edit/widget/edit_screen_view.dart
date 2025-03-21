@@ -121,7 +121,7 @@ class _EditScreenViewState extends State<EditScreenView> {
           widget.controller.isEditingExistingDocument
               ? 'edit_screen.edit_document'.tr()
               : 'edit_screen.new_document'.tr(),
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
         ),
         if (widget.controller.isImageOnlyDocument) ...[
           const SizedBox(width: 8),

@@ -35,7 +35,7 @@ class BottomLinks extends StatelessWidget {
         ),
         AutoSizeText(
           '•',
-          style: TextStyle(color: Colors.grey[600]),
+          style: GoogleFonts.slabo27px(color: Colors.grey[600]),
         ),
         TextButton(
           onPressed: isPurchasing ? null : onRestorePressed,

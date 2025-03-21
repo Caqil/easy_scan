@@ -723,12 +723,14 @@
   "change_folder_name": "Ubah nama folder",
   "change_color_option": "Ubah Warna",
   "customize_appearance": "Sesuaikan penampilan",
-  "move_folder": "Pindah Folder",
-  "change_location": "Ubah lokasi",
   "delete_folder_option": "Hapus",
   "remove_folder": "Hapus folder secara permanen",
   "add_documents_option": "Tambah Dokumen",
-  "move_documents_to": "Pindahkan dokumen ke {folderName}"
+  "move_documents_to": "Pindahkan dokumen ke {folderName}",
+  "move_folder": "Pindah Folder",
+"change_location": "Ubah lokasi folder di direktori",
+"folder_moved_success": "Berhasil memindahkan '{{folderName}}' ke '{{destinationFolder}}'",
+"move_folder_error": "Terjadi kesalahan saat memindahkan folder: {{error}}"
 },
 "folder_creator": {
   "folder_name": "Nama Folder",
@@ -1638,7 +1640,29 @@
   "subscription_successful": "Berlangganan berhasil!",
   "subscription_restored": "Pembelian berhasil dipulihkan!",
   "no_subscription_found": "Tidak ada pembelian sebelumnya yang ditemukan",
-  "restore_error": "Kesalahan memulihkan pembelian"
+  "restore_error": "Kesalahan memulihkan pembelian",
+  "step_privacy": "Kebijakan Privasi",
+    "privacy": {
+      "main_title": "Privasi Anda Penting",
+      "subtitle": "Kami berkomitmen untuk melindungi data dan privasi Anda",
+      "data_protection": {
+        "title": "Penanganan Data yang Aman",
+        "description": "Dokumen Anda dienkripsi dan disimpan dengan aman di perangkat Anda."
+      },
+      "user_control": {
+        "title": "Kontrol Penuh",
+        "description": "Anda menentukan data apa yang dikumpulkan dan bagaimana penggunaannya."
+      },
+      "transparency": {
+        "title": "Transparansi Penuh",
+        "description": "Kami terbuka tentang praktik data kami dan memberikan informasi yang jelas."
+      },
+      "full_policy": "Kebijakan Privasi Lengkap",
+      "full_policy_description": "Baca panduan privasi komprehensif kami",
+      "acceptance_prefix": "Saya telah membaca dan setuju dengan ",
+      "policy_link_text": "Kebijakan Privasi"
+    }
+  
 },
 
 "subscription": {

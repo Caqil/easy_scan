@@ -48,7 +48,7 @@ class AllDocuments extends StatelessWidget {
                 AutoSizeText(
                   'all_documents'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 16.sp.sp,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

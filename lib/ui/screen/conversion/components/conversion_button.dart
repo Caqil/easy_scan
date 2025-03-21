@@ -27,9 +27,9 @@ class ConversionButton extends StatelessWidget {
 
     return SizedBox(
       height: 56.h,
-      child: ElevatedButton(
+      child: OutlinedButton(
         onPressed: isEnabled ? () => _startConversion(context) : null,
-        style: ElevatedButton.styleFrom(
+        style: OutlinedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.primary,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
@@ -80,7 +80,7 @@ class ConversionButton extends StatelessWidget {
         AutoSizeText(
           "conversion_button.convert".tr(), // Localized string
           style: GoogleFonts.slabo27px(
-              fontWeight: FontWeight.w700, fontSize: 16.sp),
+              fontWeight: FontWeight.w700, fontSize: 14.sp.sp),
         ),
         SizedBox(width: 8.w),
         Icon(state.outputFormat?.icon ?? Icons.file_present, size: 20.sp),

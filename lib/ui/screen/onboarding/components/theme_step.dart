@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/providers/settings_provider.dart';
-import 'package:lottie/lottie.dart';
 
 class ThemeStep extends ConsumerStatefulWidget {
   final VoidCallback onThemeSelected;
@@ -77,35 +76,6 @@ class _ThemeStepState extends ConsumerState<ThemeStep> {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 40.h),
-
-            // Animation placeholder
-            Container(
-              height: 200.h,
-              width: double.infinity,
-              child: Lottie.asset(
-                'assets/animations/theme_toggle.json',
-                fit: BoxFit.contain,
-                // Fallback if the animation is not available
-                errorBuilder: (context, error, stackTrace) => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.light_mode,
-                      size: 50.r,
-                      color: Colors.amber,
-                    ),
-                    SizedBox(width: 24.w),
-                    Icon(
-                      Icons.dark_mode,
-                      size: 50.r,
-                      color: Colors.indigo,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
             SizedBox(height: 40.h),
 
             // Theme options

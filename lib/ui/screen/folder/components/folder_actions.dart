@@ -12,6 +12,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:scanpro/ui/common/folder_selection.dart';
+import 'package:scanpro/ui/screen/folder/components/folder_creator.dart';
 import 'package:scanpro/ui/widget/option_tile.dart';
 
 import '../../../../models/folder.dart';
@@ -103,7 +105,7 @@ class FolderActions {
                                   'folderName':
                                       _getFolderName(ref, doc.folderId)
                                 }),
-                          style: TextStyle(fontSize: 12),
+                          style: GoogleFonts.slabo27px(fontSize: 12),
                         ),
                         secondary: doc.thumbnailPath != null
                             ? SizedBox(
@@ -153,7 +155,7 @@ class FolderActions {
                         child: AutoSizeText(
                           'folder_actions.move_to_folder'
                               .tr(namedArgs: {'folderName': targetFolder.name}),
-                          style: TextStyle(
+                          style: GoogleFonts.slabo27px(
                             fontSize: 12,
                             color: Color(targetFolder.color),
                           ),
@@ -245,7 +247,7 @@ class FolderActions {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(dialogContext),
-                  child: AutoSizeText('common.cancel'.tr()),
+                  child: Text('common.cancel'.tr()),
                 ),
                 TextButton(
                   onPressed: () {
@@ -454,6 +456,91 @@ class FolderActions {
       }
     }
   }
+
+  static Future<void> moveFolderToSubfolder(
+    BuildContext context,
+    Folder folderToMove,
+    WidgetRef ref,
+  ) async {
+    // Get all folders, excluding the current folder and its descendants
+    final allFolders = ref.read(foldersProvider);
+    final List<Folder> availableFolders = allFolders.where((folder) {
+      // Exclude the current folder
+      if (folder.id == folderToMove.id) return false;
+
+      // Prevent moving a folder into its own descendants
+      Folder? currentParent = folder;
+      while (currentParent != null) {
+        if (currentParent.id == folderToMove.id) return false;
+        currentParent = allFolders.firstWhere(
+          (f) => f.id == currentParent?.parentId,
+          orElse: () => Folder(name: ""),
+        );
+      }
+
+      return true;
+    }).toList();
+
+    // Show folder selection dialog
+    final selectedFolder = await FolderSelector.showFolderSelectionDialog(
+      context,
+      availableFolders,
+      ref,
+      currentFolderId: folderToMove.parentId,
+      onCreateFolder: () async {
+        // Option to create a new folder as a destination
+        await FolderCreator.showCreateFolderBottomSheet(
+          context,
+          ref,
+          title: 'folder.create_destination_folder'.tr(),
+        );
+      },
+    );
+
+    // If a folder is selected and it's different from the current parent
+    if (selectedFolder != null &&
+        selectedFolder.id != folderToMove.parentId &&
+        context.mounted) {
+      try {
+        // Create an updated folder with the new parent ID
+        final updatedFolder = Folder(
+          id: folderToMove.id,
+          name: folderToMove.name,
+          parentId: selectedFolder.id,
+          color: folderToMove.color,
+          iconName: folderToMove.iconName,
+        );
+
+        // Update the folder using the folder provider
+        await ref.read(foldersProvider.notifier).updateFolder(updatedFolder);
+
+        // Show success message
+        if (context.mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            type: SnackBarType.success,
+            message: 'folder_actions.folder_moved_success'.tr(
+              namedArgs: {
+                'folderName': folderToMove.name,
+                'destinationFolder': selectedFolder.name
+              },
+            ),
+          );
+        }
+      } catch (e) {
+        // Show error message if something goes wrong
+        if (context.mounted) {
+          AppDialogs.showSnackBar(
+            context,
+            type: SnackBarType.error,
+            message: 'folder_actions.move_folder_error'.tr(
+              namedArgs: {'error': e.toString()},
+            ),
+          );
+        }
+      }
+    }
+  }
 }
 
 /// Internal widget for folder options sheet
@@ -587,7 +674,7 @@ class _FolderOptionsSheet extends StatelessWidget {
                     description: 'folder_actions.change_location'.tr(),
                     onTap: () {
                       Navigator.pop(context);
-                      // Implement move folder functionality
+                      FolderActions.moveFolderToSubfolder(context, folder, ref);
                     },
                   ),
                 OptionTile(

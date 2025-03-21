@@ -334,11 +334,11 @@ class BarcodeResultScreen extends ConsumerWidget {
     // Add QR Code Customization button if this is a QR code
     if (isQrCode) {
       buttons.add(
-        ElevatedButton.icon(
+        OutlinedButton.icon(
           onPressed: () => _navigateToCustomizationScreen(context, ref),
           icon: const Icon(Icons.edit),
           label: AutoSizeText('barcode_result.customize_qr_code'.tr()),
-          style: ElevatedButton.styleFrom(
+          style: OutlinedButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Colors.white,
             padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -356,11 +356,11 @@ class BarcodeResultScreen extends ConsumerWidget {
     switch (contentType) {
       case 'Url Website':
         buttons.add(
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () => _launchUrl(barcodeValue, context),
             icon: const Icon(Icons.open_in_browser),
             label: AutoSizeText('barcode_result.open_in_browser'.tr()),
-            style: ElevatedButton.styleFrom(
+            style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
@@ -376,11 +376,11 @@ class BarcodeResultScreen extends ConsumerWidget {
             : barcodeValue;
 
         buttons.add(
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () => _launchUrl('tel:$phoneNumber', context),
             icon: const Icon(Icons.phone),
             label: AutoSizeText('barcode_result.call_number'.tr()),
-            style: ElevatedButton.styleFrom(
+            style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               backgroundColor: Colors.green,
               shape: RoundedRectangleBorder(
@@ -413,11 +413,11 @@ class BarcodeResultScreen extends ConsumerWidget {
             : barcodeValue;
 
         buttons.add(
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () => _launchUrl('mailto:$email', context),
             icon: const Icon(Icons.email),
             label: AutoSizeText('barcode_result.send_email'.tr()),
-            style: ElevatedButton.styleFrom(
+            style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               backgroundColor: Colors.blue,
               shape: RoundedRectangleBorder(
@@ -436,7 +436,7 @@ class BarcodeResultScreen extends ConsumerWidget {
 
         if (ssid != null) {
           buttons.add(
-            ElevatedButton.icon(
+            OutlinedButton.icon(
               onPressed: () {
                 AppDialogs.showSnackBar(
                   context,
@@ -446,7 +446,7 @@ class BarcodeResultScreen extends ConsumerWidget {
               },
               icon: const Icon(Icons.wifi),
               label: AutoSizeText('barcode_result.connect_to_network'.tr()),
-              style: ElevatedButton.styleFrom(
+              style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
@@ -494,11 +494,11 @@ class BarcodeResultScreen extends ConsumerWidget {
         }
 
         buttons.add(
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () => _launchUrl(mapUrl, context),
             icon: const Icon(Icons.map),
             label: AutoSizeText('barcode_result.open_in_maps'.tr()),
-            style: ElevatedButton.styleFrom(
+            style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               backgroundColor: Colors.green,
               shape: RoundedRectangleBorder(

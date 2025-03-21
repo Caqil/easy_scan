@@ -228,7 +228,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
               AutoSizeText(
                 'No formats found',
                 style: GoogleFonts.slabo27px(
-                    fontWeight: FontWeight.w700, fontSize: 16.sp),
+                    fontWeight: FontWeight.w700, fontSize: 14.sp.sp),
               ),
             ],
           ),

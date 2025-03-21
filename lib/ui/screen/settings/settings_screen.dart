@@ -298,7 +298,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           children: [
             AutoSizeText(
               "settings.auto_lock".tr(),
-              style: TextStyle(
+              style: GoogleFonts.slabo27px(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -349,7 +349,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               children: [
                 AutoSizeText(
                   "settings.pdf_quality".tr(),
-                  style: TextStyle(
+                  style: GoogleFonts.slabo27px(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -357,7 +357,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 SizedBox(height: 8.h),
                 AutoSizeText(
                   "settings.pdf_quality_desc".tr(),
-                  style: TextStyle(
+                  style: GoogleFonts.slabo27px(
                     fontSize: 14.sp,
                     color: Colors.grey.shade600,
                   ),
@@ -368,14 +368,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   children: [
                     AutoSizeText(
                       "Lower Quality",
-                      style: TextStyle(
+                      style: GoogleFonts.slabo27px(
                         fontSize: 12.sp,
                         color: Colors.grey.shade600,
                       ),
                     ),
                     AutoSizeText(
                       "Higher Quality",
-                      style: TextStyle(
+                      style: GoogleFonts.slabo27px(
                         fontSize: 12.sp,
                         color: Colors.grey.shade600,
                       ),
@@ -399,7 +399,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   children: [
                     AutoSizeText(
                       "$selectedQuality%",
-                      style: TextStyle(
+                      style: GoogleFonts.slabo27px(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.primary,
@@ -424,7 +424,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     SizedBox(width: 16.w),
                     Expanded(
-                      child: ElevatedButton(
+                      child: OutlinedButton(
                         onPressed: () {
                           ref
                               .read(settingsProvider.notifier)
@@ -435,7 +435,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               message: "settings.quality_saved".tr(),
                               type: SnackBarType.success);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: OutlinedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 12.r),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.r),
@@ -469,7 +469,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           children: [
             AutoSizeText(
               "settings.help_support".tr(),
-              style: TextStyle(
+              style: GoogleFonts.slabo27px(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
               ),

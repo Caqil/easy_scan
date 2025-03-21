@@ -294,7 +294,7 @@ class _QRCodeCustomizationScreenState
               SizedBox(height: 8),
               Text(
                 'Your QR code has been saved to your library',
-                style: TextStyle(
+                style: GoogleFonts.slabo27px(
                   color: Colors.green,
                   fontWeight: FontWeight.w500,
                   fontSize: 12,
@@ -378,35 +378,35 @@ class _QRCodeCustomizationScreenState
             children: [
               Text(
                 'Change Colors',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
               ),
               Text(
                   'Select different colors for your QR code or use a gradient background.'),
               SizedBox(height: 12),
               Text(
                 'Add Logo',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
               ),
               Text(
                   'Add a custom logo image to the center of your QR code. Be careful not to make it too large or the code might not scan properly.'),
               SizedBox(height: 12),
               Text(
                 'Change Shapes',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
               ),
               Text(
                   'Customize the eye and data module shapes for a unique look.'),
               SizedBox(height: 12),
               Text(
                 'Saving and Sharing',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
               ),
               Text(
                   'Your customized QR code will be saved to your library automatically. You can also share it or copy the content.'),
               SizedBox(height: 12),
               Text(
                 'Scanning',
-                style: TextStyle(
+                style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w400, fontStyle: FontStyle.italic),
               ),
               Text(

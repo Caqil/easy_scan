@@ -700,7 +700,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
             ),
             if (!_isSearching) ...[
               SizedBox(height: 24.h),
-              ElevatedButton.icon(
+              OutlinedButton.icon(
                 onPressed: () {
                   // Navigate to scan screen or show scan options
                   Navigator.pushNamed(context, '/scan');

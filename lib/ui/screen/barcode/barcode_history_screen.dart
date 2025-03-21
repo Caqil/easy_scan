@@ -80,7 +80,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 24.h),
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () {
               Navigator.pushReplacement(
                 context,
@@ -91,7 +91,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
             },
             icon: const Icon(Icons.qr_code_scanner),
             label: AutoSizeText('scan.start_scanning'.tr()),
-            style: ElevatedButton.styleFrom(
+            style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(
                 horizontal: 24.w,
                 vertical: 12.h,

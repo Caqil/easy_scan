@@ -172,9 +172,9 @@ class _CompressionBottomSheetState
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: ElevatedButton(
+                child: OutlinedButton(
                   onPressed: _isCompressing ? null : _compressPdf,
-                  style: ElevatedButton.styleFrom(
+                  style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,

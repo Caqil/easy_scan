@@ -239,147 +239,147 @@ class CompressionOptions {
     }
   }
 
-  static Future<void> processBatchCompression(
-    BuildContext context,
-    WidgetRef ref,
-    List<Document> documents,
-    CompressionLevel compressionLevel,
-  ) async {
-    if (documents.isEmpty) return;
+  // static Future<void> processBatchCompression(
+  //   BuildContext context,
+  //   WidgetRef ref,
+  //   List<Document> documents,
+  //   CompressionLevel compressionLevel,
+  // ) async {
+  //   if (documents.isEmpty) return;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => WillPopScope(
-        onWillPop: () async => false,
-        child: AlertDialog(
-          title: Text('compression.batch_compression'.tr()),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('compression.processing_documents'
-                  .tr(namedArgs: {'count': documents.length.toString()})),
-              Text('compression.using_cloud_compression'.tr()),
-              Text('compression.may_take_a_while'.tr()),
-            ],
-          ),
-        ),
-      ),
-    );
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) => WillPopScope(
+  //       onWillPop: () async => false,
+  //       child: AlertDialog(
+  //         title: Text('compression.batch_compression'.tr()),
+  //         content: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             CircularProgressIndicator(),
+  //             SizedBox(height: 16),
+  //             Text('compression.processing_documents'
+  //                 .tr(namedArgs: {'count': documents.length.toString()})),
+  //             Text('compression.using_cloud_compression'.tr()),
+  //             Text('compression.may_take_a_while'.tr()),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
 
-    int successCount = 0;
-    int failCount = 0;
-    double totalSavings = 0;
-    int totalOriginalSize = 0;
-    int totalCompressedSize = 0;
+  //   int successCount = 0;
+  //   int failCount = 0;
+  //   double totalSavings = 0;
+  //   int totalOriginalSize = 0;
+  //   int totalCompressedSize = 0;
 
-    final apiService = PdfCompressionApiService();
+  //   final apiService = PdfCompressionApiService();
 
-    for (final document in documents) {
-      try {
-        final originalFile = File(document.pdfPath);
-        final originalSize = await originalFile.length();
-        totalOriginalSize += originalSize;
+  //   for (final document in documents) {
+  //     try {
+  //       final originalFile = File(document.pdfPath);
+  //       final originalSize = await originalFile.length();
+  //       totalOriginalSize += originalSize;
 
-        String compressedPdfPath = await apiService.compressPdf(
-          file: originalFile,
-          compressionLevel: compressionLevel,
-          onProgress: null,
-        );
+  //       String compressedPdfPath = await apiService.compressPdf(
+  //         file: originalFile,
+  //         compressionLevel: compressionLevel,
+  //         onProgress: null,
+  //       );
 
-        final compressedFile = File(compressedPdfPath);
-        final compressedSize = await compressedFile.length();
+  //       final compressedFile = File(compressedPdfPath);
+  //       final compressedSize = await compressedFile.length();
 
-        if (compressedSize >= originalSize) {
-          try {
-            await compressedFile.delete();
-          } catch (e) {}
-          failCount++;
-          continue;
-        }
+  //       if (compressedSize >= originalSize) {
+  //         try {
+  //           await compressedFile.delete();
+  //         } catch (e) {}
+  //         failCount++;
+  //         continue;
+  //       }
 
-        totalCompressedSize += compressedSize;
+  //       totalCompressedSize += compressedSize;
 
-        String levelSuffix;
-        switch (compressionLevel) {
-          case CompressionLevel.low:
-            levelSuffix = 'compression.lightly_compressed_suffix'.tr();
-            break;
-          case CompressionLevel.medium:
-            levelSuffix = 'compression.compressed_suffix'.tr();
-            break;
-          case CompressionLevel.high:
-            levelSuffix = 'compression.highly_compressed_suffix'.tr();
-            break;
-          case CompressionLevel.maximum:
-            levelSuffix = 'compression.max_compressed_suffix'.tr();
-            break;
-        }
+  //       String levelSuffix;
+  //       switch (compressionLevel) {
+  //         case CompressionLevel.low:
+  //           levelSuffix = 'compression.lightly_compressed_suffix'.tr();
+  //           break;
+  //         case CompressionLevel.medium:
+  //           levelSuffix = 'compression.compressed_suffix'.tr();
+  //           break;
+  //         case CompressionLevel.high:
+  //           levelSuffix = 'compression.highly_compressed_suffix'.tr();
+  //           break;
+  //         case CompressionLevel.maximum:
+  //           levelSuffix = 'compression.max_compressed_suffix'.tr();
+  //           break;
+  //       }
 
-        final String newName = "${document.name}$levelSuffix";
+  //       final String newName = "${document.name}$levelSuffix";
 
-        final imageService = ImageService();
-        final File thumbnailFile = await imageService.createThumbnail(
-          compressedFile,
-          size: AppConstants.thumbnailSize,
-        );
+  //       final imageService = ImageService();
+  //       final File thumbnailFile = await imageService.createThumbnail(
+  //         compressedFile,
+  //         size: AppConstants.thumbnailSize,
+  //       );
 
-        final int pageCount =
-            await PdfService().getPdfPageCount(compressedPdfPath);
+  //       final int pageCount =
+  //           await PdfService().getPdfPageCount(compressedPdfPath);
 
-        final compressedDocument = Document(
-          name: newName,
-          pdfPath: compressedPdfPath,
-          pagesPaths: [compressedPdfPath],
-          pageCount: pageCount,
-          thumbnailPath: thumbnailFile.path,
-          isPasswordProtected: document.isPasswordProtected,
-          password: document.password,
-        );
+  //       final compressedDocument = Document(
+  //         name: newName,
+  //         pdfPath: compressedPdfPath,
+  //         pagesPaths: [compressedPdfPath],
+  //         pageCount: pageCount,
+  //         thumbnailPath: thumbnailFile.path,
+  //         isPasswordProtected: document.isPasswordProtected,
+  //         password: document.password,
+  //       );
 
-        await ref
-            .read(documentsProvider.notifier)
-            .addDocument(compressedDocument);
+  //       await ref
+  //           .read(documentsProvider.notifier)
+  //           .addDocument(compressedDocument);
 
-        double savings = (originalSize - compressedSize) / originalSize * 100;
-        totalSavings += savings;
+  //       double savings = (originalSize - compressedSize) / originalSize * 100;
+  //       totalSavings += savings;
 
-        successCount++;
-      } catch (e) {
-        logger.error('Error compressing document ${document.name}: $e');
-        failCount++;
-      }
-    }
+  //       successCount++;
+  //     } catch (e) {
+  //       logger.error('Error compressing document ${document.name}: $e');
+  //       failCount++;
+  //     }
+  //   }
 
-    if (context.mounted) {
-      Navigator.pop(context);
+  //   if (context.mounted) {
+  //     Navigator.pop(context);
 
-      double averageSavings =
-          successCount > 0 ? totalSavings / successCount : 0;
-      int totalBytesSaved = totalOriginalSize - totalCompressedSize;
+  //     double averageSavings =
+  //         successCount > 0 ? totalSavings / successCount : 0;
+  //     int totalBytesSaved = totalOriginalSize - totalCompressedSize;
 
-      String savingsMessage = '';
-      if (successCount > 0) {
-        savingsMessage = 'compression.avg_reduction'
-            .tr(namedArgs: {'percentage': averageSavings.toStringAsFixed(1)});
-        savingsMessage += 'compression.saved_size'
-            .tr(namedArgs: {'size': FileUtils.formatFileSize(totalBytesSaved)});
-      }
+  //     String savingsMessage = '';
+  //     if (successCount > 0) {
+  //       savingsMessage = 'compression.avg_reduction'
+  //           .tr(namedArgs: {'percentage': averageSavings.toStringAsFixed(1)});
+  //       savingsMessage += 'compression.saved_size'
+  //           .tr(namedArgs: {'size': FileUtils.formatFileSize(totalBytesSaved)});
+  //     }
 
-      AppDialogs.showSnackBar(
-        context,
-        message: 'compression.batch_complete'.tr(namedArgs: {
-          'success': successCount.toString(),
-          'fail': failCount.toString(),
-          'savings': savingsMessage
-        }),
-        type: successCount > 0 ? SnackBarType.success : SnackBarType.error,
-        duration: const Duration(seconds: 6),
-      );
-    }
-  }
+  //     AppDialogs.showSnackBar(
+  //       context,
+  //       message: 'compression.batch_complete'.tr(namedArgs: {
+  //         'success': successCount.toString(),
+  //         'fail': failCount.toString(),
+  //         'savings': savingsMessage
+  //       }),
+  //       type: successCount > 0 ? SnackBarType.success : SnackBarType.error,
+  //       duration: const Duration(seconds: 6),
+  //     );
+  //   }
+  // }
 }
 
 class _CompressionOptionsSheet extends ConsumerWidget {
@@ -480,15 +480,15 @@ class _CompressionOptionsSheet extends ConsumerWidget {
               _showLibraryPdfSelector(context, ref);
             },
           ),
-          OptionTile(
-            icon: Icons.tune,
-            title: 'compression.batch_compression'.tr(),
-            description: 'compression.compress_multiple'.tr(),
-            onTap: () {
-              Navigator.pop(context);
-              _showBatchCompressionDialog(context, ref);
-            },
-          ),
+          // OptionTile(
+          //   icon: Icons.tune,
+          //   title: 'compression.batch_compression'.tr(),
+          //   description: 'compression.compress_multiple'.tr(),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //     _showBatchCompressionDialog(context, ref);
+          //   },
+          // ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Container(
@@ -610,158 +610,158 @@ class _CompressionOptionsSheet extends ConsumerWidget {
     );
   }
 
-  void _showBatchCompressionDialog(BuildContext context, WidgetRef ref) {
-    final allDocuments = ref.read(documentsProvider);
-    final pdfDocs = allDocuments.where((doc) {
-      final extension = path.extension(doc.pdfPath).toLowerCase();
-      return extension == '.pdf';
-    }).toList();
+  // void _showBatchCompressionDialog(BuildContext context, WidgetRef ref) {
+  //   final allDocuments = ref.read(documentsProvider);
+  //   final pdfDocs = allDocuments.where((doc) {
+  //     final extension = path.extension(doc.pdfPath).toLowerCase();
+  //     return extension == '.pdf';
+  //   }).toList();
 
-    if (pdfDocs.isEmpty) {
-      AppDialogs.showSnackBar(
-        context,
-        message: 'compression.no_pdfs_found'.tr(),
-        type: SnackBarType.warning,
-      );
-      return;
-    }
+  //   if (pdfDocs.isEmpty) {
+  //     AppDialogs.showSnackBar(
+  //       context,
+  //       message: 'compression.no_pdfs_found'.tr(),
+  //       type: SnackBarType.warning,
+  //     );
+  //     return;
+  //   }
 
-    final selectedDocs = <Document>[];
-    CompressionLevel selectedLevel = CompressionLevel.medium;
+  //   final selectedDocs = <Document>[];
+  //   CompressionLevel selectedLevel = CompressionLevel.medium;
 
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text('compression.batch_compression'.tr()),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'compression.select_compression_level'.tr(),
-                    style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButton<CompressionLevel>(
-                    value: selectedLevel,
-                    isExpanded: true,
-                    onChanged: (CompressionLevel? newValue) {
-                      if (newValue != null) {
-                        setState(() {
-                          selectedLevel = newValue;
-                        });
-                      }
-                    },
-                    items: [
-                      DropdownMenuItem(
-                        value: CompressionLevel.low,
-                        child: Text('compression.low_best_quality'.tr()),
-                      ),
-                      DropdownMenuItem(
-                        value: CompressionLevel.medium,
-                        child: Text('compression.medium_balanced'.tr()),
-                      ),
-                      DropdownMenuItem(
-                        value: CompressionLevel.high,
-                        child: Text('compression.high_smaller_size'.tr()),
-                      ),
-                      DropdownMenuItem(
-                        value: CompressionLevel.maximum,
-                        child: Text('compression.maximum_smallest_size'.tr()),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'compression.select_pdfs_to_compress'.tr(),
-                    style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 200.h,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: pdfDocs.length,
-                      itemBuilder: (context, index) {
-                        final doc = pdfDocs[index];
-                        final isSelected = selectedDocs.contains(doc);
-                        return CheckboxListTile(
-                          title: AutoSizeText(
-                            doc.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          subtitle: AutoSizeText('compression.page_count'.tr(
-                              namedArgs: {'count': doc.pageCount.toString()})),
-                          value: isSelected,
-                          onChanged: (value) {
-                            setState(() {
-                              if (value!) {
-                                selectedDocs.add(doc);
-                              } else {
-                                selectedDocs.remove(doc);
-                              }
-                            });
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.cloud,
-                            size: 16,
-                            color: Theme.of(context).colorScheme.primary),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'compression.using_cloud_compression'.tr(),
-                            style: GoogleFonts.slabo27px(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('common.cancel'.tr()),
-            ),
-            TextButton(
-              onPressed: selectedDocs.isEmpty
-                  ? null
-                  : () {
-                      Navigator.pop(context);
-                      CompressionOptions.processBatchCompression(
-                          context, ref, selectedDocs, selectedLevel);
-                    },
-              child: Text('compression.compress'.tr()),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => StatefulBuilder(
+  //       builder: (context, setState) => AlertDialog(
+  //         title: Text('compression.batch_compression'.tr()),
+  //         content: SizedBox(
+  //           width: double.maxFinite,
+  //           child: SingleChildScrollView(
+  //             child: Column(
+  //               mainAxisSize: MainAxisSize.min,
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   'compression.select_compression_level'.tr(),
+  //                   style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
+  //                 ),
+  //                 const SizedBox(height: 8),
+  //                 DropdownButton<CompressionLevel>(
+  //                   value: selectedLevel,
+  //                   isExpanded: true,
+  //                   onChanged: (CompressionLevel? newValue) {
+  //                     if (newValue != null) {
+  //                       setState(() {
+  //                         selectedLevel = newValue;
+  //                       });
+  //                     }
+  //                   },
+  //                   items: [
+  //                     DropdownMenuItem(
+  //                       value: CompressionLevel.low,
+  //                       child: Text('compression.low_best_quality'.tr()),
+  //                     ),
+  //                     DropdownMenuItem(
+  //                       value: CompressionLevel.medium,
+  //                       child: Text('compression.medium_balanced'.tr()),
+  //                     ),
+  //                     DropdownMenuItem(
+  //                       value: CompressionLevel.high,
+  //                       child: Text('compression.high_smaller_size'.tr()),
+  //                     ),
+  //                     DropdownMenuItem(
+  //                       value: CompressionLevel.maximum,
+  //                       child: Text('compression.maximum_smallest_size'.tr()),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 const SizedBox(height: 16),
+  //                 Text(
+  //                   'compression.select_pdfs_to_compress'.tr(),
+  //                   style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
+  //                 ),
+  //                 const SizedBox(height: 8),
+  //                 SizedBox(
+  //                   height: 200.h,
+  //                   child: ListView.builder(
+  //                     shrinkWrap: true,
+  //                     itemCount: pdfDocs.length,
+  //                     itemBuilder: (context, index) {
+  //                       final doc = pdfDocs[index];
+  //                       final isSelected = selectedDocs.contains(doc);
+  //                       return CheckboxListTile(
+  //                         title: AutoSizeText(
+  //                           doc.name,
+  //                           maxLines: 1,
+  //                           overflow: TextOverflow.ellipsis,
+  //                         ),
+  //                         subtitle: AutoSizeText('compression.page_count'.tr(
+  //                             namedArgs: {'count': doc.pageCount.toString()})),
+  //                         value: isSelected,
+  //                         onChanged: (value) {
+  //                           setState(() {
+  //                             if (value!) {
+  //                               selectedDocs.add(doc);
+  //                             } else {
+  //                               selectedDocs.remove(doc);
+  //                             }
+  //                           });
+  //                         },
+  //                       );
+  //                     },
+  //                   ),
+  //                 ),
+  //                 const SizedBox(height: 12),
+  //                 Container(
+  //                   padding: const EdgeInsets.all(8),
+  //                   decoration: BoxDecoration(
+  //                     color: Theme.of(context)
+  //                         .colorScheme
+  //                         .primary
+  //                         .withOpacity(0.1),
+  //                     borderRadius: BorderRadius.circular(4),
+  //                   ),
+  //                   child: Row(
+  //                     children: [
+  //                       Icon(Icons.cloud,
+  //                           size: 16,
+  //                           color: Theme.of(context).colorScheme.primary),
+  //                       const SizedBox(width: 8),
+  //                       Expanded(
+  //                         child: Text(
+  //                           'compression.using_cloud_compression'.tr(),
+  //                           style: GoogleFonts.slabo27px(
+  //                             fontWeight: FontWeight.w700,
+  //                             fontSize: 12,
+  //                             color: Theme.of(context).colorScheme.primary,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(context),
+  //             child: Text('common.cancel'.tr()),
+  //           ),
+  //           TextButton(
+  //             onPressed: selectedDocs.isEmpty
+  //                 ? null
+  //                 : () {
+  //                     Navigator.pop(context);
+  //                     CompressionOptions.processBatchCompression(
+  //                         context, ref, selectedDocs, selectedLevel);
+  //                   },
+  //             child: Text('compression.compress'.tr()),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }

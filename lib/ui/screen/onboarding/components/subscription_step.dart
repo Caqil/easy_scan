@@ -477,12 +477,12 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
   Widget _buildTrialButton(ColorScheme colorScheme) {
     return Column(
       children: [
-        ElevatedButton(
+        OutlinedButton(
           onPressed: _isLoading
               ? null
               : () =>
                   _showPackages ? _togglePackages() : _startTrialOrPurchase(),
-          style: ElevatedButton.styleFrom(
+          style: OutlinedButton.styleFrom(
             backgroundColor: colorScheme.primary,
             foregroundColor: colorScheme.onPrimary,
             padding: EdgeInsets.symmetric(vertical: 16.h),

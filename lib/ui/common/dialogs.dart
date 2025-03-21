@@ -95,7 +95,7 @@ class AppDialogs {
   static void showSnackBar(
     BuildContext context, {
     required String message,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 2),
     SnackBarAction? action,
     SnackBarType type = SnackBarType.normal,
     Color? backgroundColor,
@@ -127,7 +127,7 @@ class AppDialogs {
 
     overlayEntry = OverlayEntry(
       builder: (BuildContext context) => Positioned(
-        bottom: MediaQuery.of(context).viewInsets.bottom + bottomMargin,
+        bottom: MediaQuery.of(context).viewInsets.top + bottomMargin,
         left: 16.0,
         right: 16.0,
         child: Material(

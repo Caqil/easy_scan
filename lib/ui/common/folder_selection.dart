@@ -449,7 +449,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
             AutoSizeText(
               'folder_selector.no_subfolders_found'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 16,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey.shade600,
               ),
@@ -512,12 +512,12 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                     folder.name,
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 16,
+                      fontSize: 14.sp,
                     ),
                   ),
                   if (hasSubfolders)
                     AutoSizeText(
-                      'folder_selector.subfolder_count'.tr(
+                      'folder_selector.subfolder_count.one'.tr(
                         namedArgs: {'count': subfolders.length.toString()},
                       ),
                       style: GoogleFonts.slabo27px(

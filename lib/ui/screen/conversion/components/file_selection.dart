@@ -42,7 +42,7 @@ class FileSelectionSection extends StatelessWidget {
             icon: const Icon(Icons.upload_file),
             label: AutoSizeText(
                 "file_selection.select_file_button".tr()), // Localized string
-            style: ElevatedButton.styleFrom(
+            style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
             ),
           ),

@@ -243,11 +243,11 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               ),
               SizedBox(width: 12.w),
               Expanded(
-                child: ElevatedButton.icon(
+                child: OutlinedButton.icon(
                   icon: const Icon(Icons.history),
                   label: AutoSizeText('common.save'.tr()),
                   onPressed: () => _saveScanToHistory(barcode),
-                  style: ElevatedButton.styleFrom(
+                  style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 12.h),
                     backgroundColor: Theme.of(context).primaryColor,
                     foregroundColor: Colors.white,

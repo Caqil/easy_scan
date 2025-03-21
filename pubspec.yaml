@@ -78,6 +78,7 @@ dependencies:
 
   archive: any
   http_parser: any
+  purchases_flutter: ^8.6.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

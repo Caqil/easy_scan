@@ -485,9 +485,9 @@ class CompressionBottomBar extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: ElevatedButton(
+              child: OutlinedButton(
                 onPressed: isCompressing ? null : onCompress,
-                style: ElevatedButton.styleFrom(
+                style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Theme.of(context).colorScheme.onPrimary,

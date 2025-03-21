@@ -52,7 +52,7 @@ class AuthOverlay extends ConsumerWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
+              OutlinedButton(
                 onPressed:
                     authState.isAuthenticating ? null : authState.authenticate,
                 child: AutoSizeText(authState.isAuthenticating

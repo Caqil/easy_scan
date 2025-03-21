@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:scanpro/config/routes.dart';
 import '../common/app_bar.dart';
 
 class FaqScreen extends ConsumerStatefulWidget {
@@ -216,7 +217,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
           SizedBox(height: 16.h),
           OutlinedButton.icon(
             onPressed: () {
-              // Email support action
+              AppRoutes.navigateToContactSupport(context);
             },
             icon: Icon(Icons.email_outlined),
             label: AutoSizeText("faq.email_support".tr()),

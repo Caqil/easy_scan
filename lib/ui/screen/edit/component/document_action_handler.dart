@@ -94,7 +94,7 @@ class DocumentActionHandler {
                       child: AutoSizeText('common.cancel'.tr()),
                     ),
                     const SizedBox(width: 16),
-                    ElevatedButton(
+                    OutlinedButton(
                       onPressed: () {
                         controller.isPasswordProtected =
                             controller.passwordController.text.isNotEmpty;

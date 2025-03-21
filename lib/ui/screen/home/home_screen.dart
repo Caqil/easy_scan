@@ -619,7 +619,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         context: context,
         builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                title: AutoSizeText('document.rename_document'.tr()),
+                title: Text('document.rename_document'.tr()),
                 content: CupertinoTextField(
                   controller: controller,
                   autofocus: true,
@@ -627,7 +627,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: AutoSizeText('common.cancel'.tr()),
+                    child: Text('common.cancel'.tr()),
                   ),
                   TextButton(
                     onPressed: () {
@@ -635,7 +635,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Navigator.pop(context, controller.text.trim());
                       }
                     },
-                    child: AutoSizeText('common.rename'.tr()),
+                    child: Text('common.rename'.tr()),
                   ),
                 ],
               ),
@@ -790,7 +790,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             AutoSizeText(
               'no_documents_yet'.tr(),
               style: GoogleFonts.slabo27px(
-                  fontWeight: FontWeight.w700, fontSize: 16.sp),
+                  fontWeight: FontWeight.w700, fontSize: 14.sp.sp),
             ),
           ],
         ),
@@ -837,7 +837,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               document.name,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 14.sp,
               ),
             ),
             subtitle: Column(

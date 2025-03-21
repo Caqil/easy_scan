@@ -103,13 +103,13 @@ class _BarcodeGeneratorScreenState
                 // Generate button
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton.icon(
+                  child: OutlinedButton.icon(
                     onPressed: _validateAndGenerate,
                     icon: const Icon(Icons.qr_code),
                     label: AutoSizeText(_isGenerating
                         ? 'barcode_generator.generating'.tr()
                         : 'barcode_generator.generate_barcode'.tr()),
-                    style: ElevatedButton.styleFrom(
+                    style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
@@ -1129,7 +1129,7 @@ class _BarcodeGeneratorScreenState
                     onPressed: () => Navigator.pop(context),
                     child: AutoSizeText('barcode_generator.close'.tr()),
                   ),
-                  ElevatedButton.icon(
+                  OutlinedButton.icon(
                     icon: const Icon(Icons.share),
                     label: AutoSizeText('common.share'.tr()),
                     onPressed: () {

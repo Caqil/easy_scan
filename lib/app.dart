@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/config/routes.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/providers/locale_provider.dart';
@@ -14,7 +15,6 @@ import 'providers/settings_provider.dart';
 import 'ui/widget/auth_wrapper.dart';
 import 'ui/widget/auth_overlay.dart';
 import 'package:scanpro/services/subscription_service.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 
 void main() {
   runApp(ProviderScope(child: DocApp()));
@@ -73,7 +73,7 @@ class _DocAppState extends ConsumerState<DocApp>
         _isInitialized = true;
       });
     } catch (e) {
-      print('Error initializing app: $e');
+      logger.error('Error initializing app: $e');
       setState(() {
         _isInitialized = true;
       });
@@ -142,7 +142,7 @@ class _DocAppState extends ConsumerState<DocApp>
 class SplashScreen extends StatelessWidget {
   final Animation<double> animation;
 
-  const SplashScreen({required this.animation});
+  const SplashScreen({super.key, required this.animation});
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +171,7 @@ class SplashScreen extends StatelessWidget {
             SizedBox(height: 20.h),
             AutoSizeText(
               'common.loading'.tr(), // Using easy_localization
-              style: TextStyle(
+              style: GoogleFonts.slabo27px(
                 fontSize: 16.sp,
                 color: Colors.grey,
               ),

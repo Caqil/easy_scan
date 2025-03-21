@@ -492,7 +492,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                         children: [
                           AutoSizeText(
                             '${index + 1}',
-                            style: const TextStyle(
+                            style: GoogleFonts.slabo27px(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -583,11 +583,11 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
   Widget _buildMergeButton(ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton.icon(
+      child: OutlinedButton.icon(
         onPressed: _selectedDocuments.length < 2 ? null : _mergePdfs,
         icon: const Icon(Icons.merge_type),
         label: AutoSizeText('merge_pdf.merge_pdfs'.tr()),
-        style: ElevatedButton.styleFrom(
+        style: OutlinedButton.styleFrom(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -769,7 +769,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                 child: Center(
                                   child: Text(
                                     '${index + 1}',
-                                    style: const TextStyle(
+                                    style: GoogleFonts.slabo27px(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -806,7 +806,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                 onPressed: () => Navigator.pop(context, false),
                 child: Text('common.cancel'.tr()),
               ),
-              ElevatedButton(
+              OutlinedButton(
                 onPressed: () => Navigator.pop(context, true),
                 child: Text('merge_pdf.merge_now'.tr()),
               ),
@@ -871,7 +871,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             child: Center(
               child: Text(
                 number,
-                style: const TextStyle(
+                style: GoogleFonts.slabo27px(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 12,

@@ -390,9 +390,9 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
     return SizedBox(
       width: double.infinity,
       height: 52.h,
-      child: ElevatedButton(
+      child: OutlinedButton(
         onPressed: _isSending ? null : _sendEmail,
-        style: ElevatedButton.styleFrom(
+        style: OutlinedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: Theme.of(context).colorScheme.primary,
           shape: RoundedRectangleBorder(

@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/models/document.dart';
 import 'package:scanpro/services/share_limit_service.dart';
@@ -141,50 +142,99 @@ class DocumentShareService {
   void _showUpgradeToPremiumDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false, // Prevents closing by tapping outside
       builder: (context) => AlertDialog(
-        title: Text('share.limit_reached.title'.tr()),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.error_outline,
-              color: Colors.amber,
-              size: 48,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'share.limit_reached.message'.tr(
-                namedArgs: {'limit': '5'},
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'share.limit_reached.upgrade_prompt'.tr(),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16), // Softer corners
         ),
+        elevation: 8,
+        title: Text(
+          'share.limit_reached.title'.tr(),
+          textAlign: TextAlign.center,
+          style: GoogleFonts.slabo27px(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: SingleChildScrollView(
+          // Prevents overflow on smaller screens
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                color: Colors.amber,
+                size: 48,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'share.limit_reached.message'.tr(namedArgs: {'limit': '5'}),
+                textAlign: TextAlign.center,
+                style: GoogleFonts.slabo27px(
+                  color: Colors.grey[800],
+                  fontSize: 14.sp,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'share.limit_reached.upgrade_prompt'.tr(),
+                textAlign: TextAlign.center,
+                style: GoogleFonts.slabo27px(
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ],
+          ),
+        ),
+        actionsAlignment:
+            MainAxisAlignment.spaceEvenly, // Better button spacing
+        actionsPadding: const EdgeInsets.only(bottom: 16), // More padding
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('common.cancel'.tr()),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey[600],
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 12,
+              ),
+            ),
+            child: Text(
+              'common.cancel'.tr(),
+              style: GoogleFonts.slabo27px(fontSize: 14.sp),
+            ),
           ),
-          ElevatedButton(
+          OutlinedButton(
             onPressed: () {
               Navigator.pop(context);
-              // Navigate to premium screen
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => const PremiumScreen(),
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(
+            style: OutlinedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Colors.white,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 12,
+              ),
             ),
-            child: Text('share.limit_reached.upgrade'.tr()),
+            child: Text(
+              'share.limit_reached.upgrade'.tr(),
+              style: GoogleFonts.slabo27px(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),

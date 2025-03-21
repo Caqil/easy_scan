@@ -183,9 +183,9 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
           Padding(
               padding: EdgeInsets.all(24.r),
               child: Column(children: [
-                ElevatedButton(
+                OutlinedButton(
                   onPressed: _isStarting ? null : _startTrial,
-                  style: ElevatedButton.styleFrom(
+                  style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.orange,
                     minimumSize: Size(double.infinity, 56.h),
@@ -217,9 +217,9 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
             padding: EdgeInsets.all(24.r),
             child: Column(
               children: [
-                ElevatedButton(
+                OutlinedButton(
                   onPressed: _isStarting ? null : _startTrial,
-                  style: ElevatedButton.styleFrom(
+                  style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.orange,
                     minimumSize: Size(double.infinity, 56.h),

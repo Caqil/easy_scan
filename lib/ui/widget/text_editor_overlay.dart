@@ -145,7 +145,7 @@ class _TextEditorOverlayState extends State<TextEditorOverlay> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        ElevatedButton(
+                        OutlinedButton(
                           onPressed: () {
                             setState(() {
                               _selectedElement = null;

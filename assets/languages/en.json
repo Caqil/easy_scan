@@ -726,12 +726,14 @@
     "change_folder_name": "Change folder name",
     "change_color_option": "Change Color",
     "customize_appearance": "Customize appearance",
-    "move_folder": "Move Folder",
-    "change_location": "Change location",
     "delete_folder_option": "Delete",
     "remove_folder": "Remove folder permanently",
     "add_documents_option": "Add Documents",
-    "move_documents_to": "Move documents to {folderName}"
+    "move_documents_to": "Move documents to {folderName}",
+    "move_folder": "Move Folder",
+    "change_location": "Change the folder's location in the directory",
+    "folder_moved_success": "Successfully moved '{{folderName}}' to '{{destinationFolder}}'",
+    "move_folder_error": "Error moving folder: {{error}}"
   },
   "folder_creator": {
     "folder_name": "Folder Name",
@@ -1642,7 +1644,29 @@
     "subscription_successful": "Subscription successful!",
     "subscription_restored": "Purchases restored successfully!",
     "no_subscription_found": "No previous purchases found",
-    "restore_error": "Error restoring purchases"
+    "restore_error": "Error restoring purchases",
+    "step_privacy": "Privacy Policy",
+    "privacy": {
+      "main_title": "Your Privacy Matters",
+      "subtitle": "We're committed to protecting your data and privacy",
+      "data_protection": {
+        "title": "Secure Data Handling",
+        "description": "Your documents are encrypted and stored securely on your device."
+      },
+      "user_control": {
+        "title": "Complete Control",
+        "description": "You decide what data is collected and how it's used."
+      },
+      "transparency": {
+        "title": "Full Transparency",
+        "description": "We are open about our data practices and provide clear information."
+      },
+      "full_policy": "Full Privacy Policy",
+      "full_policy_description": "Read our comprehensive privacy guidelines",
+      "acceptance_prefix": "I have read and agree to the ",
+      "policy_link_text": "Privacy Policy"
+    }
+  
   },
 
   "subscription": {

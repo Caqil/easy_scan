@@ -195,7 +195,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                     AutoSizeText(
                                       widget.document.name,
                                       style: GoogleFonts.slabo27px(
-                                        fontSize: 16,
+                                        fontSize: 14.sp,
                                         fontWeight: FontWeight.bold,
                                         color: isDarkMode
                                             ? Colors.white

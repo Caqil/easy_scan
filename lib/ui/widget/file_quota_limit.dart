@@ -146,7 +146,8 @@ class FileQuotaStatusWidget extends ConsumerWidget {
       padding: padding,
       child: AutoSizeText(
         'Error loading quota information',
-        style: TextStyle(color: Theme.of(context).colorScheme.error),
+        style:
+            GoogleFonts.slabo27px(color: Theme.of(context).colorScheme.error),
       ),
     );
   }

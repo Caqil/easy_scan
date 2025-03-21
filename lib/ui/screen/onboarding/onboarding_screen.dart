@@ -4,10 +4,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:scanpro/providers/settings_provider.dart';
 import 'package:scanpro/providers/locale_provider.dart';
 import 'package:scanpro/ui/screen/onboarding/components/language_step.dart';
 import 'package:scanpro/ui/screen/onboarding/components/permission_step.dart';
+import 'package:scanpro/ui/screen/onboarding/components/privacy_step.dart';
 import 'package:scanpro/ui/screen/onboarding/components/subscription_step.dart';
 import 'package:scanpro/ui/screen/onboarding/components/theme_step.dart';
 import 'package:scanpro/utils/constants.dart';
@@ -24,9 +24,9 @@ class OnboardingScreen extends ConsumerStatefulWidget {
   final VoidCallback onComplete;
 
   const OnboardingScreen({
-    Key? key,
+    super.key,
     required this.onComplete,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -38,13 +38,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   late AnimationController _animationController;
 
   int _currentPage = 0;
-  final int _totalPages = 4; // Permissions, Language, Theme, Subscription
+  final int _totalPages =
+      5; // Permissions, Language, Theme, Subscription, Privacy
 
   // Initialize with default values
   bool _permissionsGranted = false;
   bool _languageSelected = false;
   bool _themeSelected = false;
   bool _subscriptionHandled = false;
+  bool _privacyAccepted = false;
   bool _isInitialized = false;
   bool _isCompleting = false;
 
@@ -63,8 +65,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
 
   Future<void> _initializeData() async {
     try {
-      // Get initial states from provider
-      final settings = ref.read(settingsProvider);
       final localState = ref.read(localProvider);
 
       // Check permissions
@@ -128,6 +128,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     }
   }
 
+  void _onPrivacyAccepted() {
+    setState(() {
+      _privacyAccepted = true;
+    });
+    // Complete onboarding on final privacy step
+    _completeOnboarding();
+  }
+
   void _onPermissionsGranted() {
     setState(() {
       _permissionsGranted = true;
@@ -152,9 +160,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   void _onSubscriptionHandled() {
     setState(() {
       _subscriptionHandled = true;
+      _currentPage++; // Move to privacy step
     });
-    // Immediately proceed to complete onboarding
-    _completeOnboarding();
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   Future<void> _completeOnboarding() async {
@@ -193,14 +204,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
         return AlertDialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-          title: AutoSizeText(
+          title: Text(
             'onboarding.skip_title'.tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.bold,
               fontSize: 18.sp,
             ),
           ),
-          content: AutoSizeText(
+          content: Text(
             'onboarding.skip_message'.tr(),
             style: GoogleFonts.slabo27px(
               fontSize: 14.sp,
@@ -209,7 +220,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: AutoSizeText(
+              child: Text(
                 'common.cancel'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
@@ -217,12 +228,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                 ),
               ),
             ),
-            ElevatedButton(
+            OutlinedButton(
               onPressed: () {
                 Navigator.pop(context);
                 _completeOnboarding();
               },
-              style: ElevatedButton.styleFrom(
+              style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(
@@ -230,7 +241,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
               ),
-              child: AutoSizeText(
+              child: Text(
                 'common.skip'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
@@ -333,14 +344,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                       // Step 4: Subscription Trial
                       SubscriptionStep(
                           onSubscriptionHandled: _onSubscriptionHandled),
+
+                      // Step 5: Privacy
+                      PrivacyStep(onPrivacyAccepted: _onPrivacyAccepted),
                     ],
                   ),
                 ),
               ),
             ),
-
-            // Bottom navigation
-            _buildBottomNavigation(colorScheme),
           ],
         ),
       ),
@@ -388,7 +399,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                 ],
               ),
               child: Icon(
-                _currentPage == 0 ? Icons.close : Icons.arrow_back,
+                _currentPage == 0
+                    ? Icons.close
+                    : _currentPage == _totalPages - 1
+                        ? Icons.close
+                        : Icons.arrow_back,
                 color: colorScheme.primary,
                 size: 20.r,
               ),
@@ -476,126 +491,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     );
   }
 
-  Widget _buildBottomNavigation(ColorScheme colorScheme) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h)
-          .copyWith(bottom: 24.h + MediaQuery.of(context).padding.bottom),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24.r),
-          topRight: Radius.circular(24.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Page dots indicator
-          Row(
-            children: List.generate(
-              _totalPages,
-              (index) => AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: _currentPage == index ? 24.w : 8.w,
-                height: 8.h,
-                margin: EdgeInsets.only(right: 6.w),
-                decoration: BoxDecoration(
-                  color: _currentPage == index
-                      ? colorScheme.primary
-                      : colorScheme.surfaceVariant,
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-              ),
-            ),
-          ),
-
-          SizedBox(width: 24.w),
-
-          // Next/Complete button
-          Expanded(
-            child: ElevatedButton(
-              onPressed: _isCompleting
-                  ? null
-                  : () {
-                      switch (_currentPage) {
-                        case 0: // Permissions
-                          if (_permissionsGranted) _goToNextPage();
-                          break;
-                        case 1: // Language
-                          if (_languageSelected) _goToNextPage();
-                          break;
-                        case 2: // Theme
-                          if (_themeSelected) _goToNextPage();
-                          break;
-                        case 3: // Subscription
-                          if (_subscriptionHandled) _completeOnboarding();
-                          break;
-                      }
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorScheme.primary,
-                foregroundColor: colorScheme.onPrimary,
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                elevation: 4,
-                shadowColor: colorScheme.primary.withOpacity(0.4),
-              ),
-              child: _isCompleting
-                  ? SizedBox(
-                      width: 24.r,
-                      height: 24.r,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            colorScheme.onPrimary),
-                        strokeWidth: 2.5,
-                      ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AutoSizeText(
-                          _currentPage == _totalPages - 1
-                              ? 'onboarding.get_started'.tr()
-                              : 'onboarding.next'.tr(),
-                          style: GoogleFonts.slabo27px(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Icon(
-                          _currentPage == _totalPages - 1
-                              ? Icons.check_circle_outline
-                              : Icons.arrow_forward,
-                          size: 20.r,
-                        ),
-                      ],
-                    ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   String _getStepName() {
     switch (_currentPage) {
       case 0:
         return 'onboarding.step_permissions'.tr();
       case 1:
-        return 'onboarding.step_language'.tr();
+        return 'onboarding.select_your_language'.tr();
       case 2:
         return 'onboarding.step_theme'.tr();
       case 3:
         return 'onboarding.step_subscription'.tr();
+      case 4:
+        return 'onboarding.step_privacy'.tr();
       default:
         return '';
     }

@@ -106,12 +106,12 @@ class ConversionResultSection extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: ElevatedButton.icon(
+                child: OutlinedButton.icon(
                   onPressed: () => OpenFile.open(state.convertedFilePath!),
                   icon: const Icon(Icons.file_open),
                   label: AutoSizeText("conversion_result.success.open"
                       .tr()), // Localized string
-                  style: ElevatedButton.styleFrom(
+                  style: OutlinedButton.styleFrom(
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                   ),

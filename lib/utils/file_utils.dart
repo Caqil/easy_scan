@@ -250,8 +250,9 @@ class FileUtils {
     }
   }
 
-  static String? getCompressionLevelTitle() {
-    switch (_compressionLevel) {
+  static String? getCompressionLevelTitle([CompressionLevel? level]) {
+    final currentLevel = level ?? _compressionLevel;
+    switch (currentLevel) {
       case CompressionLevel.low:
         return 'compression_descriptions.low'.tr();
       case CompressionLevel.medium:
@@ -263,8 +264,9 @@ class FileUtils {
     }
   }
 
-  static String? getCompressionLevelDescription() {
-    switch (_compressionLevel) {
+  static String? getCompressionLevelDescription([CompressionLevel? level]) {
+    final currentLevel = level ?? _compressionLevel;
+    switch (currentLevel) {
       case CompressionLevel.low:
         return 'compression_details.low'.tr();
       case CompressionLevel.medium:

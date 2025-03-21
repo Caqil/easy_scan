@@ -20,9 +20,9 @@ class PurchaseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(16.r),
-      child: ElevatedButton(
+      child: OutlinedButton(
         onPressed: isPurchasing ? null : onPressed,
-        style: ElevatedButton.styleFrom(
+        style: OutlinedButton.styleFrom(
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
