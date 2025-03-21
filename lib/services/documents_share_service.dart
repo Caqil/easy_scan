@@ -26,7 +26,7 @@ class DocumentShareService {
     try {
       // Check if user has premium subscription
       final hasSubscription =
-          await _subscriptionService.hasActiveTrialOrSubscription();
+          await _subscriptionService.hasActiveSubscription();
 
       // Check share limit for free users
       final hasReachedLimit = await _shareLimitService.hasReachedShareLimit();
@@ -83,7 +83,7 @@ class DocumentShareService {
     try {
       // Check if user has premium subscription
       final hasSubscription =
-          await _subscriptionService.hasActiveTrialOrSubscription();
+          await _subscriptionService.hasActiveSubscription();
 
       // Check share limit for free users
       final hasReachedLimit = await _shareLimitService.hasReachedShareLimit();

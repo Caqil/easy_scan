@@ -4,8 +4,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/utils/permission_utils.dart';
-import 'package:lottie/lottie.dart';
-
 class PermissionStep extends StatefulWidget {
   final VoidCallback onPermissionsGranted;
 
@@ -107,25 +105,6 @@ class _PermissionStepState extends State<PermissionStep>
               ),
             ),
             SizedBox(height: 32.h),
-
-            // Lottie Animation
-            Center(
-              child: Container(
-                height: 180.h,
-                child: Lottie.asset(
-                  'assets/animations/permissions.json',
-                  fit: BoxFit.contain,
-                  controller: _animationController,
-                  onLoaded: (composition) {
-                    _animationController.duration = composition.duration;
-                  },
-                ),
-              ),
-            ),
-
-            SizedBox(height: 32.h),
-
-            // Permission Cards
             _buildPermissionCard(
               title: 'onboarding.camera_permission'.tr(),
               description: 'onboarding.camera_permission_desc'.tr(),

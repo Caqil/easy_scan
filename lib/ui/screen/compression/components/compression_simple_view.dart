@@ -163,7 +163,7 @@ class CompressionSimpleView extends ConsumerWidget {
     SubscriptionStatus subscriptionStatus,
   ) {
     final bool isEnabled = isAlwaysAvailable ||
-        (subscriptionStatus.hasFullAccess && !isAlwaysAvailable);
+        (subscriptionStatus.isActive && !isAlwaysAvailable);
     final bool isSelected = compressionLevel == level;
 
     return InkWell(

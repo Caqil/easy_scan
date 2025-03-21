@@ -4,7 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 
@@ -28,9 +28,9 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
   bool _hasSubscription = false;
   bool _showPackages = false;
   bool _isTrialEnabled = true; // Added trial toggle state
-  List<ProductDetails> _products = [];
+  List<Package> _packages = [];
   late AnimationController _animationController;
-  String? _selectedProductId;
+  String? _selectedPackageId;
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
     );
 
     _checkSubscriptionStatus();
-    _loadProducts();
+    _loadPackages();
     _animationController.forward();
   }
 
@@ -87,35 +87,44 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
     }
   }
 
-  Future<void> _loadProducts() async {
+  Future<void> _loadPackages() async {
     try {
-      final subscriptionService = ref.read(subscriptionServiceProvider);
-      final products = await subscriptionService.getSubscriptionPackages();
+      final offerings = await Purchases.getOfferings();
+
+      if (offerings.current == null ||
+          offerings.current!.availablePackages.isEmpty) {
+        return;
+      }
 
       if (mounted) {
         setState(() {
-          _products = products;
+          _packages = offerings.current!.availablePackages;
 
-          ProductDetails? yearlyProduct;
-          ProductDetails? monthlyProduct;
-          ProductDetails? weeklyProduct;
+          // Find default package based on trial preference
+          Package? yearlyPackage;
+          Package? monthlyPackage;
 
-          for (var product in products) {
-            if (product.id == 'scanpro_premium_yearly') {
-              yearlyProduct = product;
-            } else if (product.id == 'scanpro_premium_monthly') {
-              monthlyProduct = product;
-            } else if (product.id == 'scanpro_premium_weekly') {
-              weeklyProduct = product;
+          for (var package in _packages) {
+            // Look for yearly package
+            if (package.packageType == PackageType.annual ||
+                package.identifier.contains('yearly')) {
+              yearlyPackage = package;
+            }
+            // Look for monthly package
+            else if (package.packageType == PackageType.monthly ||
+                package.identifier.contains('monthly')) {
+              monthlyPackage = package;
             }
           }
 
-          _selectedProductId = _isTrialEnabled
-              ? (yearlyProduct?.id ??
-                  (products.isNotEmpty ? products.first.id : null))
-              : (monthlyProduct?.id ??
-                  weeklyProduct?.id ??
-                  (products.isNotEmpty ? products.first.id : null));
+          if (_isTrialEnabled) {
+            _selectedPackageId = yearlyPackage?.identifier ??
+                (_packages.isNotEmpty ? _packages.first.identifier : null);
+          } else {
+            _selectedPackageId = monthlyPackage?.identifier ??
+                yearlyPackage?.identifier ??
+                (_packages.isNotEmpty ? _packages.first.identifier : null);
+          }
         });
       }
     } catch (e) {
@@ -131,15 +140,53 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
 
     try {
       final subscriptionService = ref.read(subscriptionServiceProvider);
-      ProductDetails? selectedProduct = _products.firstWhere(
-        (p) => p.id == _selectedProductId,
-      );
+
+      // Find the selected package
+      Package? selectedPackage;
+      for (var package in _packages) {
+        if (package.identifier == _selectedPackageId) {
+          selectedPackage = package;
+          break;
+        }
+      }
+
+      // If no package is selected or found, try to find a default one
+      if (selectedPackage == null) {
+        if (_isTrialEnabled) {
+          // Look for package with trial or annual package
+          for (var package in _packages) {
+            if (package.packageType == PackageType.annual ||
+                package.identifier.contains('yearly')) {
+              selectedPackage = package;
+              break;
+            }
+          }
+        } else {
+          // Look for monthly package
+          for (var package in _packages) {
+            if (package.packageType == PackageType.monthly ||
+                package.identifier.contains('monthly')) {
+              selectedPackage = package;
+              break;
+            }
+          }
+        }
+
+        // If still no package found, use the first available
+        if (selectedPackage == null && _packages.isNotEmpty) {
+          selectedPackage = _packages.first;
+        }
+      }
+
+      if (selectedPackage == null) {
+        throw Exception('No subscription package available');
+      }
 
       bool success;
       if (_isTrialEnabled) {
         success = await subscriptionService.startTrial();
       } else {
-        success = await subscriptionService.purchasePackage(selectedProduct);
+        success = await subscriptionService.purchasePackage(selectedPackage);
       }
 
       if (mounted && success) {
@@ -180,7 +227,56 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
   }
 
   Future<void> _restorePurchases() async {
-    // ... same as previous implementation
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+    });
+
+    try {
+      final subscriptionService = ref.read(subscriptionServiceProvider);
+      final restored = await subscriptionService.restorePurchases();
+
+      if (mounted) {
+        if (restored) {
+          setState(() {
+            _hasSubscription = true;
+            _isLoading = false;
+          });
+
+          AppDialogs.showSnackBar(
+            context,
+            message: 'onboarding.restore_success'.tr(),
+            type: SnackBarType.success,
+          );
+
+          widget.onSubscriptionHandled();
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+
+          AppDialogs.showSnackBar(
+            context,
+            message: 'onboarding.no_purchases'.tr(),
+            type: SnackBarType.warning,
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _hasError = true;
+          _errorMessage = e.toString();
+        });
+
+        AppDialogs.showSnackBar(
+          context,
+          message: 'onboarding.restore_error'.tr(),
+          type: SnackBarType.error,
+        );
+      }
+    }
   }
 
   void _togglePackages() {
@@ -318,7 +414,6 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
   }
 
   Widget _buildFeaturesList(ColorScheme colorScheme) {
-    // ... same as previous implementation
     final features = [
       {
         'icon': Icons.document_scanner,
@@ -360,7 +455,6 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
     required String description,
     required ColorScheme colorScheme,
   }) {
-    // ... same as previous implementation
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
       child: Row(
@@ -453,17 +547,27 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
             onChanged: (value) {
               setState(() {
                 _isTrialEnabled = value;
-                _selectedProductId = _isTrialEnabled
-                    ? _products
-                        .firstWhere(
-                          (p) => p.id == 'scanpro_premium_yearly',
-                        )
-                        .id
-                    : _products
-                        .firstWhere(
-                          (p) => p.id == 'scanpro_premium_monthly',
-                        )
-                        .id;
+
+                // Update selected package based on trial state
+                if (_isTrialEnabled) {
+                  // Find yearly package
+                  for (var package in _packages) {
+                    if (package.packageType == PackageType.annual ||
+                        package.identifier.contains('yearly')) {
+                      _selectedPackageId = package.identifier;
+                      break;
+                    }
+                  }
+                } else {
+                  // Find monthly package
+                  for (var package in _packages) {
+                    if (package.packageType == PackageType.monthly ||
+                        package.identifier.contains('monthly')) {
+                      _selectedPackageId = package.identifier;
+                      break;
+                    }
+                  }
+                }
               });
             },
             activeColor: colorScheme.primary,
@@ -546,7 +650,6 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
   }
 
   Widget _buildSubscriptionActiveCard(ColorScheme colorScheme) {
-    // ... same as previous implementation
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
@@ -580,7 +683,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
   }
 
   Widget _buildSubscriptionPackages(ColorScheme colorScheme) {
-    if (_products.isEmpty) {
+    if (_packages.isEmpty) {
       return Container(
         margin: EdgeInsets.only(bottom: 24.h),
         child: Center(
@@ -646,84 +749,78 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
   }
 
   Widget _buildYearlyCard(ColorScheme colorScheme) {
-    ProductDetails? yearlyProduct = _products.firstWhere(
-      (p) => p.id == 'scanpro_premium_yearly',
-    );
-    final isSelected = _selectedProductId == yearlyProduct.id;
+    // Find yearly package
+    Package? yearlyPackage;
+    for (var package in _packages) {
+      if (package.packageType == PackageType.annual ||
+          package.identifier.contains('yearly')) {
+        yearlyPackage = package;
+        break;
+      }
+    }
 
-    final monthlyProduct = _products.firstWhere(
-      (p) => p.id == 'scanpro_premium_monthly',
-    );
-    final yearlyPrice = double.tryParse(
-            yearlyProduct.price.replaceAll(RegExp(r'[^\d.]'), '')) ??
-        0;
-    final monthlyPrice = double.tryParse(
-            monthlyProduct.price.replaceAll(RegExp(r'[^\d.]'), '')) ??
-        0;
-    final savings =
-        ((monthlyPrice * 12 - yearlyPrice) / (monthlyPrice * 12) * 100).round();
+    if (yearlyPackage == null) return const SizedBox.shrink();
 
     return _buildProductCard(
-      product: yearlyProduct,
+      package: yearlyPackage,
       colorScheme: colorScheme,
-      isSelected: isSelected,
+      isSelected: _selectedPackageId == yearlyPackage.identifier,
       title: 'onboarding.yearly_plan'.tr(),
       description: 'onboarding.yearly_details'.tr(),
-      savingsText: 'Save $savings%',
       isBestValue: true,
     );
   }
 
   Widget _buildMonthlyCard(ColorScheme colorScheme) {
-    ProductDetails? monthlyProduct = _products.firstWhere(
-      (p) => p.id == 'scanpro_premium_monthly',
-    );
-    final isSelected = _selectedProductId == monthlyProduct.id;
+    // Find monthly package
+    Package? monthlyPackage;
+    for (var package in _packages) {
+      if (package.packageType == PackageType.monthly ||
+          package.identifier.contains('monthly')) {
+        monthlyPackage = package;
+        break;
+      }
+    }
 
-    final weeklyProduct = _products.firstWhere(
-      (p) => p.id == 'scanpro_premium_weekly',
-    );
-    final monthlyPrice = double.tryParse(
-            monthlyProduct.price.replaceAll(RegExp(r'[^\d.]'), '')) ??
-        0;
-    final weeklyPrice = double.tryParse(
-            weeklyProduct.price.replaceAll(RegExp(r'[^\d.]'), '')) ??
-        0;
-    final savings =
-        ((weeklyPrice * 4 - monthlyPrice) / (weeklyPrice * 4) * 100).round();
+    if (monthlyPackage == null) return const SizedBox.shrink();
 
     return _buildProductCard(
-      product: monthlyProduct,
+      package: monthlyPackage,
       colorScheme: colorScheme,
-      isSelected: isSelected,
+      isSelected: _selectedPackageId == monthlyPackage.identifier,
       title: 'onboarding.monthly_plan'.tr(),
       description: 'onboarding.monthly_details'.tr(),
-      savingsText: 'Save $savings%',
     );
   }
 
   Widget _buildWeeklyCard(ColorScheme colorScheme) {
-    ProductDetails? weeklyProduct = _products.firstWhere(
-      (p) => p.id == 'scanpro_premium_weekly',
-    );
-    final isSelected = _selectedProductId == weeklyProduct.id;
+    // Find weekly package
+    Package? weeklyPackage;
+    for (var package in _packages) {
+      if (package.packageType == PackageType.weekly ||
+          package.identifier.contains('weekly')) {
+        weeklyPackage = package;
+        break;
+      }
+    }
+
+    if (weeklyPackage == null) return const SizedBox.shrink();
 
     return _buildProductCard(
-      product: weeklyProduct,
+      package: weeklyPackage,
       colorScheme: colorScheme,
-      isSelected: isSelected,
+      isSelected: _selectedPackageId == weeklyPackage.identifier,
       title: 'onboarding.weekly_plan'.tr(),
       description: 'onboarding.weekly_details'.tr(),
     );
   }
 
   Widget _buildProductCard({
-    required ProductDetails product,
+    required Package package,
     required ColorScheme colorScheme,
     required bool isSelected,
     required String title,
     required String description,
-    String? savingsText,
     bool isBestValue = false,
   }) {
     return Card(
@@ -741,7 +838,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
       child: InkWell(
         onTap: () {
           setState(() {
-            _selectedProductId = product.id;
+            _selectedPackageId = package.identifier;
           });
         },
         borderRadius: BorderRadius.circular(12.r),
@@ -773,39 +870,12 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: AutoSizeText(
-                                title,
-                                style: GoogleFonts.slabo27px(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            if (savingsText != null) ...[
-                              SizedBox(width: 8.w),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 6.w,
-                                  vertical: 2.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.green.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(6.r),
-                                ),
-                                child: AutoSizeText(
-                                  savingsText,
-                                  style: GoogleFonts.slabo27px(
-                                    color: Colors.green[700],
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
+                        AutoSizeText(
+                          title,
+                          style: GoogleFonts.slabo27px(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         SizedBox(height: 4.h),
                         AutoSizeText(
@@ -822,7 +892,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       AutoSizeText(
-                        product.price,
+                        package.storeProduct.priceString,
                         style: GoogleFonts.slabo27px(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,

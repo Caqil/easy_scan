@@ -36,7 +36,7 @@ class FileLimitService {
     print("FORCE CHECK: Total files: $totalCount");
 
     final subscriptionService = SubscriptionService();
-    final isPremium = await subscriptionService.hasActiveTrialOrSubscription();
+    final isPremium = await subscriptionService.hasActiveSubscription();
 
     if (isPremium) return false;
     return totalCount >= _freeUserFileLimit;
@@ -47,7 +47,7 @@ class FileLimitService {
     try {
       final subscriptionService = SubscriptionService();
       final hasSubscription =
-          await subscriptionService.hasActiveTrialOrSubscription();
+          await subscriptionService.hasActiveSubscription();
 
       // Premium users have unlimited files
       if (hasSubscription) {
@@ -67,7 +67,7 @@ class FileLimitService {
     try {
       final subscriptionService = SubscriptionService();
       final hasSubscription =
-          await subscriptionService.hasActiveTrialOrSubscription();
+          await subscriptionService.hasActiveSubscription();
 
       // Premium users have unlimited files
       if (hasSubscription) {
@@ -87,7 +87,7 @@ class FileLimitService {
     try {
       final subscriptionService = SubscriptionService();
       final hasSubscription =
-          await subscriptionService.hasActiveTrialOrSubscription();
+          await subscriptionService.hasActiveSubscription();
 
       // Premium users have unlimited files
       if (hasSubscription) {

@@ -138,7 +138,7 @@ class OcrService {
   Future<bool> isOcrAvailable() async {
     try {
       final subscriptionService = SubscriptionService();
-      return await subscriptionService.hasActiveTrialOrSubscription();
+      return await subscriptionService.hasActiveSubscription();
     } catch (e) {
       logger.error('Error checking OCR availability: $e');
       return false;

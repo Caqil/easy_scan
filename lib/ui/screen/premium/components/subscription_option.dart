@@ -3,30 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:purchases_flutter/models/package_wrapper.dart';
 
-class SubscriptionOptionsWidget extends StatefulWidget {
-  final List<ProductDetails> products;
-  final String? selectedProductId;
+class RevenueCatSubscriptionOptions extends StatelessWidget {
+  final List<Package> packages;
+  final String? selectedPackageId;
   final bool isTrialEnabled;
   final VoidCallback onFreePlanSelected;
-  final ValueChanged<String> onProductSelected;
+  final ValueChanged<String> onPackageSelected;
 
-  const SubscriptionOptionsWidget({
-    Key? key,
-    required this.products,
-    required this.selectedProductId,
+  const RevenueCatSubscriptionOptions({
+    super.key,
+    required this.packages,
+    required this.selectedPackageId,
     required this.isTrialEnabled,
     required this.onFreePlanSelected,
-    required this.onProductSelected,
-  }) : super(key: key);
+    required this.onPackageSelected,
+  });
 
-  @override
-  State<SubscriptionOptionsWidget> createState() =>
-      _SubscriptionOptionsWidgetState();
-}
-
-class _SubscriptionOptionsWidgetState extends State<SubscriptionOptionsWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,10 +38,10 @@ class _SubscriptionOptionsWidgetState extends State<SubscriptionOptionsWidget> {
             ),
           ),
           child: Column(
-            key: ValueKey('${widget.products.length}_${widget.isTrialEnabled}'),
+            key: ValueKey('${packages.length}_$isTrialEnabled'),
             children: [
-              if (widget.products.isNotEmpty)
-                if (widget.isTrialEnabled)
+              if (packages.isNotEmpty)
+                if (isTrialEnabled)
                   _buildYearlyOption()
                 else ...[
                   _buildWeeklyOption(),
@@ -72,7 +66,11 @@ class _SubscriptionOptionsWidgetState extends State<SubscriptionOptionsWidget> {
     bool showCheckbox = true,
     String? savingsText,
   }) {
-    // ... same as previous implementation
+    final context = WidgetsBinding
+            .instance.focusManager.primaryFocus?.context ??
+        WidgetsBinding.instance.focusManager.rootScope.focusedChild?.context;
+    if (context == null) return const SizedBox.shrink();
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -250,89 +248,123 @@ class _SubscriptionOptionsWidgetState extends State<SubscriptionOptionsWidget> {
   }
 
   Widget _buildYearlyOption() {
-    ProductDetails? yearlyProduct;
-    for (var product in widget.products) {
-      if (product.id == 'scanpro_premium_yearly') {
-        yearlyProduct = product;
+    // Find yearly package
+    Package? yearlyPackage;
+    for (var package in packages) {
+      if (package.packageType == PackageType.annual ||
+          package.identifier.contains('yearly')) {
+        yearlyPackage = package;
         break;
       }
     }
 
-    if (yearlyProduct == null) return const SizedBox.shrink();
+    if (yearlyPackage == null) return const SizedBox.shrink();
 
-    final monthlyProduct = widget.products.firstWhere(
-      (p) => p.id == 'scanpro_premium_monthly',
-    );
-    final yearlyPrice = double.tryParse(
-            yearlyProduct.price.replaceAll(RegExp(r'[^\d.]'), '')) ??
-        0;
-    final monthlyPrice = double.tryParse(
-            monthlyProduct.price.replaceAll(RegExp(r'[^\d.]'), '')) ??
-        0;
-    final savings =
-        ((monthlyPrice * 12 - yearlyPrice) / (monthlyPrice * 12) * 100).round();
+    // Find monthly package for pricing comparison
+    Package? monthlyPackage;
+    for (var package in packages) {
+      if (package.packageType == PackageType.monthly ||
+          package.identifier.contains('monthly')) {
+        monthlyPackage = package;
+        break;
+      }
+    }
+
+    String savingsText = '';
+    if (monthlyPackage != null) {
+      final yearlyPrice = yearlyPackage.storeProduct.price;
+      final monthlyPrice = monthlyPackage.storeProduct.price;
+
+      if (yearlyPrice < monthlyPrice * 12) {
+        final savings =
+            ((monthlyPrice * 12 - yearlyPrice) / (monthlyPrice * 12) * 100)
+                .round();
+        savingsText = 'Save $savings%';
+      }
+    }
 
     return _buildPlanCard(
-      title: yearlyProduct.title,
-      subtitle: yearlyProduct.description,
-      price: yearlyProduct.price,
-      selected: widget.selectedProductId == yearlyProduct.id,
+      title: yearlyPackage.identifier.contains('yearly')
+          ? 'subscription.yearly'.tr()
+          : yearlyPackage.storeProduct.title,
+      subtitle: yearlyPackage.storeProduct.description,
+      price: yearlyPackage.storeProduct.priceString,
+      selected: selectedPackageId == yearlyPackage.identifier,
       isBestValue: true,
-      savingsText: 'Save $savings%',
-      onTap: () => widget.onProductSelected(yearlyProduct!.id),
+      savingsText: savingsText,
+      onTap: () => onPackageSelected(yearlyPackage!.identifier),
     );
   }
 
   Widget _buildMonthlyOption() {
-    ProductDetails? monthlyProduct;
-    for (var product in widget.products) {
-      if (product.id == 'scanpro_premium_monthly') {
-        monthlyProduct = product;
+    // Find monthly package
+    Package? monthlyPackage;
+    for (var package in packages) {
+      if (package.packageType == PackageType.monthly ||
+          package.identifier.contains('monthly')) {
+        monthlyPackage = package;
         break;
       }
     }
 
-    if (monthlyProduct == null) return const SizedBox.shrink();
+    if (monthlyPackage == null) return const SizedBox.shrink();
 
-    final weeklyProduct = widget.products.firstWhere(
-      (p) => p.id == 'scanpro_premium_weekly',
-    );
-    final monthlyPrice = double.tryParse(
-            monthlyProduct.price.replaceAll(RegExp(r'[^\d.]'), '')) ??
-        0;
-    final weeklyPrice = double.tryParse(
-            weeklyProduct.price.replaceAll(RegExp(r'[^\d.]'), '')) ??
-        0;
-    final savings =
-        ((weeklyPrice * 4 - monthlyPrice) / (weeklyPrice * 4) * 100).round();
+    // Find weekly package for pricing comparison
+    Package? weeklyPackage;
+    for (var package in packages) {
+      if (package.packageType == PackageType.weekly ||
+          package.identifier.contains('weekly')) {
+        weeklyPackage = package;
+        break;
+      }
+    }
+
+    String savingsText = '';
+    if (weeklyPackage != null) {
+      final monthlyPrice = monthlyPackage.storeProduct.price;
+      final weeklyPrice = weeklyPackage.storeProduct.price;
+
+      if (monthlyPrice < weeklyPrice * 4) {
+        final savings =
+            ((weeklyPrice * 4 - monthlyPrice) / (weeklyPrice * 4) * 100)
+                .round();
+        savingsText = 'Save $savings%';
+      }
+    }
 
     return _buildPlanCard(
-      title: monthlyProduct.title,
-      subtitle: monthlyProduct.description,
-      price: monthlyProduct.price,
-      selected: widget.selectedProductId == monthlyProduct.id,
-      savingsText: 'Save $savings%',
-      onTap: () => widget.onProductSelected(monthlyProduct!.id),
+      title: monthlyPackage.identifier.contains('monthly')
+          ? 'subscription.monthly'.tr()
+          : monthlyPackage.storeProduct.title,
+      subtitle: monthlyPackage.storeProduct.description,
+      price: monthlyPackage.storeProduct.priceString,
+      selected: selectedPackageId == monthlyPackage.identifier,
+      savingsText: savingsText,
+      onTap: () => onPackageSelected(monthlyPackage!.identifier),
     );
   }
 
   Widget _buildWeeklyOption() {
-    ProductDetails? weeklyProduct;
-    for (var product in widget.products) {
-      if (product.id == 'scanpro_premium_weekly') {
-        weeklyProduct = product;
+    // Find weekly package
+    Package? weeklyPackage;
+    for (var package in packages) {
+      if (package.packageType == PackageType.weekly ||
+          package.identifier.contains('weekly')) {
+        weeklyPackage = package;
         break;
       }
     }
 
-    if (weeklyProduct == null) return const SizedBox.shrink();
+    if (weeklyPackage == null) return const SizedBox.shrink();
 
     return _buildPlanCard(
-      title: weeklyProduct.title.replaceAll('ScanPro', ''),
-      subtitle: weeklyProduct.description,
-      price: weeklyProduct.price,
-      selected: widget.selectedProductId == weeklyProduct.id,
-      onTap: () => widget.onProductSelected(weeklyProduct!.id),
+      title: weeklyPackage.identifier.contains('weekly')
+          ? 'subscription.weekly'.tr()
+          : weeklyPackage.storeProduct.title,
+      subtitle: weeklyPackage.storeProduct.description,
+      price: weeklyPackage.storeProduct.priceString,
+      selected: selectedPackageId == weeklyPackage.identifier,
+      onTap: () => onPackageSelected(weeklyPackage!.identifier),
     );
   }
 }

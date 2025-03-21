@@ -4,7 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
@@ -24,82 +24,93 @@ class PremiumScreen extends ConsumerStatefulWidget {
 
 class _PremiumScreenState extends ConsumerState<PremiumScreen> {
   bool _purchasing = false;
-  String? _selectedProductId;
-  bool _purchasePending = false;
-  List<ProductDetails> _products = [];
+  String? _selectedPackageId;
+  List<Package> _packages = [];
   String _errorMessage = '';
-  bool _loadingProducts = true;
-  bool _isTrialEnabled = true; // Added trial toggle state
+  bool _loadingPackages = true;
+  bool _isTrialEnabled = true; // Trial toggle state
 
   @override
   void initState() {
     super.initState();
-    _loadProducts();
+    _loadPackages();
   }
 
-  Future<void> _loadProducts() async {
+  Future<void> _loadPackages() async {
     setState(() {
-      _loadingProducts = true;
+      _loadingPackages = true;
       _errorMessage = '';
     });
 
     try {
-      final subscriptionService = ref.read(subscriptionServiceProvider);
-      final products = await subscriptionService.getSubscriptionPackages();
+      final offerings = await Purchases.getOfferings();
+
+      if (offerings.current == null) {
+        logger.error('No offerings available from RevenueCat');
+        throw Exception('No subscription offerings found');
+      }
+
+      final packages = offerings.current!.availablePackages;
 
       if (mounted) {
         setState(() {
-          _products = products;
-          _loadingProducts = false;
+          _packages = packages;
+          _loadingPackages = false;
 
-          // Default select the yearly product if available for better value
-          ProductDetails? yearlyProduct;
-          ProductDetails? monthlyProduct;
-          ProductDetails? weeklyProduct;
-          // Find monthly and yearly products
-          for (var product in products) {
-            if (product.id == 'scanpro_premium_yearly') {
-              yearlyProduct = product;
-            } else if (product.id == 'scanpro_premium_monthly') {
-              monthlyProduct = product;
-            } else if (product.id == 'scanpro_premium_weekly') {
-              weeklyProduct = product;
+          // Default select the yearly package for better value
+          Package? yearlyPackage;
+          Package? monthlyPackage;
+          Package? weeklyPackage;
+
+          // Find packages based on type
+          for (var package in packages) {
+            if (package.packageType == PackageType.annual ||
+                package.identifier.contains('yearly')) {
+              yearlyPackage = package;
+            } else if (package.packageType == PackageType.monthly ||
+                package.identifier.contains('monthly')) {
+              monthlyPackage = package;
+            } else if (package.packageType == PackageType.weekly ||
+                package.identifier.contains('weekly')) {
+              weeklyPackage = package;
             }
           }
 
           // Prioritize yearly, then monthly, then first available
-          _selectedProductId =
-              yearlyProduct?.id ?? monthlyProduct?.id ?? weeklyProduct!.id;
+          _selectedPackageId = yearlyPackage?.identifier ??
+              monthlyPackage?.identifier ??
+              weeklyPackage?.identifier ??
+              packages.first.identifier;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _loadingProducts = false;
+          _loadingPackages = false;
           _errorMessage = 'subscription.load_error'.tr();
-          logger.error('Error loading products: $e');
+          logger.error('Error loading packages: $e');
         });
       }
     }
   }
 
   Future<void> _purchase() async {
-    if (_selectedProductId == null || _products.isEmpty) {
+    if (_selectedPackageId == null || _packages.isEmpty) {
       setState(() {
         _errorMessage = 'subscription.select_plan'.tr();
       });
       return;
     }
 
-    ProductDetails? selectedProduct;
-    for (var product in _products) {
-      if (product.id == _selectedProductId) {
-        selectedProduct = product;
+    Package? selectedPackage;
+    for (var package in _packages) {
+      if (package.identifier == _selectedPackageId) {
+        selectedPackage = package;
         break;
       }
     }
 
-    if (selectedProduct == null) {
+    if (selectedPackage == null) {
       setState(() {
         _errorMessage = 'subscription.no_product'.tr();
       });
@@ -114,25 +125,17 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
     try {
       final subscriptionService = ref.read(subscriptionServiceProvider);
 
-      await subscriptionService.purchasePackage(selectedProduct);
-      await Future.delayed(const Duration(seconds: 1));
-      final subscriptionStatus = ref.read(subscriptionStatusProvider);
-      final isSuccess =
-          subscriptionStatus.isActive || subscriptionStatus.isTrialActive;
-      await Future.delayed(const Duration(seconds: 1));
+      final success =
+          await subscriptionService.purchasePackage(selectedPackage);
+
       if (mounted) {
-        if (isSuccess) {
+        if (success) {
           Navigator.of(context).pop();
           AppDialogs.showSnackBar(
             context,
             message: 'subscription.success'.tr(),
             type: SnackBarType.success,
           );
-        } else if (_purchasePending) {
-          setState(() {
-            _purchasing = true;
-            _errorMessage = '';
-          });
         } else {
           setState(() {
             _purchasing = false;
@@ -192,6 +195,11 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
             message: 'subscription.restore_success'.tr(),
             type: SnackBarType.success,
           );
+
+          // Close the premium screen since the user has restored their subscription
+          Future.delayed(Duration(seconds: 1), () {
+            if (mounted) Navigator.of(context).pop();
+          });
         } else {
           AppDialogs.showSnackBar(
             context,
@@ -228,7 +236,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _loadingProducts
+      body: _loadingPackages
           ? Center(child: CircularProgressIndicator())
           : SafeArea(
               child: Stack(
@@ -247,32 +255,42 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                           onChanged: (value) {
                             setState(() {
                               _isTrialEnabled = value;
-                              // Update selected product based on trial state
-                              _selectedProductId = _isTrialEnabled
-                                  ? _products
-                                      .firstWhere(
-                                        (p) => p.id == 'scanpro_premium_yearly',
-                                      )
-                                      .id
-                                  : _products
-                                      .firstWhere(
-                                        (p) =>
-                                            p.id == 'scanpro_premium_monthly',
-                                      )
-                                      .id;
+
+                              // Update selected package based on trial state
+                              if (_isTrialEnabled) {
+                                // Find yearly package
+                                for (var package in _packages) {
+                                  if (package.packageType ==
+                                          PackageType.annual ||
+                                      package.identifier.contains('yearly')) {
+                                    _selectedPackageId = package.identifier;
+                                    break;
+                                  }
+                                }
+                              } else {
+                                // Find monthly package
+                                for (var package in _packages) {
+                                  if (package.packageType ==
+                                          PackageType.monthly ||
+                                      package.identifier.contains('monthly')) {
+                                    _selectedPackageId = package.identifier;
+                                    break;
+                                  }
+                                }
+                              }
                             });
                           },
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: SubscriptionOptionsWidget(
-                            products: _products,
-                            selectedProductId: _selectedProductId,
+                          child: RevenueCatSubscriptionOptions(
+                            packages: _packages,
+                            selectedPackageId: _selectedPackageId,
                             isTrialEnabled: _isTrialEnabled,
                             onFreePlanSelected: () =>
                                 Navigator.of(context).pop(),
-                            onProductSelected: (productId) {
-                              setState(() => _selectedProductId = productId);
+                            onPackageSelected: (packageId) {
+                              setState(() => _selectedPackageId = packageId);
                             },
                           ),
                         ),

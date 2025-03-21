@@ -47,7 +47,7 @@ class ShareLimitService {
     try {
       final subscriptionService = SubscriptionService();
       final hasSubscription =
-          await subscriptionService.hasActiveTrialOrSubscription();
+          await subscriptionService.hasActiveSubscription();
 
       // Premium users have unlimited shares
       if (hasSubscription) {
@@ -68,7 +68,7 @@ class ShareLimitService {
     try {
       final subscriptionService = SubscriptionService();
       final hasSubscription =
-          await subscriptionService.hasActiveTrialOrSubscription();
+          await subscriptionService.hasActiveSubscription();
 
       // Premium users have unlimited shares
       if (hasSubscription) {

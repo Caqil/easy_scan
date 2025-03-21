@@ -83,7 +83,7 @@ class SubscriptionNavigator {
     final subscriptionStatus = ref.read(subscriptionStatusProvider);
 
     // If user has full access, return true
-    if (subscriptionStatus.hasFullAccess) {
+    if (subscriptionStatus.isActive) {
       return true;
     }
 
@@ -98,7 +98,7 @@ class SubscriptionNavigator {
     if (shouldUpgrade) {
       // Refresh the status
       final updatedStatus = ref.read(subscriptionStatusProvider);
-      return updatedStatus.hasFullAccess;
+      return updatedStatus.isActive;
     }
 
     return false;

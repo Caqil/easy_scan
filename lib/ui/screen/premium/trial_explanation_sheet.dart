@@ -330,7 +330,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
 
     try {
       final subscriptionService = ref.read(subscriptionServiceProvider);
-      final success = await subscriptionService.startTrial();
+      final success = await subscriptionService.hasActiveSubscription();
 
       if (mounted) {
         if (success) {

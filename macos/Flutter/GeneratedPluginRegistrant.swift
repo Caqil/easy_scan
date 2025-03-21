@@ -13,7 +13,6 @@ import firebase_analytics
 import firebase_core
 import flutter_doc_scanner
 import flutter_image_compress_macos
-import in_app_purchase_storekit
 import local_auth_darwin
 import mobile_scanner
 import open_file_mac
@@ -35,7 +34,6 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FLTFirebaseCorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseCorePlugin"))
   FlutterDocScannerPlugin.register(with: registry.registrar(forPlugin: "FlutterDocScannerPlugin"))
   FlutterImageCompressMacosPlugin.register(with: registry.registrar(forPlugin: "FlutterImageCompressMacosPlugin"))
-  InAppPurchasePlugin.register(with: registry.registrar(forPlugin: "InAppPurchasePlugin"))
   FLALocalAuthPlugin.register(with: registry.registrar(forPlugin: "FLALocalAuthPlugin"))
   MobileScannerPlugin.register(with: registry.registrar(forPlugin: "MobileScannerPlugin"))
   OpenFilePlugin.register(with: registry.registrar(forPlugin: "OpenFilePlugin"))
