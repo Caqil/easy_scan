@@ -1,10 +1,15 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:hive/hive.dart';
 import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
+import 'package:scanpro/models/document.dart';
+import 'package:scanpro/services/file_limit_service.dart';
+import 'package:scanpro/utils/constants.dart';
+import 'package:scanpro/utils/premium_upgrade_utils.dart';
 
 import '../providers/scan_provider.dart';
 import '../ui/common/dialogs.dart';
@@ -37,6 +42,14 @@ class ScanService {
     required Function(bool) setLoading,
     VoidCallback? onSuccess,
   }) async {
+    final fileLimitService = FileLimitService();
+    final result = await fileLimitService.forceCheckFileLimitReached(
+      Hive.box<Document>(AppConstants.documentsBoxName),
+    );
+    if (result) {
+      PremiumUpgradeUtils.showFileLimitReachedDialog(context);
+      return;
+    }
     final hasPermission = await PermissionUtils.hasCameraPermission();
     if (!hasPermission) {
       final granted = await PermissionUtils.requestCameraPermission();
@@ -146,6 +159,14 @@ class ScanService {
     required Function(bool) setLoading,
     VoidCallback? onSuccess,
   }) async {
+    final fileLimitService = FileLimitService();
+    final result = await fileLimitService.forceCheckFileLimitReached(
+      Hive.box<Document>(AppConstants.documentsBoxName),
+    );
+    if (result) {
+      PremiumUpgradeUtils.showFileLimitReachedDialog(context);
+      return;
+    }
     try {
       setLoading(true);
 

@@ -373,7 +373,18 @@
   
 },
 "share": {
-  "share_via_apps": "Bagikan melalui aplikasi lain"
+"share_via_apps": "Bagikan melalui aplikasi lain",
+"error": "Kesalahan saat berbagi: {error}",
+"file_not_found": "File tidak ditemukan atau tidak dapat diakses",
+"no_valid_files": "Tidak ada file yang valid untuk dibagikan",
+"limit_reached": {
+"title": "Batas Berbagi Telah Tercapai",
+"message": "Anda telah menggunakan semua {limit} berbagi gratis yang tersedia bulan ini.",
+"upgrade_prompt": "Tingkatkan ke Premium untuk berbagi tanpa batas!",
+"upgrade": "Tingkatkan ke Premium"
+},
+"remaining": "{count} share{plural} tersisa. Tingkatkan untuk berbagi tanpa batas!",
+"upgrade": "Tingkatkan"
 },
 "document": {
   "original_size": "Ukuran Asli",

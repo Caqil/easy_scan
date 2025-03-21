@@ -150,7 +150,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   });
                 },
                 onSubmitted: (value) {
-                  // Explicitly search when user presses enter key
                   setState(() {
                     _searchQuery = value;
                   });
@@ -264,9 +263,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           },
                           onEdit: (p0) {
                             navigateByDocumentType(context, p0);
-                          },
-                          onShare: (p0) {
-                            _shareDocument(context, p0, ref);
                           },
                         );
                       },

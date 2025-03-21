@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:scanpro/ui/widget/file_quota_limit.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'components/settings_navigation_tile.dart';
 
@@ -79,8 +80,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 16.h),
-
-            // Appearance settings
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FileQuotaStatusWidget(),
+            ),
+            SizedBox(height: 16.h),
             SettingsSectionHeader(title: "settings.appearance".tr()),
             SettingsCard(
               children: [

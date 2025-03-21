@@ -453,11 +453,17 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
     });
 
     try {
-      // SMTP configuration (e.g., Gmail)
-      String smtpUsername = 'your-email@gmail.com'; // Replace with your email
-      String smtpPassword =
-          'your-app-password'; // Replace with your App Password
-      final smtpServer = gmail(smtpUsername, smtpPassword);
+      // SMTP configuration for privateemail.com
+      String smtpUsername = 'support@billiongroup.net';
+      String smtpPassword = 'Aqswde!123';
+      final smtpServer = SmtpServer(
+        'mail.privateemail.com',
+        username: smtpUsername,
+        password: smtpPassword,
+        port: 587,
+        ssl: false, // Using TLS/STARTTLS instead of SSL
+        allowInsecure: false,
+      );
 
       // Gather diagnostic information
       String deviceInfo = '';
@@ -474,16 +480,14 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
 
       // Prepare the email message
       final message = Message()
-        ..from = Address(smtpUsername, _nameController.text) // Sender's name
-        ..recipients
-            .add('support@scanpro.app') // Replace with your support email
+        ..from = Address(smtpUsername, _nameController.text)
+        ..recipients.add('support@scanpro.app')
         ..subject = _selectedSubject
         ..text = _messageController.text + deviceInfo
         ..attachments =
             _attachmentPaths.map((path) => FileAttachment(File(path))).toList();
 
-      // Send the email
-      final sendReport = await send(message, smtpServer);
+      await send(message, smtpServer);
 
       // Clear the form
       if (mounted) {

@@ -8,6 +8,11 @@ class DocumentNotifier extends StateNotifier<List<Document>> {
 
   DocumentNotifier(this._documentsBox) : super([]) {
     _loadDocuments();
+    loadAll();
+  }
+  Future<void> loadAll() async {
+    final documents = _documentsBox.values.toList();
+    state = documents;
   }
 
   void _loadDocuments() {

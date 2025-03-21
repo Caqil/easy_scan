@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:scanpro/app.dart';
+import 'package:scanpro/providers/document_provider.dart';
+import 'package:scanpro/services/file_limit_service.dart';
 import 'package:scanpro/services/logger_service.dart';
 import 'package:scanpro/services/subscription_service.dart';
 import 'services/storage_service.dart';
@@ -34,14 +36,18 @@ void main() async {
         'Starting app with saved locale: ${initialLocale.languageCode}_${initialLocale.countryCode}');
   }
   final container = ProviderContainer();
-
-  // Initialize subscription service
   await container.read(subscriptionServiceProvider).initialize();
-
-  // Restore subscription status
+  await container.read(documentsProvider.notifier).loadAll();
   await container.read(subscriptionServiceProvider).refreshSubscriptionStatus();
   runApp(
     ProviderScope(
+      overrides: [
+        fileLimitServiceProvider,
+        remainingFilesProvider,
+        maxAllowedFilesProvider,
+        hasReachedFileLimitProvider,
+        totalFilesProvider,
+      ],
       child: EasyLocalization(
           path: 'assets/languages',
           fallbackLocale: Locale('en', 'US'),

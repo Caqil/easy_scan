@@ -188,6 +188,11 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ref.watch(settingsProvider).darkMode
+          ? ThemeMode.dark
+          : ThemeMode.light,
       routerConfig: AppRoutes.router,
       builder: (context, child) {
         return AuthWrapper(

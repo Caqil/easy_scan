@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/providers/document_provider.dart';
+import 'package:scanpro/ui/common/document_actions.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/models/document.dart';
-import 'package:scanpro/services/share_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +29,6 @@ class ViewScreen extends ConsumerStatefulWidget {
 
 class _ViewScreenState extends ConsumerState<ViewScreen>
     with SingleTickerProviderStateMixin {
-  final ShareService _shareService = ShareService();
   bool _isLoading = false;
   bool _isToolbarVisible = true;
   bool _isInfoPanelVisible = false;
@@ -125,7 +124,10 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                   child: DocumentViewerWidget(
                     document: widget.document,
                     showAppBar: false,
-                    onShare: _shareDocument,
+                    onShare: () async {
+                      await DocumentActions.shareDocument(
+                          context, ref, widget.document);
+                    },
                   )),
             ),
 
@@ -219,7 +221,10 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                   _buildActionButton(
                                     icon: Icons.share_rounded,
                                     tooltip: 'common.share'.tr(),
-                                    onTap: _shareDocument,
+                                    onTap: () async {
+                                      await DocumentActions.shareDocument(
+                                          context, ref, widget.document);
+                                    },
                                     isDarkMode: isDarkMode,
                                   ),
                                   _buildActionButton(
@@ -521,30 +526,6 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
         ],
       ),
     );
-  }
-
-  Future<void> _shareDocument() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      await _shareService.sharePdf(
-        widget.document.pdfPath,
-        subject: widget.document.name,
-      );
-    } catch (e) {
-      // Show error
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error sharing document: ${e.toString()}',
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
   Future<void> _printPDF() async {

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:scanpro/services/documents_share_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/screen/compression/components/compression_tools.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,15 @@ class DocumentActions {
         onCompress: onCompress,
       ),
     );
+  }
+
+  static Future<void> shareDocument(
+    BuildContext context,
+    WidgetRef ref,
+    Document document,
+  ) async {
+    final documentShareService = ref.read(documentShareServiceProvider);
+    await documentShareService.shareDocument(context, ref, document);
   }
 }
 
@@ -230,10 +240,13 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                   icon: Icons.share_outlined,
                   title: 'common.share'.tr(),
                   description: 'share.share_via_apps'.tr(),
-                  onTap: () {
+                  onTap: () async {
                     Navigator.pop(context);
                     if (onShare != null) {
                       onShare!(document);
+                    } else {
+                      await DocumentActions.shareDocument(
+                          context, ref, document);
                     }
                   },
                 ),

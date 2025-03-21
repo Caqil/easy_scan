@@ -313,7 +313,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                     top: 8.h,
                     left: 8.w,
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back),
+                      icon: const Icon(Icons.close),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),

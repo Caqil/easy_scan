@@ -220,7 +220,9 @@
     "detect_edges": "Detect Edges",
     "detect_edges_desc": "Automatically crops to document boundaries",
     "ocr": "OCR",
-    "ocr_desc": "Extract text from scanned images"
+    "ocr_desc": "Extract text from scanned images",
+    "limit_reached": "Free limit reached. Upgrade to Premium to scan more documents.",
+    "remaining": "You have {count} files remaining in your free plan."
   },
   "barcode_result": {
     "scan_result": "Scan Result",
@@ -374,7 +376,36 @@
     
   },
   "share": {
-    "share_via_apps": "Share via other apps"
+    "share_via_apps": "Share via other apps",
+    "error": "Error sharing: {error}",
+    "file_not_found": "File not found or cannot be accessed",
+    "no_valid_files": "No valid files to share",
+    "limit_reached": {
+      "title": "Share Limit Reached",
+      "message": "You've used all {limit} free shares available this month.",
+      "upgrade_prompt": "Upgrade to Premium for unlimited sharing!",
+      "upgrade": "Upgrade to Premium"
+    },
+    "remaining": "{count} share{plural} remaining. Upgrade for unlimited shares!",
+    "upgrade": "Upgrade"
+  },
+  "limit": {
+    "file_limit_reached": {
+      "title": "File Limit Reached",
+      "message": "You've reached the limit of {limit} files for free users.",
+      "upgrade_prompt": "Upgrade to Premium for unlimited files, scanning, and more!",
+      "upgrade": "Upgrade to Premium"
+    },
+    "remaining_files": "{count} file{plural} remaining. Upgrade for unlimited access!",
+    "upgrade": "Upgrade",
+    "file_counter": "{current}/{max} files used",
+    "unlimited": "Unlimited access"
+  },
+  "barcodes": {
+    "limit_reached": "Free limit reached. Upgrade to Premium to create more barcodes."
+  },
+  "import": {
+    "limit_reached": "Free limit reached. Upgrade to Premium to import more files."
   },
   "document": {
     "original_size": "Original Size",
@@ -1622,5 +1653,6 @@
     "start_button": "Start my free trial now",
     "start_hint": "2 taps to start, super easy to cancel"
   }
+  
 
     }
