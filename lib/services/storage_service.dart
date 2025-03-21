@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/models/app_settings.dart';
-import 'package:scanpro/models/backup_settings.dart';
 import 'package:scanpro/models/language.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';

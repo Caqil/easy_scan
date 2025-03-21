@@ -7,6 +7,7 @@ import 'package:scanpro/main.dart';
 import 'package:scanpro/utils/constants.dart';
 
 // Product IDs
+const String kWeeklyProductId = 'scanpro_premium_weekly';
 const String kMonthlyProductId = 'scanpro_premium_monthly';
 const String kYearlyProductId = 'scanpro_premium_yearly';
 
@@ -90,6 +91,7 @@ class SubscriptionService {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   StreamSubscription<List<PurchaseDetails>>? _subscription;
   List<ProductDetails> _products = [];
+  var _purchaseCompleter = Completer<bool>();
 
   // Initialize the service
   Future<void> initialize() async {
@@ -110,13 +112,13 @@ class SubscriptionService {
       },
       onError: (error) {
         logger.error('Error in purchase stream: $error');
+        if (!_purchaseCompleter.isCompleted) {
+          _purchaseCompleter.complete(false);
+        }
       },
     );
 
-    // Load products
     await _loadProducts();
-
-    // Check current subscription status
     await refreshSubscriptionStatus();
 
     logger.info('In-app purchase initialized successfully');
@@ -126,10 +128,13 @@ class SubscriptionService {
     _subscription?.cancel();
   }
 
-  // Load available products
   Future<void> _loadProducts() async {
     try {
-      final Set<String> productIds = {kMonthlyProductId, kYearlyProductId};
+      final Set<String> productIds = {
+        kWeeklyProductId,
+        kMonthlyProductId,
+        kYearlyProductId
+      };
       final ProductDetailsResponse response =
           await _inAppPurchase.queryProductDetails(productIds);
 
@@ -160,15 +165,17 @@ class SubscriptionService {
   // Get categorized subscription packages
   Future<Map<String, List<ProductDetails>>> getSubscriptionOptions() async {
     final Map<String, List<ProductDetails>> result = {
+      'weekly': [],
       'monthly': [],
       'yearly': [],
-      'other': [],
     };
 
     final products = await getSubscriptionPackages();
 
     for (final product in products) {
-      if (product.id == kMonthlyProductId) {
+      if (product.id == kWeeklyProductId) {
+        result['weekly']!.add(product);
+      } else if (product.id == kMonthlyProductId) {
         result['monthly']!.add(product);
       } else if (product.id == kYearlyProductId) {
         result['yearly']!.add(product);
@@ -180,11 +187,13 @@ class SubscriptionService {
     return result;
   }
 
-  // Purchase a product
   Future<bool> purchasePackage(ProductDetails product) async {
     final provider = ProviderContainer();
     provider.read(subscriptionLoadingProvider.notifier).state = true;
     provider.read(subscriptionErrorProvider.notifier).state = null;
+
+    final completer = Completer<bool>();
+    _purchaseCompleter = completer;
 
     try {
       logger.info('Purchasing package: ${product.id}');
@@ -194,26 +203,24 @@ class SubscriptionService {
         applicationUserName: null,
       );
 
-      bool success = false;
+      bool purchaseStarted = false;
 
-      // Start the purchase flow
       try {
         if (Platform.isIOS) {
-          success = await _inAppPurchase.buyNonConsumable(
+          purchaseStarted = await _inAppPurchase.buyNonConsumable(
               purchaseParam: purchaseParam);
         } else {
-          success =
+          purchaseStarted =
               await _inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
         }
       } catch (purchaseError) {
         logger.error('Purchase API error: $purchaseError');
-        // Try alternative purchase method if the first one fails
         try {
           if (Platform.isIOS) {
-            success = await _inAppPurchase.buyConsumable(
+            purchaseStarted = await _inAppPurchase.buyConsumable(
                 purchaseParam: purchaseParam);
           } else {
-            success = await _inAppPurchase.buyNonConsumable(
+            purchaseStarted = await _inAppPurchase.buyNonConsumable(
                 purchaseParam: purchaseParam);
           }
         } catch (secondError) {
@@ -222,15 +229,85 @@ class SubscriptionService {
         }
       }
 
-      // Result will be handled in the purchase update listener
-      return success;
+      if (!purchaseStarted) {
+        logger.error('Failed to start purchase');
+        completer.complete(false);
+        return false;
+      }
+
+      logger.info('Purchase started, awaiting completion...');
+      return await completer.future.timeout(
+        const Duration(seconds: 60),
+        onTimeout: () {
+          logger.error('Purchase timed out');
+          return false;
+        },
+      );
     } catch (e) {
       logger.error('Error purchasing package: $e');
       provider.read(subscriptionErrorProvider.notifier).state = e.toString();
+      if (!completer.isCompleted) {
+        completer.complete(false);
+      }
       return false;
     } finally {
       provider.read(subscriptionLoadingProvider.notifier).state = false;
     }
+  }
+
+  void _onPurchaseUpdate(List<PurchaseDetails> purchaseDetailsList) async {
+    bool purchaseSuccess = false;
+
+    for (final purchaseDetails in purchaseDetailsList) {
+      logger.info(
+          'Purchase update: ${purchaseDetails.status} for ${purchaseDetails.productID}');
+
+      switch (purchaseDetails.status) {
+        case PurchaseStatus.pending:
+          logger.info('Purchase pending for ${purchaseDetails.productID}');
+          // Don’t complete the completer yet—wait for final state
+          break;
+
+        case PurchaseStatus.purchased:
+        case PurchaseStatus.restored:
+          logger.info('Purchase successful: ${purchaseDetails.productID}');
+          await _verifyPurchase(purchaseDetails);
+          purchaseSuccess = true;
+          if (!_purchaseCompleter.isCompleted) {
+            _purchaseCompleter.complete(true);
+          }
+          break;
+
+        case PurchaseStatus.error:
+          logger.error(
+              'Purchase error: ${purchaseDetails.error?.message ?? "Unknown error"}');
+          purchaseSuccess = false;
+          if (!_purchaseCompleter.isCompleted) {
+            _purchaseCompleter.complete(false);
+          }
+          break;
+
+        case PurchaseStatus.canceled:
+          logger.info('Purchase canceled for ${purchaseDetails.productID}');
+          purchaseSuccess = false;
+          if (!_purchaseCompleter.isCompleted) {
+            _purchaseCompleter.complete(false);
+          }
+          break;
+      }
+
+      if (purchaseDetails.pendingCompletePurchase) {
+        await _inAppPurchase.completePurchase(purchaseDetails);
+        logger.info('Purchase completed for ${purchaseDetails.productID}');
+      }
+    }
+
+    if (purchaseDetailsList.isNotEmpty && !_purchaseCompleter.isCompleted) {
+      logger.info('Completing purchase with result: $purchaseSuccess');
+      _purchaseCompleter.complete(purchaseSuccess);
+    }
+
+    await refreshSubscriptionStatus();
   }
 
   // Start a free trial
@@ -334,36 +411,6 @@ class SubscriptionService {
     provider.read(subscriptionStatusProvider.notifier).updateStatus(status);
   }
 
-  // Handle purchase updates
-  void _onPurchaseUpdate(List<PurchaseDetails> purchaseDetailsList) async {
-    for (final purchaseDetails in purchaseDetailsList) {
-      logger.info(
-          'Purchase update: ${purchaseDetails.status} for ${purchaseDetails.productID}');
-
-      if (purchaseDetails.status == PurchaseStatus.pending) {
-        // Show pending UI
-        logger.info('Purchase pending for ${purchaseDetails.productID}');
-      } else {
-        if (purchaseDetails.status == PurchaseStatus.error) {
-          // Handle error
-          logger.error('Purchase error: ${purchaseDetails.error}');
-        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-            purchaseDetails.status == PurchaseStatus.restored) {
-          // Verify purchase
-          await _verifyPurchase(purchaseDetails);
-        }
-
-        // Complete the purchase
-        if (purchaseDetails.pendingCompletePurchase) {
-          await _inAppPurchase.completePurchase(purchaseDetails);
-        }
-      }
-    }
-
-    // Refresh subscription status after handling purchases
-    await refreshSubscriptionStatus();
-  }
-
   // Verify purchase and update subscription status
   Future<void> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     // In a real app, you might want to verify the receipt with your server
@@ -377,10 +424,10 @@ class SubscriptionService {
     await prefs.setString(
         _kSubscriptionProductIdKey, purchaseDetails.productID);
 
-    // Set an expiration date (normally this would come from the receipt)
-    // We'll just set it to 1 month for monthly, 1 year for yearly
     DateTime expirationDate;
-    if (purchaseDetails.productID == kMonthlyProductId) {
+    if (purchaseDetails.productID == kWeeklyProductId) {
+      expirationDate = DateTime.now().add(const Duration(days: 7));
+    } else if (purchaseDetails.productID == kMonthlyProductId) {
       expirationDate = DateTime.now().add(const Duration(days: 30));
     } else {
       expirationDate = DateTime.now().add(const Duration(days: 365));

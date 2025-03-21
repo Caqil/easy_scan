@@ -1555,6 +1555,8 @@
     "start_free_trial": "Start Free Trial",
     "see_subscription_plans": "See subscription plans",
     "hide_options": "Hide options",
+    "weekly_plan": "Weekly Plan",
+    "weekly_details": "Billed weekly, cancel anytime",
     "monthly_plan": "Monthly Plan",
     "monthly_details": "Billed monthly, cancel anytime",
     "yearly_plan": "Yearly Plan",
@@ -1571,11 +1573,12 @@
     "no_subscription_found": "No previous purchases found",
     "restore_error": "Error restoring purchases"
   },
+
   "subscription": {
     
     "already_purchase": "Already Purchased?",
-    "main_title": "Write and speak in 100+ languages like a PRO",
-    "subtitle": "Communicate and translate all over the globe with no limits, even offline.",
+    "main_title": "ScanPro Premium",
+    "subtitle": "Unlock advanced scanning features and more premium tools",
     "free_option": "Not sure yet?",
     "free_desc": "Enable free access",
     "monthly_title": "ScanPro Access",

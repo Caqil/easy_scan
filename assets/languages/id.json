@@ -1553,6 +1553,8 @@
   "start_free_trial": "Mulai Uji Coba Gratis",
   "see_subscription_plans": "Lihat paket berlangganan",
   "hide_options": "Sembunyikan opsi",
+  "weekly_plan": "Paket Mingguan",
+  "weekly_details": "Ditagih Mingguan, batalkan kapan saja",
   "monthly_plan": "Paket Bulanan",
   "monthly_details": "Ditagih bulanan, batalkan kapan saja",
   "yearly_plan": "Paket Tahunan",
@@ -1572,8 +1574,8 @@
 
 "subscription": {
   "already_purchase": "Sudah Membeli?",
-  "main_title": "Tulis dan berbicara dalam 100+ bahasa seperti PRO",
-  "subtitle": "Berkomunikasi dan terjemahkan di seluruh dunia tanpa batas, bahkan secara offline.",
+  "main_title": "ScanPro Premium",
+  "subtitle": "Buka fitur pemindaian tingkat lanjut dan lebih banyak alat premium",
   "free_option": "Belum yakin?",
   "free_desc": "Aktifkan akses gratis",
   "monthly_title": "Akses ScanPro",

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,7 +16,7 @@ class PremiumBanner extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
+        margin: EdgeInsets.symmetric(vertical: 3.h),
         padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
@@ -43,7 +44,7 @@ class PremiumBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Unlock Full Access!',
+                    'subscription.monthly_desc'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
@@ -52,28 +53,11 @@ class PremiumBanner extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    'Get Premium with a 7-day free trial',
+                    'onboarding.start_free_trial'.tr(),
                     style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.bold,
                       fontSize: 12.sp,
                       color: Colors.white.withOpacity(0.8),
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  // Try Now button
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Text(
-                      'Try Now',
-                      style: GoogleFonts.slabo27px(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF673AB7),
-                      ),
                     ),
                   ),
                 ],

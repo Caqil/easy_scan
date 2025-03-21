@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/config/subscription_navigator.dart';
 import 'package:scanpro/ui/screen/premium/components/premium_banner.dart';
-import 'package:scanpro/ui/screen/premium/premium_screen.dart';
 
 class QuickActions extends ConsumerWidget {
   final VoidCallback onScan;
@@ -37,7 +36,7 @@ class QuickActions extends ConsumerWidget {
           SizedBox(height: 10.h),
           PremiumBanner(
             onTap: () {
-             SubscriptionNavigator.openPremiumScreen(context);
+              SubscriptionNavigator.openPremiumScreen(context);
             },
           ),
           SizedBox(height: 10.h),

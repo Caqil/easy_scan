@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:scanpro/main.dart';
 import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 
@@ -45,7 +44,9 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
           topRight: Radius.circular(20.r),
         ),
       ),
-      child: Column(
+      child: SingleChildScrollView(
+          // Add this
+          child: Column(
         children: [
           // Close button
           Align(
@@ -178,9 +179,6 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
               ),
             ),
 
-          const Spacer(),
-
-          // Start trial button
           Padding(
               padding: EdgeInsets.all(24.r),
               child: Column(children: [
@@ -253,7 +251,7 @@ class _TrialExplanationSheetState extends ConsumerState<TrialExplanationSheet> {
 
           SizedBox(height: 16.h + MediaQuery.of(context).padding.bottom),
         ],
-      ),
+      )),
     );
   }
 
