@@ -33,7 +33,7 @@ class SubscriptionNavigator {
   /// Show a subscription required dialog
   static Future<bool> showSubscriptionRequiredDialog(
     BuildContext context, {
-    String title = 'Premium Feature',
+    String title = 'premium_required',
     String message = 'This feature requires a premium subscription to use.',
     String actionText = 'Upgrade',
     String cancelText = 'Maybe Later',

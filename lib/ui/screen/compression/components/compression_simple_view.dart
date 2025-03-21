@@ -29,7 +29,6 @@ class CompressionSimpleView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch subscription status
     final subscriptionStatus = ref.watch(subscriptionStatusProvider);
 
     return SingleChildScrollView(
@@ -102,8 +101,11 @@ class CompressionSimpleView extends ConsumerWidget {
     );
   }
 
-  Widget _buildCompressionLevelSelector(BuildContext context, WidgetRef ref,
-      SubscriptionStatus subscriptionStatus) {
+  Widget _buildCompressionLevelSelector(
+    BuildContext context,
+    WidgetRef ref,
+    SubscriptionStatus subscriptionStatus,
+  ) {
     return Column(
       children: [
         Row(
@@ -171,7 +173,6 @@ class CompressionSimpleView extends ConsumerWidget {
         if (isEnabled) {
           onLevelChanged(level);
         } else {
-          // Show premium upsell
           _showPremiumDialog(context);
         }
       },

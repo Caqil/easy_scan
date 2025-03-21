@@ -28,11 +28,10 @@ class FileLimitService {
   }
 
   /// Force immediate check of file limits without using providers
-  Future<bool> forceCheckFileLimitReached(
-      Box<Document> documentsBox) async {
+  Future<bool> forceCheckFileLimitReached(Box<Document> documentsBox) async {
     final documents = documentsBox.values.toList();
 
-    final totalCount = documents.length ;
+    final totalCount = documents.length;
     print("FORCE CHECK: Total files: $totalCount");
 
     final subscriptionService = SubscriptionService();
@@ -46,8 +45,7 @@ class FileLimitService {
   Future<bool> hasReachedFileLimit(int totalFiles) async {
     try {
       final subscriptionService = SubscriptionService();
-      final hasSubscription =
-          await subscriptionService.hasActiveSubscription();
+      final hasSubscription = await subscriptionService.hasActiveSubscription();
 
       // Premium users have unlimited files
       if (hasSubscription) {
@@ -66,8 +64,7 @@ class FileLimitService {
   Future<int> getRemainingFiles(int totalFiles) async {
     try {
       final subscriptionService = SubscriptionService();
-      final hasSubscription =
-          await subscriptionService.hasActiveSubscription();
+      final hasSubscription = await subscriptionService.hasActiveSubscription();
 
       // Premium users have unlimited files
       if (hasSubscription) {
@@ -86,8 +83,7 @@ class FileLimitService {
   Future<int> getMaxAllowedFiles() async {
     try {
       final subscriptionService = SubscriptionService();
-      final hasSubscription =
-          await subscriptionService.hasActiveSubscription();
+      final hasSubscription = await subscriptionService.hasActiveSubscription();
 
       // Premium users have unlimited files
       if (hasSubscription) {

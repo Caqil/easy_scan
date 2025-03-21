@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/config/api_config.dart';
 import 'package:scanpro/config/helper.dart';
 import 'package:scanpro/main.dart';
@@ -177,14 +178,84 @@ class PdfCompressionApiService {
 
   /// Map compression level to API parameter
   String _mapCompressionLevelToApiParam(CompressionLevel level) {
+    return CompressionLevelMapper.toApiParam(level);
+  }
+}
+
+/// Provider for the PDF compression API service
+final pdfCompressionApiServiceProvider =
+    Provider<PdfCompressionApiService>((ref) {
+  return PdfCompressionApiService();
+});
+
+/// Utility class to map between different compression level representations
+class CompressionLevelMapper {
+  /// Convert compression level to API parameter
+  static String toApiParam(CompressionLevel level) {
     switch (level) {
       case CompressionLevel.low:
-        return 'high';
+        return 'high'; // Low compression = high quality
       case CompressionLevel.medium:
-        return 'medium';
+        return 'medium'; // Medium compression = medium quality
       case CompressionLevel.high:
+        return 'low'; // High compression = low quality
       case CompressionLevel.maximum:
-        return 'low';
+        return 'low'; // Maximum compression = low quality (using same as high for now)
+    }
+  }
+
+  /// Convert compression level to quality percentage for local processing
+  static int toQualityPercentage(CompressionLevel level) {
+    switch (level) {
+      case CompressionLevel.low:
+        return 85; // Light compression - 85% quality
+      case CompressionLevel.medium:
+        return 65; // Medium compression - 65% quality
+      case CompressionLevel.high:
+        return 45; // High compression - 45% quality
+      case CompressionLevel.maximum:
+        return 25; // Maximum compression - 25% quality
+    }
+  }
+
+  /// Get file size reduction estimate based on compression level
+  static String getReductionEstimate(CompressionLevel level) {
+    switch (level) {
+      case CompressionLevel.low:
+        return '15-30%'; // Light compression
+      case CompressionLevel.medium:
+        return '30-50%'; // Medium compression
+      case CompressionLevel.high:
+        return '50-70%'; // High compression
+      case CompressionLevel.maximum:
+        return '70-90%'; // Maximum compression
+    }
+  }
+
+  /// Get user-friendly name for compression level
+  static String getName(CompressionLevel level, {bool translate = true}) {
+    if (translate) {
+      switch (level) {
+        case CompressionLevel.low:
+          return 'compression.level.low';
+        case CompressionLevel.medium:
+          return 'compression.level.medium';
+        case CompressionLevel.high:
+          return 'compression.level.high';
+        case CompressionLevel.maximum:
+          return 'compression.level.maximum';
+      }
+    } else {
+      switch (level) {
+        case CompressionLevel.low:
+          return 'Low';
+        case CompressionLevel.medium:
+          return 'Medium';
+        case CompressionLevel.high:
+          return 'High';
+        case CompressionLevel.maximum:
+          return 'Maximum';
+      }
     }
   }
 }
