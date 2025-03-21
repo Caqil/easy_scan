@@ -10,7 +10,7 @@ class HelpDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: AutoSizeText("help_dialog.title".tr()),
+      title: Text("help_dialog.title".tr()),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +34,7 @@ class HelpDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: AutoSizeText("help_dialog.close_button".tr()),
+          child: Text("help_dialog.close_button".tr()),
         ),
       ],
     );
@@ -44,7 +44,7 @@ class HelpDialog extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AutoSizeText(
+        Text(
           title,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
@@ -52,7 +52,7 @@ class HelpDialog extends StatelessWidget {
           ),
         ),
         SizedBox(height: 4.h),
-        AutoSizeText(description),
+        Text(description),
       ],
     );
   }

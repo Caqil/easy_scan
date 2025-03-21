@@ -735,7 +735,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                 Icon(Icons.merge_type,
                     color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
-                AutoSizeText('merge_pdf.confirm_order_title'.tr()),
+                Text('merge_pdf.confirm_order_title'.tr()),
               ],
             ),
             content: SizedBox(
@@ -744,7 +744,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AutoSizeText(
+                  Text(
                     'merge_pdf.files_merge_order'.tr(),
                     style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
                   ),
@@ -767,7 +767,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
-                                  child: AutoSizeText(
+                                  child: Text(
                                     '${index + 1}',
                                     style: const TextStyle(
                                       color: Colors.white,
@@ -778,13 +778,13 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                               ),
                               const SizedBox(width: 8),
                               Expanded(
-                                child: AutoSizeText(
+                                child: Text(
                                   doc.name,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              AutoSizeText(
+                              Text(
                                 '${doc.pageCount} pages'.tr(),
                                 style: GoogleFonts.slabo27px(
                                   fontWeight: FontWeight.w700,
@@ -804,11 +804,11 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: AutoSizeText('common.cancel'.tr()),
+                child: Text('common.cancel'.tr()),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: AutoSizeText('merge_pdf.merge_now'.tr()),
+                child: Text('merge_pdf.merge_now'.tr()),
               ),
             ],
           ),
@@ -820,17 +820,17 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: AutoSizeText('merge_pdf.help_title'.tr()),
+        title: Text('merge_pdf.help_title'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AutoSizeText(
+            Text(
               'merge_pdf.help_description'.tr(),
               style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            AutoSizeText('merge_pdf.help_steps'.tr()),
+            Text('merge_pdf.help_steps'.tr()),
             const SizedBox(height: 8),
             _buildHelpItem('1', 'merge_pdf.step_1'.tr()),
             _buildHelpItem('2', 'merge_pdf.step_2'.tr()),
@@ -838,7 +838,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             _buildHelpItem('4', 'merge_pdf.step_4'.tr()),
             _buildHelpItem('5', 'merge_pdf.step_5'.tr()),
             const SizedBox(height: 16),
-            AutoSizeText(
+            Text(
               'merge_pdf.help_save_note'.tr(),
               style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w700, fontStyle: FontStyle.italic),
@@ -848,7 +848,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: AutoSizeText('common.got_it'.tr()),
+            child: Text('common.got_it'.tr()),
           ),
         ],
       ),
@@ -869,7 +869,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: AutoSizeText(
+              child: Text(
                 number,
                 style: const TextStyle(
                   color: Colors.white,
@@ -881,7 +881,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: AutoSizeText(text),
+            child: Text(text),
           ),
         ],
       ),

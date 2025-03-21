@@ -142,7 +142,7 @@ class DocumentShareService {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: AutoSizeText('share.limit_reached.title'.tr()),
+        title: Text('share.limit_reached.title'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -152,14 +152,14 @@ class DocumentShareService {
               size: 48,
             ),
             SizedBox(height: 16),
-            AutoSizeText(
+            Text(
               'share.limit_reached.message'.tr(
                 namedArgs: {'limit': '5'},
               ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8),
-            AutoSizeText(
+            Text(
               'share.limit_reached.upgrade_prompt'.tr(),
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -169,7 +169,7 @@ class DocumentShareService {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: AutoSizeText('common.cancel'.tr()),
+            child: Text('common.cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () {
@@ -184,7 +184,7 @@ class DocumentShareService {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            child: AutoSizeText('share.limit_reached.upgrade'.tr()),
+            child: Text('share.limit_reached.upgrade'.tr()),
           ),
         ],
       ),

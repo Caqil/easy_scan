@@ -165,7 +165,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 setState(() {
                   _searchQuery = ''; // Set empty to activate search field
                   _searchController.text = ''; // Clear text
-                  // Focusing search field after setting state
                   Future.delayed(Duration.zero, () {
                     FocusScope.of(context).unfocus();
                     _searchController.clear();
@@ -710,32 +709,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Document document,
     WidgetRef ref,
   ) async {
-    final bool confirm = await showCupertinoDialog(
+    final bool confirm = await showCupertinoDialog<bool>(
           context: context,
-          builder: (context) => StatefulBuilder(
-              builder: (context, setState) => CupertinoAlertDialog(
-                    title: AutoSizeText('document.delete_document'.tr()),
-                    content: AutoSizeText('document.delete_confirm_message'
-                        .tr(namedArgs: {'folderName': document.name})),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: AutoSizeText('common.cancel'.tr()),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          ref
-                              .read(documentsProvider.notifier)
-                              .deleteDocument(document.id);
-                          setState(() {});
-                          Navigator.pop(context);
-                        },
-                        style:
-                            TextButton.styleFrom(foregroundColor: Colors.red),
-                        child: AutoSizeText('common.delete'.tr()),
-                      ),
-                    ],
-                  )),
+          builder: (context) => CupertinoAlertDialog(
+            title: Text('document.delete_document'.tr()),
+            content: Text('document.delete_confirm_message'
+                .tr(namedArgs: {'name': document.name})),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('common.cancel'.tr()),
+              ),
+              CupertinoDialogAction(
+                isDestructiveAction: true,
+                onPressed: () => Navigator.pop(context, true),
+                child: Text('common.delete'.tr()),
+              ),
+            ],
+          ),
         ) ??
         false;
 
@@ -744,9 +735,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
       // Show success message
       if (context.mounted) {
-        AppDialogs.showSnackBar(context,
-            type: SnackBarType.success,
-            message: 'document.document_deleted'.tr());
+        AppDialogs.showSnackBar(
+          context,
+          type: SnackBarType.success,
+          message: 'document.document_deleted'.tr(),
+        );
       }
     }
   }

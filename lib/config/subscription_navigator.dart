@@ -43,18 +43,18 @@ class SubscriptionNavigator {
       final result = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: AutoSizeText(title),
-          content: AutoSizeText(message),
+          title: Text(title),
+          content: Text(message),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: AutoSizeText(cancelText),
+              child: Text(cancelText),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: AutoSizeText(actionText),
+              child: Text(actionText),
             ),
           ],
         ),

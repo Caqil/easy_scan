@@ -233,7 +233,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
             items: _subjectOptions.map((String subject) {
               return DropdownMenuItem<String>(
                 value: subject,
-                child: AutoSizeText(subject),
+                child: Text(subject),
               );
             }).toList(),
             onChanged: (String? newValue) {

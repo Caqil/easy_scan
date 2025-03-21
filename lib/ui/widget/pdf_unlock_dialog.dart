@@ -132,7 +132,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
-                  child: AutoSizeText(
+                  child: Text(
                     'pdf.unlock.title'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontSize: 18.sp,
@@ -146,7 +146,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
             SizedBox(height: 16.h),
 
             // Description
-            AutoSizeText(
+            Text(
               'pdf.unlock.description'
                   .tr(namedArgs: {'name': widget.document.name}),
               style: GoogleFonts.slabo27px(
@@ -196,7 +196,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                   ),
                   SizedBox(width: 8.w),
                   Expanded(
-                    child: AutoSizeText(
+                    child: Text(
                       _errorMessage,
                       style: GoogleFonts.slabo27px(
                         fontSize: 12.sp,
@@ -220,7 +220,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
               ),
               SizedBox(height: 8.h),
               Center(
-                child: AutoSizeText(
+                child: Text(
                   'pdf.unlock.processing'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontSize: 12.sp,
@@ -245,7 +245,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                     ),
-                    child: AutoSizeText('common.cancel'.tr()),
+                    child: Text('common.cancel'.tr()),
                   ),
                 ),
                 SizedBox(width: 16.w),
@@ -264,7 +264,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                             height: 20.r,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : AutoSizeText('pdf.unlock.unlock_button'.tr()),
+                        : Text('pdf.unlock.unlock_button'.tr()),
                   ),
                 ),
               ],

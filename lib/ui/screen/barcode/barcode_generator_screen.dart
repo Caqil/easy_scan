@@ -1107,7 +1107,7 @@ class _BarcodeGeneratorScreenState
           children: [
             Padding(
               padding: EdgeInsets.all(16.w),
-              child: AutoSizeText(
+              child: Text(
                 'barcode_generator.saved_qr_code'.tr(),
                 style: GoogleFonts.slabo27px(
                   fontSize: 18.sp,

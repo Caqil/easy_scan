@@ -23,12 +23,12 @@ class AppDialogs {
         context: context,
         builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                title: AutoSizeText(title),
-                content: AutoSizeText(message),
+                title: Text(title),
+                content: Text(message),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: AutoSizeText(cancelText),
+                    child: Text(cancelText),
                   ),
                   TextButton(
                     onPressed: () {
@@ -38,7 +38,7 @@ class AppDialogs {
                     style: isDangerous
                         ? TextButton.styleFrom(foregroundColor: Colors.red)
                         : null,
-                    child: AutoSizeText(confirmText),
+                    child: Text(confirmText),
                   ),
                 ],
               ),
@@ -61,7 +61,7 @@ class AppDialogs {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: AutoSizeText(title),
+        title: Text(title),
         content: TextField(
           controller: controller,
           obscureText: isPassword,
@@ -74,7 +74,7 @@ class AppDialogs {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: AutoSizeText(cancelText),
+            child: Text(cancelText),
           ),
           TextButton(
             onPressed: () {
@@ -82,7 +82,7 @@ class AppDialogs {
                 Navigator.pop(context, controller.text.trim());
               }
             },
-            child: AutoSizeText(confirmText),
+            child: Text(confirmText),
           ),
         ],
       ),
@@ -143,7 +143,7 @@ class AppDialogs {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Expanded(
-                  child: AutoSizeText(
+                  child: Text(
                     message,
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
@@ -168,7 +168,7 @@ class AppDialogs {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       backgroundColor: Colors.transparent,
                     ),
-                    child: AutoSizeText(action.label),
+                    child: Text(action.label),
                   ),
                 ],
               ],

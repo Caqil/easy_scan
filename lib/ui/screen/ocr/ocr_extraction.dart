@@ -84,7 +84,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: AutoSizeText('ocr.premium_required.title'.tr()),
+        title: Text('ocr.premium_required.title'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -94,7 +94,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
               size: 64.r,
             ),
             SizedBox(height: 16.h),
-            AutoSizeText(
+            Text(
               'ocr.premium_required.message'.tr(),
               textAlign: TextAlign.center,
             ),
@@ -105,7 +105,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: AutoSizeText('common.cancel'.tr()),
+            child: Text('common.cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () {
@@ -120,7 +120,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            child: AutoSizeText('common.upgrade'.tr()),
+            child: Text('common.upgrade'.tr()),
           ),
         ],
       ),

@@ -280,23 +280,22 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const AutoSizeText('Clear History'),
-        content: const AutoSizeText(
-            'Are you sure you want to clear all scan history?'),
+        title: const Text('Clear History'),
+        content: const Text('Are you sure you want to clear all scan history?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: AutoSizeText('common.cancel'.tr()),
+            child: Text('common.cancel'.tr()),
           ),
           TextButton(
             onPressed: () {
               ref.read(barcodeScanHistoryProvider.notifier).clearHistory();
               Navigator.pop(context);
             },
-            child: const AutoSizeText('Clear'),
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
+            child: Text('common.clear'.tr()),
           ),
         ],
       ),

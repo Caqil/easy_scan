@@ -193,14 +193,14 @@ class MergeOptionsSheet extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: AutoSizeText('merge_pdf.select_to_append'.tr()),
+          title: Text('merge_pdf.select_to_append'.tr()),
           content: SizedBox(
             width: double.maxFinite,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AutoSizeText(
+                Text(
                   'merge_pdf.selected_document'
                       .tr(namedArgs: {'name': initialDocument.name}),
                   style: GoogleFonts.slabo27px(
@@ -208,7 +208,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                AutoSizeText(
+                Text(
                   'merge_pdf.choose_to_append'.tr(),
                 ),
                 const SizedBox(height: 8),
@@ -221,12 +221,12 @@ class MergeOptionsSheet extends ConsumerWidget {
                       final isSelected = selectedDocs.contains(doc);
 
                       return CheckboxListTile(
-                        title: AutoSizeText(
+                        title: Text(
                           doc.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        subtitle: AutoSizeText('${doc.pageCount} pages'.tr()),
+                        subtitle: Text('${doc.pageCount} pages'.tr()),
                         value: isSelected,
                         onChanged: (value) {
                           setState(() {
@@ -247,7 +247,7 @@ class MergeOptionsSheet extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: AutoSizeText('common.cancel'.tr()),
+              child: Text('common.cancel'.tr()),
             ),
             TextButton(
               onPressed: selectedDocs.isEmpty
@@ -263,7 +263,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                         outputName,
                       );
                     },
-              child: AutoSizeText('common.merge'.tr()),
+              child: Text('common.merge'.tr()),
             ),
           ],
         ),
@@ -296,7 +296,7 @@ class MergeOptionsSheet extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: AutoSizeText('merge_pdf.quick_merge_title'.tr()),
+          title: Text('merge_pdf.quick_merge_title'.tr()),
           content: SizedBox(
             width: double.maxFinite,
             child: Column(
@@ -311,7 +311,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                AutoSizeText(
+                Text(
                   'merge_pdf.select_to_merge'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
@@ -327,13 +327,13 @@ class MergeOptionsSheet extends ConsumerWidget {
                       final isSelected = selectedDocs.contains(doc);
 
                       return CheckboxListTile(
-                        title: AutoSizeText(
+                        title: Text(
                           doc.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        subtitle: AutoSizeText('${doc.pageCount} pages'.tr()),
-                        secondary: AutoSizeText(
+                        subtitle: Text('${doc.pageCount} pages'.tr()),
+                        secondary: Text(
                           '${index + 1}',
                           style: GoogleFonts.slabo27px(
                             color: isSelected
@@ -362,7 +362,7 @@ class MergeOptionsSheet extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: AutoSizeText('common.cancel'.tr()),
+              child: Text('common.cancel'.tr()),
             ),
             TextButton(
               onPressed: selectedDocs.length < 2
@@ -376,7 +376,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                         nameController.text.trim(),
                       );
                     },
-              child: AutoSizeText('common.merge'.tr()),
+              child: Text('common.merge'.tr()),
             ),
           ],
         ),

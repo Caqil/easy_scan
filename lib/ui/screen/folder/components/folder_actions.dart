@@ -70,7 +70,7 @@ class FolderActions {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: AutoSizeText('folder_actions.add_documents_to'
+          title: Text('folder_actions.add_documents_to'
               .tr(namedArgs: {'folderName': targetFolder.name})),
           content: SizedBox(
             width: double.maxFinite,
@@ -78,7 +78,7 @@ class FolderActions {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AutoSizeText(
+                Text(
                   'folder_actions.select_documents'.tr(),
                   style: GoogleFonts.slabo27px(fontWeight: FontWeight.bold),
                 ),
@@ -91,12 +91,12 @@ class FolderActions {
                       final isSelected = selectedDocuments.contains(doc);
 
                       return CheckboxListTile(
-                        title: AutoSizeText(
+                        title: Text(
                           doc.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        subtitle: AutoSizeText(
+                        subtitle: Text(
                           doc.folderId == null
                               ? 'folder_actions.root_folder'.tr()
                               : 'folder_actions.from_folder'.tr(namedArgs: {
@@ -237,7 +237,7 @@ class FolderActions {
         return StatefulBuilder(
           builder: (context, setState) {
             return CupertinoAlertDialog(
-              title: AutoSizeText('folder_actions.rename_folder'.tr()),
+              title: Text('folder_actions.rename_folder'.tr()),
               content: CupertinoTextField(
                 controller: controller,
                 autofocus: true,
@@ -253,7 +253,7 @@ class FolderActions {
                       Navigator.pop(dialogContext, controller.text.trim());
                     }
                   },
-                  child: AutoSizeText('common.rename'.tr()),
+                  child: Text('common.rename'.tr()),
                 ),
               ],
             );
@@ -297,7 +297,7 @@ class FolderActions {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return CupertinoAlertDialog(
-            title: AutoSizeText('folder_actions.change_folder_color'.tr()),
+            title: Text('folder_actions.change_folder_color'.tr()),
             content: Wrap(
               spacing: 16,
               runSpacing: 16,
@@ -340,11 +340,11 @@ class FolderActions {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: AutoSizeText('common.cancel'.tr()),
+                child: Text('common.cancel'.tr()),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: AutoSizeText('folder_actions.apply'.tr()),
+                child: Text('folder_actions.apply'.tr()),
               ),
             ],
           );
@@ -386,21 +386,20 @@ class FolderActions {
           context: context,
           builder: (context) => StatefulBuilder(
               builder: (context, setState) => CupertinoAlertDialog(
-                    title: AutoSizeText('folder_actions.delete_folder'.tr()),
+                    title: Text('folder_actions.delete_folder'.tr()),
                     content: documentsInFolder.isNotEmpty ||
                             subfolders.isNotEmpty
-                        ? AutoSizeText(
-                            'folder_actions.delete_folder_content_warning'
-                                .tr(namedArgs: {
+                        ? Text('folder_actions.delete_folder_content_warning'
+                            .tr(namedArgs: {
                             'docCount': documentsInFolder.length.toString(),
                             'subfolderCount': subfolders.length.toString()
                           }))
-                        : AutoSizeText('folder_actions.delete_folder_confirm'
+                        : Text('folder_actions.delete_folder_confirm'
                             .tr(namedArgs: {'folderName': folder.name})),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: AutoSizeText('common.cancel'.tr()),
+                        child: Text('common.cancel'.tr()),
                       ),
                       TextButton(
                         onPressed: () {
@@ -409,7 +408,7 @@ class FolderActions {
                         },
                         style:
                             TextButton.styleFrom(foregroundColor: Colors.red),
-                        child: AutoSizeText('common.delete'.tr()),
+                        child: Text('common.delete'.tr()),
                       ),
                     ],
                   )),
@@ -531,7 +530,7 @@ class _FolderOptionsSheet extends StatelessWidget {
 
                 // Folder name
                 Expanded(
-                  child: AutoSizeText(
+                  child: Text(
                     folder.name,
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.bold,

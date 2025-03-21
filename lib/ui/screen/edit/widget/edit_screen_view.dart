@@ -70,8 +70,7 @@ class _EditScreenViewState extends State<EditScreenView> {
                                 EditMode.imageEdit
                             ? colorScheme.primary
                             : null),
-                    title:
-                        AutoSizeText('edit_screen.editor.edit_as_images'.tr()),
+                    title: Text('edit_screen.editor.edit_as_images'.tr()),
                     selected:
                         widget.controller.currentEditMode == EditMode.imageEdit,
                   ),
@@ -84,7 +83,7 @@ class _EditScreenViewState extends State<EditScreenView> {
                                 EditMode.pdfEdit
                             ? colorScheme.primary
                             : null),
-                    title: AutoSizeText('edit_screen.editor.edit_as_pdf'.tr()),
+                    title: Text('edit_screen.editor.edit_as_pdf'.tr()),
                     selected:
                         widget.controller.currentEditMode == EditMode.pdfEdit,
                   ),

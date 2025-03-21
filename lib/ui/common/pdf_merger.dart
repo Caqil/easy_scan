@@ -5,7 +5,6 @@ import 'package:scanpro/services/pdf_merger_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/screen/merger/components/merge_option_shhet.dart';
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PdfMerger {
@@ -52,7 +51,7 @@ class PdfMerger {
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
-              AutoSizeText('merging_pdfs'.tr()),
+              Text('merging_pdfs'.tr()),
             ],
           ),
         ),

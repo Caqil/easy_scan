@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/ui/screen/premium/premium_screen.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/services/file_limit_service.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 
 class PremiumUpgradeUtils {
   static const _animationDuration = Duration(milliseconds: 300);
@@ -107,7 +106,7 @@ class PremiumUpgradeUtils {
         ),
         child: Semantics(
           label: 'Upgrade to premium button',
-          child: AutoSizeText(
+          child: Text(
             'limit.file_limit_reached.upgrade'.tr(),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
@@ -120,7 +119,7 @@ class PremiumUpgradeUtils {
         ),
         child: Semantics(
           label: 'Cancel button',
-          child: AutoSizeText(
+          child: Text(
             'common.cancel'.tr(),
             style: TextStyle(color: Theme.of(context).colorScheme.secondary),
           ),

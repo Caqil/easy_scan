@@ -9,6 +9,7 @@ import 'package:scanpro/ui/screen/conversion/conversion_screen.dart';
 import 'package:scanpro/ui/screen/faq_screen.dart';
 import 'package:scanpro/ui/screen/languages/languages_screen.dart';
 import 'package:scanpro/ui/screen/merger/pdf_merge_screen.dart';
+import 'package:scanpro/ui/screen/ocr/ocr_extraction.dart';
 import 'package:scanpro/ui/screen/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -38,6 +39,7 @@ class AppRoutes {
   static const String backupSettings = '/backup-settings';
   static const String backupRestore = '/backup-restore';
   static const String scan = '/scan';
+  static const String ocr = '/ocr';
   static const String barcodeScan = '/barcode/scan';
   static const String barcodeGenerate = '/barcode/generate';
   static const String barcodeHistory = '/barcode/history';
@@ -119,6 +121,7 @@ class AppRoutes {
             path: contactSupport,
             builder: (context, state) => const ContactSupportScreen(),
           ),
+
           GoRoute(
             path: '/userguide',
             name: 'userGuide',
@@ -149,7 +152,17 @@ class AppRoutes {
           );
         },
       ),
-
+      GoRoute(
+        path: ocr,
+        pageBuilder: (context, state) {
+          final document = state.extra as Document?;
+          return AppTransitions.buildSlideTransition(
+            context: context,
+            state: state,
+            child: OcrExtractionScreen(document: document!),
+          );
+        },
+      ),
       // View document route - hero transition for smooth document viewing
       GoRoute(
         path: view,
@@ -306,6 +319,10 @@ class AppRoutes {
 
   static void navigateToFolders(BuildContext context) {
     context.go(folders);
+  }
+
+  static void navigateToOcr(BuildContext context) {
+    context.go(ocr);
   }
 
   static void navigateToSettings(BuildContext context) {

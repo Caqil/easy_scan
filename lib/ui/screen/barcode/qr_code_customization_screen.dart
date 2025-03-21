@@ -181,12 +181,12 @@ class _QRCodeCustomizationScreenState
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: AutoSizeText('Processing'),
+            title: Text('Processing'),
             content: Row(
               children: [
                 CircularProgressIndicator(),
                 SizedBox(width: 16),
-                AutoSizeText('Saving QR code...'),
+                Text('Saving QR code...'),
               ],
             ),
           ),
@@ -284,15 +284,15 @@ class _QRCodeCustomizationScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: AutoSizeText('QR Code Created'),
+        title: Text('QR Code Created'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AutoSizeText('What would you like to do next?'),
+            Text('What would you like to do next?'),
             if (widget.saveToLibrary) ...[
               SizedBox(height: 8),
-              AutoSizeText(
+              Text(
                 'Your QR code has been saved to your library',
                 style: TextStyle(
                   color: Colors.green,
@@ -370,46 +370,46 @@ class _QRCodeCustomizationScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: AutoSizeText('QR Code Customization Help'),
+        title: Text('QR Code Customization Help'),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              AutoSizeText(
+              Text(
                 'Change Colors',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              AutoSizeText(
+              Text(
                   'Select different colors for your QR code or use a gradient background.'),
               SizedBox(height: 12),
-              AutoSizeText(
+              Text(
                 'Add Logo',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              AutoSizeText(
+              Text(
                   'Add a custom logo image to the center of your QR code. Be careful not to make it too large or the code might not scan properly.'),
               SizedBox(height: 12),
-              AutoSizeText(
+              Text(
                 'Change Shapes',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              AutoSizeText(
+              Text(
                   'Customize the eye and data module shapes for a unique look.'),
               SizedBox(height: 12),
-              AutoSizeText(
+              Text(
                 'Saving and Sharing',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              AutoSizeText(
+              Text(
                   'Your customized QR code will be saved to your library automatically. You can also share it or copy the content.'),
               SizedBox(height: 12),
-              AutoSizeText(
+              Text(
                 'Scanning',
                 style: TextStyle(
                     fontWeight: FontWeight.w400, fontStyle: FontStyle.italic),
               ),
-              AutoSizeText(
+              Text(
                   'Note: Very heavily customized QR codes may be difficult to scan with some devices. If you have trouble scanning, try using fewer customizations.'),
             ],
           ),
@@ -417,7 +417,7 @@ class _QRCodeCustomizationScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: AutoSizeText('Got it'),
+            child: Text('Got it'),
           ),
         ],
       ),

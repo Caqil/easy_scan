@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../models/document.dart';
+
 class PDFViewerWidget extends StatefulWidget {
   final Document document;
   final bool showAppBar;
@@ -191,7 +192,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                             children: [
                               Icon(Icons.bookmark),
                               SizedBox(width: 8),
-                              AutoSizeText('common.add_bookmark'.tr()),
+                              Text('common.add_bookmark'.tr()),
                             ],
                           ),
                         ),
@@ -201,7 +202,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                             children: [
                               Icon(Icons.print),
                               SizedBox(width: 8),
-                              AutoSizeText('share.print'.tr()),
+                              Text('share.print'.tr()),
                             ],
                           ),
                         ),

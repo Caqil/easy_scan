@@ -534,7 +534,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                       children: [
                         Icon(Icons.edit),
                         SizedBox(width: 8),
-                        AutoSizeText('folder_screen.menu_options.rename'.tr()),
+                        Text('folder_screen.menu_options.rename'.tr()),
                       ],
                     ),
                   ),
@@ -544,8 +544,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                       children: [
                         Icon(Icons.palette),
                         SizedBox(width: 8),
-                        AutoSizeText(
-                            'folder_screen.menu_options.change_color'.tr()),
+                        Text('folder_screen.menu_options.change_color'.tr()),
                       ],
                     ),
                   ),
@@ -555,7 +554,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                       children: [
                         Icon(Icons.delete, color: Colors.red),
                         SizedBox(width: 8),
-                        AutoSizeText(
+                        Text(
                           'folder_screen.menu_options.delete'.tr(),
                           style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700, color: Colors.red),
@@ -569,8 +568,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                       children: [
                         Icon(Icons.add_to_photos),
                         SizedBox(width: 8),
-                        AutoSizeText(
-                            'folder_screen.menu_options.add_documents'.tr()),
+                        Text('folder_screen.menu_options.add_documents'.tr()),
                       ],
                     ),
                   ),
