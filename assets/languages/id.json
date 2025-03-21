@@ -187,7 +187,6 @@
   "protected_document": "Dokumen yang Dilindungi",
   "enter_password_prompt": "Dokumen ini dilindungi. Harap masukkan kata sandi untuk melanjutkan.",
   "check_password_error": "Harap periksa kata sandi Anda dan coba lagi",
-  "unlock": "Buka Kunci",
   "file_not_found": "File PDF tidak ditemukan",
   "password_cancelled": "Input kata sandi dibatalkan.",
   "incorrect_password": "Kata sandi salah atau input kata sandi dibatalkan.",
@@ -195,8 +194,49 @@
   "change_password": "Ganti Kata Sandi",
   "add_password": "Tambah Kata Sandi",
   "update_security": "Perbarui keamanan dokumen",
-  "protect_with_password": "Lindungi dengan kata sandi"
+  "protect_with_password": "Lindungi dengan kata sandi",
+  "unlock": {
+      "title": "Buka Kunci PDF",
+      "description": "Masukkan kata sandi untuk membuka kunci \"{name}\"",
+      "description_short": "Hapus perlindungan kata sandi dari PDF ini",
+      "password_label": "Kata Sandi PDF",
+      "unlock_button": "Buka Kunci",
+      "processing": "Membuka kunci PDF...",
+      "success": "PDF berhasil dibuka kuncinya",
+      "error_empty_password": "Harap masukkan kata sandi",
+      "error_unlock_failed": "Gagal membuka kunci PDF. Harap periksa kata sandi Anda dan coba lagi."
+    },
+    "password_protected_documents": "Dokumen yang Dilindungi Kata Sandi",
+"select_document_to_open": "Pilih dokumen untuk dibuka",
+"no_locked_documents": "Tidak ada dokumen yang dilindungi kata sandi ditemukan"
 },
+"ocr": {
+    "extract_text": "Ekstrak Teks (OCR)",
+    "extract_text_desc": "Ekstrak teks dari dokumen ini menggunakan OCR",
+    "extraction_settings": "Pengaturan Ekstraksi",
+    "language": "Bahasa",
+    "enhance_scanned": "Tingkatkan Gambar",
+    "preserve_layout": "Pertahankan Tata Letak",
+    "start_extraction": "Mulai Ekstraksi",
+    "processing": "Memproses dokumen...",
+    "extracted_text": "Teks yang Diekstrak",
+    "extracted_text_placeholder": "Teks yang diekstrak akan muncul di sini",
+    "no_text_found": "Tidak ada teks yang ditemukan dalam dokumen ini",
+    "copy": "Salin Teks",
+    "save": "Simpan sebagai TXT",
+    "extract_again": "Ekstrak Lagi",
+    "copied_to_clipboard": "Teks disalin ke papan klip",
+    "save_error": "Kesalahan saat menyimpan teks: {error}",
+    "unknown_error": "Terjadi kesalahan yang tidak diketahui",
+    "pages_count": "{count} halaman",
+    "premium_required": {
+      "title": "Fitur Premium",
+      "message": "Ekstraksi teks dengan OCR adalah fitur premium. Harap tingkatkan untuk mengakses fungsi ini."
+    },
+"select_document": "Pilih dokumen untuk ekstraksi teks",
+"scan_document": "Pindai Dokumen",
+"gallery_image": "Pilih dari Galeri"
+  },
 "barcode_history": {
   "title": "Riwayat Pemindaian",
   "no_history": "Tidak Ada Riwayat Pemindaian",
@@ -373,19 +413,37 @@
   
 },
 "share": {
-"share_via_apps": "Bagikan melalui aplikasi lain",
-"error": "Kesalahan saat berbagi: {error}",
-"file_not_found": "File tidak ditemukan atau tidak dapat diakses",
-"no_valid_files": "Tidak ada file yang valid untuk dibagikan",
-"limit_reached": {
-"title": "Batas Berbagi Telah Tercapai",
-"message": "Anda telah menggunakan semua {limit} berbagi gratis yang tersedia bulan ini.",
-"upgrade_prompt": "Tingkatkan ke Premium untuk berbagi tanpa batas!",
-"upgrade": "Tingkatkan ke Premium"
-},
-"remaining": "{count} share{plural} tersisa. Tingkatkan untuk berbagi tanpa batas!",
-"upgrade": "Tingkatkan"
-},
+    "share_via_apps": "Bagikan melalui aplikasi lain",
+    "error": "Kesalahan saat berbagi: {error}",
+    "file_not_found": "File tidak ditemukan atau tidak dapat diakses",
+    "no_valid_files": "Tidak ada file valid untuk dibagikan",
+    "limit_reached": {
+      "title": "Batas Berbagi Tercapai",
+      "message": "Anda telah menggunakan semua {limit} berbagi gratis yang tersedia bulan ini.",
+      "upgrade_prompt": "Tingkatkan ke Premium untuk berbagi tanpa batas!",
+      "upgrade": "Tingkatkan ke Premium"
+    },
+    "remaining": "{count} berbagi{plural} tersisa. Tingkatkan untuk berbagi tanpa batas!",
+    "upgrade": "Tingkatkan"
+  },
+  "limit": {
+    "file_limit_reached": {
+      "title": "Batas File Tercapai",
+      "message": "Anda telah mencapai batas {limit} file untuk pengguna gratis.",
+      "upgrade_prompt": "Tingkatkan ke Premium untuk file tanpa batas, pemindaian, dan lebih banyak lagi!",
+      "upgrade": "Tingkatkan ke Premium"
+    },
+    "remaining_files": "{count} file{plural} tersisa. Tingkatkan untuk akses tanpa batas!",
+    "upgrade": "Tingkatkan",
+    "file_counter": "{current}/{max} file digunakan",
+    "unlimited": "Akses tanpa batas"
+  },
+  "barcodes": {
+    "limit_reached": "Batas gratis tercapai. Tingkatkan ke Premium untuk membuat lebih banyak barcode."
+  },
+  "import": {
+    "limit_reached": "Batas gratis tercapai. Tingkatkan ke Premium untuk mengimpor lebih banyak file."
+  },
 "document": {
   "original_size": "Ukuran Asli",
   "estimated_size": "Ukuran Perkiraan",
@@ -520,7 +578,7 @@
   "convert": "Konversi",
   "converting": "Mengonversi...",
   "success_message": "File berhasil dikonversi!",
-  "failure_message": "Konversi gagal: {0}"
+  "failure_message": "Konversi gagal: {error}"
 },
 "conversion_result": {
   "error": {
@@ -528,7 +586,7 @@
   },
   "success": {
     "title": "Konversi Berhasil",
-    "file_saved": "File disimpan sebagai {0}",
+    "file_saved": "File disimpan sebagai {saved}",
     "open": "Buka File",
     "share": "Bagikan",
     "share_message": "Membagikan file...",

@@ -99,10 +99,7 @@ class ConversionResultSection extends StatelessWidget {
           SizedBox(height: 8.h),
           Text(
             "conversion_result.success.file_saved".tr(
-              args: [
-                path.basename(state.convertedFilePath!)
-              ], // Dynamic argument
-            ),
+                namedArgs: {'saved': path.basename(state.convertedFilePath!)}),
           ),
           SizedBox(height: 12.h),
           Row(

@@ -98,8 +98,8 @@ class ConversionButton extends StatelessWidget {
       onFailure: (error) {
         AppDialogs.showSnackBar(
           context,
-          message: "conversion_button.failure_message"
-              .tr(args: [error]), // Localized string with argument
+          message: "conversion_button.failure_message".tr(
+              namedArgs: {'error': error}), // Localized string with argument
           type: SnackBarType.error,
         );
       },

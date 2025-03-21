@@ -6,65 +6,131 @@ import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/services/file_limit_service.dart';
 
 class PremiumUpgradeUtils {
-  /// Show dialog to upgrade to premium when file limit is reached
+  static const _animationDuration = Duration(milliseconds: 300);
+  static const _buttonBounceDuration = Duration(milliseconds: 150);
+
+  /// Displays a premium upgrade dialog with smooth animations
   static Future<void> showFileLimitReachedDialog(BuildContext context) async {
-    return showDialog(
+    await showGeneralDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('limit.file_limit_reached.title'.tr()),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      transitionDuration: _animationDuration,
+      pageBuilder: (context, animation, secondaryAnimation) => ScaleTransition(
+        scale: CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        ),
+        child: AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 10,
+          backgroundColor: Theme.of(context).dialogBackgroundColor,
+          title: Semantics(
+            label: 'File limit reached title',
+            child: Text(
+              'limit.file_limit_reached.title'.tr(),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          content: _buildDialogContent(context),
+          actionsAlignment: MainAxisAlignment.spaceEvenly,
+          actions: _buildDialogActions(context),
+        ),
+      ),
+    ).then((_) => null); // Explicitly discard the return value
+  }
+
+  static Widget _buildDialogContent(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return Container(
+      constraints: BoxConstraints(maxWidth: screenWidth * 0.85),
+      padding: EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Semantics(
+            label: 'Locked feature icon',
+            child: Icon(
               Icons.lock_outline,
               color: Theme.of(context).colorScheme.error,
-              size: 48,
+              size: 60,
             ),
-            SizedBox(height: 16),
-            Text(
-              'limit.file_limit_reached.message'.tr(
-                namedArgs: {'limit': '5'},
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'limit.file_limit_reached.upgrade_prompt'.tr(),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('common.cancel'.tr()),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Navigate to premium screen
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const PremiumScreen(),
+          SizedBox(height: 20),
+          Text(
+            'limit.file_limit_reached.message'.tr(namedArgs: {'limit': '5'}),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-            ),
-            child: Text('limit.file_limit_reached.upgrade'.tr()),
+          ),
+          SizedBox(height: 12),
+          Text(
+            'limit.file_limit_reached.upgrade_prompt'.tr(),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
           ),
         ],
       ),
     );
   }
 
-  /// Show message about remaining files
+  static List<Widget> _buildDialogActions(BuildContext context) {
+    return [
+      ElevatedButton(
+        onPressed: () {
+          Navigator.pop(context);
+          if (context.mounted) {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const PremiumScreen()),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          elevation: 3,
+          backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+          shadowColor: Theme.of(context).primaryColor.withOpacity(0.3),
+        ),
+        child: Semantics(
+          label: 'Upgrade to premium button',
+          child: Text(
+            'limit.file_limit_reached.upgrade'.tr(),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        ),
+      ),
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        ),
+        child: Semantics(
+          label: 'Cancel button',
+          child: Text(
+            'common.cancel'.tr(),
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+          ),
+        ),
+      ),
+    ];
+  }
+
+  /// Shows a refined snackbar with remaining files info
   static void showRemainingFilesMessage(
-    BuildContext context,
-    int remainingFiles,
-  ) {
+      BuildContext context, int remainingFiles) {
+    if (!context.mounted) return;
     AppDialogs.showSnackBar(
       context,
       message: 'limit.remaining_files'.tr(
@@ -77,44 +143,52 @@ class PremiumUpgradeUtils {
       duration: Duration(seconds: 4),
       action: SnackBarAction(
         label: 'limit.upgrade'.tr(),
+        textColor: Theme.of(context).colorScheme.primary,
         onPressed: () {
-          // Navigate to premium screen
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const PremiumScreen(),
-            ),
-          );
+          if (context.mounted) {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const PremiumScreen()),
+            );
+          }
         },
       ),
     );
   }
 
-  /// Check if action is allowed based on file limit, and show appropriate dialogs
-  static Future<bool> canPerformFileAction(BuildContext context, WidgetRef ref,
-      {bool showDialog = true}) async {
-    // Check if user has reached limit using the providers
-    final hasReachedLimitAsync = ref.read(hasReachedFileLimitProvider);
+  /// Validates file action with robust error handling
+  static Future<bool> canPerformFileAction(
+    BuildContext context,
+    WidgetRef ref, {
+    bool showDialog = true,
+  }) async {
+    try {
+      final hasReachedLimitAsync = ref.read(hasReachedFileLimitProvider);
+      final hasReachedLimit = await hasReachedLimitAsync.value ?? false;
 
-    // Use the future to get the result
-    final hasReachedLimit = await hasReachedLimitAsync.value;
+      if (hasReachedLimit) {
+        if (showDialog && context.mounted) {
+          await showFileLimitReachedDialog(context);
+        }
+        return false;
+      }
 
-    if (hasReachedLimit ?? false) {
-      if (showDialog && context.mounted) {
-        await showFileLimitReachedDialog(context);
+      final remainingFilesAsync = ref.read(remainingFilesProvider);
+      final remainingFiles = await remainingFilesAsync.value ?? 0;
+
+      if (remainingFiles <= 2 && remainingFiles > 0 && context.mounted) {
+        showRemainingFilesMessage(context, remainingFiles);
+      }
+
+      return true;
+    } catch (e) {
+      if (context.mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'An error occurred while checking file limits',
+          type: SnackBarType.error,
+        );
       }
       return false;
     }
-
-    // Get remaining files if close to limit
-    final remainingFilesAsync = ref.read(remainingFilesProvider);
-    final remainingFiles = await remainingFilesAsync.value;
-
-    if ((remainingFiles ?? 0) <= 2 &&
-        (remainingFiles ?? 0) > 0 &&
-        context.mounted) {
-      showRemainingFilesMessage(context, remainingFiles ?? 0);
-    }
-
-    return true;
   }
 }

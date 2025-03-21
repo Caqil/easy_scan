@@ -236,7 +236,7 @@ class _PasswordVerificationDialogState extends State<PasswordVerificationDialog>
                       ),
                     ),
                   )
-                : Text('pdf.unlock'.tr()),
+                : Text('pdf.unlock.title'.tr()),
           ),
         ],
       ),

@@ -188,7 +188,6 @@
     "protected_document": "Protected Document",
     "enter_password_prompt": "This document is protected. Please enter the password to continue.",
     "check_password_error": "Please check your password and try again",
-    "unlock": "Unlock",
     "file_not_found": "PDF file not found",
     "password_cancelled": "Password input was cancelled.",
     "incorrect_password": "Incorrect password or password input was cancelled.",
@@ -196,7 +195,48 @@
     "change_password": "Change Password",
     "add_password": "Add Password",
     "update_security": "Update document security",
-    "protect_with_password": "Protect with a password"
+    "protect_with_password": "Protect with a password",
+    "unlock": {
+      "title": "Unlock PDF",
+      "description": "Enter the password to unlock \"{name}\"",
+      "description_short": "Remove password protection from this PDF",
+      "password_label": "PDF Password",
+      "unlock_button": "Unlock",
+      "processing": "Unlocking PDF...",
+      "success": "PDF successfully unlocked",
+      "error_empty_password": "Please enter a password",
+      "error_unlock_failed": "Failed to unlock PDF. Please check your password and try again."
+    },
+    "password_protected_documents": "Password Protected Documents",
+    "select_document_to_open": "Select a document to open",
+    "no_locked_documents": "No password-protected documents found"
+  },
+  "ocr": {
+    "extract_text": "Extract Text (OCR)",
+    "extract_text_desc": "Extract text from this document using OCR",
+    "extraction_settings": "Extraction Settings",
+    "language": "Language",
+    "enhance_scanned": "Enhance Image",
+    "preserve_layout": "Preserve Layout",
+    "start_extraction": "Start Extraction",
+    "processing": "Processing document...",
+    "extracted_text": "Extracted Text",
+    "extracted_text_placeholder": "The extracted text will appear here",
+    "no_text_found": "No text was found in this document",
+    "copy": "Copy Text",
+    "save": "Save as TXT",
+    "extract_again": "Extract Again",
+    "copied_to_clipboard": "Text copied to clipboard",
+    "save_error": "Error saving text: {error}",
+    "unknown_error": "Unknown error occurred",
+    "pages_count": "{count} page{s}",
+    "premium_required": {
+      "title": "Premium Feature",
+      "message": "Text extraction with OCR is a premium feature. Please upgrade to access this functionality."
+    },
+    "select_document": "Select a document for text extraction",
+    "scan_document": "Scan Document",
+    "gallery_image": "Choose from Gallery"
   },
   "barcode_history": {
     "title": "Scan History",
@@ -541,7 +581,7 @@
     "convert": "Convert",
     "converting": "Converting...",
     "success_message": "File converted successfully!",
-    "failure_message": "Conversion failed: {0}"
+    "failure_message": "Conversion failed: {error}"
   },
   "conversion_result": {
     "error": {
@@ -549,7 +589,7 @@
     },
     "success": {
       "title": "Conversion Successful",
-      "file_saved": "File saved as {0}",
+      "file_saved": "File saved as {saved}",
       "open": "Open File",
       "share": "Share",
       "share_message": "Sharing file...",

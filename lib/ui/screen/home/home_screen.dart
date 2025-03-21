@@ -204,40 +204,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   QuickActions(
                     onScan: () {
                       showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => Padding(
-                                padding: EdgeInsets.only(
-                                  bottom:
-                                      MediaQuery.of(context).viewInsets.bottom,
-                                ),
-                                child: SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.6,
-                                  child: BarcodeScanOptionsView(
-                                    onScanPressed: () {
-                                      Navigator.pop(context);
-                                      AppRoutes.navigateToBarcodeScan(context);
-                                    },
-                                    onGeneratePressed: () {
-                                      Navigator.pop(context);
-                                      AppRoutes.navigateToBarcodeGenerator(
-                                          context);
-                                    },
-                                    onHistoryPressed: () {
-                                      Navigator.pop(context);
-                                      AppRoutes.navigateToBarcodeHistory(
-                                          context);
-                                    },
-                                  ),
-                                ),
-                              ));
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: BarcodeScanOptionsView(
+                              onScanPressed: () {
+                                Navigator.pop(context);
+                                AppRoutes.navigateToBarcodeScan(context);
+                              },
+                              onGeneratePressed: () {
+                                Navigator.pop(context);
+                                AppRoutes.navigateToBarcodeGenerator(context);
+                              },
+                              onHistoryPressed: () {
+                                Navigator.pop(context);
+                                AppRoutes.navigateToBarcodeHistory(context);
+                              },
+                            ),
+                          ),
+                        ),
+                      );
                     },
-                    onFolders: () => _showFolderSelectionDialog(rootFolders),
-                    onFavorites: _showFavorites,
+                    onFolders: () {
+                      _showFolderSelectionDialog(rootFolders);
+                    },
+                    onOcr: _handleOcrAction,
+                    onUnlock: _handleUnlockAction,
                     onMerge: () => PdfMerger.showMergeOptions(context, ref),
-                    onCompress: () async {
+                    onCompress: () {
                       PdfCompressionUtils.showCompressionOptions(context, ref);
                     },
                   ),
@@ -332,6 +332,246 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: const Center(child: CircularProgressIndicator()),
             ),
         ],
+      ),
+    );
+  }
+
+  void _handleOcrAction() {
+    // Implementation for OCR action
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'ocr.extract_text'.tr(),
+              style: GoogleFonts.slabo27px(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'ocr.select_document'.tr(),
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildOcrOption(
+                  context,
+                  Icons.document_scanner_outlined,
+                  'ocr.scan_document'.tr(),
+                  () {
+                    Navigator.pop(context);
+                    _handleScanAction();
+                  },
+                ),
+                _buildOcrOption(
+                  context,
+                  Icons.photo_library_outlined,
+                  'ocr.gallery_image'.tr(),
+                  () {
+                    Navigator.pop(context);
+                    final scanService = ref.read(scanServiceProvider);
+                    scanService.pickImages(
+                      context: context,
+                      ref: ref,
+                      setLoading: (isLoading) =>
+                          setState(() => _isLoading = isLoading),
+                      onSuccess: () {
+                        AppRoutes.navigateToEdit(context);
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOcrOption(
+    BuildContext context,
+    IconData icon,
+    String label,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 130,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 32,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              label,
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleUnlockAction() {
+    final documents = ref.read(documentsProvider);
+    final lockedDocuments =
+        documents.where((doc) => doc.isPasswordProtected).toList();
+
+    if (lockedDocuments.isEmpty) {
+      AppDialogs.showSnackBar(
+        context,
+        message: 'pdf.no_locked_documents'.tr(),
+        type: SnackBarType.warning,
+      );
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'pdf.password_protected_documents'.tr(),
+              style: GoogleFonts.slabo27px(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'pdf.select_document_to_open'.tr(),
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.5,
+              ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: lockedDocuments.length,
+                itemBuilder: (context, index) {
+                  final document = lockedDocuments[index];
+                  return _buildLockedDocumentItem(context, document);
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            SafeArea(
+              top: false,
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('common.cancel'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLockedDocumentItem(BuildContext context, Document document) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(12),
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: document.thumbnailPath != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(
+                    File(document.thumbnailPath!),
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : Icon(
+                  Icons.picture_as_pdf,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+        ),
+        title: Text(
+          document.name,
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          DateTimeUtils.getFriendlyDate(document.modifiedAt),
+          style: GoogleFonts.slabo27px(
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+            color: Colors.grey,
+          ),
+        ),
+        trailing: const Icon(Icons.lock, color: Colors.blue),
+        onTap: () {
+          Navigator.pop(context);
+          AppRoutes.navigateToView(context, document);
+        },
       ),
     );
   }

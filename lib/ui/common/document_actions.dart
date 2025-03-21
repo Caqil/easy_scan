@@ -8,13 +8,63 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path/path.dart' as path;
+import 'package:scanpro/ui/screen/ocr/ocr_extraction.dart';
 import 'package:scanpro/ui/widget/option_tile.dart';
+import 'package:scanpro/ui/widget/pdf_unlock_dialog.dart';
 import '../../models/document.dart';
 import '../../providers/document_provider.dart';
 import '../../utils/date_utils.dart';
 import '../widget/password_bottom_sheet.dart';
 
-/// A globally accessible class to handle document-related actions
+extension DocumentActionsExtension on _DocumentOptionsSheet {
+  // Add new options for OCR and PDF Unlock
+  Widget buildAdditionalOptions(BuildContext context) {
+    final isPdf = document.pdfPath.toLowerCase().endsWith('.pdf');
+
+    return Column(
+      children: [
+        // OCR Text Extraction Option
+        if (isPdf)
+          OptionTile(
+            icon: Icons.text_fields_outlined,
+            title: 'ocr.extract_text'.tr(),
+            description: 'ocr.extract_text_desc'.tr(),
+            onTap: () {
+              Navigator.pop(context);
+              _navigateToOcrScreen(context);
+            },
+          ),
+
+        // PDF Unlock Option (only for password-protected PDFs)
+        if (isPdf && document.isPasswordProtected)
+          OptionTile(
+            icon: Icons.no_encryption_outlined,
+            title: 'pdf.unlock.title'.tr(),
+            description: 'pdf.unlock.description_short'.tr(),
+            onTap: () {
+              Navigator.pop(context);
+              showPdfUnlockDialog(context, document, onSuccess: (unlockedDoc) {
+                // If there's an onEdit callback, call it with the unlocked document
+                if (onEdit != null) {
+                  onEdit!(unlockedDoc);
+                }
+              });
+            },
+          ),
+      ],
+    );
+  }
+
+  void _navigateToOcrScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OcrExtractionScreen(document: document),
+      ),
+    );
+  }
+}
+
 class DocumentActions {
   /// Show document options bottom sheet
   static void showDocumentOptions(
@@ -263,6 +313,38 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                         PdfCompressionUtils.showQuickCompressionDialog(
                             context, ref, document);
                       }
+                    },
+                  ),
+                if (isPdf)
+                  OptionTile(
+                    icon: Icons.text_fields_outlined,
+                    title: 'ocr.extract_text'.tr(),
+                    description: 'ocr.extract_text_desc'.tr(),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              OcrExtractionScreen(document: document),
+                        ),
+                      );
+                    },
+                  ),
+                if (isPdf && document.isPasswordProtected)
+                  OptionTile(
+                    icon: Icons.no_encryption_outlined,
+                    title: 'pdf.unlock.title'.tr(),
+                    description: 'pdf.unlock.description_short'.tr(),
+                    onTap: () {
+                      Navigator.pop(context);
+                      showPdfUnlockDialog(context, document,
+                          onSuccess: (unlockedDoc) {
+                        // If there's an onEdit callback, call it with the unlocked document
+                        if (onEdit != null) {
+                          onEdit!(unlockedDoc);
+                        }
+                      });
                     },
                   ),
                 if (isPdf)
