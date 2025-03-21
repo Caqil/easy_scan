@@ -118,7 +118,6 @@ class SubscriptionService {
     }
   }
 
-  // Get all available subscription packages
   Future<List<Package>> getSubscriptionPackages() async {
     logger.info('Getting subscription packages');
 
@@ -132,12 +131,14 @@ class SubscriptionService {
 
       final packages = offerings.current!.availablePackages;
 
-      // Debug log of loaded packages
+      // Important: Log each package found to help with debugging
+      logger.info('Found ${packages.length} packages from RevenueCat:');
       for (final package in packages) {
-        logger.debug(
-            'Package: ${package.identifier}, Price: ${package.storeProduct.priceString}');
+        logger.info(
+            'Package: ${package.identifier}, Type: ${package.packageType}, Price: ${package.storeProduct.priceString}');
       }
 
+      // Make sure to return ALL packages, not just filtering to the default
       return packages;
     } catch (e) {
       logger.error('Error loading packages from RevenueCat: $e');

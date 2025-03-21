@@ -43,6 +43,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
     });
 
     try {
+      // Directly use Purchases.getOfferings() to get all available offerings
       final offerings = await Purchases.getOfferings();
 
       if (offerings.current == null) {
@@ -50,7 +51,14 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
         throw Exception('No subscription offerings found');
       }
 
+      // Get ALL packages, not just the default
       final packages = offerings.current!.availablePackages;
+
+      // Log all packages for debugging
+      logger.info('Found ${packages.length} packages:');
+      for (var pkg in packages) {
+        logger.info('Package: ${pkg.identifier}, Type: ${pkg.packageType}');
+      }
 
       if (mounted) {
         setState(() {
@@ -62,25 +70,25 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
           Package? monthlyPackage;
           Package? weeklyPackage;
 
-          // Find packages based on type
+          // Find packages based on type or identifier
           for (var package in packages) {
             if (package.packageType == PackageType.annual ||
-                package.identifier.contains('yearly')) {
+                package.identifier.toLowerCase().contains('yearly')) {
               yearlyPackage = package;
             } else if (package.packageType == PackageType.monthly ||
-                package.identifier.contains('monthly')) {
+                package.identifier.toLowerCase().contains('monthly')) {
               monthlyPackage = package;
             } else if (package.packageType == PackageType.weekly ||
-                package.identifier.contains('weekly')) {
+                package.identifier.toLowerCase().contains('weekly')) {
               weeklyPackage = package;
             }
           }
 
-          // Prioritize yearly, then monthly, then first available
+          // Prioritize yearly, then monthly, then weekly, then first available
           _selectedPackageId = yearlyPackage?.identifier ??
               monthlyPackage?.identifier ??
               weeklyPackage?.identifier ??
-              packages.first.identifier;
+              (packages.isNotEmpty ? packages.first.identifier : null);
         });
       }
     } catch (e) {

@@ -51,7 +51,7 @@ class RevenueCatSubscriptionOptions extends StatelessWidget {
               SizedBox(height: 12.h),
             ],
           ),
-        ),
+        )
       ],
     );
   }
@@ -284,9 +284,7 @@ class RevenueCatSubscriptionOptions extends StatelessWidget {
     }
 
     return _buildPlanCard(
-      title: yearlyPackage.identifier.contains('yearly')
-          ? 'subscription.yearly'.tr()
-          : yearlyPackage.storeProduct.title,
+      title: yearlyPackage.storeProduct.title,
       subtitle: yearlyPackage.storeProduct.description,
       price: yearlyPackage.storeProduct.priceString,
       selected: selectedPackageId == yearlyPackage.identifier,
@@ -333,9 +331,7 @@ class RevenueCatSubscriptionOptions extends StatelessWidget {
     }
 
     return _buildPlanCard(
-      title: monthlyPackage.identifier.contains('monthly')
-          ? 'subscription.monthly'.tr()
-          : monthlyPackage.storeProduct.title,
+      title: monthlyPackage.storeProduct.title,
       subtitle: monthlyPackage.storeProduct.description,
       price: monthlyPackage.storeProduct.priceString,
       selected: selectedPackageId == monthlyPackage.identifier,
@@ -358,9 +354,7 @@ class RevenueCatSubscriptionOptions extends StatelessWidget {
     if (weeklyPackage == null) return const SizedBox.shrink();
 
     return _buildPlanCard(
-      title: weeklyPackage.identifier.contains('weekly')
-          ? 'subscription.weekly'.tr()
-          : weeklyPackage.storeProduct.title,
+      title: weeklyPackage.storeProduct.title,
       subtitle: weeklyPackage.storeProduct.description,
       price: weeklyPackage.storeProduct.priceString,
       selected: selectedPackageId == weeklyPackage.identifier,
