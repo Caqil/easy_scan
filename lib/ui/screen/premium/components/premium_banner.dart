@@ -17,66 +17,87 @@ class PremiumBanner extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 3.h),
-        padding: EdgeInsets.all(16.r),
+        margin: EdgeInsets.symmetric(vertical: 8.h),
+        padding: EdgeInsets.all(20.r),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF2196F3), // Blue
-              Color(0xFF673AB7), // Purple
+              Colors.grey[900]!.withOpacity(0.9),
+              Colors.grey[800]!.withOpacity(0.9),
             ],
+            stops: const [0.0, 1.0],
           ),
-          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: Colors.yellowAccent.withOpacity(0.3),
+            width: 1.5,
+          ),
+          borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.yellowAccent.withOpacity(0.1),
+              blurRadius: 20,
+              spreadRadius: 2,
             ),
           ],
         ),
         child: Row(
           children: [
-            // Text content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AutoSizeText(
                     'subscription.monthly_desc'.tr(),
+                    maxLines: 2,
                     style: GoogleFonts.slabo27px(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                  SizedBox(height: 4.h),
+                  SizedBox(height: 8.h),
                   AutoSizeText(
                     'onboarding.start_free_trial'.tr(),
+                    maxLines: 1,
                     style: GoogleFonts.slabo27px(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12.sp,
-                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.yellowAccent.withOpacity(0.9),
+                      letterSpacing: 0.2,
                     ),
                   ),
                 ],
               ),
             ),
-            // Icon
+            SizedBox(width: 16.w),
             Container(
-              width: 60.w,
-              height: 60.w,
-              decoration: const BoxDecoration(
+              width: 64.w,
+              height: 64.w,
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white24,
+                gradient: RadialGradient(
+                  colors: [
+                    Colors.yellowAccent.withOpacity(0.3),
+                    Colors.transparent,
+                  ],
+                ),
+                border: Border.all(
+                  color: Colors.yellowAccent.withOpacity(0.5),
+                  width: 2,
+                ),
               ),
               child: Center(
-                child: Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                  size: 36.r,
+                child: Image.asset(
+                  'assets/icons/ic_icon.png',
+                  height: 40.r,
                 ),
               ),
             ),

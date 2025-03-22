@@ -114,7 +114,7 @@ class CompressionSimpleView extends ConsumerWidget {
               child: _buildCompressionOption(
                 context,
                 CompressionLevel.low,
-                true, // Always available
+                true, // Always unlocked
                 ref,
                 subscriptionStatus,
               ),
@@ -123,7 +123,7 @@ class CompressionSimpleView extends ConsumerWidget {
               child: _buildCompressionOption(
                 context,
                 CompressionLevel.medium,
-                true, // Always available
+                subscriptionStatus.hasFullAccess, // Unlocked only for premium
                 ref,
                 subscriptionStatus,
               ),
@@ -137,7 +137,7 @@ class CompressionSimpleView extends ConsumerWidget {
               child: _buildCompressionOption(
                 context,
                 CompressionLevel.high,
-                false, // Requires premium
+                subscriptionStatus.hasFullAccess, // Unlocked only for premium
                 ref,
                 subscriptionStatus,
               ),
@@ -146,7 +146,7 @@ class CompressionSimpleView extends ConsumerWidget {
               child: _buildCompressionOption(
                 context,
                 CompressionLevel.maximum,
-                false, // Requires premium
+                subscriptionStatus.hasFullAccess, // Unlocked only for premium
                 ref,
                 subscriptionStatus,
               ),
@@ -164,8 +164,7 @@ class CompressionSimpleView extends ConsumerWidget {
     WidgetRef ref,
     SubscriptionStatus subscriptionStatus,
   ) {
-    final bool isEnabled = isAlwaysAvailable ||
-        (subscriptionStatus.isActive && !isAlwaysAvailable);
+    final bool isEnabled = isAlwaysAvailable;
     final bool isSelected = compressionLevel == level;
 
     return InkWell(
@@ -218,7 +217,7 @@ class CompressionSimpleView extends ConsumerWidget {
                       fontSize: 14.sp,
                     ),
                   ),
-                  if (!isAlwaysAvailable && !isEnabled) ...[
+                  if (!isAlwaysAvailable) ...[
                     const SizedBox(width: 4),
                     Icon(
                       Icons.lock,
@@ -252,9 +251,9 @@ class CompressionSimpleView extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Premium Feature'.tr()),
+        title: Text('premium_required.title'.tr()),
         content: Text(
-          'Unlock advanced compression levels by upgrading to Premium!'.tr(),
+          'subscription.subtitle'.tr(),
         ),
         actions: [
           TextButton(

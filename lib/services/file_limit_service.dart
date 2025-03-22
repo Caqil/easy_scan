@@ -9,7 +9,6 @@ import 'package:scanpro/models/barcode_scan.dart';
 
 /// Service to manage file limits for free users
 class FileLimitService {
-  static const String _fileCountKey = 'total_files_count';
   static const int _freeUserFileLimit = 5;
 
   /// Get the current number of documents

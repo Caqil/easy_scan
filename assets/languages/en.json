@@ -946,7 +946,7 @@
   "create_new_document": "Create New Document",
   "tap_to_edit": "Tap to edit",
   "drag": "Drag",
-  "all": "all ",
+  "all": "All ",
   "empty_state": {
     "searching": {
       "no_documents_match": "No documents match your search",

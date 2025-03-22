@@ -348,7 +348,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                       ),
                     ),
                     TextSpan(
-                      text: 'categories.documents'.tr(),
+                      text: 'chip_format_selector.categories.documents'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
                         fontSize: 18.sp,

@@ -2,12 +2,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/config/helper.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/models/document.dart';
 import 'package:scanpro/providers/document_provider.dart';
 import 'package:scanpro/services/pdf_compression_api_service.dart';
 import 'package:scanpro/services/image_service.dart';
+import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/screen/compression/components/compression_advanced_view.dart';
@@ -31,7 +34,7 @@ class CompressionScreen extends ConsumerStatefulWidget {
 }
 
 class _CompressionScreenState extends ConsumerState<CompressionScreen> {
-  CompressionLevel _compressionLevel = CompressionLevel.medium;
+  CompressionLevel _compressionLevel = CompressionLevel.low;
   bool _isAdvancedMode = false;
   bool _isCompressing = false;
   double _qualitySliderValue = 70.0;
@@ -80,18 +83,30 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isPremimUser = ref.watch(subscriptionStatusProvider);
     return Scaffold(
       appBar: CustomAppBar(
-        title: AutoSizeText('compression.compress_pdf'.tr()),
+        title: AutoSizeText('compression.compress_pdf'.tr(),
+            style: GoogleFonts.lilitaOne(fontSize: 25.sp)),
         actions: [
           IconButton(
             icon: Icon(_isAdvancedMode ? Icons.tune : Icons.tune),
             tooltip: _isAdvancedMode ? 'Simple Mode' : 'Advanced Mode',
-            onPressed: _isCompressing
-                ? null
+            onPressed: isPremimUser.isActive
+                ? _isCompressing
+                    ? null
+                    : () {
+                        setState(() {
+                          _isAdvancedMode = !_isAdvancedMode;
+                        });
+                      }
                 : () {
                     setState(() {
-                      _isAdvancedMode = !_isAdvancedMode;
+                      AppDialogs.showSnackBar(
+                        context,
+                        message: 'ocr.premium_required.message'.tr(),
+                        type: SnackBarType.error,
+                      );
                     });
                   },
           ),

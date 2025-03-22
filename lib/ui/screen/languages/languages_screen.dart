@@ -35,7 +35,8 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: AutoSizeText("settings.language".tr()),
+        title: AutoSizeText("settings.language".tr(),
+            style: GoogleFonts.lilitaOne(fontSize: 25.sp)),
         centerTitle: false,
       ),
       body: localState.languages.isEmpty

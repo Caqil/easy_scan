@@ -143,7 +143,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       // Body remains the same
       body: _isLoading
           ? Container(
-              color: Colors.black45,
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: const Center(child: CircularProgressIndicator()),
             )
           : widget.child,
