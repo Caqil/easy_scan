@@ -161,7 +161,7 @@ class RevenueCatSubscriptionOptions extends StatelessWidget {
                                 vertical: 2.h,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.2),
+                                color: const Color.fromARGB(255, 0, 255, 8),
                                 borderRadius: BorderRadius.circular(6.r),
                               ),
                               child: AutoSizeText(

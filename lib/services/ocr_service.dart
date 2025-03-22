@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -158,7 +159,7 @@ class OcrService {
       // Check if OCR is available (premium feature)
       final isAvailable = await isOcrAvailable();
       if (!isAvailable) {
-        return OcrResult.error('OCR is a premium feature');
+        return OcrResult.error('ocr.premium_required.message'.tr());
       }
 
       final file = File(document.pdfPath);

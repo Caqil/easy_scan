@@ -5,6 +5,7 @@ import 'package:scanpro/providers/settings_provider.dart';
 import 'package:scanpro/services/auth_service.dart';
 import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/ui/screen/settings/components/quality_selector_sheet.dart';
 import 'package:scanpro/ui/screen/settings/components/settings_card.dart';
 import 'package:scanpro/ui/screen/settings/components/settings_divider.dart';
 import 'package:scanpro/ui/screen/settings/components/settings_section_header.dart';
@@ -184,7 +185,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   title: "settings.default_pdf_quality".tr(),
                   subtitle: "${settings.defaultPdfQuality}%",
                   onTap: () {
-                    _showQualitySelector(
+                    showQualitySelector(
                         context, ref, settings.defaultPdfQuality);
                   },
                 ),
@@ -326,132 +327,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         AppDialogs.showSnackBar(context,
             message: "settings.auto_lock_set".tr(), type: SnackBarType.success);
       },
-    );
-  }
-
-  void _showQualitySelector(
-      BuildContext context, WidgetRef ref, int currentQuality) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          int selectedQuality = currentQuality;
-
-          return Padding(
-            padding: EdgeInsets.all(24.r),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoSizeText(
-                  "settings.pdf_quality".tr(),
-                  style: GoogleFonts.slabo27px(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                AutoSizeText(
-                  "settings.pdf_quality_desc".tr(),
-                  style: GoogleFonts.slabo27px(
-                    fontSize: 14.sp,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                SizedBox(height: 24.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AutoSizeText(
-                      "Lower Quality",
-                      style: GoogleFonts.slabo27px(
-                        fontSize: 12.sp,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                    AutoSizeText(
-                      "Higher Quality",
-                      style: GoogleFonts.slabo27px(
-                        fontSize: 12.sp,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-                Slider(
-                  value: selectedQuality.toDouble(),
-                  min: 30,
-                  max: 100,
-                  divisions: 7,
-                  label: "$selectedQuality%",
-                  onChanged: (value) {
-                    setState(() {
-                      selectedQuality = value.round();
-                    });
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AutoSizeText(
-                      "$selectedQuality%",
-                      style: GoogleFonts.slabo27px(
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 32.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 12.r),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                        ),
-                        child: AutoSizeText("common.cancel".tr()),
-                      ),
-                    ),
-                    SizedBox(width: 16.w),
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          ref
-                              .read(settingsProvider.notifier)
-                              .setDefaultPdfQuality(selectedQuality);
-                          Navigator.pop(context);
-
-                          AppDialogs.showSnackBar(context,
-                              message: "settings.quality_saved".tr(),
-                              type: SnackBarType.success);
-                        },
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 12.r),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                        ),
-                        child: AutoSizeText("common.save".tr()),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-              ],
-            ),
-          );
-        },
-      ),
     );
   }
 

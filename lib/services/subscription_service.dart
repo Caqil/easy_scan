@@ -10,7 +10,10 @@ const String kYearlyProductId = 'scanpro_premium_yearly';
 
 // Entitlement IDs - These should match what you configure in RevenueCat dashboard
 const String kPremiumEntitlementId = 'premium_access';
-
+final isPremiumProvider = FutureProvider<bool>((ref) async {
+  final subscriptionService = ref.watch(subscriptionServiceProvider);
+  return await subscriptionService.hasActiveSubscription();
+});
 // Provider for the subscription service
 final subscriptionServiceProvider = Provider<SubscriptionService>((ref) {
   logger.info('Creating SubscriptionService provider');

@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/config/subscription_navigator.dart';
-import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/ui/screen/premium/components/premium_banner.dart';
 
 class QuickActions extends ConsumerWidget {
@@ -32,7 +31,6 @@ class QuickActions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final subscriptionStatus = ref.watch(subscriptionStatusProvider);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 5.h),
       decoration: BoxDecoration(
@@ -79,11 +77,9 @@ class QuickActions extends ConsumerWidget {
             ],
           ),
           SizedBox(height: 12.h),
-          subscriptionStatus.hasFullAccess
-              ? SizedBox.shrink()
-              : PremiumBanner(
-                  onTap: () => SubscriptionNavigator.openPremiumScreen(context),
-                ),
+          PremiumBanner(
+            onTap: () => SubscriptionNavigator.openPremiumScreen(context),
+          )
         ],
       ),
     );

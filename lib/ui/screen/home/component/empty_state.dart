@@ -6,9 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class EmptyState extends StatelessWidget {
-  final VoidCallback onScan;
-
-  const EmptyState({super.key, required this.onScan});
+  const EmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +30,6 @@ class EmptyState extends StatelessWidget {
                 color: Colors.grey),
           ),
           const SizedBox(height: 24),
-          OutlinedButton.icon(
-            onPressed: onScan,
-            icon: const Icon(Icons.camera_alt),
-            label: AutoSizeText('scan.start_scanning'.tr()),
-          ),
         ],
       ),
     );

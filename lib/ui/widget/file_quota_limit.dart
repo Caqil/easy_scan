@@ -4,9 +4,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:scanpro/main.dart';
 import 'package:scanpro/services/file_limit_service.dart';
 import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/ui/screen/premium/premium_screen.dart';
+
+// Create a simplified provider that just returns if the user has premium
+final hasPremiumProvider = FutureProvider<bool>((ref) async {
+  final subscriptionService = ref.watch(subscriptionServiceProvider);
+  return await subscriptionService.hasActiveSubscription();
+});
+
+// Create a provider for trial status
+final hasTrialProvider = FutureProvider<bool>((ref) async {
+  final subscriptionService = ref.watch(subscriptionServiceProvider);
+  final hasSubscription = await subscriptionService.hasActiveSubscription();
+  final hasTrialOrSubscription =
+      await subscriptionService.hasActiveTrialOrSubscription();
+
+  // If they have trial OR subscription but don't have a paid subscription, they must be on trial
+  return hasTrialOrSubscription && !hasSubscription;
+});
 
 class FileQuotaStatusWidget extends ConsumerWidget {
   final bool showUpgradeButton;
@@ -27,6 +45,9 @@ class FileQuotaStatusWidget extends ConsumerWidget {
     final totalFiles = ref.watch(totalFilesProvider);
     final subscriptionStatus = ref.watch(subscriptionStatusProvider);
 
+    // Force subscription refresh if needed
+    ref.watch(hasPremiumProvider);
+
     return remainingFilesAsync.when(
       data: (remainingFiles) {
         return maxFilesAsync.when(
@@ -41,11 +62,17 @@ class FileQuotaStatusWidget extends ConsumerWidget {
             );
           },
           loading: () => _buildLoadingWidget(),
-          error: (_, __) => _buildErrorWidget(context),
+          error: (error, stack) {
+            logger.error('Error loading max files: $error\n$stack');
+            return _buildErrorWidget(context);
+          },
         );
       },
       loading: () => _buildLoadingWidget(),
-      error: (_, __) => _buildErrorWidget(context),
+      error: (error, stack) {
+        logger.error('Error loading remaining files: $error\n$stack');
+        return _buildErrorWidget(context);
+      },
     );
   }
 
@@ -58,9 +85,12 @@ class FileQuotaStatusWidget extends ConsumerWidget {
     SubscriptionStatus subscriptionStatus,
   ) {
     final theme = Theme.of(context);
-    final isPremium = maxFiles == -1;
+    final isPremium = maxFiles == -1 || subscriptionStatus.isActive;
     final isTrialActive = subscriptionStatus.isTrialActive;
     final expirationDate = subscriptionStatus.expirationDate;
+
+    logger.info(
+        'user premium: $isPremium, trial: $isTrialActive, expiration: $expirationDate');
 
     return GestureDetector(
       onTap: showUpgradeButton && !isPremium
@@ -73,7 +103,11 @@ class FileQuotaStatusWidget extends ConsumerWidget {
           color: backgroundColor ?? theme.cardColor,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: theme.dividerColor.withOpacity(0.3),
+            color: isPremium
+                ? Colors.amber.withOpacity(0.5)
+                : (isTrialActive
+                    ? Colors.green.withOpacity(0.5)
+                    : theme.dividerColor.withOpacity(0.3)),
           ),
           boxShadow: [
             BoxShadow(
@@ -118,20 +152,52 @@ class FileQuotaStatusWidget extends ConsumerWidget {
                           color: theme.textTheme.titleMedium?.color,
                         ),
                       ),
-                      if (expirationDate != null && !isPremium)
+                      if (expirationDate != null &&
+                          (isTrialActive || isPremium))
                         AutoSizeText(
                           _getExpirationText(expirationDate),
                           style: GoogleFonts.slabo27px(
                             fontSize: 12.sp,
-                            color: Colors.grey[600],
+                            color: isTrialActive &&
+                                    expirationDate
+                                            .difference(DateTime.now())
+                                            .inDays <
+                                        2
+                                ? theme.colorScheme.error
+                                : Colors.grey[600],
                           ),
                         ),
                     ],
                   ),
                 ),
 
-                // Upgrade Button
-                if (showUpgradeButton && !isPremium)
+                // Upgrade Button or Premium Badge
+                if (isPremium)
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(color: Colors.amber.withOpacity(0.5)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.stars, color: Colors.amber, size: 16.r),
+                        SizedBox(width: 4.w),
+                        AutoSizeText(
+                          'Premium',
+                          style: GoogleFonts.slabo27px(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12.sp,
+                            color: Colors.amber[800],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else if (showUpgradeButton)
                   TextButton(
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute(
@@ -145,7 +211,9 @@ class FileQuotaStatusWidget extends ConsumerWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: AutoSizeText(
-                      'limit.upgrade'.tr(),
+                      isTrialActive
+                          ? 'subscription.extend'.tr()
+                          : 'limit.upgrade'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
@@ -218,6 +286,8 @@ class FileQuotaStatusWidget extends ConsumerWidget {
   String _getExpirationText(DateTime expirationDate) {
     final daysRemaining = expirationDate.difference(DateTime.now()).inDays;
     if (daysRemaining < 0) return 'subscription.expired'.tr();
+    if (daysRemaining == 0) return 'subscription.expires_today'.tr();
+    if (daysRemaining == 1) return 'subscription.expires_tomorrow'.tr();
     return 'subscription.expires_in'
         .tr(namedArgs: {'days': daysRemaining.toString()});
   }

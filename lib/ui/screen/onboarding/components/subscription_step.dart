@@ -629,22 +629,22 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                   ],
                 ),
         ),
-        if (!_showPackages) SizedBox(height: 12.h),
-        if (!_showPackages)
-          TextButton(
-            onPressed: _togglePackages,
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
-            ),
-            child: AutoSizeText(
-              'onboarding.see_subscription_plans'.tr(),
-              style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: colorScheme.primary,
-              ),
-            ),
-          ),
+        // if (!_showPackages) SizedBox(height: 12.h),
+        // if (!_showPackages)
+        //   TextButton(
+        //     onPressed: _togglePackages,
+        //     style: TextButton.styleFrom(
+        //       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+        //     ),
+        //     child: AutoSizeText(
+        //       'onboarding.see_subscription_plans'.tr(),
+        //       style: GoogleFonts.slabo27px(
+        //         fontSize: 14.sp,
+        //         fontWeight: FontWeight.w600,
+        //         color: colorScheme.primary,
+        //       ),
+        //     ),
+        //   ),
       ],
     );
   }

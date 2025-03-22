@@ -241,6 +241,7 @@ class FolderActions {
             return CupertinoAlertDialog(
               title: Text('folder_actions.rename_folder'.tr()),
               content: CupertinoTextField(
+                style: Theme.of(context).textTheme.titleMedium,
                 controller: controller,
                 autofocus: true,
               ),

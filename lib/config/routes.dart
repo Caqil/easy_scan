@@ -322,8 +322,13 @@ class AppRoutes {
     context.go(folders);
   }
 
-  static void navigateToOcr(BuildContext context) {
-    context.go(ocr);
+  static void navigateToOcr(BuildContext context, Document document) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OcrExtractionScreen(document: document),
+      ),
+    );
   }
 
   static void navigateToSettings(BuildContext context) {

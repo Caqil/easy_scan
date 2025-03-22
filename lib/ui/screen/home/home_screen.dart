@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/models/document.dart';
+import 'package:scanpro/providers/scan_provider.dart';
+import 'package:scanpro/services/image_service.dart';
+import 'package:scanpro/services/pdf_service.dart';
 import 'package:scanpro/services/scan_service.dart';
 import 'package:scanpro/services/share_service.dart';
 import 'package:scanpro/ui/common/component/scan_initial_view.dart';
@@ -19,6 +22,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:scanpro/ui/screen/ocr/ocr_extraction.dart';
+import 'package:scanpro/utils/constants.dart';
 import '../../../config/routes.dart';
 import '../../../models/folder.dart';
 import '../../../providers/document_provider.dart';
@@ -134,7 +139,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final List<Document> filteredDocuments = _searchQuery.isEmpty
         ? []
         : ref.read(documentsProvider.notifier).searchDocuments(_searchQuery);
-    final scanService = ref.read(scanServiceProvider);
     return Scaffold(
       appBar: CustomAppBar(
         title: _searchQuery.isEmpty
@@ -325,7 +329,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   if (recentDocuments.isEmpty &&
                       rootFolders.isEmpty &&
                       allDocuments.isEmpty)
-                    EmptyState(onScan: _handleScanAction),
+                    EmptyState(),
                 ],
               ),
             ),
@@ -339,8 +343,117 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  Future<void> _scanAndGoToOcr() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final scanService = ref.read(scanServiceProvider);
+      await scanService.scanDocuments(
+        context: context,
+        ref: ref,
+        setLoading: (isLoading) => setState(() => _isLoading = isLoading),
+        onSuccess: _createDocumentAndNavigateToOcr,
+      );
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error during scanning: ${e.toString()}',
+          type: SnackBarType.error,
+        );
+      }
+    }
+  }
+
+// For direct navigation to OCR after import success
+  Future<void> _importAndGoToOcr() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final scanService = ref.read(scanServiceProvider);
+      await scanService.pickImages(
+        context: context,
+        ref: ref,
+        setLoading: (isLoading) => setState(() => _isLoading = isLoading),
+        onSuccess: _createDocumentAndNavigateToOcr,
+      );
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error during import: ${e.toString()}',
+          type: SnackBarType.error,
+        );
+      }
+    }
+  }
+
+// This is the callback that creates the document and navigates to OCR
+  Future<void> _createDocumentAndNavigateToOcr() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final scanState = ref.read(scanProvider);
+      if (!scanState.hasPages) {
+        throw Exception('No scanned pages available');
+      }
+
+      // Create a default document name with timestamp
+      final documentName =
+          'Scan ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now())}';
+
+      // Create PDF from scanned images
+      final pdfService = PdfService();
+      final pdfPath = await pdfService.createPdfFromImages(
+        scanState.scannedPages,
+        documentName,
+      );
+
+      // Create thumbnail
+      final imageService = ImageService();
+      final thumbnailFile = await imageService.createThumbnail(
+        scanState.scannedPages[0],
+        size: AppConstants.thumbnailSize,
+      );
+
+      // Create document model
+      final document = Document(
+        name: documentName,
+        pdfPath: pdfPath,
+        pagesPaths: [pdfPath],
+        pageCount: scanState.scannedPages.length,
+        thumbnailPath: thumbnailFile.path,
+      );
+
+      // Save document to library
+      await ref.read(documentsProvider.notifier).addDocument(document);
+
+      // Navigate to OCR
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OcrExtractionScreen(document: document),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          context,
+          message: 'Error creating document: ${e.toString()}',
+          type: SnackBarType.error,
+        );
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+// To use this with your _handleOcrAction:
   void _handleOcrAction() {
-    // Implementation for OCR action
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -384,7 +497,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   'ocr.scan_document'.tr(),
                   () {
                     Navigator.pop(context);
-                    _handleScanAction();
+                    _scanAndGoToOcr(); // Use the direct method
                   },
                 ),
                 _buildOcrOption(
@@ -393,16 +506,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   'ocr.gallery_image'.tr(),
                   () {
                     Navigator.pop(context);
-                    final scanService = ref.read(scanServiceProvider);
-                    scanService.pickImages(
-                      context: context,
-                      ref: ref,
-                      setLoading: (isLoading) =>
-                          setState(() => _isLoading = isLoading),
-                      onSuccess: () {
-                        AppRoutes.navigateToEdit(context);
-                      },
-                    );
+                    _importAndGoToOcr(); // Use the direct method
                   },
                 ),
               ],
@@ -621,6 +725,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               builder: (context, setState) => CupertinoAlertDialog(
                 title: Text('document.rename_document'.tr()),
                 content: CupertinoTextField(
+                  style: Theme.of(context).textTheme.titleMedium,
                   controller: controller,
                   autofocus: true,
                 ),
@@ -748,14 +853,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final folder = await FolderCreator.showCreateFolderBottomSheet(
       context,
       ref,
-      title: 'create_folder'.tr(),
+      title: 'folder.create_folder'.tr(),
     );
-
     if (folder != null) {
       AppDialogs.showSnackBar(context,
           type: SnackBarType.success,
           message: 'created_folder_success'
-              .tr(namedArgs: {'folderName': '${folder.name}'}));
+              .tr(namedArgs: {'folderName': folder.name}));
     }
   }
 
