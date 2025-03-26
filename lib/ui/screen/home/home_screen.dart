@@ -6,7 +6,6 @@ import 'package:scanpro/services/image_service.dart';
 import 'package:scanpro/services/pdf_service.dart';
 import 'package:scanpro/services/scan_service.dart';
 import 'package:scanpro/services/share_service.dart';
-import 'package:scanpro/ui/common/component/scan_initial_view.dart';
 import 'package:scanpro/ui/common/document_actions.dart';
 import 'package:scanpro/ui/screen/folder/components/folder_actions.dart';
 import 'package:scanpro/ui/screen/barcode/widget/recent_barcodes.dart';
@@ -18,6 +17,7 @@ import 'package:scanpro/ui/common/pdf_merger.dart';
 import 'package:scanpro/ui/screen/compression/components/compression_bottomsheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,47 +75,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  void _handleScanAction() {
-    final scanService = ref.read(scanServiceProvider);
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
-          child: ScanInitialView(
-            onScanPressed: () {
-              scanService.scanDocuments(
-                context: context,
-                ref: ref,
-                setLoading: (isLoading) =>
-                    setState(() => _isLoading = isLoading),
-                onSuccess: () {
-                  AppRoutes.navigateToEdit(context);
-                },
-              );
-            },
-            onImportPressed: () {
-              scanService.pickImages(
-                context: context,
-                ref: ref,
-                setLoading: (isLoading) =>
-                    setState(() => _isLoading = isLoading),
-                onSuccess: () {
-                  AppRoutes.navigateToEdit(context);
-                },
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
   void showCompressionOptions(
       BuildContext context, Document document, WidgetRef ref) {
     showModalBottomSheet(
@@ -143,7 +102,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: CustomAppBar(
         title: _searchQuery.isEmpty
             ? AutoSizeText('ScanPro',
-                style: GoogleFonts.lilitaOne(fontSize: 25.sp))
+                style: GoogleFonts.lilitaOne(fontSize: 25.adaptiveSp))
             : CupertinoSearchTextField(
                 style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
@@ -246,7 +205,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       PdfCompressionUtils.showCompressionOptions(context, ref);
                     },
                     onFavorite: _showFavorites,
-                    onMoreTools: () {},
+                    onMoreTools: () {
+                      AppDialogs.showSnackBar(
+                        context,
+                        message: 'coming_soon'.tr(),
+                        type: SnackBarType.success,
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
                   if (recentDocuments.isNotEmpty)
@@ -817,18 +782,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final bool confirm = await showCupertinoDialog<bool>(
           context: context,
           builder: (context) => CupertinoAlertDialog(
-            title: Text('document.delete_document'.tr()),
-            content: Text('document.delete_confirm_message'
-                .tr(namedArgs: {'name': document.name})),
+            title: Text(
+              'document.delete_document'.tr(),
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            content: Text(
+              'document.delete_confirm_message'
+                  .tr(namedArgs: {'name': document.name}),
+              style: GoogleFonts.slabo27px(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             actions: [
               CupertinoDialogAction(
                 onPressed: () => Navigator.pop(context, false),
-                child: Text('common.cancel'.tr()),
+                child: Text(
+                  'common.cancel'.tr(),
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
               CupertinoDialogAction(
                 isDestructiveAction: true,
                 onPressed: () => Navigator.pop(context, true),
-                child: Text('common.delete'.tr()),
+                child: Text(
+                  'common.delete'.tr(),
+                  style: GoogleFonts.slabo27px(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.red,
+                  ),
+                ),
               ),
             ],
           ),
@@ -894,7 +880,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             AutoSizeText(
               'no_documents_yet'.tr(),
               style: GoogleFonts.slabo27px(
-                  fontWeight: FontWeight.w700, fontSize: 14.sp.sp),
+                  fontWeight: FontWeight.w700, fontSize: 14.adaptiveSp),
             ),
           ],
         ),
@@ -913,7 +899,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.all(8),
-            leading: Container(
+            leading: SizedBox(
               width: 60,
               height: 60,
               child: document.thumbnailPath != null &&
@@ -941,7 +927,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               document.name,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
               ),
             ),
             subtitle: Column(
@@ -951,7 +937,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   DateTimeUtils.getFriendlyDate(document.modifiedAt),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     color: Colors.grey.shade600,
                   ),
                 ),
@@ -962,7 +948,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           .tr(namedArgs: {'count': '${document.pageCount}'}),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
-                        fontSize: 12.sp,
+                        fontSize: 12.adaptiveSp,
                         color: Colors.grey.shade600,
                       ),
                     ),
@@ -1173,7 +1159,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     document.name,
                                     style: GoogleFonts.slabo27px(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 14.sp,
+                                      fontSize: 14.adaptiveSp,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -1192,7 +1178,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                             document.modifiedAt),
                                         style: GoogleFonts.slabo27px(
                                           fontWeight: FontWeight.w700,
-                                          fontSize: 10.sp,
+                                          fontSize: 10.adaptiveSp,
                                           color: Colors.grey.shade600,
                                         ),
                                       ),
@@ -1213,7 +1199,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         }),
                                         style: GoogleFonts.slabo27px(
                                           fontWeight: FontWeight.w700,
-                                          fontSize: 10.sp,
+                                          fontSize: 10.adaptiveSp,
                                           color: Colors.grey.shade600,
                                         ),
                                       ),

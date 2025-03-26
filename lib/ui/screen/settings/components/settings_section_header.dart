@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,10 +9,10 @@ class SettingsSectionHeader extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   const SettingsSectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class SettingsSectionHeader extends StatelessWidget {
       child: AutoSizeText(
         title,
         style: GoogleFonts.slabo27px(
-          fontSize: 14.sp,
+          fontSize: 14.adaptiveSp,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.primary,
           letterSpacing: 0.5,

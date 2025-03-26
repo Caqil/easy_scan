@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/config/helper.dart';
 import 'package:scanpro/models/document.dart';
@@ -66,7 +66,7 @@ class DocumentInfoCard extends StatelessWidget {
                   document.name,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -74,11 +74,11 @@ class DocumentInfoCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 AutoSizeText(
                   'stats.file_size'.tr(namedArgs: {
-                    'size': '${FileUtils.formatFileSize(fileSize)}'
+                    'size': FileUtils.formatFileSize(fileSize)
                   }),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     color: Colors.grey.shade700,
                   ),
                 ),
@@ -88,7 +88,7 @@ class DocumentInfoCard extends StatelessWidget {
                       .tr(namedArgs: {'count': '${document.pageCount}'}),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     color: Colors.grey.shade700,
                   ),
                 ),
@@ -106,7 +106,7 @@ class DocumentInfoCard extends StatelessWidget {
                         'stats.password_protected',
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
-                          fontSize: 12.sp,
+                          fontSize: 12.adaptiveSp,
                           color: Colors.grey.shade700,
                         ),
                       ),
@@ -244,7 +244,7 @@ class CompressionOption extends StatelessWidget {
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w700,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
               ),
             ),
           ],
@@ -284,7 +284,7 @@ class SliderWithLabel extends StatelessWidget {
               label,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
               ),
             ),
             AutoSizeText(
@@ -292,7 +292,7 @@ class SliderWithLabel extends StatelessWidget {
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
               ),
             ),
           ],
@@ -312,7 +312,7 @@ class SliderWithLabel extends StatelessWidget {
               'slider.more_compression'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 10.sp,
+                fontSize: 10.adaptiveSp,
                 color: Colors.grey.shade600,
               ),
             ),
@@ -320,7 +320,7 @@ class SliderWithLabel extends StatelessWidget {
               'slider.better_quality'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 10.sp,
+                fontSize: 10.adaptiveSp,
                 color: Colors.grey.shade600,
               ),
             ),
@@ -424,7 +424,7 @@ class StatColumn extends StatelessWidget {
           label,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.w700,
-            fontSize: 12.sp,
+            fontSize: 12.adaptiveSp,
             color: Colors.grey.shade600,
           ),
         ),
@@ -432,7 +432,7 @@ class StatColumn extends StatelessWidget {
         AutoSizeText(
           value,
           style: GoogleFonts.slabo27px(
-            fontSize: 16.sp,
+            fontSize: 16.adaptiveSp,
             fontWeight: FontWeight.bold,
             color: valueColor,
           ),

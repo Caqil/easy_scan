@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -43,7 +44,7 @@ class CompressionProgressView extends StatelessWidget {
                   AutoSizeText(
                     '${(progress * 100).round()}%',
                     style: GoogleFonts.slabo27px(
-                      fontSize: 18.sp,
+                      fontSize: 18.adaptiveSp,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -56,7 +57,7 @@ class CompressionProgressView extends StatelessWidget {
           AutoSizeText(
             'compressing_view.compressing_pdf'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 18.sp,
+              fontSize: 18.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -66,7 +67,7 @@ class CompressionProgressView extends StatelessWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
               color: Colors.grey.shade600,
             ),
           ),
@@ -75,7 +76,7 @@ class CompressionProgressView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
               color:
-                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                  Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -91,7 +92,7 @@ class CompressionProgressView extends StatelessWidget {
                   statusMessage,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 14.sp,
+                    fontSize: 14.adaptiveSp,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),

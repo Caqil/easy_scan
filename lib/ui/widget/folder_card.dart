@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../models/folder.dart';
 
 class FolderCard extends StatelessWidget {
@@ -82,7 +82,7 @@ class FolderCard extends StatelessWidget {
                             child: AutoSizeText(
                               '$documentCount',
                               style: GoogleFonts.slabo27px(
-                                fontSize: 10.sp,
+                                fontSize: 10.adaptiveSp,
                                 fontWeight: FontWeight.bold,
                                 color: Color(folder.color),
                               ),
@@ -104,7 +104,7 @@ class FolderCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14.sp,
+                  fontSize: 10.adaptiveSp,
                 ),
               ),
             ],

@@ -1,9 +1,9 @@
 // empty_state.dart
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class EmptyState extends StatelessWidget {
   const EmptyState({super.key});
@@ -19,14 +19,14 @@ class EmptyState extends StatelessWidget {
           AutoSizeText(
             'no_documents_yet'.tr(),
             style: GoogleFonts.slabo27px(
-                fontSize: 20.sp, fontWeight: FontWeight.bold),
+                fontSize: 20.adaptiveSp, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           AutoSizeText(
             'scan_or_import_prompt'.tr(),
             style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 color: Colors.grey),
           ),
           const SizedBox(height: 24),

@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:scanpro/main.dart';
+import 'package:scanpro/services/compress_limit_service.dart';
+import 'package:scanpro/services/file_limit_service.dart';
 import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/screen/premium/components/bottom_links.dart';
@@ -16,7 +18,7 @@ import 'package:scanpro/ui/screen/premium/components/subscription_option.dart';
 import 'package:scanpro/ui/screen/premium/components/trial_toggle.dart';
 
 class PremiumScreen extends ConsumerStatefulWidget {
-  const PremiumScreen({Key? key}) : super(key: key);
+  const PremiumScreen({super.key});
 
   @override
   ConsumerState<PremiumScreen> createState() => _PremiumScreenState();
@@ -138,6 +140,20 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
 
       if (mounted) {
         if (success) {
+          ref.read(subscriptionStatusProvider.notifier).updateStatus(
+                SubscriptionStatus(
+                  isActive: true,
+                  isTrialActive: false,
+                  expirationDate: null,
+                  productId: selectedPackage.identifier,
+                ),
+              );
+
+          // Refresh any critical providers
+          ref.refresh(hasReachedFileLimitProvider);
+          ref.refresh(maxAllowedFilesProvider);
+          ref.refresh(remainingFilesProvider);
+          ref.refresh(availableCompressionLevelsProvider);
           Navigator.of(context).pop();
           AppDialogs.showSnackBar(
             context,

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -113,7 +114,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.slabo27px(
                   color: Colors.grey[800],
-                  fontSize: 14.sp,
+                  fontSize: 14.adaptiveSp,
                 ),
               ),
             ],
@@ -133,7 +134,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
             ),
             child: Text(
               'common.cancel'.tr(),
-              style: GoogleFonts.slabo27px(fontSize: 14.sp),
+              style: GoogleFonts.slabo27px(fontSize: 14.adaptiveSp),
             ),
           ),
           OutlinedButton(
@@ -160,7 +161,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
             child: Text(
               'limit.upgrade'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -241,7 +242,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
         title: AutoSizeText(
           'ocr.extract_text'.tr(),
           style: GoogleFonts.slabo27px(
-            fontSize: 18.sp,
+            fontSize: 18.adaptiveSp,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -312,7 +313,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                         AutoSizeText(
                           widget.document.name,
                           style: GoogleFonts.slabo27px(
-                            fontSize: 16.sp,
+                            fontSize: 16.adaptiveSp,
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 1,
@@ -327,7 +328,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                             },
                           ),
                           style: GoogleFonts.slabo27px(
-                            fontSize: 12.sp,
+                            fontSize: 12.adaptiveSp,
                             color: Colors.grey.shade600,
                           ),
                         ),
@@ -345,7 +346,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
           AutoSizeText(
             'ocr.extraction_settings'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -389,7 +390,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                   title: AutoSizeText(
                     'ocr.enhance_scanned'.tr(),
                     style: GoogleFonts.slabo27px(
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                     ),
                   ),
                   value: _enhanceScanned,
@@ -409,7 +410,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                   title: AutoSizeText(
                     'ocr.preserve_layout'.tr(),
                     style: GoogleFonts.slabo27px(
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                     ),
                   ),
                   value: _preserveLayout,
@@ -451,7 +452,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                     child: AutoSizeText(
                       _errorMessage,
                       style: GoogleFonts.slabo27px(
-                        fontSize: 14.sp,
+                        fontSize: 14.adaptiveSp,
                         color: Theme.of(context).colorScheme.error,
                       ),
                     ),
@@ -477,7 +478,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                 AutoSizeText(
                   'ocr.processing'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 14.sp,
+                    fontSize: 14.adaptiveSp,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
@@ -500,7 +501,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
               child: AutoSizeText(
                 'ocr.start_extraction'.tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 16.sp,
+                  fontSize: 16.adaptiveSp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -532,7 +533,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
               AutoSizeText(
                 'ocr.extracted_text'.tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 16.sp,
+                  fontSize: 16.adaptiveSp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -558,7 +559,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                   child: AutoSizeText(
                     'ocr.no_text_found'.tr(),
                     style: GoogleFonts.slabo27px(
-                      fontSize: 16.sp,
+                      fontSize: 16.adaptiveSp,
                       color: Colors.grey.shade600,
                     ),
                   ),
@@ -579,7 +580,7 @@ class _OcrExtractionScreenState extends ConsumerState<OcrExtractionScreen> {
                       contentPadding: EdgeInsets.all(16.r),
                     ),
                     style: GoogleFonts.robotoMono(
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                     ),
                   ),
                 ),

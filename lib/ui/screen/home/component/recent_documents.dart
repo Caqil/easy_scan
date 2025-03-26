@@ -2,8 +2,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/ui/widget/document_card.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../models/document.dart';
@@ -31,7 +31,7 @@ class RecentDocuments extends StatelessWidget {
         AutoSizeText(
           'recent_documents'.tr(),
           style: GoogleFonts.slabo27px(
-              fontSize: 14.sp, fontWeight: FontWeight.bold),
+              fontSize: 14.adaptiveSp, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         SizedBox(

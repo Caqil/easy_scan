@@ -2,8 +2,8 @@
 import 'package:scanpro/providers/document_provider.dart';
 import 'package:scanpro/ui/widget/folder_card.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -39,7 +39,7 @@ class FoldersSection extends ConsumerWidget {
             AutoSizeText(
               'folder.folders'.tr(),
               style: GoogleFonts.slabo27px(
-                  fontSize: 14.sp, fontWeight: FontWeight.bold),
+                  fontSize: 14.adaptiveSp, fontWeight: FontWeight.bold),
             ),
             Row(
               children: [
@@ -48,6 +48,7 @@ class FoldersSection extends ConsumerWidget {
                   child: AutoSizeText('folder.create_new'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
+                        fontSize: 14.adaptiveSp,
                       )),
                 ),
                 if (folders.length > 5)

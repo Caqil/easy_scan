@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/models/document.dart';
 import 'compression_widgets.dart';
@@ -38,7 +38,7 @@ class CompressionAdvancedView extends StatelessWidget {
           AutoSizeText(
             'advanced_view.advanced_settings'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -76,7 +76,7 @@ class CompressionAdvancedView extends StatelessWidget {
                   child: AutoSizeText(
                     'advanced_view.warning'.tr(),
                     style: GoogleFonts.slabo27px(
-                        fontWeight: FontWeight.w700, fontSize: 12.sp),
+                        fontWeight: FontWeight.w700, fontSize: 12.adaptiveSp),
                   ),
                 ),
               ],
@@ -86,7 +86,7 @@ class CompressionAdvancedView extends StatelessWidget {
           AutoSizeText(
             'simple_view.expected_results'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),

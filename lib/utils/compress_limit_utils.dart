@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/config/helper.dart';
 import 'package:scanpro/ui/screen/premium/premium_screen.dart';
@@ -118,7 +118,7 @@ class CompressionLimitUtils {
           child: Text(
             'compression.premium_feature.upgrade'.tr(),
             style: GoogleFonts.slabo27px(
-                fontWeight: FontWeight.bold, fontSize: 14.sp),
+                fontWeight: FontWeight.bold, fontSize: 14.adaptiveSp),
           ),
         ),
       ),
@@ -149,7 +149,7 @@ class CompressionLimitUtils {
     try {
       final isAvailableAsync =
           ref.read(isCompressionLevelAvailableProvider(level));
-      final isAvailable = await isAvailableAsync.value ?? false;
+      final isAvailable = isAvailableAsync.value ?? false;
 
       // If level is not available and dialog should be shown
       if (!isAvailable && showDialog && context.mounted) {

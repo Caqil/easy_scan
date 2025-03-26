@@ -7,11 +7,11 @@ class SettingsCard extends StatelessWidget {
   final double? borderRadius;
 
   const SettingsCard({
-    Key? key,
+    super.key,
     required this.children,
     this.margin,
     this.borderRadius,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

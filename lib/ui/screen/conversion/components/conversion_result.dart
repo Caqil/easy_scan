@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -47,14 +48,14 @@ class ConversionResultSection extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.error_outline,
-                  color: Colors.red.shade700, size: 20.sp),
+                  color: Colors.red.shade700, size: 20.adaptiveSp),
               SizedBox(width: 8.w),
               AutoSizeText(
                 "conversion_result.error.title".tr(), // Localized string
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
                   color: Colors.red.shade700,
-                  fontSize: 16.sp,
+                  fontSize: 16.adaptiveSp,
                 ),
               ),
             ],
@@ -85,14 +86,14 @@ class ConversionResultSection extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.check_circle_outline,
-                  color: Colors.green.shade700, size: 20.sp),
+                  color: Colors.green.shade700, size: 20.adaptiveSp),
               SizedBox(width: 8.w),
               AutoSizeText(
                 "conversion_result.success.title".tr(), // Localized string
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
                   color: Colors.green.shade700,
-                  fontSize: 16.sp,
+                  fontSize: 16.adaptiveSp,
                 ),
               ),
             ],

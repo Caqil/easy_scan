@@ -5,7 +5,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthOverlay extends ConsumerWidget {
-  const AuthOverlay({Key? key}) : super(key: key);
+  const AuthOverlay({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

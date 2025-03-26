@@ -7,6 +7,7 @@ import 'package:scanpro/ui/screen/barcode/barcode_result_screen.dart';
 import 'package:scanpro/ui/screen/barcode/qr_code_customization_screen.dart';
 import 'package:scanpro/ui/screen/barcode/widget/barcode_action.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,7 +53,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
               AutoSizeText(
                 title.tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 14.sp,
+                  fontSize: 14.adaptiveSp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -66,7 +67,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                     'recent_barcodes.view_all'.tr(),
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 12.sp,
+                      fontSize: 12.adaptiveSp,
                     ),
                   ),
                 ),
@@ -194,7 +195,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                           children: [
                             Icon(
                               Icons.brush,
-                              size: 12.sp,
+                              size: 12.adaptiveSp,
                               color: Colors.white,
                             ),
                             SizedBox(width: 2.w),
@@ -202,7 +203,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                               'recent_barcodes.custom'.tr(),
                               style: GoogleFonts.slabo27px(
                                 color: Colors.white,
-                                fontSize: 8.sp,
+                                fontSize: 8.adaptiveSp,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -232,7 +233,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                           child: Icon(
                             Icons.more_vert,
                             color: Colors.grey.shade800,
-                            size: 16.sp,
+                            size: 16.adaptiveSp,
                           ),
                         ),
                       ),
@@ -263,7 +264,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                           children: [
                             Icon(
                               contentType.icon,
-                              size: 10.sp,
+                              size: 10.adaptiveSp,
                               color: contentType.color,
                             ),
                             SizedBox(width: 2.w),
@@ -271,7 +272,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                               contentType.label,
                               style: GoogleFonts.slabo27px(
                                 fontWeight: FontWeight.w700,
-                                fontSize: 8.sp,
+                                fontSize: 8.adaptiveSp,
                                 color: contentType.color,
                               ),
                             ),
@@ -288,7 +289,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
                     _truncateAutoSizeText(scan.barcodeValue, 25),
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 10.sp,
+                      fontSize: 10.adaptiveSp,
                       color: Colors.grey.shade800,
                     ),
                     maxLines: 1,
@@ -318,7 +319,7 @@ class RecentBarcodesWidget extends ConsumerWidget {
             color: Colors.white,
             child: Icon(
               Icons.qr_code,
-              size: 60.sp,
+              size: 60.adaptiveSp,
               color: Colors.grey,
             ),
           );

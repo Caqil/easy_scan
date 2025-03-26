@@ -1,6 +1,6 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,7 +25,7 @@ class AdvancedOptionsSection extends StatelessWidget {
     return SectionContainer(
       title: "advanced_options.title".tr(),
       trailing: IconButton(
-        icon: Icon(Icons.help_outline, size: 20.sp),
+        icon: Icon(Icons.help_outline, size: 20.adaptiveSp),
         onPressed: () => _showHelpDialog(context),
       ),
       child: Column(
@@ -33,9 +33,8 @@ class AdvancedOptionsSection extends StatelessWidget {
         children: [
           // OCR option
           SwitchListTile(
-            title:  AutoSizeText("advanced_options.enable_ocr.title".tr()),
-            subtitle:
-                 AutoSizeText("advanced_options.enable_ocr.subtitle".tr()),
+            title: AutoSizeText("advanced_options.enable_ocr.title".tr()),
+            subtitle: AutoSizeText("advanced_options.enable_ocr.subtitle".tr()),
             secondary: Icon(
               Icons.document_scanner,
               color: state.ocrEnabled

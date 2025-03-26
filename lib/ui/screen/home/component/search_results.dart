@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,7 +25,7 @@ class SearchResults extends StatelessWidget {
             SizedBox(height: 16),
             AutoSizeText('no_documents_yet'.tr(),
                 style: GoogleFonts.slabo27px(
-                    fontWeight: FontWeight.w700, fontSize: 16.sp)),
+                    fontWeight: FontWeight.w700, fontSize: 16.adaptiveSp)),
           ],
         ),
       );

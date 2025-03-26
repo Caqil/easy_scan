@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -68,7 +69,7 @@ class PremiumBanner extends ConsumerWidget {
                               'subscription.monthly_desc'.tr(),
                               maxLines: 2,
                               style: GoogleFonts.slabo27px(
-                                fontSize: 18.sp,
+                                fontSize: 18.adaptiveSp,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                                 letterSpacing: 0.5,
@@ -79,7 +80,7 @@ class PremiumBanner extends ConsumerWidget {
                               'onboarding.start_free_trial'.tr(),
                               maxLines: 1,
                               style: GoogleFonts.slabo27px(
-                                fontSize: 14.sp,
+                                fontSize: 14.adaptiveSp,
                                 fontWeight: FontWeight.w400,
                                 color: Colors.yellowAccent.withOpacity(0.9),
                                 letterSpacing: 0.2,

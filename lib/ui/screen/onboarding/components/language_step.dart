@@ -1,18 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/models/language.dart';
 import 'package:scanpro/providers/locale_provider.dart';
+
 class LanguageStep extends ConsumerStatefulWidget {
   final VoidCallback onLanguageSelected;
 
   const LanguageStep({
-    Key? key,
+    super.key,
     required this.onLanguageSelected,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<LanguageStep> createState() => _LanguageStepState();
@@ -56,8 +58,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
       final currentLanguage = languages.firstWhere(
         (lang) =>
             lang.languageCode == currentLocale.languageCode &&
-            (lang.countryCode == currentLocale.countryCode ||
-                lang.countryCode == null),
+            (lang.countryCode == currentLocale.countryCode),
         orElse: () => languages.first,
       );
 
@@ -103,7 +104,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
             AutoSizeText(
               'onboarding.language_title'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 26.sp,
+                fontSize: 26.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 color: colorScheme.primary,
               ),
@@ -112,7 +113,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
             AutoSizeText(
               'onboarding.language_description'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 color: colorScheme.onSurface.withOpacity(0.7),
                 height: 1.5,
               ),
@@ -123,7 +124,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
             AutoSizeText(
               'onboarding.select_your_language'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 18.sp,
+                fontSize: 18.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 color: colorScheme.onSurface,
               ),
@@ -148,7 +149,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
                   isSelected: isSelected,
                   onSelect: () => _selectLanguage(language),
                 );
-              }).toList(),
+              }),
 
             SizedBox(height: 24.h),
           ],
@@ -207,7 +208,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
                     language.languageCode.toUpperCase(),
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
+                      fontSize: 16.adaptiveSp,
                       color: _getLanguageColor(language.languageCode),
                     ),
                   ),
@@ -220,7 +221,7 @@ class _LanguageStepState extends ConsumerState<LanguageStep>
                 child: AutoSizeText(
                   language.label,
                   style: GoogleFonts.slabo27px(
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal,
                     color: isSelected

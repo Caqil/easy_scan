@@ -90,7 +90,7 @@ class ConversionService {
       }
 
       String downloadUrl =
-          "${ApiConfig.baseUrl}//file?folder=conversions&filename=${filename}";
+          "${ApiConfig.baseUrl}//file?folder=conversions&filename=$filename";
 
       logger.info("Using direct fileUrl download: $downloadUrl");
       logger.info("Downloading from: $downloadUrl");

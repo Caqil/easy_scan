@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,13 +41,13 @@ class FormatSelectionSection extends ConsumerWidget {
                 Icon(
                   Icons.swap_horiz_rounded,
                   color: colorScheme.primary,
-                  size: 18.sp,
+                  size: 18.adaptiveSp,
                 ),
                 SizedBox(width: 8.w),
                 AutoSizeText(
                   "format_selection.title".tr(), // Localized string
                   style: GoogleFonts.slabo27px(
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -81,7 +82,7 @@ class FormatSelectionSection extends ConsumerWidget {
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   child: Icon(
                     Icons.arrow_forward,
-                    size: 16.sp,
+                    size: 16.adaptiveSp,
                     color: colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -136,7 +137,7 @@ class FormatSelectionSection extends ConsumerWidget {
           decoration: BoxDecoration(
             color: selectedFormat != null
                 ? selectedFormat.color.withOpacity(0.1)
-                : colorScheme.surfaceVariant.withOpacity(0.2),
+                : colorScheme.surfaceContainerHighest.withOpacity(0.2),
             borderRadius: BorderRadius.circular(16.r),
             border: Border.all(
               color: selectedFormat != null
@@ -158,7 +159,7 @@ class FormatSelectionSection extends ConsumerWidget {
                 ),
                 child: Icon(
                   selectedFormat?.icon ?? Icons.file_present_outlined,
-                  size: 14.sp,
+                  size: 14.adaptiveSp,
                   color: selectedFormat?.color ?? colorScheme.primary,
                 ),
               ),
@@ -175,7 +176,7 @@ class FormatSelectionSection extends ConsumerWidget {
                       label,
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
-                        fontSize: 10.sp,
+                        fontSize: 10.adaptiveSp,
                         color: colorScheme.onSurfaceVariant.withOpacity(0.7),
                       ),
                     ),
@@ -186,7 +187,7 @@ class FormatSelectionSection extends ConsumerWidget {
                           "format_selection.select_placeholder"
                               .tr(), // Localized string
                       style: GoogleFonts.slabo27px(
-                        fontSize: 13.sp,
+                        fontSize: 13.adaptiveSp,
                         fontWeight: selectedFormat != null
                             ? FontWeight.bold
                             : FontWeight.w700,
@@ -203,7 +204,7 @@ class FormatSelectionSection extends ConsumerWidget {
 
               Icon(
                 Icons.keyboard_arrow_down,
-                size: 16.sp,
+                size: 16.adaptiveSp,
                 color: colorScheme.onSurfaceVariant,
               ),
             ],
@@ -228,7 +229,7 @@ class FormatSelectionSection extends ConsumerWidget {
         children: [
           Icon(
             Icons.info_outline,
-            size: 14.sp,
+            size: 14.adaptiveSp,
             color: colorScheme.primary,
           ),
           SizedBox(width: 8.w),
@@ -237,7 +238,7 @@ class FormatSelectionSection extends ConsumerWidget {
               text: TextSpan(
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w700,
-                  fontSize: 12.sp,
+                  fontSize: 12.adaptiveSp,
                   color: colorScheme.onSurfaceVariant,
                 ),
                 children: [
@@ -269,7 +270,7 @@ class FormatSelectionSection extends ConsumerWidget {
         children: [
           Icon(
             Icons.info_outline,
-            size: 14.sp,
+            size: 14.adaptiveSp,
             color: Colors.amber.shade800,
           ),
           SizedBox(width: 6.w),
@@ -278,7 +279,7 @@ class FormatSelectionSection extends ConsumerWidget {
               "format_selection.format_info.hint".tr(), // Localized string
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 12.sp,
+                fontSize: 12.adaptiveSp,
                 color: Colors.amber.shade800,
               ),
               maxLines: 1,
@@ -383,7 +384,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
                   "format_selection.format_picker.title".tr(
                       namedArgs: {'label': widget.label}), // Localized string
                   style: GoogleFonts.slabo27px(
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -393,7 +394,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
                   width: 140.w,
                   height: 36.h,
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceVariant.withOpacity(0.1),
+                    color: colorScheme.surfaceContainerHighest.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(18.r),
                     border: Border.all(
                       color: colorScheme.outlineVariant.withOpacity(0.3),
@@ -408,8 +409,8 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
                       hintText:
                           "format_selection.format_picker.search_placeholder"
                               .tr(), // Localized string
-                      hintStyle: TextStyle(fontSize: 13.sp),
-                      prefixIcon: Icon(Icons.search, size: 16.sp),
+                      hintStyle: TextStyle(fontSize: 13.adaptiveSp),
+                      prefixIcon: Icon(Icons.search, size: 16.adaptiveSp),
                       border: InputBorder.none,
                       suffixIcon: _searchQuery.isNotEmpty
                           ? GestureDetector(
@@ -417,7 +418,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
                                 _controller.clear();
                                 setState(() => _searchQuery = '');
                               },
-                              child: Icon(Icons.clear, size: 16.sp),
+                              child: Icon(Icons.clear, size: 16.adaptiveSp),
                             )
                           : null,
                     ),
@@ -480,7 +481,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
                 "format_selection.format_picker.categories.$category"
                     .tr(), // Localized string
                 style: GoogleFonts.slabo27px(
-                  fontSize: 14.sp,
+                  fontSize: 14.adaptiveSp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -530,14 +531,14 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
           children: [
             Icon(
               format.icon,
-              size: 16.sp,
+              size: 16.adaptiveSp,
               color: format.color,
             ),
             SizedBox(width: 4.w),
             AutoSizeText(
               format.name,
               style: GoogleFonts.slabo27px(
-                fontSize: 13.sp,
+                fontSize: 13.adaptiveSp,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w700,
               ),
             ),
@@ -545,7 +546,7 @@ class _FormatPickerSheetState extends State<FormatPickerSheet> {
               SizedBox(width: 4.w),
               Icon(
                 Icons.check_circle,
-                size: 14.sp,
+                size: 14.adaptiveSp,
                 color: format.color,
               ),
             ],

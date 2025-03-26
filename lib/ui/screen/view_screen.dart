@@ -5,8 +5,8 @@ import 'package:scanpro/providers/document_provider.dart';
 import 'package:scanpro/ui/common/document_actions.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/models/document.dart';
@@ -195,7 +195,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                     AutoSizeText(
                                       widget.document.name,
                                       style: GoogleFonts.slabo27px(
-                                        fontSize: 14.sp,
+                                        fontSize: 14.adaptiveSp,
                                         fontWeight: FontWeight.bold,
                                         color: isDarkMode
                                             ? Colors.white
@@ -373,7 +373,7 @@ class _ViewScreenState extends ConsumerState<ViewScreen>
                                     AutoSizeText(
                                       widget.document.name,
                                       style: GoogleFonts.slabo27px(
-                                        fontSize: 16.sp,
+                                        fontSize: 16.adaptiveSp,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),

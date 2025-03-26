@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:purchases_flutter/models/package_wrapper.dart';
@@ -75,27 +74,24 @@ class RevenueCatSubscriptionOptions extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: EdgeInsets.only(bottom: 4.h),
-        padding: EdgeInsets.all(16.r),
+        margin: EdgeInsets.symmetric(vertical: 6.h),
+        padding: EdgeInsets.all(12.r),
         decoration: BoxDecoration(
           color: selected
-              ? Theme.of(context).primaryColor.withOpacity(0.15)
+              ? Theme.of(context).primaryColor.withOpacity(0.1)
               : Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(10.r),
           border: Border.all(
             color: selected
                 ? Theme.of(context).primaryColor
-                : Theme.of(context).dividerColor.withOpacity(0.5),
-            width: selected ? 2 : 1,
+                : Theme.of(context).dividerColor,
+            width: selected ? 1 : 0.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: selected
-                  ? Theme.of(context).primaryColor.withOpacity(0.2)
-                  : Colors.grey.withOpacity(0.1),
-              spreadRadius: selected ? 2 : 1,
-              blurRadius: selected ? 8 : 4,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(selected ? 0.08 : 0.04),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
             ),
           ],
         ),
@@ -106,34 +102,26 @@ class RevenueCatSubscriptionOptions extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (showCheckbox)
-                  AnimatedScale(
-                    duration: const Duration(milliseconds: 200),
-                    scale: selected ? 1.1 : 1.0,
-                    child: Container(
-                      width: 24.w,
-                      height: 24.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
+                  Container(
+                    width: 16.w,
+                    height: 16.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: selected
+                          ? Theme.of(context).primaryColor
+                          : Colors.transparent,
+                      border: Border.all(
                         color: selected
                             ? Theme.of(context).primaryColor
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: selected
-                              ? Theme.of(context).primaryColor
-                              : Colors.grey.withOpacity(0.5),
-                          width: 2,
-                        ),
+                            : Colors.grey.shade400,
+                        width: 1,
                       ),
-                      child: selected
-                          ? Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: 16.r,
-                            )
-                          : null,
                     ),
+                    child: selected
+                        ? Icon(Icons.check, size: 10.r, color: Colors.white)
+                        : null,
                   ),
-                SizedBox(width: 12.w),
+                if (showCheckbox) SizedBox(width: 8.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,11 +129,11 @@ class RevenueCatSubscriptionOptions extends StatelessWidget {
                       Row(
                         children: [
                           Flexible(
-                            child: AutoSizeText(
+                            child: Text(
                               title,
-                              style: GoogleFonts.slabo27px(
+                              style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 16.sp,
+                                fontSize: 14.adaptiveSp,
                                 color: Theme.of(context)
                                     .textTheme
                                     .bodyLarge
@@ -154,22 +142,20 @@ class RevenueCatSubscriptionOptions extends StatelessWidget {
                             ),
                           ),
                           if (savingsText != null) ...[
-                            SizedBox(width: 8.w),
+                            SizedBox(width: 6.w),
                             Container(
                               padding: EdgeInsets.symmetric(
-                                horizontal: 6.w,
-                                vertical: 2.h,
-                              ),
+                                  horizontal: 4.w, vertical: 1.h),
                               decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 0, 255, 8),
-                                borderRadius: BorderRadius.circular(6.r),
+                                color: Colors.green.shade100,
+                                borderRadius: BorderRadius.circular(4.r),
                               ),
-                              child: AutoSizeText(
+                              child: Text(
                                 savingsText,
-                                style: GoogleFonts.slabo27px(
-                                  color: Colors.green[700],
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.bold,
+                                style: GoogleFonts.inter(
+                                  fontSize: 8.adaptiveSp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.green.shade800,
                                 ),
                               ),
                             ),
@@ -177,66 +163,49 @@ class RevenueCatSubscriptionOptions extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 4.h),
-                      AutoSizeText(
+                      Text(
                         subtitle,
-                        style: GoogleFonts.slabo27px(
+                        style: GoogleFonts.inter(
+                          fontSize: 10.adaptiveSp,
                           color: Theme.of(context)
                               .textTheme
                               .bodyMedium
                               ?.color
-                              ?.withOpacity(0.7),
-                          fontSize: 12.sp,
+                              ?.withOpacity(0.6),
                         ),
                       ),
                     ],
                   ),
                 ),
                 SizedBox(width: 8.w),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    AutoSizeText(
-                      price,
-                      style: GoogleFonts.slabo13px(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.sp,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                      ),
-                    ),
-                  ],
+                Text(
+                  price,
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14.adaptiveSp,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
                 ),
               ],
             ),
             if (isBestValue)
               Positioned(
-                top: -15.h,
-                right: -16.w,
+                top: -11.h,
+                right: -12.w,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColor.withOpacity(0.8),
-                      ],
-                    ),
+                    color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(12.r),
-                        topRight: Radius.circular(12.r)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).primaryColor.withOpacity(0.3),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                        bottomLeft: Radius.circular(6.r),
+                        topRight: Radius.circular(8.r)),
                   ),
-                  child: AutoSizeText(
-                    'subscription.most_popular'.tr(),
+                  child: Text(
+                    'Best Value',
                     style: GoogleFonts.slabo27px(
                       color: Colors.white,
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 10.adaptiveSp,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

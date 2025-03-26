@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoadingIndicator extends StatelessWidget {
   final String? message;
@@ -24,7 +24,7 @@ class LoadingIndicator extends StatelessWidget {
               message!,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 color: Colors.grey,
               ),
             ),

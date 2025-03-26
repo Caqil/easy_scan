@@ -8,11 +8,11 @@ class ImageViewerWidget extends StatelessWidget {
   final VoidCallback? onShare;
 
   const ImageViewerWidget({
-    Key? key,
+    super.key,
     required this.filePath,
     this.showAppBar = true,
     this.onShare,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

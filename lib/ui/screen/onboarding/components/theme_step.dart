@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,9 +11,9 @@ class ThemeStep extends ConsumerStatefulWidget {
   final VoidCallback onThemeSelected;
 
   const ThemeStep({
-    Key? key,
+    super.key,
     required this.onThemeSelected,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<ThemeStep> createState() => _ThemeStepState();
@@ -61,7 +62,7 @@ class _ThemeStepState extends ConsumerState<ThemeStep> {
             AutoSizeText(
               'onboarding.theme_title'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 24.sp,
+                fontSize: 24.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
               ),
@@ -71,7 +72,7 @@ class _ThemeStepState extends ConsumerState<ThemeStep> {
             AutoSizeText(
               'onboarding.theme_description'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 16.sp,
+                fontSize: 16.adaptiveSp,
                 color: Colors.grey[700],
               ),
               textAlign: TextAlign.center,
@@ -164,7 +165,7 @@ class _ThemeStepState extends ConsumerState<ThemeStep> {
             AutoSizeText(
               title,
               style: GoogleFonts.slabo27px(
-                fontSize: 16.sp,
+                fontSize: 16.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 color:
                     previewColor == Colors.white ? Colors.black : Colors.white,
@@ -181,7 +182,7 @@ class _ThemeStepState extends ConsumerState<ThemeStep> {
                 child: AutoSizeText(
                   'onboarding.selected'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.primary,
                   ),

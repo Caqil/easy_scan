@@ -8,12 +8,12 @@ class SettingsDivider extends StatelessWidget {
   final Color? color;
 
   const SettingsDivider({
-    Key? key,
+    super.key,
     this.indent,
     this.endIndent,
     this.height,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

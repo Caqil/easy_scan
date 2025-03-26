@@ -31,7 +31,7 @@ class BarcodeScan {
     String? customImagePath,
   }) {
     return BarcodeScan(
-      id: this.id,
+      id: id,
       barcodeValue: barcodeValue ?? this.barcodeValue,
       barcodeType: barcodeType ?? this.barcodeType,
       barcodeFormat: barcodeFormat ?? this.barcodeFormat,
@@ -214,6 +214,6 @@ class BarcodeScan {
 extension BarcodeFormatExtension on String {
   bool get isQrCodeFormat {
     final qrFormats = ['QR_CODE', 'AZTEC', 'DATA_MATRIX'];
-    return qrFormats.contains(this) || this.contains('QR');
+    return qrFormats.contains(this) || contains('QR');
   }
 }

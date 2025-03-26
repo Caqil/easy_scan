@@ -1,12 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scanpro/models/document.dart';
 import 'package:scanpro/providers/document_provider.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../main.dart';
 import '../../services/pdf_service.dart';
 
@@ -54,7 +54,7 @@ class _PasswordBottomSheetState extends ConsumerState<PasswordBottomSheet> {
                 ? 'password_sheet.change_password'.tr()
                 : 'password_sheet.add_password'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),

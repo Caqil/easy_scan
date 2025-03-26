@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,9 +13,9 @@ class SubscriptionStep extends ConsumerStatefulWidget {
   final VoidCallback onSubscriptionHandled;
 
   const SubscriptionStep({
-    Key? key,
+    super.key,
     required this.onSubscriptionHandled,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<SubscriptionStep> createState() => _SubscriptionStepState();
@@ -302,7 +303,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
             AutoSizeText(
               'onboarding.subscription_title'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 26.sp,
+                fontSize: 26.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 color: colorScheme.primary,
               ),
@@ -311,7 +312,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
             AutoSizeText(
               'onboarding.subscription_description'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 color: colorScheme.onSurface.withOpacity(0.7),
                 height: 1.5,
               ),
@@ -340,7 +341,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                   AutoSizeText(
                     'onboarding.premium_features'.tr(),
                     style: GoogleFonts.slabo27px(
-                      fontSize: 18.sp,
+                      fontSize: 18.adaptiveSp,
                       fontWeight: FontWeight.bold,
                       color: colorScheme.primary,
                     ),
@@ -378,7 +379,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                   child: AutoSizeText(
                     'onboarding.restore_purchases'.tr(),
                     style: GoogleFonts.slabo27px(
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                       fontWeight: FontWeight.w600,
                       color: colorScheme.primary,
                     ),
@@ -399,7 +400,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                   child: AutoSizeText(
                     'onboarding.maybe_later'.tr(),
                     style: GoogleFonts.slabo27px(
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                       color: colorScheme.onSurface.withOpacity(0.6),
                     ),
                   ),
@@ -481,7 +482,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                 AutoSizeText(
                   title,
                   style: GoogleFonts.slabo27px(
-                    fontSize: 15.sp,
+                    fontSize: 15.adaptiveSp,
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
@@ -490,7 +491,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                 AutoSizeText(
                   description,
                   style: GoogleFonts.slabo27px(
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     color: colorScheme.onSurface.withOpacity(0.7),
                   ),
                 ),
@@ -525,7 +526,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                 AutoSizeText(
                   'subscription.free_option'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 14.sp,
+                    fontSize: 14.adaptiveSp,
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
@@ -534,7 +535,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                 AutoSizeText(
                   'trial_explanation.price_info_1'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 14.sp,
+                    fontSize: 14.adaptiveSp,
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
@@ -622,7 +623,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                               ? 'onboarding.start_free_trial'.tr()
                               : 'subscription.continue'.tr()),
                       style: GoogleFonts.slabo27px(
-                        fontSize: 16.sp,
+                        fontSize: 16.adaptiveSp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -639,7 +640,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
         //     child: AutoSizeText(
         //       'onboarding.see_subscription_plans'.tr(),
         //       style: GoogleFonts.slabo27px(
-        //         fontSize: 14.sp,
+        //         fontSize: 14.adaptiveSp,
         //         fontWeight: FontWeight.w600,
         //         color: colorScheme.primary,
         //       ),
@@ -672,7 +673,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
           AutoSizeText(
             'onboarding.subscription_active'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
               color: Colors.green,
             ),
@@ -696,7 +697,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
               AutoSizeText(
                 'onboarding.loading_options'.tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 14.sp,
+                  fontSize: 14.adaptiveSp,
                   color: colorScheme.onSurface.withOpacity(0.7),
                 ),
               ),
@@ -714,7 +715,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
           AutoSizeText(
             'onboarding.subscription_plans'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 18.sp,
+              fontSize: 18.adaptiveSp,
               fontWeight: FontWeight.bold,
               color: colorScheme.primary,
             ),
@@ -873,7 +874,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                         AutoSizeText(
                           title,
                           style: GoogleFonts.slabo27px(
-                            fontSize: 16.sp,
+                            fontSize: 16.adaptiveSp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -881,7 +882,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                         AutoSizeText(
                           description,
                           style: GoogleFonts.slabo27px(
-                            fontSize: 12.sp,
+                            fontSize: 12.adaptiveSp,
                             color: colorScheme.onSurface.withOpacity(0.7),
                           ),
                         ),
@@ -894,7 +895,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                       AutoSizeText(
                         package.storeProduct.priceString,
                         style: GoogleFonts.slabo27px(
-                          fontSize: 16.sp,
+                          fontSize: 16.adaptiveSp,
                           fontWeight: FontWeight.bold,
                           color: colorScheme.primary,
                         ),
@@ -930,7 +931,7 @@ class _SubscriptionStepState extends ConsumerState<SubscriptionStep>
                     'onboarding.best_value'.tr(),
                     style: GoogleFonts.slabo27px(
                       color: Colors.white,
-                      fontSize: 10.sp,
+                      fontSize: 10.adaptiveSp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

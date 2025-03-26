@@ -1,11 +1,11 @@
 import 'dart:io';
+import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:hive/hive.dart';
 import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
 import 'package:scanpro/models/document.dart';
 import 'package:scanpro/services/file_limit_service.dart';
 import 'package:scanpro/utils/constants.dart';
@@ -50,6 +50,7 @@ class ScanService {
       PremiumUpgradeUtils.showFileLimitReachedDialog(context);
       return;
     }
+
     final hasPermission = await PermissionUtils.hasCameraPermission();
     if (!hasPermission) {
       final granted = await PermissionUtils.requestCameraPermission();
@@ -63,15 +64,9 @@ class ScanService {
       setLoading(true);
       List<String> imagePaths = [];
       try {
-        dynamic result = await FlutterDocScanner().getScannedDocumentAsImages(
-          page: 2, // Default to 4 pages, adjust as needed
-        );
-
-        if (result != null && result is List) {
-          // Convert dynamic list to List<String>
-          imagePaths = result.map((path) => path.toString()).toList();
-          logger.info('Scanned images: $imagePaths');
-        }
+        // Use cunning_document_scanner instead of flutter_doc_scanner
+        imagePaths = await CunningDocumentScanner.getPictures() ?? [];
+        logger.info('Scanned images: $imagePaths');
       } catch (e) {
         if (context.mounted) {
           AppDialogs.showSnackBar(
@@ -121,11 +116,6 @@ class ScanService {
         }
       }
 
-      // Close the processing dialog
-      if (context.mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-
       setLoading(false);
 
       // If we have pages, navigate to edit screen or call success callback
@@ -137,11 +127,6 @@ class ScanService {
         }
       }
     } catch (e) {
-      // Close the processing dialog if it's open
-      if (context.mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-
       if (context.mounted) {
         AppDialogs.showSnackBar(
           context,

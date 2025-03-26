@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/screen/user_guide/components/guide_content_builder.dart';
@@ -45,7 +45,7 @@ class _UserGuideScreenState extends ConsumerState<UserGuideScreen> {
         title: AutoSizeText(
           "user_guide.title".tr(),
           style: GoogleFonts.lilitaOne(
-            fontSize: 25.sp,
+            fontSize: 25.adaptiveSp,
             fontWeight: FontWeight.bold,
           ),
         ),

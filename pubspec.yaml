@@ -2,7 +2,7 @@ name: scanpro
 description: "All-in-One PDF Converter, Editor & Tools | Free Online."
 
 publish_to: "none"
-version: 1.0.0+1
+version: 1.0.1+101
 
 environment:
   sdk: ">=3.6.0 <4.0.0"
@@ -36,7 +36,7 @@ dependencies:
   share_plus: ^10.1.4
   intl: ^0.19.0
   uuid: ^4.3.3
-  permission_handler: ^11.3.0
+  permission_handler: ^11.4.0
   path: ^1.8.3
   mobile_scanner: ^6.0.7
   qr_flutter: ^4.1.0
@@ -47,7 +47,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   file_picker: ^9.0.2
   reorderable_grid_view: ^2.2.8
-  flutter_doc_scanner: ^0.0.16
   printing: ^5.14.2
   pro_image_editor: ^9.0.2
   flutter_screenutil: ^5.9.3
@@ -73,9 +72,14 @@ dependencies:
   # icloud_storage_sync: ^0.0.2
   # shared_preferences: ^2.5.2
 
+  #archive: any
+  #http_parser: any
+  purchases_flutter: ^8.6.1
+  cunning_document_scanner: ^1.2.3
+  app_tracking_transparency: ^2.0.6+1
+  shared_preferences: any
   archive: any
   http_parser: any
-  purchases_flutter: ^8.6.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

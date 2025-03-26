@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/ui/screen/premium/premium_screen.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
@@ -111,7 +110,7 @@ class PremiumUpgradeUtils {
           child: Text(
             'limit.file_limit_reached.upgrade'.tr(),
             style: GoogleFonts.slabo27px(
-                fontWeight: FontWeight.bold, fontSize: 14.sp),
+                fontWeight: FontWeight.bold, fontSize: 14.adaptiveSp),
           ),
         ),
       ),
@@ -168,7 +167,7 @@ class PremiumUpgradeUtils {
   }) async {
     try {
       final hasReachedLimitAsync = ref.read(hasReachedFileLimitProvider);
-      final hasReachedLimit = await hasReachedLimitAsync.value ?? false;
+      final hasReachedLimit = hasReachedLimitAsync.value ?? false;
 
       if (hasReachedLimit) {
         if (showDialog && context.mounted) {
@@ -178,7 +177,7 @@ class PremiumUpgradeUtils {
       }
 
       final remainingFilesAsync = ref.read(remainingFilesProvider);
-      final remainingFiles = await remainingFilesAsync.value ?? 0;
+      final remainingFiles = remainingFilesAsync.value ?? 0;
 
       if (remainingFiles <= 2 && remainingFiles > 0 && context.mounted) {
         showRemainingFilesMessage(context, remainingFiles);

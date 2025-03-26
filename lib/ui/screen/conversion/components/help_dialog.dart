@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -48,7 +48,7 @@ class HelpDialog extends StatelessWidget {
           title,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.bold,
-            fontSize: 16.sp,
+            fontSize: 16.adaptiveSp,
           ),
         ),
         SizedBox(height: 4.h),

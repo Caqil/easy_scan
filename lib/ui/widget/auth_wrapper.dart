@@ -12,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class AuthWrapper extends ConsumerStatefulWidget {
   final Widget Function(BuildContext) builder;
 
-  const AuthWrapper({Key? key, required this.builder}) : super(key: key);
+  const AuthWrapper({super.key, required this.builder});
 
   @override
   ConsumerState<AuthWrapper> createState() => _AuthWrapperState();

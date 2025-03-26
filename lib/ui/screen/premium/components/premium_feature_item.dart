@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,12 +11,12 @@ class PremiumFeatureItem extends StatelessWidget {
   final Color? iconColor;
 
   const PremiumFeatureItem({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.description,
     this.iconColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,14 +48,14 @@ class PremiumFeatureItem extends StatelessWidget {
                   title,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                   ),
                 ),
                 SizedBox(height: 4.h),
                 AutoSizeText(
                   description,
                   style: GoogleFonts.slabo27px(
-                    fontSize: 14.sp,
+                    fontSize: 14.adaptiveSp,
                     color: Colors.grey.shade600,
                   ),
                 ),

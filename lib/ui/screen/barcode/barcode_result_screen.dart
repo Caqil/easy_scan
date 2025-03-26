@@ -3,6 +3,7 @@ import 'package:scanpro/models/barcode_scan.dart';
 import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:scanpro/ui/screen/barcode/qr_code_customization_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,11 +28,11 @@ class BarcodeResultScreen extends ConsumerWidget {
   final GlobalKey _qrKey = GlobalKey();
 
   BarcodeResultScreen({
-    Key? key,
+    super.key,
     required this.barcodeValue,
     required this.barcodeType,
     required this.barcodeFormat,
-  }) : super(key: key);
+  });
 
   BarcodeScan? _findCustomizedScan(WidgetRef ref) {
     final barcodeHistory = ref.watch(barcodeScanHistoryProvider);
@@ -60,7 +61,7 @@ class BarcodeResultScreen extends ConsumerWidget {
             'barcode_result.customized_qr'.tr(),
             style: GoogleFonts.slabo27px(
               color: Colors.white,
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -131,7 +132,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                             style: GoogleFonts.slabo27px(
                               color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 14.sp,
+                              fontSize: 14.adaptiveSp,
                             ),
                           ),
                         ),
@@ -156,7 +157,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                                 : 'barcode_result.barcode'.tr(),
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
-                              fontSize: 10.sp,
+                              fontSize: 10.adaptiveSp,
                               color: isQrCode ? Colors.green : Colors.orange,
                             ),
                           ),
@@ -184,7 +185,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                       'barcode_result.content'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
+                        fontSize: 14.adaptiveSp,
                         color: Colors.grey.shade600,
                       ),
                     ),
@@ -193,7 +194,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                       barcodeValue,
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
-                        fontSize: 16.sp,
+                        fontSize: 16.adaptiveSp,
                       ),
                     ),
 
@@ -205,7 +206,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                         'barcode_result.technical_details'.tr(),
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
-                          fontSize: 14.sp,
+                          fontSize: 14.adaptiveSp,
                         ),
                       ),
                       collapsedIconColor: Colors.grey,
@@ -216,7 +217,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                             'barcode_result.barcode_format'.tr(),
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
-                              fontSize: 12.sp,
+                              fontSize: 12.adaptiveSp,
                               color: Colors.grey.shade600,
                             ),
                           ),
@@ -224,7 +225,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                             barcodeFormat,
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
-                              fontSize: 14.sp,
+                              fontSize: 14.adaptiveSp,
                             ),
                           ),
                           dense: true,
@@ -234,7 +235,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                             'barcode_result.barcode_type'.tr(),
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
-                              fontSize: 12.sp,
+                              fontSize: 12.adaptiveSp,
                               color: Colors.grey.shade600,
                             ),
                           ),
@@ -242,7 +243,7 @@ class BarcodeResultScreen extends ConsumerWidget {
                             barcodeType,
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
-                              fontSize: 14.sp,
+                              fontSize: 14.adaptiveSp,
                             ),
                           ),
                           dense: true,
@@ -487,10 +488,10 @@ class BarcodeResultScreen extends ConsumerWidget {
         String mapUrl;
         if (barcodeValue.startsWith('geo:')) {
           // Parse geo:37.786971,-122.399677
-          mapUrl = 'https://maps.google.com/?q=' + barcodeValue.substring(4);
+          mapUrl = 'https://maps.google.com/?q=${barcodeValue.substring(4)}';
         } else {
           // Assume it's already lat,long
-          mapUrl = 'https://maps.google.com/?q=' + barcodeValue;
+          mapUrl = 'https://maps.google.com/?q=$barcodeValue';
         }
 
         buttons.add(
@@ -661,11 +662,11 @@ class BarcodeResultQRCode extends StatelessWidget {
   final GlobalKey qrKey;
 
   const BarcodeResultQRCode({
-    Key? key,
+    super.key,
     required this.barcodeValue,
     required this.barcodeType,
     required this.qrKey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -699,14 +700,14 @@ class BarcodeResultQRCode extends StatelessWidget {
                 Icon(
                   _getIconForType(barcodeType),
                   color: Colors.white,
-                  size: 20.sp,
+                  size: 20.adaptiveSp,
                 ),
                 SizedBox(width: 8.w),
                 AutoSizeText(
                   barcodeType,
                   style: GoogleFonts.slabo27px(
                     color: Colors.white,
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                     fontWeight: FontWeight.bold,
                     shadows: [
                       Shadow(

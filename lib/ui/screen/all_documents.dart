@@ -6,13 +6,14 @@ import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/common/document_actions.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AllDocumentsScreen extends ConsumerStatefulWidget {
-  const AllDocumentsScreen({Key? key}) : super(key: key);
+  const AllDocumentsScreen({super.key});
 
   @override
   ConsumerState<AllDocumentsScreen> createState() => _AllDocumentsScreenState();
@@ -93,7 +94,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
               child: AutoSizeText(
                 'sort_documents'.tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 18.sp,
+                  fontSize: 18.adaptiveSp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -333,7 +334,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                 ),
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w700,
-                  fontSize: 16.sp,
+                  fontSize: 16.adaptiveSp,
                 ),
               )
             : RichText(
@@ -343,7 +344,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                       text: 'all'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
-                        fontSize: 18.sp,
+                        fontSize: 18.adaptiveSp,
                         color: theme.textTheme.bodyLarge?.color,
                       ),
                     ),
@@ -351,7 +352,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                       text: 'chip_format_selector.categories.documents'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18.sp,
+                        fontSize: 18.adaptiveSp,
                         color: primaryColor,
                       ),
                     ),
@@ -398,7 +399,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                         children: [
                           Icon(
                             Icons.description_outlined,
-                            size: 16.sp,
+                            size: 16.adaptiveSp,
                             color: primaryColor,
                           ),
                           SizedBox(width: 8.w),
@@ -406,7 +407,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                             'Showing ${currentPageDocs.length} of ${filteredDocs.length} documents',
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
-                              fontSize: 13.sp,
+                              fontSize: 13.adaptiveSp,
                               color: theme.textTheme.bodyMedium?.color,
                             ),
                           ),
@@ -426,7 +427,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                             'Page ${_currentPage + 1} of $totalPages',
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
-                              fontSize: 12.sp,
+                              fontSize: 12.adaptiveSp,
                               color: primaryColor,
                             ),
                           ),
@@ -532,7 +533,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                             document.name,
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.bold,
-                              fontSize: 14.sp,
+                              fontSize: 14.adaptiveSp,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -541,7 +542,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                             '${document.pageCount} pages',
                             style: GoogleFonts.slabo27px(
                               fontWeight: FontWeight.w700,
-                              fontSize: 12.sp,
+                              fontSize: 12.adaptiveSp,
                               color: Colors.grey.shade600,
                             ),
                           ),
@@ -602,7 +603,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                     child: AutoSizeText(
                       '${_currentPage + 1} / $totalPages',
                       style: GoogleFonts.slabo27px(
-                        fontSize: 14.sp,
+                        fontSize: 14.adaptiveSp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -656,7 +657,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
           ),
           child: Icon(
             icon,
-            size: 20.sp,
+            size: 20.adaptiveSp,
             color: isActive ? primaryColor : Colors.grey.shade400,
           ),
         ),
@@ -672,7 +673,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
           children: [
             Icon(
               _isSearching ? Icons.search_off : Icons.description_outlined,
-              size: 64.sp,
+              size: 64.adaptiveSp,
               color: Colors.grey.shade400,
             ),
             SizedBox(height: 16.h),
@@ -681,7 +682,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                   ? 'empty_state.searching.no_documents_match'.tr()
                   : 'not_searching.no_documents_found'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 18.sp,
+                fontSize: 18.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey.shade700,
               ),
@@ -693,7 +694,7 @@ class _AllDocumentsScreenState extends ConsumerState<AllDocumentsScreen> {
                   : 'not_searching.scan_or_import'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 color: Colors.grey.shade600,
               ),
               textAlign: TextAlign.center,

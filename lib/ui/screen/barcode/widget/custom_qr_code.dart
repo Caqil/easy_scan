@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart'; // Add this import
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +18,7 @@ class CustomQRCode extends StatelessWidget {
   final bool showShadow;
 
   const CustomQRCode({
-    Key? key,
+    super.key,
     required this.data,
     this.title,
     this.primaryColor = Colors.black,
@@ -26,7 +27,7 @@ class CustomQRCode extends StatelessWidget {
     this.logo,
     this.borderRadius,
     this.showShadow = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,7 @@ class CustomQRCode extends StatelessWidget {
               title!.tr(), // Apply translation if title is a key
               style: GoogleFonts.slabo27px(
                 color: primaryColor,
-                fontSize: 16.sp,
+                fontSize: 16.adaptiveSp,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -101,7 +102,7 @@ class CustomQRCode extends StatelessWidget {
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
                       color: Colors.red,
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                     ),
                   ),
                 );
@@ -131,14 +132,14 @@ class GradientQRCode extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   const GradientQRCode({
-    Key? key,
+    super.key,
     required this.data,
     this.title,
     this.gradientColors = const [Colors.blue, Colors.purple],
     this.size = 250,
     this.logo,
     this.borderRadius,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +169,7 @@ class GradientQRCode extends StatelessWidget {
               title!.tr(), // Apply translation if title is a key
               style: GoogleFonts.slabo27px(
                 color: Colors.white,
-                fontSize: 16.sp,
+                fontSize: 16.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 shadows: [
                   Shadow(
@@ -229,13 +230,13 @@ class TransparentQRCode extends StatelessWidget {
   final Widget? logo;
 
   const TransparentQRCode({
-    Key? key,
+    super.key,
     required this.data,
     this.title,
     this.accentColor = Colors.blue,
     this.size = 250,
     this.logo,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +262,7 @@ class TransparentQRCode extends StatelessWidget {
                   title!.tr(), // Apply translation if title is a key
                   style: GoogleFonts.slabo27px(
                     color: Colors.white,
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -316,11 +317,11 @@ class ThemedQRCode extends StatelessWidget {
   final double size;
 
   const ThemedQRCode({
-    Key? key,
+    super.key,
     required this.data,
     required this.contentType,
     this.size = 250,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -352,14 +353,14 @@ class ThemedQRCode extends StatelessWidget {
               Icon(
                 typeSettings.icon,
                 color: Colors.white,
-                size: 20.sp,
+                size: 20.adaptiveSp,
               ),
               SizedBox(width: 8.w),
               AutoSizeText(
                 typeSettings.title.tr(), // Apply translation to title
                 style: GoogleFonts.slabo27px(
                   color: Colors.white,
-                  fontSize: 16.sp,
+                  fontSize: 16.adaptiveSp,
                   fontWeight: FontWeight.bold,
                 ),
               ),

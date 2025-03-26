@@ -15,6 +15,7 @@ import 'package:scanpro/utils/constants.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -438,7 +439,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                 AutoSizeText(
                   'compression.pdf_cloud_compressor'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 18.sp,
+                    fontSize: 18.adaptiveSp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -512,7 +513,7 @@ class _CompressionOptionsSheet extends ConsumerWidget {
                       'compression.cloud_compression_info'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
-                        fontSize: 12.sp,
+                        fontSize: 12.adaptiveSp,
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),

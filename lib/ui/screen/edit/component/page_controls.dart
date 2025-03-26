@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// Controls for document pages including counter and delete button
@@ -59,7 +59,7 @@ class PageControls extends StatelessWidget {
               style: GoogleFonts.slabo27px(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 10.sp,
+                fontSize: 10.adaptiveSp,
               ),
             ),
           ],

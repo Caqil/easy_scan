@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/common/component/scanned_documents_view.dart';
-import 'package:scanpro/ui/screen/edit/component/document_action_button.dart';
 import 'package:scanpro/ui/screen/edit/component/document_action_handler.dart';
 import 'package:scanpro/ui/screen/edit/component/document_name_input.dart';
 import 'package:scanpro/ui/screen/edit/component/document_preview.dart';
@@ -44,7 +43,7 @@ class _EditScreenViewState extends State<EditScreenView> {
     }
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       appBar: CustomAppBar(
         title: _buildAppBarTitle(colorScheme),
         elevation: 0,

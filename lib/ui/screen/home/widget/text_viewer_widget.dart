@@ -12,11 +12,11 @@ class TextViewerWidget extends StatelessWidget {
   final VoidCallback? onShare;
 
   const TextViewerWidget({
-    Key? key,
+    super.key,
     required this.filePath,
     this.showAppBar = true,
     this.onShare,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

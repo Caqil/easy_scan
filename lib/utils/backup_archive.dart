@@ -54,7 +54,7 @@ class BackupArchiver {
         } else if (entity is Directory && relativePath.isNotEmpty) {
           logger.info('Adding directory to archive: $relativePath');
           // Add an empty entry for directories
-          final archiveFile = ArchiveFile(relativePath + '/', 0, []);
+          final archiveFile = ArchiveFile('$relativePath/', 0, []);
           archive.addFile(archiveFile);
         }
       }

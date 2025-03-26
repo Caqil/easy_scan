@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -41,7 +42,7 @@ class SectionContainer extends StatelessWidget {
                 AutoSizeText(
                   title,
                   style: GoogleFonts.slabo27px(
-                    fontSize: 18.sp,
+                    fontSize: 18.adaptiveSp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

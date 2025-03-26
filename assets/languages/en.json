@@ -429,6 +429,7 @@
     "remaining": "{count} share{plural} remaining. Upgrade for unlimited shares!",
     "upgrade": "Upgrade"
   },
+  
   "limit": {
     "file_limit_reached": {
       "title": "File Limit Reached",
@@ -929,7 +930,7 @@
     "help_save_note": "The merged PDF will be saved to your document library."
   },
 
-
+  "coming_soon": "Coming soon...",
   "search_documents": "Search documents...",
   "sort_documents": "Sort Documents",
   "newest_first": "Newest First",

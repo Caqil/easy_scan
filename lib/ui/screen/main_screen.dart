@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/config/routes.dart';
 import 'package:scanpro/services/scan_service.dart';
+import 'package:scanpro/services/tracking_service.dart';
 import 'package:scanpro/ui/widget/component/scan_initial_view.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,9 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
-  // Add child parameter for GoRouter's ShellRoute
   final Widget child;
-
   const MainScreen({
     super.key,
     required this.child,
@@ -28,7 +30,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   int _selectedIndex = 0;
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   bool _isLoading = false;
-
+  String? _advertisingIdentifier;
+  bool _isTrackingAuthorized = false;
   // Updated to include 5 items with Scan in the middle
   final _iconList = <IconData>[
     Icons.home_rounded,
@@ -59,6 +62,24 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     super.initState();
+    if (Platform.isAndroid || Platform.isIOS) {
+      _initializeTracking();
+    }
+  }
+
+  Future<void> _initializeTracking() async {
+    // Request tracking authorization
+    final isAuthorized = await TrackingService.requestTracking();
+
+    if (isAuthorized) {
+      // If authorized, get the advertising identifier
+      final idfa = await TrackingService.getAdvertisingIdentifier();
+
+      setState(() {
+        _isTrackingAuthorized = true;
+        _advertisingIdentifier = idfa;
+      });
+    }
   }
 
   @override
@@ -158,8 +179,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               // Special container for center scan icon
               index == 2
                   ? Container(
-                      width: 48.sp,
-                      height: 48.sp,
+                      width: 42.adaptiveSp,
+                      height: 42.adaptiveSp,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: colorScheme.primary,
@@ -177,22 +198,14 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                           Icon(
                             _iconList[index],
                             color: Colors.white,
-                            size: 20.sp,
-                          ),
-                          AutoSizeText(
-                            'labels.scan'.tr(),
-                            style: GoogleFonts.slabo27px(
-                              fontSize: 10.sp,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            size: 20.adaptiveSp,
                           ),
                         ],
                       ),
                     )
                   : Icon(
                       _iconList[index],
-                      size: 24.sp,
+                      size: 24.adaptiveSp,
                       color: isActive ? colorScheme.primary : Colors.grey,
                     ),
 
@@ -204,7 +217,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     AutoSizeText(
                       _labelList[index],
                       style: GoogleFonts.slabo27px(
-                        fontSize: 10.sp,
+                        fontSize: 10.adaptiveSp,
                         fontWeight:
                             isActive ? FontWeight.bold : FontWeight.w700,
                         color: isActive ? colorScheme.primary : Colors.grey,

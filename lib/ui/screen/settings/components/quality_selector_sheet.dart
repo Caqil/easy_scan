@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -56,7 +57,7 @@ class _QualitySelectorSheetState extends State<QualitySelectorSheet> {
           AutoSizeText(
             "settings.pdf_quality".tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 20.sp,
+              fontSize: 20.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -64,7 +65,7 @@ class _QualitySelectorSheetState extends State<QualitySelectorSheet> {
           AutoSizeText(
             "settings.pdf_quality_desc".tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
               color: Colors.grey.shade600,
             ),
           ),
@@ -75,14 +76,14 @@ class _QualitySelectorSheetState extends State<QualitySelectorSheet> {
               AutoSizeText(
                 "Lower Quality",
                 style: GoogleFonts.slabo27px(
-                  fontSize: 12.sp,
+                  fontSize: 12.adaptiveSp,
                   color: Colors.grey.shade600,
                 ),
               ),
               AutoSizeText(
                 "Higher Quality",
                 style: GoogleFonts.slabo27px(
-                  fontSize: 12.sp,
+                  fontSize: 12.adaptiveSp,
                   color: Colors.grey.shade600,
                 ),
               ),
@@ -106,7 +107,7 @@ class _QualitySelectorSheetState extends State<QualitySelectorSheet> {
               AutoSizeText(
                 "$_selectedQuality%",
                 style: GoogleFonts.slabo27px(
-                  fontSize: 24.sp,
+                  fontSize: 24.adaptiveSp,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primary,
                 ),

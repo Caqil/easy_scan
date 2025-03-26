@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -461,7 +462,7 @@ class GuideWidgets {
       child: AutoSizeText(
         title,
         style: GoogleFonts.slabo27px(
-          fontSize: 22.sp,
+          fontSize: 22.adaptiveSp,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.primary,
         ),
@@ -475,9 +476,9 @@ class GuideWidgets {
       child: AutoSizeText(
         title,
         style: GoogleFonts.slabo27px(
-          fontSize: 18.sp,
+          fontSize: 18.adaptiveSp,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
     );
@@ -489,7 +490,7 @@ class GuideWidgets {
       child: AutoSizeText(
         content,
         style: GoogleFonts.slabo27px(
-          fontSize: 14.sp,
+          fontSize: 14.adaptiveSp,
           height: 1.5,
           color: Theme.of(context).colorScheme.onSurface,
         ),
@@ -502,7 +503,7 @@ class GuideWidgets {
       height: 180.h,
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8.r),
       ),
       alignment: Alignment.center,
@@ -547,7 +548,7 @@ class GuideWidgets {
             child: AutoSizeText(
               content,
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 height: 1.4,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -575,7 +576,7 @@ class GuideWidgets {
             child: AutoSizeText(
               number.toString(),
               style: GoogleFonts.slabo27px(
-                fontSize: 12.sp,
+                fontSize: 12.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
               ),
@@ -590,7 +591,7 @@ class GuideWidgets {
                   AutoSizeText(
                     title,
                     style: GoogleFonts.slabo27px(
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
@@ -598,7 +599,7 @@ class GuideWidgets {
                 AutoSizeText(
                   content,
                   style: GoogleFonts.slabo27px(
-                    fontSize: 14.sp,
+                    fontSize: 14.adaptiveSp,
                     height: 1.4,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
@@ -622,7 +623,7 @@ class GuideWidgets {
             child: AutoSizeText(
               feature,
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -633,7 +634,7 @@ class GuideWidgets {
             child: AutoSizeText(
               explanation,
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 height: 1.4,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -668,7 +669,7 @@ class GuideWidgets {
             child: AutoSizeText(
               tip,
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 height: 1.4,
                 fontStyle: FontStyle.italic,
                 color: Theme.of(context).colorScheme.onSurface,

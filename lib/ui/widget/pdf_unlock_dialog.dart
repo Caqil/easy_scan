@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,10 +14,10 @@ class PdfUnlockDialog extends ConsumerStatefulWidget {
   final Function(Document)? onSuccess;
 
   const PdfUnlockDialog({
-    Key? key,
+    super.key,
     required this.document,
     this.onSuccess,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<PdfUnlockDialog> createState() => _PdfUnlockDialogState();
@@ -135,7 +135,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                   child: Text(
                     'pdf.unlock.title'.tr(),
                     style: GoogleFonts.slabo27px(
-                      fontSize: 18.sp,
+                      fontSize: 18.adaptiveSp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -150,7 +150,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
               'pdf.unlock.description'
                   .tr(namedArgs: {'name': widget.document.name}),
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 color: Colors.grey[600],
               ),
             ),
@@ -199,7 +199,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                     child: Text(
                       _errorMessage,
                       style: GoogleFonts.slabo27px(
-                        fontSize: 12.sp,
+                        fontSize: 12.adaptiveSp,
                         color: Theme.of(context).colorScheme.error,
                       ),
                     ),
@@ -223,7 +223,7 @@ class _PdfUnlockDialogState extends ConsumerState<PdfUnlockDialog> {
                 child: Text(
                   'pdf.unlock.processing'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),

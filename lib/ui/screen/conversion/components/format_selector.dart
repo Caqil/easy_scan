@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,7 +29,7 @@ class ChipFormatSelector extends StatelessWidget {
           label,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.w700,
-            fontSize: 14.sp,
+            fontSize: 14.adaptiveSp,
             color: Colors.grey.shade700,
           ),
         ),
@@ -47,14 +48,14 @@ class ChipFormatSelector extends StatelessWidget {
                   Icon(
                     selectedFormat!.icon,
                     color: selectedFormat!.color,
-                    size: 24.sp,
+                    size: 24.adaptiveSp,
                   ),
                   SizedBox(width: 12.w),
                   AutoSizeText(
                     selectedFormat!.name,
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                     ),
                   ),
                 ] else
@@ -62,7 +63,7 @@ class ChipFormatSelector extends StatelessWidget {
                     '$label Format',
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 12.sp,
+                      fontSize: 12.adaptiveSp,
                       color: Colors.grey.shade600,
                     ),
                   ),
@@ -109,12 +110,12 @@ class FormatSelectorBottomSheet extends StatefulWidget {
   final String label;
 
   const FormatSelectorBottomSheet({
-    Key? key,
+    super.key,
     required this.formats,
     required this.selectedFormat,
     required this.onFormatSelected,
     required this.label,
-  }) : super(key: key);
+  });
 
   @override
   State<FormatSelectorBottomSheet> createState() =>
@@ -172,7 +173,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
               tr('chip_format_selector.select_format',
                   namedArgs: {'label': widget.label}),
               style: GoogleFonts.slabo27px(
-                fontSize: 18.sp,
+                fontSize: 18.adaptiveSp,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -223,12 +224,13 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.search_off, size: 48.sp, color: Colors.grey),
+              Icon(Icons.search_off, size: 48.adaptiveSp, color: Colors.grey),
               SizedBox(height: 16.h),
               AutoSizeText(
                 'No formats found',
                 style: GoogleFonts.slabo27px(
-                    fontWeight: FontWeight.w700, fontSize: 14.sp.sp),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14.adaptiveSp.adaptiveSp),
               ),
             ],
           ),
@@ -263,7 +265,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
               child: AutoSizeText(
                 category,
                 style: GoogleFonts.slabo27px(
-                  fontSize: 14.sp,
+                  fontSize: 14.adaptiveSp,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey.shade700,
                 ),
@@ -289,7 +291,7 @@ class _FormatSelectorBottomSheetState extends State<FormatSelectorBottomSheet> {
       avatar: Icon(
         format.icon,
         color: isSelected ? Colors.white : format.color,
-        size: 15.sp,
+        size: 15.adaptiveSp,
       ),
       label: AutoSizeText(format.name),
       selected: isSelected,

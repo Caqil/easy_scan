@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// A card showing a scanned document page
@@ -96,7 +96,7 @@ class DocumentCard extends StatelessWidget {
           style: GoogleFonts.slabo27px(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 10.sp,
+            fontSize: 10.adaptiveSp,
           ),
         ),
       ),
@@ -177,7 +177,7 @@ class DocumentCard extends StatelessWidget {
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.w700,
             color: Colors.white.withOpacity(0.9),
-            fontSize: 10.sp,
+            fontSize: 10.adaptiveSp,
           ),
         ),
       ],

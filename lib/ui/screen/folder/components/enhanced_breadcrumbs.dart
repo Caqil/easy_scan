@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,12 +11,12 @@ class EnhancedBreadcrumbs extends StatelessWidget {
   final VoidCallback onNavigateUp;
 
   const EnhancedBreadcrumbs({
-    Key? key,
+    super.key,
     required this.breadcrumbs,
     this.currentParentId,
     required this.onBreadcrumbTap,
     required this.onNavigateUp,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class EnhancedBreadcrumbs extends StatelessWidget {
             padding: EdgeInsets.all(8.w),
             child: Icon(
               Icons.arrow_back_ios_rounded,
-              size: 16.sp,
+              size: 16.adaptiveSp,
               color: Theme.of(context).brightness == Brightness.dark
                   ? Colors.grey.shade300
                   : Colors.grey.shade600,
@@ -109,7 +110,7 @@ class EnhancedBreadcrumbs extends StatelessWidget {
                   if (isRoot)
                     Icon(
                       Icons.home_rounded,
-                      size: 16.sp,
+                      size: 16.adaptiveSp,
                       color: isLast
                           ? colorScheme.primary
                           : (theme.brightness == Brightness.dark
@@ -126,7 +127,7 @@ class EnhancedBreadcrumbs extends StatelessWidget {
                               ? Colors.grey.shade300
                               : Colors.grey.shade800),
                       fontWeight: isLast ? FontWeight.w900 : FontWeight.w800,
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                     ),
                   ),
                 ],
@@ -142,7 +143,7 @@ class EnhancedBreadcrumbs extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 4.w),
             child: Icon(
               Icons.chevron_right_rounded,
-              size: 18.sp,
+              size: 18.adaptiveSp,
               color: theme.brightness == Brightness.dark
                   ? Colors.grey.shade500
                   : Colors.grey.shade400,

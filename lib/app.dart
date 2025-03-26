@@ -4,6 +4,7 @@ import 'package:scanpro/config/routes.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -154,8 +155,8 @@ class SplashScreen extends StatelessWidget {
             FadeTransition(
               opacity: animation,
               child: Container(
-                width: 150.w,
-                height: 150.h,
+                width: 150.adaptiveW,
+                height: 150.adaptiveH,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/icons/ic_icon.png'),
@@ -164,15 +165,15 @@ class SplashScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 20.adaptiveH),
             CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 20.adaptiveH),
             AutoSizeText(
               'common.loading'.tr(), // Using easy_localization
               style: GoogleFonts.slabo27px(
-                fontSize: 16.sp,
+                fontSize: 16,
                 color: Colors.grey,
               ),
             ),

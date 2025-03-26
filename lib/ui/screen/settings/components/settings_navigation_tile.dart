@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,14 +13,14 @@ class SettingsNavigationTile extends StatelessWidget {
   final Widget? trailing;
 
   const SettingsNavigationTile({
-    Key? key,
+    super.key,
     required this.icon,
     required this.iconColor,
     required this.title,
     required this.subtitle,
     required this.onTap,
     this.trailing,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +43,14 @@ class SettingsNavigationTile extends StatelessWidget {
         title,
         style: GoogleFonts.slabo27px(
           fontWeight: FontWeight.w700,
-          fontSize: 14.sp,
+          fontSize: 14.adaptiveSp,
         ),
       ),
       subtitle: AutoSizeText(
         subtitle,
         style: GoogleFonts.slabo27px(
           fontWeight: FontWeight.w700,
-          fontSize: 12.sp,
+          fontSize: 12.adaptiveSp,
           color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
         ),
       ),

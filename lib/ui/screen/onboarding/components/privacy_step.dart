@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 
 class PrivacyStep extends StatefulWidget {
@@ -26,6 +28,7 @@ class _PrivacyStepState extends State<PrivacyStep>
   @override
   void initState() {
     super.initState();
+   
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -58,12 +61,14 @@ class _PrivacyStepState extends State<PrivacyStep>
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: FadeTransition(
           opacity: _animation,
@@ -98,9 +103,9 @@ class _PrivacyStepState extends State<PrivacyStep>
                         AutoSizeText(
                           'onboarding.privacy.main_title'.tr(),
                           style: GoogleFonts.slabo27px(
-                            fontSize: 24.sp,
+                            fontSize: 24.adaptiveSp,
                             fontWeight: FontWeight.bold,
-                            color: colorScheme.onBackground,
+                            color: colorScheme.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -108,8 +113,8 @@ class _PrivacyStepState extends State<PrivacyStep>
                         AutoSizeText(
                           'onboarding.privacy.subtitle'.tr(),
                           style: GoogleFonts.slabo27px(
-                            fontSize: 16.sp,
-                            color: colorScheme.onBackground.withOpacity(0.7),
+                            fontSize: 16.adaptiveSp,
+                            color: colorScheme.onSurface.withOpacity(0.7),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -156,7 +161,8 @@ class _PrivacyStepState extends State<PrivacyStep>
                     child: Container(
                       padding: EdgeInsets.all(16.r),
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceVariant.withOpacity(0.3),
+                        color: colorScheme.surfaceContainerHighest
+                            .withOpacity(0.3),
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
                           color: colorScheme.onSurface.withOpacity(0.1),
@@ -177,16 +183,16 @@ class _PrivacyStepState extends State<PrivacyStep>
                                   'onboarding.privacy.full_policy'.tr(),
                                   style: GoogleFonts.slabo27px(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16.sp,
+                                    fontSize: 16.adaptiveSp,
                                   ),
                                 ),
                                 AutoSizeText(
                                   'onboarding.privacy.full_policy_description'
                                       .tr(),
                                   style: GoogleFonts.slabo27px(
-                                    fontSize: 12.sp,
-                                    color: colorScheme.onBackground
-                                        .withOpacity(0.7),
+                                    fontSize: 12.adaptiveSp,
+                                    color:
+                                        colorScheme.onSurface.withOpacity(0.7),
                                   ),
                                 ),
                               ],
@@ -229,8 +235,8 @@ class _PrivacyStepState extends State<PrivacyStep>
                           child: RichText(
                             text: TextSpan(
                               style: GoogleFonts.slabo27px(
-                                fontSize: 14.sp,
-                                color: colorScheme.onBackground,
+                                fontSize: 14.adaptiveSp,
+                                color: colorScheme.onSurface,
                               ),
                               children: [
                                 TextSpan(
@@ -272,7 +278,7 @@ class _PrivacyStepState extends State<PrivacyStep>
                     child: AutoSizeText(
                       'subscription.continue'.tr(),
                       style: GoogleFonts.slabo27px(
-                        fontSize: 16.sp,
+                        fontSize: 16.adaptiveSp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -307,7 +313,7 @@ class _PrivacyStepState extends State<PrivacyStep>
           ),
         ],
         border: Border.all(
-          color: colorScheme.surfaceVariant,
+          color: colorScheme.surfaceContainerHighest,
           width: 1,
         ),
       ),
@@ -334,17 +340,17 @@ class _PrivacyStepState extends State<PrivacyStep>
                 AutoSizeText(
                   title,
                   style: GoogleFonts.slabo27px(
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                     fontWeight: FontWeight.bold,
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 SizedBox(height: 8.h),
                 AutoSizeText(
                   description,
                   style: GoogleFonts.slabo27px(
-                    fontSize: 14.sp,
-                    color: colorScheme.onBackground.withOpacity(0.7),
+                    fontSize: 14.adaptiveSp,
+                    color: colorScheme.onSurface.withOpacity(0.7),
                   ),
                 ),
               ],

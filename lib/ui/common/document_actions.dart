@@ -4,6 +4,7 @@ import 'package:scanpro/services/documents_share_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/screen/compression/components/compression_tools.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -196,7 +197,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                         document.name,
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.bold,
-                          fontSize: 14.sp,
+                          fontSize: 14.adaptiveSp,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -207,7 +208,7 @@ class _DocumentOptionsSheet extends ConsumerWidget {
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
                           color: Colors.grey.shade600,
-                          fontSize: 10.sp,
+                          fontSize: 10.adaptiveSp,
                         ),
                       ),
                     ],

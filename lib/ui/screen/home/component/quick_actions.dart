@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -90,7 +91,7 @@ class QuickActions extends ConsumerWidget {
       'quick_actions'.tr(),
       style: GoogleFonts.inter(
         fontWeight: FontWeight.w600,
-        fontSize: 16.sp,
+        fontSize: 16.adaptiveSp,
         color: Colors.grey[800],
       ),
     );
@@ -129,10 +130,9 @@ class QuickActions extends ConsumerWidget {
               SizedBox(height: 6.h),
               AutoSizeText(
                 label,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w500,
-                  fontSize: 11.sp,
-                  color: Colors.grey[700],
+                  fontSize: 11.adaptiveSp,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,

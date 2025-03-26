@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/models/document.dart';
@@ -173,7 +173,7 @@ class DocumentShareService {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.slabo27px(
                   color: Colors.grey[800],
-                  fontSize: 14.sp,
+                  fontSize: 14.adaptiveSp,
                 ),
               ),
               const SizedBox(height: 12),
@@ -183,7 +183,7 @@ class DocumentShareService {
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).primaryColor,
-                  fontSize: 14.sp,
+                  fontSize: 14.adaptiveSp,
                 ),
               ),
             ],
@@ -204,7 +204,7 @@ class DocumentShareService {
             ),
             child: Text(
               'common.cancel'.tr(),
-              style: GoogleFonts.slabo27px(fontSize: 14.sp),
+              style: GoogleFonts.slabo27px(fontSize: 14.adaptiveSp),
             ),
           ),
           OutlinedButton(
@@ -231,7 +231,7 @@ class DocumentShareService {
             child: Text(
               'share.limit_reached.upgrade'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 fontWeight: FontWeight.w600,
               ),
             ),

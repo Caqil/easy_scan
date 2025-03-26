@@ -38,6 +38,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  app_tracking_transparency:
+    dependency: "direct main"
+    description:
+      name: app_tracking_transparency
+      sha256: "1f71f4d8402552fbf8b191d4edab301f233c1af794878b7bc56c708470ffd74c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.6+1"
   archive:
     dependency: "direct main"
     description:
@@ -278,6 +286,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.6"
+  cunning_document_scanner:
+    dependency: "direct main"
+    description:
+      name: cunning_document_scanner
+      sha256: bf590e8c8c8a4903ba7873c4f22b67e976604853f11065f594cb19b408bd25ef
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.3"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -475,14 +491,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_doc_scanner:
-    dependency: "direct main"
-    description:
-      name: flutter_doc_scanner
-      sha256: "4a1dd77d37004ee8b9bdbb7437b0c970706d51b74ddd9806d491420d066d255d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.16"
   flutter_highlight:
     dependency: "direct main"
     description:
@@ -1308,7 +1316,7 @@ packages:
     source: hosted
     version: "5.0.2"
   shared_preferences:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shared_preferences
       sha256: "846849e3e9b68f3ef4b60c60cf4b3e02e9321bc7f4d8c4692cf87ffa82fc8a3a"

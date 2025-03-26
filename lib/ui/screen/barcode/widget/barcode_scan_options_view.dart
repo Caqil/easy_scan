@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -63,7 +64,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
       ),
       child: Icon(
         Icons.qr_code_scanner,
-        size: 60.sp,
+        size: 60.adaptiveSp,
         color: Theme.of(context).primaryColor,
       ),
     );
@@ -73,7 +74,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
     return AutoSizeText(
       'barcode_options.title'.tr(),
       style: GoogleFonts.slabo27px(
-        fontSize: 24.sp,
+        fontSize: 24.adaptiveSp,
         fontWeight: FontWeight.bold,
       ),
     );
@@ -85,7 +86,7 @@ class BarcodeScanOptionsView extends StatelessWidget {
       textAlign: TextAlign.center,
       style: GoogleFonts.slabo27px(
         fontWeight: FontWeight.w700,
-        fontSize: 14.sp,
+        fontSize: 14.adaptiveSp,
         color: Colors.grey[600],
       ),
     );

@@ -6,10 +6,10 @@ import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_result_screen.dart';
 import 'package:scanpro/ui/screen/barcode/qr_code_customization_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BarcodeActionSheet extends ConsumerWidget {
@@ -89,7 +89,7 @@ class BarcodeActionSheet extends ConsumerWidget {
                       AutoSizeText(
                         contentType.label,
                         style: GoogleFonts.slabo27px(
-                          fontSize: 14.sp,
+                          fontSize: 14.adaptiveSp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -97,7 +97,7 @@ class BarcodeActionSheet extends ConsumerWidget {
                         _truncateAutoSizeText(scan.barcodeValue, 40),
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
-                          fontSize: 10.sp,
+                          fontSize: 10.adaptiveSp,
                           color: Colors.grey.shade600,
                         ),
                         maxLines: 1,
@@ -232,7 +232,7 @@ class BarcodeActionSheet extends ConsumerWidget {
               label,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 10.sp,
+                fontSize: 10.adaptiveSp,
                 color: Colors.black,
               ),
               textAlign: TextAlign.center,

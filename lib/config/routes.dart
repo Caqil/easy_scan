@@ -1,4 +1,3 @@
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scanpro/config/app_transition.dart';
 import 'package:scanpro/ui/screen/all_documents.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_generator_screen.dart';
@@ -13,6 +12,7 @@ import 'package:scanpro/ui/screen/merger/pdf_merge_screen.dart';
 import 'package:scanpro/ui/screen/ocr/ocr_extraction.dart';
 import 'package:scanpro/ui/screen/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -186,7 +186,8 @@ class AppRoutes {
                       AutoSizeText(
                         'Document not found or invalid',
                         style: GoogleFonts.slabo27px(
-                            fontWeight: FontWeight.w700, fontSize: 14.sp),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14.adaptiveSp),
                       ),
                       const SizedBox(height: 16),
                       OutlinedButton(
@@ -257,7 +258,7 @@ class AppRoutes {
             AutoSizeText(
               'Route not found: ${state.error}',
               style: GoogleFonts.slabo27px(
-                  fontWeight: FontWeight.w700, fontSize: 14.sp),
+                  fontWeight: FontWeight.w700, fontSize: 14.adaptiveSp),
             ),
             const SizedBox(height: 16),
             OutlinedButton(

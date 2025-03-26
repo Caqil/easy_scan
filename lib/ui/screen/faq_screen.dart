@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,7 +24,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
         title: AutoSizeText(
           "faq.title".tr(),
           style: GoogleFonts.lilitaOne(
-            fontSize: 25.sp,
+            fontSize: 25.adaptiveSp,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -107,7 +108,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
               AutoSizeText(
                 "faq.welcome_to_faq".tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 16.sp,
+                  fontSize: 16.adaptiveSp,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primary,
                 ),
@@ -118,7 +119,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
           AutoSizeText(
             "faq.introduction".tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
@@ -145,7 +146,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
         title: AutoSizeText(
           title,
           style: GoogleFonts.slabo27px(
-            fontSize: 16.sp,
+            fontSize: 16.adaptiveSp,
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.primary,
           ),
@@ -170,7 +171,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
       title: AutoSizeText(
         question,
         style: GoogleFonts.slabo27px(
-          fontSize: 14.sp,
+          fontSize: 14.adaptiveSp,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -179,7 +180,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
         AutoSizeText(
           answer,
           style: GoogleFonts.slabo27px(
-            fontSize: 14.sp,
+            fontSize: 14.adaptiveSp,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
@@ -203,7 +204,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
           AutoSizeText(
             "faq.need_more_help".tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -211,7 +212,7 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
           AutoSizeText(
             "faq.contact_support".tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
             ),
           ),
           SizedBox(height: 16.h),

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// A stylized save button for the edit screen
@@ -33,7 +33,7 @@ class SaveButton extends StatelessWidget {
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 16),
           textStyle: GoogleFonts.slabo27px(
-            fontSize: 14.sp,
+            fontSize: 14.adaptiveSp,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
           ),

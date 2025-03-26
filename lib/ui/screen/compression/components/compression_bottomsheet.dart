@@ -9,6 +9,7 @@ import 'package:scanpro/services/pdf_compression_api_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -77,7 +78,7 @@ class _CompressionBottomSheetState
               AutoSizeText(
                 'compress_pdf'.tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 18.sp,
+                  fontSize: 18.adaptiveSp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -88,7 +89,7 @@ class _CompressionBottomSheetState
             'documents'.tr(namedArgs: {'name': widget.document.name}),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
             ),
           ),
           SizedBox(height: 15.h),
@@ -96,7 +97,7 @@ class _CompressionBottomSheetState
             'compression_level'.tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
             ),
           ),
           const SizedBox(height: 16),
@@ -106,7 +107,7 @@ class _CompressionBottomSheetState
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color:
-                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                  Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
@@ -119,7 +120,7 @@ class _CompressionBottomSheetState
                   FileUtils.getCompressionLevelTitle()!,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14.sp,
+                    fontSize: 14.adaptiveSp,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
@@ -128,7 +129,7 @@ class _CompressionBottomSheetState
                   FileUtils.getCompressionLevelDescription()!,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -149,7 +150,7 @@ class _CompressionBottomSheetState
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w700,
                   color: Theme.of(context).colorScheme.secondary,
-                  fontSize: 14.sp,
+                  fontSize: 14.adaptiveSp,
                 ),
               ),
             ),

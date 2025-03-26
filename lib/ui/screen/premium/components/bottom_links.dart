@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BottomLinks extends StatelessWidget {
@@ -10,11 +10,11 @@ class BottomLinks extends StatelessWidget {
   final VoidCallback onRestorePressed;
 
   const BottomLinks({
-    Key? key,
+    super.key,
     required this.isPurchasing,
     required this.onTermsPressed,
     required this.onRestorePressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class BottomLinks extends StatelessWidget {
           child: AutoSizeText(
             'subscription.terms'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
             ),
           ),
         ),
@@ -45,7 +45,7 @@ class BottomLinks extends StatelessWidget {
           child: AutoSizeText(
             'subscription.restore_purchases'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
             ),
           ),
         ),

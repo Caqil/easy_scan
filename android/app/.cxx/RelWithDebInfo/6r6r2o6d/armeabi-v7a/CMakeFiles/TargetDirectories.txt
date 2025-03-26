@@ -1,0 +1,2 @@
+/Users/cakra/Documents/app/easy_scan/android/app/.cxx/RelWithDebInfo/6r6r2o6d/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/cakra/Documents/app/easy_scan/android/app/.cxx/RelWithDebInfo/6r6r2o6d/armeabi-v7a/CMakeFiles/rebuild_cache.dir

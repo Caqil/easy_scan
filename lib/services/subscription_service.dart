@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:scanpro/main.dart';
@@ -97,7 +98,9 @@ class SubscriptionStatus {
 
 class SubscriptionService {
   // Configuration - Replace this with your actual RevenueCat API key
-  static const String _apiKey = 'appl_EHJrAaVNEkhAmFiQKziJNYRVULB';
+  static final String _apiKey = Platform.isIOS
+      ? 'appl_EHJrAaVNEkhAmFiQKziJNYRVULB'
+      : 'goog_oqxxNnycSOdmcwEIUtkHvKmkkTn';
   static const bool _debugLogsEnabled = true;
 
   // Initialize the service

@@ -5,7 +5,6 @@ import 'package:scanpro/models/document.dart';
 import 'package:scanpro/models/folder.dart';
 import 'package:scanpro/providers/document_provider.dart';
 import 'package:scanpro/providers/folder_provider.dart';
-import 'package:scanpro/services/share_service.dart';
 import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/common/document_actions.dart';
@@ -16,6 +15,7 @@ import 'package:scanpro/ui/screen/folder/components/enhanced_breadcrumbs.dart';
 import 'package:scanpro/utils/date_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,8 +37,6 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
   String? _currentParentId;
   List<String> _breadcrumbs = ["Root"];
   bool _isGridView = true;
-  bool _isLoading = false;
-  final ShareService _shareService = ShareService();
 
   @override
   void initState() {
@@ -98,7 +96,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
         title: _searchQuery.isEmpty
             ? AutoSizeText(
                 'folder_screen.title'.tr(),
-                style: GoogleFonts.lilitaOne(fontSize: 25.sp),
+                style: GoogleFonts.lilitaOne(fontSize: 25.adaptiveSp),
               )
             : CupertinoSearchTextField(
                 controller: _searchController,
@@ -179,7 +177,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             AutoSizeText(
               'folder_screen.no_results_found'.tr(),
               style: GoogleFonts.slabo27px(
-                  fontWeight: FontWeight.w700, fontSize: 16.sp),
+                  fontWeight: FontWeight.w700, fontSize: 16.adaptiveSp),
             ),
           ],
         ),
@@ -196,7 +194,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             child: AutoSizeText(
               'folder_screen.folders_section'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 16.sp,
+                fontSize: 16.adaptiveSp,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -212,7 +210,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             child: AutoSizeText(
               'folder_screen.documents_section'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 16.sp,
+                fontSize: 16.adaptiveSp,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -238,7 +236,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
               child: AutoSizeText(
                 'folder_screen.folders_section'.tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 16.sp,
+                  fontSize: 16.adaptiveSp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -275,7 +273,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
               child: AutoSizeText(
                 'folder_screen.documents_section'.tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 16.sp,
+                  fontSize: 16.adaptiveSp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -319,7 +317,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             child: AutoSizeText(
               'folder_screen.folders_section'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 16.sp,
+                fontSize: 16.adaptiveSp,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -335,7 +333,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             child: AutoSizeText(
               'folder_screen.documents_section'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 16.sp,
+                fontSize: 16.adaptiveSp,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -393,21 +391,21 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                 folder.name,
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14.sp,
+                  fontSize: 14.adaptiveSp,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               AutoSizeText(
-                'folder_screen.documents_count'
-                        .tr(namedArgs: {'count': documentsCount.toString()}) +
-                    ' | ' +
-                    'folder_screen.subfolders_count'
-                        .tr(namedArgs: {'count': subFolders.length.toString()}),
+                '${'folder_screen.documents_count'.tr(namedArgs: {
+                      'count': documentsCount.toString()
+                    })} | ${'folder_screen.subfolders_count'.tr(namedArgs: {
+                      'count': subFolders.length.toString()
+                    })}',
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w700,
-                  fontSize: 10.sp,
+                  fontSize: 10.adaptiveSp,
                   color: Colors.grey.shade600,
                 ),
                 textAlign: TextAlign.center,
@@ -464,7 +462,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                       folder.name,
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
+                        fontSize: 14.adaptiveSp,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -684,7 +682,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                     DateTimeUtils.getFriendlyDate(document.modifiedAt),
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 10.sp,
+                      fontSize: 10.adaptiveSp,
                       color: Colors.grey.shade600,
                     ),
                   ),
@@ -837,8 +835,9 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                     onEdit: (p0) {
                       navigateByDocumentType(context, p0);
                     },
-                    onShare: (p0) {
-                      _shareDocument(context, p0, ref);
+                    onShare: (p0) async {
+                      await DocumentActions.shareDocument(
+                          context, ref, document);
                     },
                   );
                 },
@@ -865,35 +864,6 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
       AppRoutes.navigateToView(context, document);
     }
   }
-
-  Future<void> _shareDocument(
-    BuildContext context,
-    Document document,
-    WidgetRef ref,
-  ) async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      await _shareService.sharePdf(
-        document.pdfPath,
-        subject: document.name,
-      );
-    } catch (e) {
-      // Show error
-      // ignore: use_build_context_synchronously
-      AppDialogs.showSnackBar(
-        context,
-        message: 'Error sharing document: ${e.toString()}',
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
   void _showDeleteDocumentConfirmation(
       BuildContext context, Document document) {
     AppDialogs.showConfirmDialog(
@@ -1029,7 +999,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
                 ? 'folder_screen.no_folders_yet'.tr()
                 : 'folder_screen.folder_empty'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -1039,7 +1009,7 @@ class _FolderScreenState extends ConsumerState<FolderScreen> {
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
               color: Colors.grey,
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
             ),
           ),
           const SizedBox(height: 24),

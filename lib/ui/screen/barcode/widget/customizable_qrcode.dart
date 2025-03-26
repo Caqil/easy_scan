@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,11 +19,11 @@ class CustomizableQRCode extends StatefulWidget {
   final Function(File) onSaveQR;
 
   const CustomizableQRCode({
-    Key? key,
+    super.key,
     required this.data,
     this.initialTitle,
     required this.onSaveQR,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomizableQRCode> createState() => _CustomizableQRCodeState();
@@ -95,7 +96,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
                   title,
                   style: GoogleFonts.slabo27px(
                     color: useGradient ? Colors.white : foregroundColor,
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                     fontWeight: FontWeight.bold,
                     shadows: useGradient
                         ? [
@@ -174,7 +175,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
           AutoSizeText(
             'custom_qr.customize_title'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -490,7 +491,7 @@ class _CustomizableQRCodeState extends State<CustomizableQRCode> {
             ? Icon(
                 Icons.check,
                 color: Colors.white,
-                size: 20.sp,
+                size: 20.adaptiveSp,
               )
             : null,
       ),

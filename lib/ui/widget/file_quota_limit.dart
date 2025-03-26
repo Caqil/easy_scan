@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -148,7 +149,7 @@ class FileQuotaStatusWidget extends ConsumerWidget {
                         _getStatusText(isPremium, isTrialActive),
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16.sp,
+                          fontSize: 16.adaptiveSp,
                           color: theme.textTheme.titleMedium?.color,
                         ),
                       ),
@@ -157,7 +158,7 @@ class FileQuotaStatusWidget extends ConsumerWidget {
                         AutoSizeText(
                           _getExpirationText(expirationDate),
                           style: GoogleFonts.slabo27px(
-                            fontSize: 12.sp,
+                            fontSize: 12.adaptiveSp,
                             color: isTrialActive &&
                                     expirationDate
                                             .difference(DateTime.now())
@@ -190,7 +191,7 @@ class FileQuotaStatusWidget extends ConsumerWidget {
                           'Premium',
                           style: GoogleFonts.slabo27px(
                             fontWeight: FontWeight.bold,
-                            fontSize: 12.sp,
+                            fontSize: 12.adaptiveSp,
                             color: Colors.amber[800],
                           ),
                         ),
@@ -216,7 +217,7 @@ class FileQuotaStatusWidget extends ConsumerWidget {
                           : 'limit.upgrade'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
+                        fontSize: 14.adaptiveSp,
                         color: theme.colorScheme.primary,
                       ),
                     ),
@@ -246,7 +247,7 @@ class FileQuotaStatusWidget extends ConsumerWidget {
                   AutoSizeText(
                     '$currentFiles / $maxFiles',
                     style: GoogleFonts.slabo27px(
-                      fontSize: 12.sp,
+                      fontSize: 12.adaptiveSp,
                       color: Colors.grey[600],
                     ),
                   ),
@@ -265,7 +266,7 @@ class FileQuotaStatusWidget extends ConsumerWidget {
                   },
                 ),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 12.sp,
+                  fontSize: 12.adaptiveSp,
                   color: theme.colorScheme.error,
                 ),
                 textAlign: TextAlign.center,

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -55,7 +56,7 @@ class FileSelectionSection extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(
@@ -64,7 +65,7 @@ class FileSelectionSection extends StatelessWidget {
             state.inputFormat?.icon ?? Icons.file_present,
             color: state.inputFormat?.color ??
                 Theme.of(context).colorScheme.primary,
-            size: 28.sp,
+            size: 28.adaptiveSp,
           ),
           SizedBox(width: 12.w),
           Expanded(
@@ -76,7 +77,7 @@ class FileSelectionSection extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                   ),
                 ),
                 SizedBox(height: 4.h),
@@ -91,7 +92,7 @@ class FileSelectionSection extends StatelessWidget {
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
                         color: Colors.grey,
-                        fontSize: 14.sp,
+                        fontSize: 14.adaptiveSp,
                       ),
                     );
                   },
@@ -119,21 +120,21 @@ class FileSelectionSection extends StatelessWidget {
         children: [
           Icon(
             Icons.file_upload_outlined,
-            size: 40.sp,
+            size: 40.adaptiveSp,
             color: Colors.grey,
           ),
           SizedBox(height: 12.h),
           AutoSizeText(
             "file_selection.no_file_selected.title".tr(), // Localized string
             style: GoogleFonts.slabo27px(
-                fontWeight: FontWeight.w700, fontSize: 16.sp),
+                fontWeight: FontWeight.w700, fontSize: 16.adaptiveSp),
           ),
           SizedBox(height: 8.h),
           AutoSizeText(
             "file_selection.no_file_selected.subtitle".tr(), // Localized string
             style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 color: Colors.grey),
           ),
         ],

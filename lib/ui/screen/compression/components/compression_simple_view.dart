@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -94,12 +95,7 @@ class CompressionSimpleView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Using subscriptionStatus from provider to avoid API calls on each build
     final subscriptionStatus = ref.watch(subscriptionStatusProvider);
-
-    // Force a refresh of the subscription status when viewing this screen
-    // This ensures the status is up-to-date
-    Future.microtask(() {
-      ref.read(subscriptionServiceProvider).refreshSubscriptionStatus();
-    });
+    final premiumStatus = ref.watch(isPremiumProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -111,7 +107,7 @@ class CompressionSimpleView extends ConsumerWidget {
           AutoSizeText(
             'simple_view.compression_level'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -138,7 +134,7 @@ class CompressionSimpleView extends ConsumerWidget {
                   FileUtils.getCompressionLevelTitle(compressionLevel)!,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14.sp,
+                    fontSize: 14.adaptiveSp,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
@@ -147,7 +143,7 @@ class CompressionSimpleView extends ConsumerWidget {
                   FileUtils.getCompressionLevelDescription(compressionLevel)!,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                   ),
                 ),
               ],
@@ -157,7 +153,7 @@ class CompressionSimpleView extends ConsumerWidget {
           AutoSizeText(
             'simple_view.expected_results'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -166,12 +162,23 @@ class CompressionSimpleView extends ConsumerWidget {
             originalSize: originalSize,
             estimatedSize: estimatedSize,
           ),
-
-          // Add a premium upgrade banner for non-premium users
-          if (!subscriptionStatus.hasFullAccess) ...[
-            const SizedBox(height: 24),
-            _buildPremiumBanner(context),
-          ],
+          premiumStatus.when(
+            data: (isPremium) {
+              if (!isPremium) {
+                return Column(
+                  children: [
+                    const SizedBox(height: 24),
+                    _buildPremiumBanner(context),
+                  ],
+                );
+              } else {
+                return const SizedBox.shrink(); // Nothing if premium
+              }
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) =>
+                Text('Error checking subscription: $error'),
+          )
         ],
       ),
     );
@@ -244,10 +251,15 @@ class CompressionSimpleView extends ConsumerWidget {
 
     return InkWell(
       onTap: () async {
-        if (isAvailable) {
+        // Always check subscription status directly for latest status
+        final subscriptionService = ref.read(subscriptionServiceProvider);
+        final hasAccess = await subscriptionService.hasActiveSubscription();
+
+        if (level == CompressionLevel.low || hasAccess) {
+          // Low level is always available, others require premium access
           onLevelChanged(level);
         } else {
-          // Use the helper method to handle premium check
+          // Show premium dialog if no access
           await PremiumFeatureHandler.canUseFeature(context, ref);
         }
       },
@@ -292,7 +304,7 @@ class CompressionSimpleView extends ConsumerWidget {
                               : Theme.of(context).colorScheme.onSurfaceVariant,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.w700,
-                          fontSize: 14.sp,
+                          fontSize: 14.adaptiveSp,
                         ),
                       ),
                     ],
@@ -350,18 +362,18 @@ class CompressionSimpleView extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AutoSizeText(
-                    'compression.unlock_all_levels'.tr(),
+                    'limit.file_limit_reached.upgrade'.tr(),
                     style: GoogleFonts.slabo27px(
-                      fontSize: 16.sp,
+                      fontSize: 16.adaptiveSp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                   SizedBox(height: 4.h),
                   AutoSizeText(
-                    'compression.premium_description'.tr(),
+                    'limit.file_limit_reached.upgrade_prompt'.tr(),
                     style: GoogleFonts.slabo27px(
-                      fontSize: 12.sp,
+                      fontSize: 12.adaptiveSp,
                       color: Colors.white.withOpacity(0.9),
                     ),
                   ),

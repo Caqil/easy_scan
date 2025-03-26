@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/config/helper.dart';
 import 'package:scanpro/main.dart';
@@ -83,33 +83,44 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isPremimUser = ref.watch(subscriptionStatusProvider);
+    final premiumStatus = ref.watch(isPremiumProvider);
     return Scaffold(
       appBar: CustomAppBar(
         title: AutoSizeText('compression.compress_pdf'.tr(),
-            style: GoogleFonts.lilitaOne(fontSize: 25.sp)),
+            style: GoogleFonts.lilitaOne(fontSize: 25.adaptiveSp)),
         actions: [
-          IconButton(
-            icon: Icon(_isAdvancedMode ? Icons.tune : Icons.tune),
-            tooltip: _isAdvancedMode ? 'Simple Mode' : 'Advanced Mode',
-            onPressed: isPremimUser.isActive
-                ? _isCompressing
-                    ? null
-                    : () {
-                        setState(() {
-                          _isAdvancedMode = !_isAdvancedMode;
-                        });
-                      }
-                : () {
-                    setState(() {
-                      AppDialogs.showSnackBar(
-                        context,
-                        message: 'ocr.premium_required.message'.tr(),
-                        type: SnackBarType.error,
-                      );
-                    });
-                  },
-          ),
+          premiumStatus.when(
+            data: (isPremium) {
+              if (isPremium) {
+                return IconButton(
+                  icon: Icon(_isAdvancedMode ? Icons.tune : Icons.tune),
+                  tooltip: _isAdvancedMode ? 'Simple Mode' : 'Advanced Mode',
+                  onPressed: isPremium
+                      ? _isCompressing
+                          ? null
+                          : () {
+                              setState(() {
+                                _isAdvancedMode = !_isAdvancedMode;
+                              });
+                            }
+                      : () {
+                          setState(() {
+                            AppDialogs.showSnackBar(
+                              context,
+                              message: 'ocr.premium_required.message'.tr(),
+                              type: SnackBarType.error,
+                            );
+                          });
+                        },
+                );
+              } else {
+                return const SizedBox.shrink(); // Nothing if premium
+              }
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) =>
+                Text('Error checking subscription: $error'),
+          )
         ],
       ),
       body: _isCompressing
@@ -266,7 +277,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
             type: SnackBarType.success,
             message: 'snackbar.success'.tr(
               namedArgs: {
-                'percentage': '${compressionPercentage.toStringAsFixed(1)}'
+                'percentage': compressionPercentage.toStringAsFixed(1)
               },
             ));
       }

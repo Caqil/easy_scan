@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/config/routes.dart';
 import 'package:scanpro/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -49,14 +50,14 @@ class SettingsLanguageMenu extends ConsumerWidget {
         "settings.language".tr(),
         style: GoogleFonts.slabo27px(
           fontWeight: FontWeight.w700,
-          fontSize: 16.sp,
+          fontSize: 16.adaptiveSp,
         ),
       ),
       subtitle: AutoSizeText(
         currentLanguageLabel,
         style: GoogleFonts.slabo27px(
           fontWeight: FontWeight.w700,
-          fontSize: 14.sp,
+          fontSize: 14.adaptiveSp,
           color: Colors.grey.shade600,
         ),
       ),

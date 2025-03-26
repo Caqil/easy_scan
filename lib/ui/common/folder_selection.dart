@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/folder.dart';
@@ -186,7 +186,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                       AutoSizeText(
                         'folder_selector.select_folder'.tr(),
                         style: GoogleFonts.slabo27px(
-                          fontSize: 16.sp,
+                          fontSize: 16.adaptiveSp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -288,7 +288,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                       'folder_selector.create_new_folder'.tr(),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
-                        fontSize: 14.sp,
+                        fontSize: 14.adaptiveSp,
                       ),
                     ),
                   ),
@@ -350,7 +350,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                       });
                     } else {
                       String? targetId;
-                      String? parentId = null;
+                      String? parentId;
 
                       for (int j = 1; j <= i; j++) {
                         final folders = widget.allFolders
@@ -449,7 +449,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
             AutoSizeText(
               'folder_selector.no_subfolders_found'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey.shade600,
               ),
@@ -512,7 +512,7 @@ class _FolderSelectionSheetState extends ConsumerState<_FolderSelectionSheet> {
                     folder.name,
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                     ),
                   ),
                   if (hasSubfolders)

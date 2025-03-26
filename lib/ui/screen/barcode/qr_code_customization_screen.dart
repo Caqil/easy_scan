@@ -8,6 +8,7 @@ import 'package:scanpro/ui/screen/barcode/widget/customizable_qrcode.dart';
 import 'package:scanpro/utils/constants.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,12 +25,12 @@ class QRCodeCustomizationScreen extends ConsumerStatefulWidget {
   final bool saveToLibrary;
 
   const QRCodeCustomizationScreen({
-    Key? key,
+    super.key,
     required this.data,
     required this.contentType,
     this.barcodeFormat,
     this.saveToLibrary = true,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<QRCodeCustomizationScreen> createState() =>
@@ -96,7 +97,7 @@ class _QRCodeCustomizationScreenState
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
                           color: Theme.of(context).primaryColor,
-                          fontSize: 14.sp,
+                          fontSize: 14.adaptiveSp,
                         ),
                       ),
                     ),
@@ -112,7 +113,7 @@ class _QRCodeCustomizationScreenState
                   'QR Code Name',
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                     color: Theme.of(context).primaryColor,
                   ),
                 ),

@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/cakra/Documents/developer/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/cakra/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/cakra/Documents/app/easy_scan/android/app/.cxx/RelWithDebInfo/6r6r2o6d/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/cakra/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/cakra/Documents/app/easy_scan/android/app/.cxx/RelWithDebInfo/6r6r2o6d/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

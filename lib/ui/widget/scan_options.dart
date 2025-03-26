@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../models/scan_settings.dart';
 
@@ -24,7 +24,7 @@ class ScanOptionsWidget extends StatelessWidget {
         AutoSizeText(
           'scan.scan_settings'.tr(),
           style: GoogleFonts.slabo27px(
-            fontSize: 16.sp,
+            fontSize: 16.adaptiveSp,
             fontWeight: FontWeight.bold,
           ),
         ),

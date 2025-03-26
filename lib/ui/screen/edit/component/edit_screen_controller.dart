@@ -611,7 +611,7 @@ class EditScreenController {
                   allPdfPaths.add(singleImagePdfPath);
                   tempPaths.add(singleImagePdfPath);
                 } catch (e) {
-                  logger.error('Error converting image ${i}: $e');
+                  logger.error('Error converting image $i: $e');
                   // Skip problematic image
                 }
               }
@@ -658,7 +658,7 @@ class EditScreenController {
                 allPdfPaths.add(singleImagePdfPath);
                 tempPaths.add(singleImagePdfPath);
               } catch (e) {
-                logger.error('Error converting image ${i}: $e');
+                logger.error('Error converting image $i: $e');
                 // Skip problematic image
               }
             }

@@ -8,14 +8,14 @@ import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/utils/date_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 
 class PdfMergerScreen extends ConsumerStatefulWidget {
-  const PdfMergerScreen({Key? key}) : super(key: key);
+  const PdfMergerScreen({super.key});
 
   @override
   ConsumerState<PdfMergerScreen> createState() => _PdfMergerScreenState();
@@ -105,7 +105,8 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
@@ -203,7 +204,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           AutoSizeText(
             'merge_pdf.no_pdfs_in_library'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -212,7 +213,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             'merge_pdf.import_or_switch'.tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
               color: Colors.grey,
             ),
             textAlign: TextAlign.center,
@@ -236,7 +237,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
           AutoSizeText(
             'merge_pdf.select_pdfs_to_merge'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -245,7 +246,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
             'merge_pdf.tap_to_select'.tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
               color: Colors.grey,
             ),
             textAlign: TextAlign.center,
@@ -386,7 +387,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.bold,
-                          fontSize: 12.sp,
+                          fontSize: 12.adaptiveSp,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -394,7 +395,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                         '${document.pageCount} pages'.tr(),
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
-                          fontSize: 10.sp,
+                          fontSize: 10.adaptiveSp,
                           color: Colors.grey.shade600,
                         ),
                       ),
@@ -402,7 +403,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                         DateTimeUtils.getRelativeTime(document.modifiedAt),
                         style: GoogleFonts.slabo27px(
                           fontWeight: FontWeight.w700,
-                          fontSize: 10.sp,
+                          fontSize: 10.adaptiveSp,
                           color: Colors.grey.shade600,
                         ),
                       ),
@@ -444,7 +445,7 @@ class _PdfMergerScreenState extends ConsumerState<PdfMergerScreen> {
                   'merge_pdf.drag_to_reorder'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),

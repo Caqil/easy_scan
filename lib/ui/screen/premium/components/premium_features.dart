@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PremiumFeatures extends StatelessWidget {
-  const PremiumFeatures({Key? key}) : super(key: key);
+  const PremiumFeatures({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,7 @@ class PremiumFeatures extends StatelessWidget {
             child: AutoSizeText(
               'Premium Features',
               style: GoogleFonts.slabo27px(
-                fontSize: 18.sp,
+                fontSize: 18.adaptiveSp,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -88,14 +89,14 @@ class PremiumFeatures extends StatelessWidget {
                           AutoSizeText(
                             feature['title'] as String,
                             style: GoogleFonts.slabo27px(
-                              fontSize: 14.sp,
+                              fontSize: 14.adaptiveSp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           AutoSizeText(
                             feature['description'] as String,
                             style: GoogleFonts.slabo27px(
-                              fontSize: 12.sp,
+                              fontSize: 12.adaptiveSp,
                             ),
                           ),
                         ],

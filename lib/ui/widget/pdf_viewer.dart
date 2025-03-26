@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/ui/widget/password_verification_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../models/document.dart';
@@ -84,7 +84,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
               _errorMessage!,
               textAlign: TextAlign.center,
               style: GoogleFonts.slabo27px(
-                  fontWeight: FontWeight.w700, fontSize: 14.sp),
+                  fontWeight: FontWeight.w700, fontSize: 14.adaptiveSp),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -111,7 +111,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
               'pdf.file_not_found'.tr(),
               textAlign: TextAlign.center,
               style: GoogleFonts.slabo27px(
-                  fontWeight: FontWeight.w700, fontSize: 14.sp),
+                  fontWeight: FontWeight.w700, fontSize: 14.adaptiveSp),
             ),
           ],
         ),
@@ -158,7 +158,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget> {
                       child: AutoSizeText(
                         widget.document.name,
                         style: GoogleFonts.slabo27px(
-                          fontSize: 16.sp,
+                          fontSize: 16.adaptiveSp,
                           fontWeight: FontWeight.bold,
                         ),
                         maxLines: 1,

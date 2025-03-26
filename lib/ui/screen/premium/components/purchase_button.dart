@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,11 +11,11 @@ class PurchaseButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const PurchaseButton({
-    Key? key,
+    super.key,
     required this.isPurchasing,
     required this.isTrialEnabled,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class PurchaseButton extends StatelessWidget {
                         ? 'trial_explanation.start_button'.tr()
                         : 'subscription.continue'.tr(),
                     style: GoogleFonts.slabo27px(
-                      fontSize: 18.sp,
+                      fontSize: 18.adaptiveSp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),

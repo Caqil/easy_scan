@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,10 +10,10 @@ class TrialToggle extends StatelessWidget {
   final ValueChanged<bool> onChanged;
 
   const TrialToggle({
-    Key? key,
+    super.key,
     required this.isTrialEnabled,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +30,13 @@ class TrialToggle extends StatelessWidget {
                   'trial_explanation.start_hint'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                   ),
                 ),
                 AutoSizeText(
                   'trial_explanation.price_info_1'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     color: Colors.grey[600],
                   ),
                 ),

@@ -11,6 +11,7 @@ import 'package:scanpro/ui/screen/settings/components/settings_divider.dart';
 import 'package:scanpro/ui/screen/settings/components/settings_section_header.dart';
 import 'package:scanpro/ui/screen/settings/components/settings_switch_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,7 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'components/settings_navigation_tile.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
@@ -58,8 +59,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         final currentLang = localState.languages.firstWhere(
           (lang) =>
               lang.languageCode == context.locale.languageCode &&
-              (lang.countryCode == context.locale.countryCode ||
-                  lang.countryCode == null),
+              (lang.countryCode == context.locale.countryCode),
           orElse: () => localState.languages.first,
         );
         currentLanguageLabel = currentLang.label;
@@ -73,7 +73,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       appBar: CustomAppBar(
         title: AutoSizeText(
           "settings.title".tr(),
-          style: GoogleFonts.lilitaOne(fontSize: 25.sp),
+          style: GoogleFonts.lilitaOne(fontSize: 25.adaptiveSp),
         ),
         centerTitle: false,
       ),
@@ -284,51 +284,51 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  void _showAutoLockOptions(BuildContext context, WidgetRef ref) {
-    // This would show options for auto-lock timing
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.all(24.r),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AutoSizeText(
-              "settings.auto_lock".tr(),
-              style: GoogleFonts.slabo27px(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            _buildAutoLockOption(
-                context, "settings.auto_lock_immediate".tr(), 0),
-            _buildAutoLockOption(
-                context, "settings.auto_lock_1_minute".tr(), 1),
-            _buildAutoLockOption(
-                context, "settings.auto_lock_5_minutes".tr(), 5),
-            _buildAutoLockOption(context, "settings.auto_lock_never".tr(), -1),
-          ],
-        ),
-      ),
-    );
-  }
+  // void _showAutoLockOptions(BuildContext context, WidgetRef ref) {
+  //   // This would show options for auto-lock timing
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+  //     ),
+  //     builder: (context) => Padding(
+  //       padding: EdgeInsets.all(24.r),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           AutoSizeText(
+  //             "settings.auto_lock".tr(),
+  //             style: GoogleFonts.slabo27px(
+  //               fontSize: 20.adaptiveSp,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           SizedBox(height: 16.h),
+  //           _buildAutoLockOption(
+  //               context, "settings.auto_lock_immediate".tr(), 0),
+  //           _buildAutoLockOption(
+  //               context, "settings.auto_lock_1_minute".tr(), 1),
+  //           _buildAutoLockOption(
+  //               context, "settings.auto_lock_5_minutes".tr(), 5),
+  //           _buildAutoLockOption(context, "settings.auto_lock_never".tr(), -1),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _buildAutoLockOption(BuildContext context, String title, int minutes) {
-    return ListTile(
-      title: AutoSizeText(title),
-      onTap: () {
-        // Would save the auto-lock setting
-        Navigator.pop(context);
-        AppDialogs.showSnackBar(context,
-            message: "settings.auto_lock_set".tr(), type: SnackBarType.success);
-      },
-    );
-  }
+  // Widget _buildAutoLockOption(BuildContext context, String title, int minutes) {
+  //   return ListTile(
+  //     title: AutoSizeText(title),
+  //     onTap: () {
+  //       // Would save the auto-lock setting
+  //       Navigator.pop(context);
+  //       AppDialogs.showSnackBar(context,
+  //           message: "settings.auto_lock_set".tr(), type: SnackBarType.success);
+  //     },
+  //   );
+  // }
 
   void _showHelpOptions(BuildContext context) {
     showModalBottomSheet(
@@ -345,7 +345,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             AutoSizeText(
               "settings.help_support".tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 20.sp,
+                fontSize: 20.adaptiveSp,
                 fontWeight: FontWeight.bold,
               ),
             ),

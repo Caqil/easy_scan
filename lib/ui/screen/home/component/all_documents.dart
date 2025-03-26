@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/models/document.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,14 +42,14 @@ class AllDocuments extends StatelessWidget {
               children: [
                 Icon(
                   Icons.folder_special_rounded,
-                  size: 24.sp,
+                  size: 24.adaptiveSp,
                   color: colorScheme.primary,
                 ),
                 SizedBox(width: 8.w),
                 AutoSizeText(
                   'all_documents'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 16.sp,
+                    fontSize: 16.adaptiveSp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -69,7 +70,7 @@ class AllDocuments extends StatelessWidget {
                     ),
                     Icon(
                       Icons.arrow_forward_ios,
-                      size: 12.sp,
+                      size: 12.adaptiveSp,
                       color: colorScheme.primary,
                     ),
                   ],
@@ -87,7 +88,7 @@ class AllDocuments extends StatelessWidget {
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
               color: Colors.grey,
-              fontSize: 12.sp,
+              fontSize: 12.adaptiveSp,
             ),
           ),
         ),
@@ -152,7 +153,7 @@ class AllDocuments extends StatelessWidget {
                               : Icon(
                                   Icons.picture_as_pdf,
                                   color: colorScheme.primary.withOpacity(0.7),
-                                  size: 28.sp,
+                                  size: 28.adaptiveSp,
                                 ),
                         ),
 
@@ -167,7 +168,7 @@ class AllDocuments extends StatelessWidget {
                                 document.name,
                                 style: GoogleFonts.slabo27px(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 15.sp,
+                                  fontSize: 15.adaptiveSp,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -177,7 +178,7 @@ class AllDocuments extends StatelessWidget {
                                 children: [
                                   Icon(
                                     Icons.access_time,
-                                    size: 10.sp,
+                                    size: 10.adaptiveSp,
                                     color: Colors.grey,
                                   ),
                                   SizedBox(width: 4.w),
@@ -187,13 +188,13 @@ class AllDocuments extends StatelessWidget {
                                     style: GoogleFonts.slabo27px(
                                       fontWeight: FontWeight.w700,
                                       color: Colors.grey.shade600,
-                                      fontSize: 10.sp,
+                                      fontSize: 10.adaptiveSp,
                                     ),
                                   ),
                                   SizedBox(width: 10.w),
                                   Icon(
                                     Icons.description_outlined,
-                                    size: 10.sp,
+                                    size: 10.adaptiveSp,
                                     color: Colors.grey,
                                   ),
                                   SizedBox(width: 4.w),
@@ -204,7 +205,7 @@ class AllDocuments extends StatelessWidget {
                                     style: GoogleFonts.slabo27px(
                                       fontWeight: FontWeight.w700,
                                       color: Colors.grey.shade600,
-                                      fontSize: 10.sp,
+                                      fontSize: 10.adaptiveSp,
                                     ),
                                   ),
                                 ],
@@ -233,7 +234,7 @@ class AllDocuments extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.description_outlined,
-                    size: 48.sp,
+                    size: 48.adaptiveSp,
                     color: Colors.grey.withOpacity(0.6),
                   ),
                   SizedBox(height: 16.h),
@@ -241,7 +242,7 @@ class AllDocuments extends StatelessWidget {
                     'No documents yet',
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 16.sp,
+                      fontSize: 16.adaptiveSp,
                       color: Colors.grey.shade600,
                     ),
                   ),
@@ -250,7 +251,7 @@ class AllDocuments extends StatelessWidget {
                     'Scan or import your first document',
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                       color: Colors.grey,
                     ),
                   ),
@@ -270,7 +271,7 @@ class AllDocuments extends StatelessWidget {
           Icon(
             Icons.star_rounded,
             color: Colors.amber,
-            size: 15.sp,
+            size: 15.adaptiveSp,
           ),
         if (document.isPasswordProtected)
           Padding(
@@ -278,7 +279,7 @@ class AllDocuments extends StatelessWidget {
             child: Icon(
               Icons.lock_outline,
               color: Colors.blue,
-              size: 15.sp,
+              size: 15.adaptiveSp,
             ),
           ),
         IconButton(

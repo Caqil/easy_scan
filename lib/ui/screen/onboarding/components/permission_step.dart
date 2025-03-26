@@ -1,16 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/utils/permission_utils.dart';
+
 class PermissionStep extends StatefulWidget {
   final VoidCallback onPermissionsGranted;
 
   const PermissionStep({
-    Key? key,
+    super.key,
     required this.onPermissionsGranted,
-  }) : super(key: key);
+  });
 
   @override
   State<PermissionStep> createState() => _PermissionStepState();
@@ -90,7 +92,7 @@ class _PermissionStepState extends State<PermissionStep>
             AutoSizeText(
               'onboarding.permissions_title'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 26.sp,
+                fontSize: 26.adaptiveSp,
                 fontWeight: FontWeight.bold,
                 color: colorScheme.primary,
               ),
@@ -99,7 +101,7 @@ class _PermissionStepState extends State<PermissionStep>
             AutoSizeText(
               'onboarding.permissions_description'.tr(),
               style: GoogleFonts.slabo27px(
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 color: colorScheme.onSurface.withOpacity(0.7),
                 height: 1.5,
               ),
@@ -175,7 +177,7 @@ class _PermissionStepState extends State<PermissionStep>
               decoration: BoxDecoration(
                 color: isGranted
                     ? colorScheme.primary.withOpacity(0.2)
-                    : colorScheme.surfaceVariant,
+                    : colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Icon(
@@ -196,7 +198,7 @@ class _PermissionStepState extends State<PermissionStep>
                   AutoSizeText(
                     title,
                     style: GoogleFonts.slabo27px(
-                      fontSize: 16.sp,
+                      fontSize: 16.adaptiveSp,
                       fontWeight: FontWeight.bold,
                       color: colorScheme.onSurface,
                     ),
@@ -205,7 +207,7 @@ class _PermissionStepState extends State<PermissionStep>
                   AutoSizeText(
                     description,
                     style: GoogleFonts.slabo27px(
-                      fontSize: 12.sp,
+                      fontSize: 12.adaptiveSp,
                       color: colorScheme.onSurface.withOpacity(0.7),
                     ),
                   ),
@@ -237,7 +239,7 @@ class _PermissionStepState extends State<PermissionStep>
                           AutoSizeText(
                             'onboarding.granted'.tr(),
                             style: GoogleFonts.slabo27px(
-                              fontSize: 12.sp,
+                              fontSize: 12.adaptiveSp,
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
                             ),
@@ -259,7 +261,7 @@ class _PermissionStepState extends State<PermissionStep>
                       child: AutoSizeText(
                         'onboarding.grant'.tr(),
                         style: GoogleFonts.slabo27px(
-                          fontSize: 12.sp,
+                          fontSize: 12.adaptiveSp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

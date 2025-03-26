@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scanpro/main.dart';
 import 'package:scanpro/models/document.dart';
@@ -7,6 +6,7 @@ import 'package:scanpro/ui/screen/home/widget/image_viewer_widget.dart';
 import 'package:scanpro/ui/screen/home/widget/text_viewer_widget.dart';
 import 'package:scanpro/ui/widget/pdf_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
@@ -17,11 +17,11 @@ class DocumentViewerWidget extends StatelessWidget {
   final VoidCallback? onShare;
 
   const DocumentViewerWidget({
-    Key? key,
+    super.key,
     required this.document,
     this.showAppBar = true,
     this.onShare,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class DocumentViewerWidget extends StatelessWidget {
               AutoSizeText(
                 'cannot_preview_file_format'
                     .tr(namedArgs: {'extension': extension}),
-                style: GoogleFonts.slabo27px(fontSize: 14.sp),
+                style: GoogleFonts.slabo27px(fontSize: 14.adaptiveSp),
               ),
               const SizedBox(height: 8),
               OutlinedButton(

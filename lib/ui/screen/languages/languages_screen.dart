@@ -4,11 +4,11 @@ import 'package:scanpro/providers/locale_provider.dart';
 import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/screen/languages/components/language_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:scanpro/ui/screen/languages/components/language_tile.dart';
 
 class LanguagesScreen extends ConsumerStatefulWidget {
   const LanguagesScreen({super.key});
@@ -36,7 +36,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: AutoSizeText("settings.language".tr(),
-            style: GoogleFonts.lilitaOne(fontSize: 25.sp)),
+            style: GoogleFonts.lilitaOne(fontSize: 25.adaptiveSp)),
         centerTitle: false,
       ),
       body: localState.languages.isEmpty
@@ -56,7 +56,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
             "settings.loading_languages".tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               color: Colors.grey.shade600,
             ),
           ),
@@ -100,7 +100,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
                         AutoSizeText(
                           "settings.current_language".tr(),
                           style: GoogleFonts.slabo27px(
-                            fontSize: 14.sp,
+                            fontSize: 14.adaptiveSp,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.primary,
                           ),
@@ -111,7 +111,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
                               context.locale, localState.languages),
                           style: GoogleFonts.slabo27px(
                             fontWeight: FontWeight.w700,
-                            fontSize: 16.sp,
+                            fontSize: 16.adaptiveSp,
                           ),
                         ),
                       ],
@@ -129,9 +129,9 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
           child: AutoSizeText(
             "settings.available_languages".tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onBackground,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),
@@ -146,8 +146,7 @@ class _LanguagesScreenState extends ConsumerState<LanguagesScreen> {
               final language = localState.languages[index];
               final isSelected =
                   context.locale.languageCode == language.languageCode &&
-                      (context.locale.countryCode == language.countryCode ||
-                          language.countryCode == null);
+                      (context.locale.countryCode == language.countryCode);
 
               return LanguageTile(
                 language: language,

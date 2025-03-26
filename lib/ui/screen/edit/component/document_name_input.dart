@@ -42,7 +42,7 @@ class DocumentNameInput extends StatelessWidget {
             borderSide: BorderSide(color: colorScheme.primary, width: 2),
           ),
           filled: true,
-          fillColor: colorScheme.surfaceVariant.withOpacity(0.5),
+          fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 16,

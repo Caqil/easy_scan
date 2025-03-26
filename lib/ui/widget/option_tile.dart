@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -59,7 +59,7 @@ class OptionTile extends StatelessWidget {
                     description,
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 10.sp,
+                      fontSize: 10.adaptiveSp,
                       color: Colors.grey.shade600,
                     ),
                   ),

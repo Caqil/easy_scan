@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,12 +11,12 @@ class AppHeaderWidget extends StatelessWidget {
   final Color? backgroundColor;
 
   const AppHeaderWidget({
-    Key? key,
+    super.key,
     required this.appName,
     required this.version,
     required this.icon,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class AppHeaderWidget extends StatelessWidget {
           AutoSizeText(
             appName,
             style: GoogleFonts.slabo27px(
-              fontSize: 24.sp,
+              fontSize: 24.adaptiveSp,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.primary,
             ),
@@ -55,9 +56,9 @@ class AppHeaderWidget extends StatelessWidget {
             version,
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
               color:
-                  Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
+                  Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
             ),
           ),
         ],

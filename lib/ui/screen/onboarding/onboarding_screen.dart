@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -208,13 +209,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
             'onboarding.skip_title'.tr(),
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.bold,
-              fontSize: 18.sp,
+              fontSize: 18.adaptiveSp,
             ),
           ),
           content: Text(
             'onboarding.skip_message'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
             ),
           ),
           actions: [
@@ -279,7 +280,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     // Show loading indicator while initializing
     if (!_isInitialized) {
       return Scaffold(
-        backgroundColor: colorScheme.background,
+        backgroundColor: colorScheme.surface,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -291,8 +292,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
               AutoSizeText(
                 'onboarding.initializing'.tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 16.sp,
-                  color: colorScheme.onBackground.withOpacity(0.7),
+                  fontSize: 16.adaptiveSp,
+                  color: colorScheme.onSurface.withOpacity(0.7),
                 ),
               ),
             ],
@@ -302,7 +303,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     }
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -362,7 +363,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
       decoration: BoxDecoration(
-        color: colorScheme.background,
+        color: colorScheme.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),
@@ -422,8 +423,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                   _getStepName(),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14.sp,
-                    color: colorScheme.onBackground,
+                    fontSize: 14.adaptiveSp,
+                    color: colorScheme.onSurface,
                   ),
                 ),
 
@@ -436,7 +437,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                     Container(
                       height: 6.h,
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceVariant,
+                        color: colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(3.r),
                       ),
                     ),
@@ -481,7 +482,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
               '${_currentPage + 1}/$_totalPages',
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.bold,
-                fontSize: 12.sp,
+                fontSize: 12.adaptiveSp,
                 color: colorScheme.primary,
               ),
             ),

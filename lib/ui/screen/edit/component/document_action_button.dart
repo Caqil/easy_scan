@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -105,7 +106,7 @@ class DocumentActionButtons extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isActive
                       ? colorScheme.primary.withOpacity(0.2)
-                      : colorScheme.surfaceVariant.withOpacity(0.3),
+                      : colorScheme.surfaceContainerHighest.withOpacity(0.3),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -113,7 +114,7 @@ class DocumentActionButtons extends StatelessWidget {
                   color: isActive
                       ? colorScheme.primary
                       : colorScheme.onSurfaceVariant,
-                  size: 24.sp,
+                  size: 24.adaptiveSp,
                 ),
               ),
               SizedBox(height: 1.h),
@@ -123,7 +124,7 @@ class DocumentActionButtons extends StatelessWidget {
                   color: isActive
                       ? colorScheme.primary
                       : colorScheme.onSurfaceVariant,
-                  fontSize: 8.sp,
+                  fontSize: 8.adaptiveSp,
                   fontWeight: isActive ? FontWeight.bold : FontWeight.w700,
                 ),
               ),

@@ -5,6 +5,7 @@ import 'package:scanpro/models/content_type.dart';
 import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:scanpro/ui/screen/barcode/barcode_scanner_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,7 +15,7 @@ import 'package:scanpro/models/barcode_scan.dart';
 import 'barcode_result_screen.dart';
 
 class BarcodeHistoryScreen extends ConsumerStatefulWidget {
-  const BarcodeHistoryScreen({Key? key}) : super(key: key);
+  const BarcodeHistoryScreen({super.key});
 
   @override
   ConsumerState<BarcodeHistoryScreen> createState() =>
@@ -57,14 +58,14 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
         children: [
           Icon(
             Icons.qr_code_scanner,
-            size: 72.sp,
+            size: 72.adaptiveSp,
             color: Colors.grey.shade300,
           ),
           SizedBox(height: 16.h),
           AutoSizeText(
             'No Scan History',
             style: GoogleFonts.slabo27px(
-              fontSize: 18.sp,
+              fontSize: 18.adaptiveSp,
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade800,
             ),
@@ -74,7 +75,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
             'Your scanned barcodes will appear here',
             style: GoogleFonts.slabo27px(
               fontWeight: FontWeight.w700,
-              fontSize: 14.sp,
+              fontSize: 14.adaptiveSp,
               color: Colors.grey.shade600,
             ),
             textAlign: TextAlign.center,
@@ -157,7 +158,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
                       child: Icon(
                         contentType.icon,
                         color: contentType.color,
-                        size: 24.sp,
+                        size: 24.adaptiveSp,
                       ),
                     ),
               SizedBox(width: 16.w),
@@ -171,7 +172,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
                       _truncateAutoSizeText(scan.barcodeValue, 40),
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
-                        fontSize: 14.sp,
+                        fontSize: 14.adaptiveSp,
                       ),
                     ),
                     SizedBox(height: 4.h),
@@ -182,7 +183,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
                       style: GoogleFonts.slabo27px(
                         fontWeight: FontWeight.w700,
                         color: Colors.grey.shade600,
-                        fontSize: 12.sp,
+                        fontSize: 12.adaptiveSp,
                       ),
                     ),
                   ],
@@ -220,7 +221,7 @@ class _BarcodeHistoryScreenState extends ConsumerState<BarcodeHistoryScreen> {
               child: Icon(
                 Icons.qr_code,
                 color: Colors.purple,
-                size: 24.sp,
+                size: 24.adaptiveSp,
               ),
             );
           },

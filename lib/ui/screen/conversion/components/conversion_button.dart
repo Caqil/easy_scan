@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -75,15 +76,17 @@ class ConversionButton extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(state.inputFormat?.icon ?? Icons.file_present, size: 20.sp),
+        Icon(state.inputFormat?.icon ?? Icons.file_present,
+            size: 20.adaptiveSp),
         SizedBox(width: 8.w),
         AutoSizeText(
           "conversion_button.convert".tr(), // Localized string
           style: GoogleFonts.slabo27px(
-              fontWeight: FontWeight.w700, fontSize: 14.sp.sp),
+              fontWeight: FontWeight.w700, fontSize: 14.adaptiveSp),
         ),
         SizedBox(width: 8.w),
-        Icon(state.outputFormat?.icon ?? Icons.file_present, size: 20.sp),
+        Icon(state.outputFormat?.icon ?? Icons.file_present,
+            size: 20.adaptiveSp),
       ],
     );
   }

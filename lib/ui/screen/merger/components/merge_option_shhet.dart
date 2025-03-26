@@ -6,6 +6,7 @@ import 'package:scanpro/services/pdf_merger_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:scanpro/ui/common/pdf_merger.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -74,7 +75,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                 AutoSizeText(
                   'merge_pdf.title'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 18.sp,
+                    fontSize: 18.adaptiveSp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -100,7 +101,7 @@ class MergeOptionsSheet extends ConsumerWidget {
               'merge_pdf.open_tool_desc'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 12.sp,
+                fontSize: 12.adaptiveSp,
                 color: Colors.grey.shade600,
               ),
             ),
@@ -127,7 +128,7 @@ class MergeOptionsSheet extends ConsumerWidget {
                     .tr(namedArgs: {'name': initialDocument!.name}),
                 style: GoogleFonts.slabo27px(
                   fontWeight: FontWeight.w700,
-                  fontSize: 12.sp,
+                  fontSize: 12.adaptiveSp,
                   color: Colors.grey.shade600,
                 ),
                 maxLines: 1,
@@ -154,7 +155,7 @@ class MergeOptionsSheet extends ConsumerWidget {
               'merge_pdf.quick_merge_desc'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 12.sp,
+                fontSize: 12.adaptiveSp,
                 color: Colors.grey.shade600,
               ),
             ),

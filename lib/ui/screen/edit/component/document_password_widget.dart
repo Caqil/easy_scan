@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/main.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,7 +55,7 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: widget.colorScheme.surfaceVariant.withOpacity(0.3),
+        color: widget.colorScheme.surfaceContainerHighest.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: _isProtectionEnabled
@@ -70,7 +71,7 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
               'password_protection'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
               ),
             ),
             subtitle: AutoSizeText(
@@ -79,7 +80,7 @@ class _DocumentPasswordWidgetState extends State<DocumentPasswordWidget> {
                   : 'add_password_to_protect'.tr(),
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 12.sp,
+                fontSize: 12.adaptiveSp,
                 color: widget.colorScheme.onSurfaceVariant,
               ),
             ),

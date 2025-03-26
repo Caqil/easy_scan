@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:scanpro/models/document.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utils/date_utils.dart';
 
 class DocumentCard extends StatelessWidget {
@@ -109,6 +109,7 @@ class DocumentCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.slabo27px(
                             fontWeight: FontWeight.bold,
+                            fontSize: 10.adaptiveSp,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -116,7 +117,7 @@ class DocumentCard extends StatelessWidget {
                           DateTimeUtils.getFriendlyDate(document.modifiedAt),
                           style: GoogleFonts.slabo27px(
                             fontWeight: FontWeight.w700,
-                            fontSize: 10.sp,
+                            fontSize: 7.adaptiveSp,
                             color: Colors.grey.shade600,
                           ),
                         ),

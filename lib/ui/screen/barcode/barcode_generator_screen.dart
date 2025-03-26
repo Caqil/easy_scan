@@ -6,6 +6,7 @@ import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:scanpro/ui/screen/barcode/qr_code_customization_screen.dart';
 import 'package:scanpro/ui/screen/barcode/widget/custom_qr_code.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +31,7 @@ enum BarcodeType {
 }
 
 class BarcodeGeneratorScreen extends ConsumerStatefulWidget {
-  const BarcodeGeneratorScreen({Key? key}) : super(key: key);
+  const BarcodeGeneratorScreen({super.key});
 
   @override
   ConsumerState<BarcodeGeneratorScreen> createState() =>
@@ -141,7 +142,7 @@ class _BarcodeGeneratorScreenState
         AutoSizeText(
           'barcode_generator.barcode_type'.tr(),
           style: GoogleFonts.slabo27px(
-            fontSize: 16.sp,
+            fontSize: 16.adaptiveSp,
             fontWeight: FontWeight.bold,
             color: Theme.of(context).primaryColor,
           ),
@@ -240,7 +241,7 @@ class _BarcodeGeneratorScreenState
               child: Icon(
                 icon,
                 color: isSelected ? accentColor : Colors.grey.shade500,
-                size: 24.sp,
+                size: 24.adaptiveSp,
               ),
             ),
             SizedBox(height: 8.h),
@@ -248,7 +249,7 @@ class _BarcodeGeneratorScreenState
               label,
               style: GoogleFonts.slabo27px(
                 color: isSelected ? accentColor : Colors.grey.shade700,
-                fontSize: 12.sp,
+                fontSize: 12.adaptiveSp,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w700,
               ),
               textAlign: TextAlign.center,
@@ -304,7 +305,7 @@ class _BarcodeGeneratorScreenState
           AutoSizeText(
             'barcode_generator.enter_details'.tr(),
             style: GoogleFonts.slabo27px(
-              fontSize: 16.sp,
+              fontSize: 16.adaptiveSp,
               fontWeight: FontWeight.bold,
               color: _getColorForType(_selectedType),
             ),
@@ -425,7 +426,7 @@ class _BarcodeGeneratorScreenState
                   'barcode_generator.security'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 14.sp,
+                    fontSize: 14.adaptiveSp,
                   ),
                 ),
                 subtitle: AutoSizeText(
@@ -434,7 +435,7 @@ class _BarcodeGeneratorScreenState
                       : 'barcode_generator.none_open'.tr(),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     color: Colors.grey.shade600,
                   ),
                 ),
@@ -551,7 +552,7 @@ class _BarcodeGeneratorScreenState
           children: [
             Icon(
               icon,
-              size: 18.sp,
+              size: 18.adaptiveSp,
               color: accentColor,
             ),
             SizedBox(width: 8.w),
@@ -559,7 +560,7 @@ class _BarcodeGeneratorScreenState
               label,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
                 color: Colors.grey.shade800,
               ),
             ),
@@ -603,7 +604,7 @@ class _BarcodeGeneratorScreenState
           maxLines: maxLines,
           style: GoogleFonts.slabo27px(
             fontWeight: FontWeight.w700,
-            fontSize: 14.sp,
+            fontSize: 14.adaptiveSp,
           ),
         ),
       ],
@@ -638,7 +639,7 @@ class _BarcodeGeneratorScreenState
                 AutoSizeText(
                   'barcode_generator.encoded_data'.tr(),
                   style: GoogleFonts.slabo27px(
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                     fontWeight: FontWeight.bold,
                     color: Colors.grey.shade700,
                   ),
@@ -648,7 +649,7 @@ class _BarcodeGeneratorScreenState
                   _generatedData,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
+                    fontSize: 12.adaptiveSp,
                   ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -817,7 +818,7 @@ class _BarcodeGeneratorScreenState
               child: Icon(
                 icon,
                 color: color,
-                size: 20.sp,
+                size: 20.adaptiveSp,
               ),
             ),
             SizedBox(height: 4.h),
@@ -825,7 +826,7 @@ class _BarcodeGeneratorScreenState
               label,
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 12.sp,
+                fontSize: 12.adaptiveSp,
                 color: color,
               ),
             ),
@@ -1110,7 +1111,7 @@ class _BarcodeGeneratorScreenState
               child: Text(
                 'barcode_generator.saved_qr_code'.tr(),
                 style: GoogleFonts.slabo27px(
-                  fontSize: 18.sp,
+                  fontSize: 18.adaptiveSp,
                   fontWeight: FontWeight.bold,
                 ),
               ),

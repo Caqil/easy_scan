@@ -8,6 +8,7 @@ import 'package:scanpro/providers/document_provider.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -622,7 +623,7 @@ class _FolderOptionsSheet extends StatelessWidget {
                     folder.name,
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
+                      fontSize: 16.adaptiveSp,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

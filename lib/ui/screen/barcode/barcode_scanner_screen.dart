@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:scanpro/models/barcode_scan.dart';
 import 'package:scanpro/providers/barcode_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:scanpro/utils/screen_util_extensions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,7 @@ import 'package:scanpro/ui/common/dialogs.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class BarcodeScannerScreen extends ConsumerStatefulWidget {
-  const BarcodeScannerScreen({Key? key}) : super(key: key);
+  const BarcodeScannerScreen({super.key});
 
   @override
   ConsumerState<BarcodeScannerScreen> createState() =>
@@ -85,7 +86,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                     'Position the barcode within the frame to scan',
                     style: GoogleFonts.slabo27px(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14.sp,
+                      fontSize: 14.adaptiveSp,
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
@@ -203,7 +204,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               AutoSizeText(
                 'Scan Result',
                 style: GoogleFonts.slabo27px(
-                  fontSize: 16.sp,
+                  fontSize: 16.adaptiveSp,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).primaryColor,
                 ),
@@ -223,7 +224,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               barcode.rawValue ?? 'No data',
               style: GoogleFonts.slabo27px(
                 fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
+                fontSize: 14.adaptiveSp,
               ),
             ),
           ),
@@ -274,7 +275,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
       child: AutoSizeText(
         format,
         style: GoogleFonts.slabo27px(
-          fontSize: 10.sp,
+          fontSize: 10.adaptiveSp,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).primaryColor,
         ),
