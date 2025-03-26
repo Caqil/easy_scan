@@ -79,6 +79,12 @@ dependencies:
   app_tracking_transparency: ^2.0.6+1
   shared_preferences: any
   archive: any
+  icloud_storage:
+    git:
+      url: https://github.com/kingdomseed/icloud_storage_plus.git
+  google_sign_in: ^6.3.0
+  googleapis: ^14.0.0
+  extension_google_sign_in_as_googleapis_auth: ^2.0.12
 
 dev_dependencies:
   flutter_test:

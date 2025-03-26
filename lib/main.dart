@@ -26,6 +26,7 @@ void main() async {
   );
   final storageService = StorageService();
   await storageService.initialize();
+
   Locale initialLocale = const Locale('en', 'US'); // Default
   final settingsBox = await Hive.openBox('settings');
   final storedLocale = settingsBox.get('locale');

@@ -207,17 +207,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
 
                 SettingsDivider(),
-                // SettingsNavigationTile(
-                //   icon: Icons.folder,
-                //   iconColor: Colors.blue,
-                //   title: "backup.title".tr(),
-                //   subtitle: settings.defaultSaveLocation.isEmpty
-                //       ? "backup.create_first_backup_description".tr()
-                //       : settings.defaultSaveLocation,
-                //   onTap: () {
-                //     AppRoutes.navigateToBackupSettings(context);
-                //   },
-                // ),
+                SettingsNavigationTile(
+                  icon: Icons.folder,
+                  iconColor: Colors.blue,
+                  title: "backup.title".tr(),
+                  subtitle: settings.defaultSaveLocation.isEmpty
+                      ? "backup.create_first_backup_description".tr()
+                      : settings.defaultSaveLocation,
+                  onTap: () {
+                    AppRoutes.navigateToBackupSettings(context);
+                  },
+                ),
               ],
             ),
 

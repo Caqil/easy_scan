@@ -1,339 +1,291 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:icloud_storage/icloud_storage.dart';
-import 'package:path/path.dart' as path;
-import 'package:scanpro/main.dart';
-import 'package:scanpro/utils/constants.dart';
+// import 'dart:io';
+// import 'dart:math';
+// import 'package:icloud_storage/icloud_storage.dart';
+// import 'package:path/path.dart' as path;
+// import 'package:scanpro/main.dart';
+// import 'package:scanpro/utils/constants.dart';
 
-// Enum to represent the connection state of iCloud
-enum ICloudState {
-  notConnected, // iCloud is not connected
-  connected, // iCloud is successfully connected
-  connecting, // iCloud is in the process of connecting
-}
+// // Assuming logger is defined elsewhere
+// // import 'package:scanpro/main.dart';
 
-// Enum to represent the result of syncing with iCloud
-enum SyncICloudResult {
-  failed, // Sync operation failed
-  completed, // Sync operation completed successfully
-  skipped // Sync operation was skipped
-}
+// // Enum to represent the connection state of iCloud
+// enum ICloudState {
+//   notConnected,
+//   connected,
+//   connecting,
+// }
 
-/// A service class to handle iCloud backup operations
-class ICloudBackupManager {
-  static final ICloudBackupManager _instance = ICloudBackupManager._internal();
-  factory ICloudBackupManager() => _instance;
+// enum SyncICloudResult {
+//   failed,
+//   completed,
+//   skipped,
+// }
 
-  ICloudBackupManager._internal();
+// class ICloudBackupManager {
+//   static final ICloudBackupManager _instance = ICloudBackupManager._internal();
+//   factory ICloudBackupManager() => _instance;
 
-  final ICloudStorage _iCloudStorage = ICloudStorage();
-  ICloudState _iCloudState = ICloudState.notConnected;
+//   ICloudBackupManager._internal();
 
-  // Get the current iCloud state
-  ICloudState get state => _iCloudState;
+//   late final ICloudStorage _iCloudStorage;
+//   ICloudState _iCloudState = ICloudState.notConnected;
 
-  /// Initialize iCloud service
-  Future<bool> initialize() async {
-    try {
-      if (!Platform.isIOS) {
-        return false;
-      }
+//   ICloudState get state => _iCloudState;
 
-      _iCloudState = ICloudState.connecting;
+//   Future<bool> initialize() async {
+//     try {
+//       if (!Platform.isIOS) {
+//         return false;
+//       }
 
-      // Check if iCloud is available
-      final bool isAvailable = await isICloudAvailable();
-      if (isAvailable) {
-        // Enable iCloud document storage if available
-        final bool enabled = await _iCloudStorage.enableICloudDocumentStorage();
-        _iCloudState =
-            enabled ? ICloudState.connected : ICloudState.notConnected;
-        return enabled;
-      } else {
-        _iCloudState = ICloudState.notConnected;
-        return false;
-      }
-    } catch (e) {
-      logger.error('Error initializing iCloud: $e');
-      _iCloudState = ICloudState.notConnected;
-      return false;
-    }
-  }
+//       _iCloudState = ICloudState.connecting;
+//       _iCloudStorage =
+//           ICloudStorage(containerId: AppConstants.iCloudContainerId);
 
-  /// Check if iCloud is available for the current device
-  Future<bool> isICloudAvailable() async {
-    try {
-      if (!Platform.isIOS) {
-        return false;
-      }
+//       // Check iCloud availability
+//       final bool isAvailable = await _iCloudStorage.isAvailable();
+//       _iCloudState =
+//           isAvailable ? ICloudState.connected : ICloudState.notConnected;
+//       return isAvailable;
+//     } catch (e) {
+//       logger.error('Error initializing iCloud: $e');
+//       _iCloudState = ICloudState.notConnected;
+//       return false;
+//     }
+//   }
 
-      return await _iCloudStorage.isICloudAvailable();
-    } catch (e) {
-      logger.error('Error checking iCloud availability: $e');
-      return false;
-    }
-  }
+//   Future<bool> isICloudAvailable() async {
+//     try {
+//       if (!Platform.isIOS) {
+//         return false;
+//       }
+//       return await _iCloudStorage.isAvailable();
+//     } catch (e) {
+//       logger.error('Error checking iCloud availability: $e');
+//       return false;
+//     }
+//   }
 
-  /// Upload a file to iCloud
-  Future<SyncICloudResult> uploadToICloud(String filePath) async {
-    try {
-      if (!Platform.isIOS) {
-        return SyncICloudResult.skipped;
-      }
+//   Future<SyncICloudResult> uploadToICloud(String filePath) async {
+//     try {
+//       if (!Platform.isIOS) {
+//         return SyncICloudResult.skipped;
+//       }
 
-      // Check if iCloud is available
-      if (_iCloudState != ICloudState.connected) {
-        final bool isInitialized = await initialize();
-        if (!isInitialized) {
-          return SyncICloudResult.failed;
-        }
-      }
+//       if (_iCloudState != ICloudState.connected) {
+//         final bool isInitialized = await initialize();
+//         if (!isInitialized) {
+//           return SyncICloudResult.failed;
+//         }
+//       }
 
-      // Get file name
-      final String fileName = path.basename(filePath);
+//       final String fileName = path.basename(filePath);
 
-      // Upload file to iCloud
-      final bool success = await _iCloudStorage.uploadFileToICloud(
-        sourcePath: filePath,
-        destinationFileName: fileName,
-        destinationContainerIdentifier: AppConstants.iCloudContainerId,
-      );
+//       await _iCloudStorage.startUpload(
+//         filePath: filePath,
+//         destinationFileName: fileName,
+//         onProgress: (progress) {
+//           logger
+//               .info('Upload progress: ${(progress * 100).toStringAsFixed(1)}%');
+//         },
+//       );
 
-      return success ? SyncICloudResult.completed : SyncICloudResult.failed;
-    } catch (e) {
-      logger.error('Error uploading to iCloud: $e');
-      return SyncICloudResult.failed;
-    }
-  }
+//       return SyncICloudResult.completed;
+//     } catch (e) {
+//       logger.error('Error uploading to iCloud: $e');
+//       return SyncICloudResult.failed;
+//     }
+//   }
 
-  /// Upload multiple files to iCloud
-  Future<SyncICloudResult> uploadMultipleFilesToICloud(
-      List<String> filePaths) async {
-    try {
-      if (!Platform.isIOS) {
-        return SyncICloudResult.skipped;
-      }
+//   Future<SyncICloudResult> uploadMultipleFilesToICloud(
+//       List<String> filePaths) async {
+//     try {
+//       if (!Platform.isIOS) {
+//         return SyncICloudResult.skipped;
+//       }
 
-      // Check if iCloud is available
-      if (_iCloudState != ICloudState.connected) {
-        final bool isInitialized = await initialize();
-        if (!isInitialized) {
-          return SyncICloudResult.failed;
-        }
-      }
+//       if (_iCloudState != ICloudState.connected) {
+//         final bool isInitialized = await initialize();
+//         if (!isInitialized) {
+//           return SyncICloudResult.failed;
+//         }
+//       }
 
-      bool allSucceeded = true;
+//       bool allSucceeded = true;
+//       for (String filePath in filePaths) {
+//         final String fileName = path.basename(filePath);
+//         try {
+//           await _iCloudStorage.startUpload(
+//             filePath: filePath,
+//             destinationFileName: fileName,
+//           );
+//         } catch (e) {
+//           allSucceeded = false;
+//           logger.error('Error uploading file $fileName: $e');
+//         }
+//       }
 
-      // Upload each file to iCloud
-      for (String filePath in filePaths) {
-        final String fileName = path.basename(filePath);
+//       return allSucceeded
+//           ? SyncICloudResult.completed
+//           : SyncICloudResult.failed;
+//     } catch (e) {
+//       logger.error('Error uploading multiple files to iCloud: $e');
+//       return SyncICloudResult.failed;
+//     }
+//   }
 
-        final bool success = await _iCloudStorage.uploadFileToICloud(
-          sourcePath: filePath,
-          destinationFileName: fileName,
-          destinationContainerIdentifier: AppConstants.iCloudContainerId,
-        );
+//   Future<String?> downloadFromICloud(String fileName) async {
+//     try {
+//       if (!Platform.isIOS) {
+//         return null;
+//       }
 
-        if (!success) {
-          allSucceeded = false;
-        }
-      }
+//       if (_iCloudState != ICloudState.connected) {
+//         final bool isInitialized = await initialize();
+//         if (!isInitialized) {
+//           return null;
+//         }
+//       }
 
-      return allSucceeded
-          ? SyncICloudResult.completed
-          : SyncICloudResult.failed;
-    } catch (e) {
-      logger.error('Error uploading multiple files to iCloud: $e');
-      return SyncICloudResult.failed;
-    }
-  }
+//       final String tempPath = await _createTempPath(fileName);
 
-  /// Download a file from iCloud
-  Future<String?> downloadFromICloud(String fileName) async {
-    try {
-      if (!Platform.isIOS) {
-        return null;
-      }
+//       await _iCloudStorage.startDownload(
+//         cloudFileName: fileName,
+//         destinationFilePath: tempPath,
+//         onProgress: (progress) {
+//           logger.info(
+//               'Download progress: ${(progress * 100).toStringAsFixed(1)}%');
+//         },
+//       );
 
-      // Check if iCloud is available
-      if (_iCloudState != ICloudState.connected) {
-        final bool isInitialized = await initialize();
-        if (!isInitialized) {
-          return null;
-        }
-      }
+//       logger.info('Downloaded file from iCloud: $tempPath');
+//       return tempPath;
+//     } catch (e) {
+//       logger.error('Error downloading from iCloud: $e');
+//       return null;
+//     }
+//   }
 
-      // Create a temporary directory for the downloaded file
-      final String tempPath = await _createTempPath(fileName);
+//   Future<String> _createTempPath(String fileName) async {
+//     final Directory tempDir = await Directory.systemTemp.createTemp();
+//     return path.join(tempDir.path, fileName);
+//   }
 
-      // Download the file
-      final bool success = await _iCloudStorage.downloadFileFromICloud(
-        sourceFileName: fileName,
-        destinationPath: tempPath,
-        sourceContainerIdentifier: AppConstants.iCloudContainerId,
-      );
+//   Future<List<ICloudFile>> getCloudFiles() async {
+//     try {
+//       if (!Platform.isIOS) {
+//         return [];
+//       }
 
-      if (!success) {
-        logger.error('Failed to download file from iCloud: $fileName');
-        return null;
-      }
+//       if (_iCloudState != ICloudState.connected) {
+//         final bool isInitialized = await initialize();
+//         if (!isInitialized) {
+//           return [];
+//         }
+//       }
 
-      logger.info('Downloaded file from iCloud: $tempPath');
-      return tempPath;
-    } catch (e) {
-      logger.error('Error downloading from iCloud: $e');
-      return null;
-    }
-  }
+//       final files = await _iCloudStorage.getAllFiles();
+//       logger.info('Cloud files found: ${files.length}');
 
-  /// Create a temporary path for downloads
-  Future<String> _createTempPath(String fileName) async {
-    final Directory tempDir = await Directory.systemTemp.createTemp();
-    return path.join(tempDir.path, fileName);
-  }
+//       final backupFiles = files
+//           .where((file) =>
+//               file.relativePath.startsWith(AppConstants.backupFilePrefix))
+//           .toList();
 
-  /// Get all cloud files
-  Future<List<ICloudFile>> getCloudFiles() async {
-    try {
-      if (!Platform.isIOS) {
-        return [];
-      }
+//       return backupFiles;
+//     } catch (e) {
+//       logger.error('Error getting cloud files: $e');
+//       return [];
+//     }
+//   }
 
-      // Check if iCloud is available
-      if (_iCloudState != ICloudState.connected) {
-        final bool isInitialized = await initialize();
-        if (!isInitialized) {
-          return [];
-        }
-      }
+//   Future<List<Map<String, dynamic>>> listICloudBackups() async {
+//     try {
+//       if (!Platform.isIOS) {
+//         return [];
+//       }
 
-      // Get cloud files
-      final files = await _iCloudStorage.getICloudDocuments(
-        containerIdentifier: AppConstants.iCloudContainerId,
-      );
+//       final backupFiles = await getCloudFiles();
 
-      logger.info('Cloud files found: ${files.length}');
+//       List<Map<String, dynamic>> backups = backupFiles.map((file) {
+//         return {
+//           'id': file.relativePath,
+//           'name': file.relativePath,
+//           'date': file.lastModified?.toString() ?? 'Unknown',
+//           'size': _formatSize(file.size ?? 0),
+//         };
+//       }).toList();
 
-      // Filter for backup files if needed
-      final backupFiles = files
-          .where((file) => file.name.startsWith(AppConstants.backupFilePrefix))
-          .toList();
+//       backups.sort((a, b) {
+//         if (a['date'] == 'Unknown' || b['date'] == 'Unknown') return 0;
+//         return DateTime.parse(b['date']).compareTo(DateTime.parse(a['date']));
+//       });
 
-      return backupFiles;
-    } catch (e) {
-      logger.error('Error getting cloud files: $e');
-      return [];
-    }
-  }
+//       return backups;
+//     } catch (e) {
+//       logger.error('Error listing iCloud backups: $e');
+//       return [];
+//     }
+//   }
 
-  /// List available backups in iCloud
-  Future<List<Map<String, dynamic>>> listICloudBackups() async {
-    try {
-      if (!Platform.isIOS) {
-        return [];
-      }
+//   Future<SyncICloudResult> deleteICloudBackup(String fileName) async {
+//     try {
+//       if (!Platform.isIOS) {
+//         return SyncICloudResult.skipped;
+//       }
 
-      // Use getCloudFiles to get all files
-      final backupFiles = await getCloudFiles();
+//       if (_iCloudState != ICloudState.connected) {
+//         final bool isInitialized = await initialize();
+//         if (!isInitialized) {
+//           return SyncICloudResult.failed;
+//         }
+//       }
 
-      // Create backup metadata list
-      List<Map<String, dynamic>> backups = [];
-      for (var file in backupFiles) {
-        backups.add({
-          'id': file.name,
-          'name': file.name,
-          'date': file.modifiedDate?.toString() ?? 'Unknown',
-          'size': _formatSize(file.size),
-        });
-      }
+//       await _iCloudStorage.delete(fileName);
+//       return SyncICloudResult.completed;
+//     } catch (e) {
+//       logger.error('Error deleting iCloud backup: $e');
+//       return SyncICloudResult.failed;
+//     }
+//   }
 
-      // Sort by date (newest first)
-      backups.sort((a, b) {
-        if (a['date'] == 'Unknown' || b['date'] == 'Unknown') {
-          return 0;
-        }
-        return DateTime.parse(b['date']).compareTo(DateTime.parse(a['date']));
-      });
+//   Future<SyncICloudResult> deleteMultipleICloudBackups(
+//       List<String> fileNames) async {
+//     try {
+//       if (!Platform.isIOS) {
+//         return SyncICloudResult.skipped;
+//       }
 
-      return backups;
-    } catch (e) {
-      logger.error('Error listing iCloud backups: $e');
-      return [];
-    }
-  }
+//       if (_iCloudState != ICloudState.connected) {
+//         final bool isInitialized = await initialize();
+//         if (!isInitialized) {
+//           return SyncICloudResult.failed;
+//         }
+//       }
 
-  /// Delete a backup file from iCloud
-  Future<SyncICloudResult> deleteICloudBackup(String fileName) async {
-    try {
-      if (!Platform.isIOS) {
-        return SyncICloudResult.skipped;
-      }
+//       bool allSucceeded = true;
+//       for (String fileName in fileNames) {
+//         try {
+//           await _iCloudStorage.delete(fileName);
+//         } catch (e) {
+//           allSucceeded = false;
+//           logger.error('Error deleting file $fileName: $e');
+//         }
+//       }
 
-      // Check if iCloud is available
-      if (_iCloudState != ICloudState.connected) {
-        final bool isInitialized = await initialize();
-        if (!isInitialized) {
-          return SyncICloudResult.failed;
-        }
-      }
+//       return allSucceeded
+//           ? SyncICloudResult.completed
+//           : SyncICloudResult.failed;
+//     } catch (e) {
+//       logger.error('Error deleting multiple iCloud backups: $e');
+//       return SyncICloudResult.failed;
+//     }
+//   }
 
-      // Delete the file
-      final bool success = await _iCloudStorage.deleteICloudFile(
-        fileName: fileName,
-        containerIdentifier: AppConstants.iCloudContainerId,
-      );
-
-      return success ? SyncICloudResult.completed : SyncICloudResult.failed;
-    } catch (e) {
-      logger.error('Error deleting iCloud backup: $e');
-      return SyncICloudResult.failed;
-    }
-  }
-
-  /// Delete multiple backup files from iCloud
-  Future<SyncICloudResult> deleteMultipleICloudBackups(
-      List<String> fileNames) async {
-    try {
-      if (!Platform.isIOS) {
-        return SyncICloudResult.skipped;
-      }
-
-      // Check if iCloud is available
-      if (_iCloudState != ICloudState.connected) {
-        final bool isInitialized = await initialize();
-        if (!isInitialized) {
-          return SyncICloudResult.failed;
-        }
-      }
-
-      bool allSucceeded = true;
-
-      // Delete each file
-      for (String fileName in fileNames) {
-        final bool success = await _iCloudStorage.deleteICloudFile(
-          fileName: fileName,
-          containerIdentifier: AppConstants.iCloudContainerId,
-        );
-
-        if (!success) {
-          allSucceeded = false;
-        }
-      }
-
-      return allSucceeded
-          ? SyncICloudResult.completed
-          : SyncICloudResult.failed;
-    } catch (e) {
-      logger.error('Error deleting multiple iCloud backups: $e');
-      return SyncICloudResult.failed;
-    }
-  }
-
-  // Helper method to format file size
-  String _formatSize(int bytes) {
-    if (bytes <= 0) return '0 B';
-    const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    var i = (log(bytes) / log(1024)).floor();
-    return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
-  }
-}
+//   String _formatSize(int bytes) {
+//     if (bytes <= 0) return '0 B';
+//     const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
+//     var i = (log(bytes) / log(1024)).floor();
+//     return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
+//   }
+// }
