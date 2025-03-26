@@ -212,20 +212,20 @@ class _CompressionBottomSheetState
       children: [
         _buildCompressionOption(
           label: 'compression_levels.low'.tr(),
-          description: 'compression_levels.low_desc'.tr(),
+          description: 'compression_descriptions.low'.tr(),
           isSelected: _compressionLevel == CompressionLevel.low,
           onTap: () => setState(() => _compressionLevel = CompressionLevel.low),
         ),
         _buildCompressionOption(
           label: 'compression_levels.medium'.tr(),
-          description: 'compression_levels.medium_desc'.tr(),
+          description: 'compression_descriptions.medium'.tr(),
           isSelected: _compressionLevel == CompressionLevel.medium,
           onTap: () =>
               setState(() => _compressionLevel = CompressionLevel.medium),
         ),
         _buildCompressionOption(
           label: 'compression_levels.high'.tr(),
-          description: 'compression_levels.high_desc'.tr(),
+          description: 'compression_descriptions.high'.tr(),
           isSelected: _compressionLevel == CompressionLevel.high,
           onTap: () =>
               setState(() => _compressionLevel = CompressionLevel.high),

@@ -13,6 +13,11 @@ class AppConstants {
   static const String backupFolderName = 'scanpro Backups';
   static const int maxBackupHistory = 10;
   static const String backupFilePrefix = 'scanpro_backup_';
+  static const String backupSettingsBoxName = 'backup_settings';
+  static const String backupSettingsKey = 'backup_settings';
+  static const String iCloudContainerId =
+      'iCloud.com.scanpro.documentconverter';
+
   static const List<int> folderColors = [
     0xFF2196F3, // Blue
     0xFF4CAF50, // Green

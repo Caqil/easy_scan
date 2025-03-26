@@ -43,6 +43,7 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
   void initState() {
     super.initState();
     _loadFileInfo();
+    ref.read(subscriptionServiceProvider).refreshSubscriptionStatus();
   }
 
   Future<void> _loadFileInfo() async {

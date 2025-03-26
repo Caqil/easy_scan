@@ -164,19 +164,16 @@ class CompressionSimpleView extends ConsumerWidget {
     SubscriptionStatus subscriptionStatus,
   ) {
     final bool isSelected = compressionLevel == level;
-
-    // Get appropriate label based on level
+    final isPremium = ref.watch(isPremiumProvider).value ?? false;
     final String label = _getLevelLabel(level);
-    // Get appropriate description based on level
-    final String description = _getLevelDescription(level);
 
     return InkWell(
       onTap: () async {
-        if (level == CompressionLevel.low || subscriptionStatus.hasFullAccess) {
+        if (level == CompressionLevel.low || isPremium) {
           // Low level is always available, others require premium
           onLevelChanged(level);
         } else {
-          // Show premium screen if trying to access premium features
+          // Show premium screen
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const PremiumScreen()),
@@ -188,7 +185,7 @@ class CompressionSimpleView extends ConsumerWidget {
         children: [
           Container(
             width: 105.w, // Set a fixed width for all options
-            padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
+            padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 8.w),
             decoration: BoxDecoration(
               color: isSelected
                   ? Theme.of(context).colorScheme.primaryContainer
@@ -215,7 +212,8 @@ class CompressionSimpleView extends ConsumerWidget {
             ),
             child: Opacity(
               opacity: isAvailable ? 1.0 : 0.7,
-              child: Column(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
@@ -238,15 +236,6 @@ class CompressionSimpleView extends ConsumerWidget {
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  AutoSizeText(
-                    description,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.slabo27px(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 10.adaptiveSp,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -289,11 +278,11 @@ class CompressionSimpleView extends ConsumerWidget {
   String _getLevelDescription(CompressionLevel level) {
     switch (level) {
       case CompressionLevel.low:
-        return 'compression_levels.low_desc'.tr();
+        return 'compression_descriptions.low'.tr();
       case CompressionLevel.medium:
-        return 'compression_levels.medium_desc'.tr();
+        return 'compression_descriptions.medium'.tr();
       case CompressionLevel.high:
-        return 'compression_levels.high_desc'.tr();
+        return 'compression_descriptions.high'.tr();
     }
   }
 
