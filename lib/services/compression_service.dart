@@ -1,127 +1,143 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scanpro/config/helper.dart';
+import 'package:path/path.dart' as path;
 import 'package:scanpro/main.dart';
-import 'package:scanpro/models/document.dart';
-import 'package:scanpro/services/image_service.dart';
-import 'package:scanpro/utils/compress_limit_utils.dart';
-import 'package:scanpro/providers/document_provider.dart';
-import 'package:scanpro/utils/constants.dart';
-import 'package:scanpro/ui/common/dialogs.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:scanpro/services/pdf_compression_api_service.dart';
+import 'package:scanpro/config/api_config.dart';
+import 'package:scanpro/config/helper.dart';
+import 'package:scanpro/utils/file_utils.dart';
 
-/// A service to handle document compression with level-based restrictions
-class CompressionService {
-  final ImageService _imageService = ImageService();
+/// Service for compressing PDF files using the universal compression API
+class PdfCompressionApiService {
+  // Universal compression endpoint
+  static const String _compressionEndpoint = '/api/compress/universal';
 
-  /// Compress a PDF document with level-based restrictions
-  Future<Document?> compressPdf({
-    required BuildContext context,
-    required WidgetRef ref,
-    required Document document,
-    required CompressionLevel level,
+  /// Compress a PDF file
+  Future<String> compressPdf({
+    required File file,
+    required CompressionLevel compressionLevel,
     Function(double)? onProgress,
   }) async {
-    // Check if the compression level is available for this user
-    final canUseLevel = await CompressionLimitUtils.canUseCompressionLevel(
-        context, ref, level,
-        showDialog: true);
-
-    if (!canUseLevel) {
-      return null;
-    }
-
     try {
-      // Show progress dialog
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('compression.compressing'.tr()),
-              ],
-            ),
-          ),
-        );
+      // Report initial progress
+      onProgress?.call(0.1);
+
+      // Check if file exists
+      if (!await file.exists()) {
+        throw Exception('File does not exist: ${file.path}');
       }
 
-      // Use the API service instead of local compression
-      final compressionApiService = ref.read(pdfCompressionApiServiceProvider);
-      final compressedPdfPath = await compressionApiService.compressPdf(
-        file: File(document.pdfPath),
-        compressionLevel: level,
-        onProgress: onProgress,
+      // Convert compression level enum to string for API
+      final String qualityLevel = _compressionLevelToString(compressionLevel);
+
+      logger.info('Starting compression with level: $qualityLevel');
+      logger.info('File path: ${file.path}');
+
+      // Create multipart request
+      final Uri uri = Uri.parse('${ApiConfig.baseUrl}$_compressionEndpoint');
+      final request = http.MultipartRequest('POST', uri);
+
+      // Add API key if required
+      if (ApiConfig.apiKey.isNotEmpty) {
+        request.headers['X-API-Key'] = ApiConfig.apiKey;
+      }
+
+      // Add the file
+      final fileStream = http.ByteStream(file.openRead());
+      final fileLength = await file.length();
+
+      final multipartFile = http.MultipartFile(
+        'file',
+        fileStream,
+        fileLength,
+        filename: path.basename(file.path),
       );
 
-      // Generate a thumbnail for the compressed document
-      File? thumbnailFile;
-      try {
-        thumbnailFile = await _imageService.createThumbnail(
-          File(compressedPdfPath),
-          size: AppConstants.thumbnailSize,
-        );
-      } catch (e) {
-        logger.error('Error creating thumbnail for compressed PDF: $e');
-        // Continue without thumbnail - it's not critical
+      request.files.add(multipartFile);
+
+      // Add the quality parameter
+      request.fields['quality'] = qualityLevel;
+
+      logger.info('Uploading file to compression API: $uri');
+
+      // Report progress
+      onProgress?.call(0.3);
+
+      // Send the request
+      final streamedResponse = await request.send();
+
+      // Report progress after upload
+      onProgress?.call(0.6);
+
+      // Handle the response
+      if (streamedResponse.statusCode != 200) {
+        final response = await http.Response.fromStream(streamedResponse);
+        logger.error(
+            'Compression failed: ${response.statusCode} - ${response.body}');
+        throw Exception(
+            'API compression failed: HTTP ${streamedResponse.statusCode}');
       }
 
-      // Create a new document model for the compressed PDF
-      final compressedDocument = Document(
-        name: '${document.name}_compressed',
-        pdfPath: compressedPdfPath,
-        pagesPaths: [compressedPdfPath],
-        pageCount: document.pageCount,
-        thumbnailPath: thumbnailFile?.path ?? document.thumbnailPath,
-        isFavorite: document.isFavorite,
-        folderId: document.folderId,
+      // Create a meaningful file name for the compressed file
+      final originalFileName = path.basenameWithoutExtension(file.path);
+      final extension = path.extension(file.path);
+      final compressedFileName =
+          '${originalFileName}_compressed_$qualityLevel$extension';
+
+      // Get a unique path in the documents directory
+      final String finalPath = await FileUtils.getUniqueFilePath(
+        documentName: '${originalFileName}_compressed_$qualityLevel',
+        extension: extension.replaceAll('.', ''),
       );
 
-      // Save the compressed document to the library
-      await ref
-          .read(documentsProvider.notifier)
-          .addDocument(compressedDocument);
+      logger.info('Saving compressed file to: $finalPath');
 
-      // Close progress dialog
-      if (context.mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
+      // Save the compressed file
+      final response = await http.Response.fromStream(streamedResponse);
+      final outputFile = File(finalPath);
+      await outputFile.writeAsBytes(response.bodyBytes);
+
+      onProgress?.call(0.9);
+
+      // Verify the file was created and has content
+      if (!await outputFile.exists()) {
+        throw Exception('Failed to create compressed file');
       }
 
-      return compressedDocument;
+      final fileSize = await outputFile.length();
+      if (fileSize == 0) {
+        throw Exception('Compressed file is empty');
+      }
+
+      // Report completion
+      onProgress?.call(1.0);
+      logger.info(
+          'Compression completed successfully: ${outputFile.path}, size: $fileSize bytes');
+
+      return finalPath;
     } catch (e) {
-      logger.error('Error compressing PDF: $e');
-
-      // Close progress dialog
-      if (context.mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-
-      // Show error dialog
-      if (context.mounted) {
-        AppDialogs.showSnackBar(
-          context,
-          message: 'compression.error'.tr(namedArgs: {'error': e.toString()}),
-          type: SnackBarType.error,
-        );
-      }
-
-      return null;
+      logger.error('Error compressing file: $e');
+      rethrow;
     }
   }
 
-  /// Get file size reduction estimate based on compression level
-  String getFileSizeReductionEstimate(CompressionLevel level) {
-    return CompressionLevelMapper.getReductionEstimate(level);
+  /// Convert CompressionLevel enum to string for the API
+  String _compressionLevelToString(CompressionLevel level) {
+    switch (level) {
+      case CompressionLevel.low:
+        return 'low';
+      case CompressionLevel.medium:
+        return 'medium';
+      case CompressionLevel.high:
+        return 'high';
+      default:
+        return 'medium'; // Default to medium
+    }
   }
 }
 
-/// Provider for the compression service
-final compressionServiceProvider = Provider<CompressionService>((ref) {
-  return CompressionService();
+/// Provider for the PDF compression API service
+final pdfCompressionApiServiceProvider =
+    Provider<PdfCompressionApiService>((ref) {
+  return PdfCompressionApiService();
 });

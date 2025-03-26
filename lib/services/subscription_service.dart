@@ -311,7 +311,7 @@ class SubscriptionService {
       // Check if the user has premium access
       final isPremium =
           customerInfo.entitlements.active.containsKey(kPremiumEntitlementId);
-
+      logger.info(customerInfo.originalAppUserId);
       return isPremium;
     } catch (e) {
       logger.error('Error checking for active subscription: $e');

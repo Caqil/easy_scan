@@ -180,8 +180,6 @@ class CompressionLimitUtils {
         return 'compression.level.medium'.tr();
       case CompressionLevel.high:
         return 'compression.level.high'.tr();
-      case CompressionLevel.maximum:
-        return 'compression.level.maximum'.tr();
     }
   }
 
@@ -226,12 +224,6 @@ class CompressionLimitUtils {
         {
           'level': CompressionLevel.high,
           'name': _getCompressionLevelName(CompressionLevel.high),
-          'isAvailable': false,
-          'isPremium': true,
-        },
-        {
-          'level': CompressionLevel.maximum,
-          'name': _getCompressionLevelName(CompressionLevel.maximum),
           'isAvailable': false,
           'isPremium': true,
         },

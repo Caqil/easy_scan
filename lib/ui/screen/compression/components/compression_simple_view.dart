@@ -13,68 +13,6 @@ import 'package:scanpro/utils/file_utils.dart';
 import 'compression_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Helper function to check premium outside of widgets
-Future<bool> checkPremiumAccess(WidgetRef ref) async {
-  final subscriptionService = ref.read(subscriptionServiceProvider);
-  return await subscriptionService.hasActiveSubscription();
-}
-
-// Helper class for premium-related actions
-class PremiumFeatureHandler {
-  static Future<bool> canUseFeature(
-    BuildContext context,
-    WidgetRef ref, {
-    bool showDialog = true,
-  }) async {
-    final subscriptionStatus = ref.read(subscriptionStatusProvider);
-
-    // Quick check using status provider first (no API call)
-    if (subscriptionStatus.hasFullAccess) {
-      return true;
-    }
-
-    // Double-check with the service if the state might be outdated
-    final subscriptionService = ref.read(subscriptionServiceProvider);
-    final hasAccess = await subscriptionService.hasActiveTrialOrSubscription();
-
-    if (!hasAccess && showDialog) {
-      _showPremiumDialog(context);
-    }
-
-    return hasAccess;
-  }
-
-  static void _showPremiumDialog(BuildContext context) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text('ocr.premium_required.title'.tr()),
-        content: Text(
-          'subscription.subtitle'.tr(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'.tr()),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PremiumScreen(),
-                ),
-              );
-            },
-            child: Text('Upgrade'.tr()),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class CompressionSimpleView extends ConsumerWidget {
   final Document document;
   final int originalSize;
@@ -189,52 +127,30 @@ class CompressionSimpleView extends ConsumerWidget {
     WidgetRef ref,
     SubscriptionStatus subscriptionStatus,
   ) {
-    return Column(
+    // For the simplified 3-level compression
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildCompressionOption(
-                context,
-                CompressionLevel.low,
-                true, // Always unlocked
-                ref,
-                subscriptionStatus,
-              ),
-            ),
-            Expanded(
-              child: _buildCompressionOption(
-                context,
-                CompressionLevel.medium,
-                subscriptionStatus.hasFullAccess, // Unlocked only for premium
-                ref,
-                subscriptionStatus,
-              ),
-            ),
-          ],
+        _buildCompressionOption(
+          context,
+          CompressionLevel.low,
+          true, // Low is always available
+          ref,
+          subscriptionStatus,
         ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _buildCompressionOption(
-                context,
-                CompressionLevel.high,
-                subscriptionStatus.hasFullAccess, // Unlocked only for premium
-                ref,
-                subscriptionStatus,
-              ),
-            ),
-            Expanded(
-              child: _buildCompressionOption(
-                context,
-                CompressionLevel.maximum,
-                subscriptionStatus.hasFullAccess, // Unlocked only for premium
-                ref,
-                subscriptionStatus,
-              ),
-            ),
-          ],
+        _buildCompressionOption(
+          context,
+          CompressionLevel.medium,
+          subscriptionStatus.hasFullAccess, // Medium needs premium
+          ref,
+          subscriptionStatus,
+        ),
+        _buildCompressionOption(
+          context,
+          CompressionLevel.high,
+          subscriptionStatus.hasFullAccess, // High needs premium
+          ref,
+          subscriptionStatus,
         ),
       ],
     );
@@ -249,40 +165,56 @@ class CompressionSimpleView extends ConsumerWidget {
   ) {
     final bool isSelected = compressionLevel == level;
 
+    // Get appropriate label based on level
+    final String label = _getLevelLabel(level);
+    // Get appropriate description based on level
+    final String description = _getLevelDescription(level);
+
     return InkWell(
       onTap: () async {
-        // Always check subscription status directly for latest status
-        final subscriptionService = ref.read(subscriptionServiceProvider);
-        final hasAccess = await subscriptionService.hasActiveSubscription();
-
-        if (level == CompressionLevel.low || hasAccess) {
-          // Low level is always available, others require premium access
+        if (level == CompressionLevel.low || subscriptionStatus.hasFullAccess) {
+          // Low level is always available, others require premium
           onLevelChanged(level);
         } else {
-          // Show premium dialog if no access
-          await PremiumFeatureHandler.canUseFeature(context, ref);
+          // Show premium screen if trying to access premium features
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const PremiumScreen()),
+          );
         }
       },
       borderRadius: BorderRadius.circular(8),
       child: Stack(
         children: [
-          Opacity(
-            opacity: isAvailable ? 1.0 : 0.7,
-            child: Container(
-              margin: const EdgeInsets.all(4),
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-              decoration: BoxDecoration(
+          Container(
+            width: 105.w, // Set a fixed width for all options
+            padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
                 color: isSelected
-                    ? Theme.of(context).colorScheme.primaryContainer
-                    : Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                  width: isSelected ? 2 : 1,
-                ),
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                width: isSelected ? 2 : 1,
               ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Opacity(
+              opacity: isAvailable ? 1.0 : 0.7,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -291,23 +223,29 @@ class CompressionSimpleView extends ConsumerWidget {
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurfaceVariant,
+                    size: 24.adaptiveSp,
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AutoSizeText(
-                        _getLevelName(level),
-                        style: GoogleFonts.slabo27px(
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.w700,
-                          fontSize: 14.adaptiveSp,
-                        ),
-                      ),
-                    ],
+                  SizedBox(height: 8.h),
+                  AutoSizeText(
+                    label,
+                    style: GoogleFonts.slabo27px(
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.w700,
+                      fontSize: 14.adaptiveSp,
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  AutoSizeText(
+                    description,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.slabo27px(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10.adaptiveSp,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -322,19 +260,41 @@ class CompressionSimpleView extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: Colors.amber.withOpacity(0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.lock,
-                  size: 12,
-                  color: Theme.of(context).colorScheme.primary,
+                  size: 12.adaptiveSp,
+                  color: Colors.amber,
                 ),
               ),
             ),
         ],
       ),
     );
+  }
+
+  String _getLevelLabel(CompressionLevel level) {
+    switch (level) {
+      case CompressionLevel.low:
+        return 'compression_levels.low'.tr();
+      case CompressionLevel.medium:
+        return 'compression_levels.medium'.tr();
+      case CompressionLevel.high:
+        return 'compression_levels.high'.tr();
+    }
+  }
+
+  String _getLevelDescription(CompressionLevel level) {
+    switch (level) {
+      case CompressionLevel.low:
+        return 'compression_levels.low_desc'.tr();
+      case CompressionLevel.medium:
+        return 'compression_levels.medium_desc'.tr();
+      case CompressionLevel.high:
+        return 'compression_levels.high_desc'.tr();
+    }
   }
 
   Widget _buildPremiumBanner(BuildContext context) {
@@ -398,18 +358,5 @@ class CompressionSimpleView extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  String _getLevelName(CompressionLevel level) {
-    switch (level) {
-      case CompressionLevel.low:
-        return 'compression_levels.low'.tr();
-      case CompressionLevel.medium:
-        return 'compression_levels.medium'.tr();
-      case CompressionLevel.high:
-        return 'compression_levels.high'.tr();
-      case CompressionLevel.maximum:
-        return 'compression_levels.maximum'.tr();
-    }
   }
 }

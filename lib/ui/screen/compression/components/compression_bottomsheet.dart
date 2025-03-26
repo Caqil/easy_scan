@@ -6,7 +6,10 @@ import 'package:scanpro/main.dart';
 import 'package:scanpro/models/document.dart';
 import 'package:scanpro/providers/document_provider.dart';
 import 'package:scanpro/services/pdf_compression_api_service.dart';
+import 'package:scanpro/services/image_service.dart';
+import 'package:scanpro/services/pdf_service.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
+import 'package:scanpro/utils/constants.dart';
 import 'package:scanpro/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:scanpro/utils/screen_util_extensions.dart';
@@ -106,8 +109,10 @@ class _CompressionBottomSheetState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color:
-                  Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              color: Theme.of(context)
+                  .colorScheme
+                  .surfaceContainerHighest
+                  .withOpacity(0.3),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
@@ -117,7 +122,7 @@ class _CompressionBottomSheetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoSizeText(
-                  FileUtils.getCompressionLevelTitle()!,
+                  FileUtils.getCompressionLevelTitle(_compressionLevel)!,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.adaptiveSp,
@@ -126,7 +131,7 @@ class _CompressionBottomSheetState
                 ),
                 const SizedBox(height: 4),
                 AutoSizeText(
-                  FileUtils.getCompressionLevelDescription()!,
+                  FileUtils.getCompressionLevelDescription(_compressionLevel)!,
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
                     fontSize: 12.adaptiveSp,
@@ -202,52 +207,28 @@ class _CompressionBottomSheetState
   }
 
   Widget _buildCompressionLevelSelector() {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildCompressionOption(
-                label: 'compression_levels.low'.tr(),
-                icon: Icons.compress,
-                isSelected: _compressionLevel == CompressionLevel.low,
-                onTap: () =>
-                    setState(() => _compressionLevel = CompressionLevel.low),
-              ),
-            ),
-            Expanded(
-              child: _buildCompressionOption(
-                label: 'compression_levels.medium'.tr(),
-                icon: Icons.compress,
-                isSelected: _compressionLevel == CompressionLevel.medium,
-                onTap: () =>
-                    setState(() => _compressionLevel = CompressionLevel.medium),
-              ),
-            ),
-          ],
+        _buildCompressionOption(
+          label: 'compression_levels.low'.tr(),
+          description: 'compression_levels.low_desc'.tr(),
+          isSelected: _compressionLevel == CompressionLevel.low,
+          onTap: () => setState(() => _compressionLevel = CompressionLevel.low),
         ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _buildCompressionOption(
-                label: 'compression_levels.high'.tr(),
-                icon: Icons.compress,
-                isSelected: _compressionLevel == CompressionLevel.high,
-                onTap: () =>
-                    setState(() => _compressionLevel = CompressionLevel.high),
-              ),
-            ),
-            Expanded(
-              child: _buildCompressionOption(
-                label: 'compression_levels.maximum'.tr(),
-                icon: Icons.compress,
-                isSelected: _compressionLevel == CompressionLevel.maximum,
-                onTap: () => setState(
-                    () => _compressionLevel = CompressionLevel.maximum),
-              ),
-            ),
-          ],
+        _buildCompressionOption(
+          label: 'compression_levels.medium'.tr(),
+          description: 'compression_levels.medium_desc'.tr(),
+          isSelected: _compressionLevel == CompressionLevel.medium,
+          onTap: () =>
+              setState(() => _compressionLevel = CompressionLevel.medium),
+        ),
+        _buildCompressionOption(
+          label: 'compression_levels.high'.tr(),
+          description: 'compression_levels.high_desc'.tr(),
+          isSelected: _compressionLevel == CompressionLevel.high,
+          onTap: () =>
+              setState(() => _compressionLevel = CompressionLevel.high),
         ),
       ],
     );
@@ -255,7 +236,7 @@ class _CompressionBottomSheetState
 
   Widget _buildCompressionOption({
     required String label,
-    required IconData icon,
+    required String description,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
@@ -263,8 +244,9 @@ class _CompressionBottomSheetState
       onTap: _isCompressing ? null : onTap,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        margin: const EdgeInsets.all(4),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        width: 95.w,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).colorScheme.primaryContainer
@@ -281,7 +263,7 @@ class _CompressionBottomSheetState
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              icon,
+              Icons.compress,
               color: isSelected
                   ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -289,11 +271,24 @@ class _CompressionBottomSheetState
             const SizedBox(height: 4),
             AutoSizeText(
               label,
+              textAlign: TextAlign.center,
               style: GoogleFonts.slabo27px(
                 color: isSelected
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w700,
+                fontSize: 12.adaptiveSp,
+              ),
+            ),
+            const SizedBox(height: 2),
+            AutoSizeText(
+              description,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.slabo27px(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w700,
+                fontSize: 9.adaptiveSp,
               ),
             ),
           ],
@@ -319,7 +314,7 @@ class _CompressionBottomSheetState
           'Original file size: ${FileUtils.formatFileSize(originalSize)}');
       logger.info('Compression level: $_compressionLevel');
 
-      final apiService = PdfCompressionApiService();
+      final apiService = ref.read(pdfCompressionApiServiceProvider);
       final compressedPdfPath = await apiService.compressPdf(
         file: originalFile,
         compressionLevel: _compressionLevel,
@@ -354,10 +349,25 @@ class _CompressionBottomSheetState
           'Compression complete. New size: ${FileUtils.formatFileSize(compressedSize)}');
       logger.info('Size reduction: ${percentReduction.toStringAsFixed(1)}%');
 
-      final compressedDocument = widget.document.copyWith(
+      // Generate a thumbnail for the compressed document
+      final imageService = ImageService();
+      final File thumbnailFile = await imageService.createThumbnail(
+        compressedResult,
+        size: AppConstants.thumbnailSize,
+      );
+
+      // Get page count of compressed PDF
+      final pdfService = PdfService();
+      final int pageCount = await pdfService.getPdfPageCount(compressedPdfPath);
+
+      final compressedDocument = Document(
         name: '${widget.document.name} (Compressed)',
         pdfPath: compressedPdfPath,
         pagesPaths: [compressedPdfPath],
+        pageCount: pageCount,
+        thumbnailPath: thumbnailFile.path,
+        isPasswordProtected: widget.document.isPasswordProtected,
+        password: widget.document.password,
         modifiedAt: DateTime.now(),
       );
 
@@ -377,6 +387,7 @@ class _CompressionBottomSheetState
       }
     } catch (e) {
       if (mounted) {
+        Navigator.pop(context);
         AppDialogs.showSnackBar(
           context,
           type: SnackBarType.error,

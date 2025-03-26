@@ -251,7 +251,7 @@ class FileUtils {
   }
 
   static String? getCompressionLevelTitle([CompressionLevel? level]) {
-    final currentLevel = level ?? _compressionLevel;
+    final currentLevel = level ?? CompressionLevel.medium;
     switch (currentLevel) {
       case CompressionLevel.low:
         return 'compression_descriptions.low'.tr();
@@ -259,13 +259,12 @@ class FileUtils {
         return 'compression_descriptions.medium'.tr();
       case CompressionLevel.high:
         return 'compression_descriptions.high'.tr();
-      case CompressionLevel.maximum:
-        return 'compression_descriptions.maximum'.tr();
     }
   }
 
+  /// Get user-friendly description for compression level
   static String? getCompressionLevelDescription([CompressionLevel? level]) {
-    final currentLevel = level ?? _compressionLevel;
+    final currentLevel = level ?? CompressionLevel.medium;
     switch (currentLevel) {
       case CompressionLevel.low:
         return 'compression_details.low'.tr();
@@ -273,8 +272,6 @@ class FileUtils {
         return 'compression_details.medium'.tr();
       case CompressionLevel.high:
         return 'compression_details.high'.tr();
-      case CompressionLevel.maximum:
-        return 'compression_details.maximum'.tr();
     }
   }
 

@@ -73,9 +73,8 @@ class DocumentInfoCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 AutoSizeText(
-                  'stats.file_size'.tr(namedArgs: {
-                    'size': FileUtils.formatFileSize(fileSize)
-                  }),
+                  'stats.file_size'.tr(
+                      namedArgs: {'size': FileUtils.formatFileSize(fileSize)}),
                   style: GoogleFonts.slabo27px(
                     fontWeight: FontWeight.w700,
                     fontSize: 12.adaptiveSp,
@@ -154,25 +153,12 @@ class CompressionLevelSelector extends StatelessWidget {
                 onTap: () => onLevelChanged(CompressionLevel.medium),
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
             Expanded(
               child: CompressionOption(
                 label: 'options.high'.tr(),
                 icon: Icons.compress,
                 isSelected: selectedLevel == CompressionLevel.high,
                 onTap: () => onLevelChanged(CompressionLevel.high),
-              ),
-            ),
-            Expanded(
-              child: CompressionOption(
-                label: 'options.maximum'.tr(),
-                icon: Icons.compress,
-                isSelected: selectedLevel == CompressionLevel.maximum,
-                onTap: () => onLevelChanged(CompressionLevel.maximum),
               ),
             ),
           ],

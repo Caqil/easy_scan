@@ -179,8 +179,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               // Special container for center scan icon
               index == 2
                   ? Container(
-                      width: 42.adaptiveSp,
-                      height: 42.adaptiveSp,
+                      width: 45.adaptiveSp,
+                      height: 45.adaptiveSp,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: colorScheme.primary,
@@ -198,7 +198,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                           Icon(
                             _iconList[index],
                             color: Colors.white,
-                            size: 20.adaptiveSp,
+                            size: 25.adaptiveSp,
                           ),
                         ],
                       ),

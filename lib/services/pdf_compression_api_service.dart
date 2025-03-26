@@ -199,8 +199,6 @@ class CompressionLevelMapper {
         return 'medium'; // Medium compression = medium quality
       case CompressionLevel.high:
         return 'low'; // High compression = low quality
-      case CompressionLevel.maximum:
-        return 'low'; // Maximum compression = low quality (using same as high for now)
     }
   }
 
@@ -213,8 +211,6 @@ class CompressionLevelMapper {
         return 65; // Medium compression - 65% quality
       case CompressionLevel.high:
         return 45; // High compression - 45% quality
-      case CompressionLevel.maximum:
-        return 25; // Maximum compression - 25% quality
     }
   }
 
@@ -227,8 +223,6 @@ class CompressionLevelMapper {
         return '30-50%'; // Medium compression
       case CompressionLevel.high:
         return '50-70%'; // High compression
-      case CompressionLevel.maximum:
-        return '70-90%'; // Maximum compression
     }
   }
 
@@ -242,8 +236,6 @@ class CompressionLevelMapper {
           return 'compression.level.medium';
         case CompressionLevel.high:
           return 'compression.level.high';
-        case CompressionLevel.maximum:
-          return 'compression.level.maximum';
       }
     } else {
       switch (level) {
@@ -253,8 +245,6 @@ class CompressionLevelMapper {
           return 'Medium';
         case CompressionLevel.high:
           return 'High';
-        case CompressionLevel.maximum:
-          return 'Maximum';
       }
     }
   }

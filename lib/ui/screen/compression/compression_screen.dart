@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:scanpro/utils/screen_util_extensions.dart';
@@ -13,12 +14,10 @@ import 'package:scanpro/services/image_service.dart';
 import 'package:scanpro/services/subscription_service.dart';
 import 'package:scanpro/ui/common/app_bar.dart';
 import 'package:scanpro/ui/common/dialogs.dart';
-import 'package:scanpro/ui/screen/compression/components/compression_advanced_view.dart';
 import 'package:scanpro/ui/screen/compression/components/compression_simple_view.dart';
 import 'package:scanpro/ui/screen/compression/components/compression_widgets.dart';
 import 'package:scanpro/utils/constants.dart';
 import 'package:scanpro/utils/file_utils.dart';
-import 'dart:io';
 import 'components/compression_progress_view.dart';
 
 class CompressionScreen extends ConsumerStatefulWidget {
@@ -35,10 +34,7 @@ class CompressionScreen extends ConsumerStatefulWidget {
 
 class _CompressionScreenState extends ConsumerState<CompressionScreen> {
   CompressionLevel _compressionLevel = CompressionLevel.low;
-  bool _isAdvancedMode = false;
   bool _isCompressing = false;
-  double _qualitySliderValue = 70.0;
-  double _imageQualitySliderValue = 60.0;
   int _originalFileSize = 0;
   int _estimatedFileSize = 0;
   double _compressionProgress = 0.0;
@@ -64,16 +60,13 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
     double compressionRatio;
     switch (_compressionLevel) {
       case CompressionLevel.low:
-        compressionRatio = 0.8;
+        compressionRatio = 0.8; // 20% reduction
         break;
       case CompressionLevel.medium:
-        compressionRatio = 0.5;
+        compressionRatio = 0.5; // 50% reduction
         break;
       case CompressionLevel.high:
-        compressionRatio = 0.3;
-        break;
-      case CompressionLevel.maximum:
-        compressionRatio = 0.2;
+        compressionRatio = 0.3; // 70% reduction
         break;
     }
     setState(() {
@@ -83,87 +76,28 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final premiumStatus = ref.watch(isPremiumProvider);
     return Scaffold(
       appBar: CustomAppBar(
         title: AutoSizeText('compression.compress_pdf'.tr(),
             style: GoogleFonts.lilitaOne(fontSize: 25.adaptiveSp)),
-        actions: [
-          premiumStatus.when(
-            data: (isPremium) {
-              if (isPremium) {
-                return IconButton(
-                  icon: Icon(_isAdvancedMode ? Icons.tune : Icons.tune),
-                  tooltip: _isAdvancedMode ? 'Simple Mode' : 'Advanced Mode',
-                  onPressed: isPremium
-                      ? _isCompressing
-                          ? null
-                          : () {
-                              setState(() {
-                                _isAdvancedMode = !_isAdvancedMode;
-                              });
-                            }
-                      : () {
-                          setState(() {
-                            AppDialogs.showSnackBar(
-                              context,
-                              message: 'ocr.premium_required.message'.tr(),
-                              type: SnackBarType.error,
-                            );
-                          });
-                        },
-                );
-              } else {
-                return const SizedBox.shrink(); // Nothing if premium
-              }
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) =>
-                Text('Error checking subscription: $error'),
-          )
-        ],
       ),
       body: _isCompressing
           ? CompressionProgressView(
               progress: _compressionProgress,
               statusMessage: _getCompressionStatusMessage(_compressionProgress),
             )
-          : _isAdvancedMode
-              ? CompressionAdvancedView(
-                  document: widget.document,
-                  originalSize: _originalFileSize,
-                  estimatedSize: _estimatedFileSize,
-                  qualityValue: _qualitySliderValue,
-                  imageQualityValue: _imageQualitySliderValue,
-                  onQualityChanged: (value) {
-                    setState(() {
-                      _qualitySliderValue = value;
-                      final ratio = 1 - (value / 100);
-                      _estimatedFileSize =
-                          (_originalFileSize * (1 - (ratio * 0.8))).round();
-                    });
-                  },
-                  onImageQualityChanged: (value) {
-                    setState(() {
-                      _imageQualitySliderValue = value;
-                      final ratio = 1 - (value / 100);
-                      _estimatedFileSize =
-                          (_originalFileSize * (1 - (ratio * 0.6))).round();
-                    });
-                  },
-                )
-              : CompressionSimpleView(
-                  document: widget.document,
-                  originalSize: _originalFileSize,
-                  estimatedSize: _estimatedFileSize,
-                  compressionLevel: _compressionLevel,
-                  onLevelChanged: (level) {
-                    setState(() {
-                      _compressionLevel = level;
-                      _updateEstimatedSize();
-                    });
-                  },
-                ),
+          : CompressionSimpleView(
+              document: widget.document,
+              originalSize: _originalFileSize,
+              estimatedSize: _estimatedFileSize,
+              compressionLevel: _compressionLevel,
+              onLevelChanged: (level) {
+                setState(() {
+                  _compressionLevel = level;
+                  _updateEstimatedSize();
+                });
+              },
+            ),
       bottomNavigationBar: CompressionBottomBar(
         isCompressing: _isCompressing,
         onCancel: () => Navigator.pop(context),
@@ -185,7 +119,6 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
   }
 
   Future<void> _compressPdf() async {
-    // [Same compression logic as original]
     if (_isCompressing) return;
 
     setState(() {
@@ -199,8 +132,9 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
 
       logger.info('Starting compression of PDF: ${widget.document.name}');
       logger.info('Original size: ${FileUtils.formatFileSize(originalSize)}');
+      logger.info('Using compression level: $_compressionLevel');
 
-      final apiService = PdfCompressionApiService();
+      final apiService = ref.read(pdfCompressionApiServiceProvider);
       final compressedPdfPath = await apiService.compressPdf(
         file: originalFile,
         compressionLevel: _compressionLevel,
@@ -253,8 +187,22 @@ class _CompressionScreenState extends ConsumerState<CompressionScreen> {
         logger.error('Failed to generate thumbnail: $e');
       }
 
+      // Create suffix based on compression level for the filename
+      String levelSuffix;
+      switch (_compressionLevel) {
+        case CompressionLevel.low:
+          levelSuffix = 'compression.lightly_compressed_suffix'.tr();
+          break;
+        case CompressionLevel.medium:
+          levelSuffix = 'compression.compressed_suffix'.tr();
+          break;
+        case CompressionLevel.high:
+          levelSuffix = 'compression.highly_compressed_suffix'.tr();
+          break;
+      }
+
       final String newName =
-          '${widget.document.name} (Compressed ${compressionPercentage.toStringAsFixed(0)}%)';
+          '${widget.document.name} (${compressionPercentage.toStringAsFixed(0)}% ${levelSuffix})';
 
       final compressedDocument = Document(
         name: newName,
